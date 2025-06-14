@@ -33,12 +33,12 @@ SPDX-License-Identifier: Apache-2.0
 </div>
 
 <p align="center">
-✨ <a href="features">Features</a>
-🚀 <a href="quick-start">Quick start</a>
+✨ <a href="#features">Features</a>
+🚀 <a href="#quick-start">Quick start</a>
 📚 <a href="https://open-nudge.github.io/opentemplate">Documentation</a>
-🤝 <a href="contribute">Contribute</a>
+🤝 <a href="#contribute">Contribute</a>
 👍 <a href="https://github.com/open-nudge/opentemplate/blob/main/ADOPTERS.md">Adopters</a>
-📜 <a href="legal">Legal</a>
+📜 <a href="#legal">Legal</a>
 </p>
 <!-- vale on -->
 
