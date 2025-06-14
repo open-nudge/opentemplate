@@ -181,7 +181,7 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28"
           "${PAGES_ENDPOINT}"
           -f "source[branch]=gh-pages" -f "source[path]=/docs"
-          -f "build_type=workflow"
+          -f "build_type=legacy"
       - name: "Apply general settings for the repository"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
