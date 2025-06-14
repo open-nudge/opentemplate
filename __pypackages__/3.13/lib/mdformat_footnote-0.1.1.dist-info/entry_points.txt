@@ -1,0 +1,3 @@
+[mdformat.parser_extension]
+footnote=mdformat_footnote
+

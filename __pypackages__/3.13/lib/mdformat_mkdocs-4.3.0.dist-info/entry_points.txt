@@ -1,0 +1,3 @@
+[mdformat.parser_extension]
+mkdocs=mdformat_mkdocs
+

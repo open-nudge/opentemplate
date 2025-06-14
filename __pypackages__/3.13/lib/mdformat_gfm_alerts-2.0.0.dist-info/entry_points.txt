@@ -1,0 +1,3 @@
+[mdformat.parser_extension]
+gfm_alerts=mdformat_gfm_alerts
+

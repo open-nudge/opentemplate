@@ -1,0 +1,3 @@
+[console_scripts]
+pymarkdown = pymarkdown.__main__:main
+pymarkdownlnt = pymarkdown.__main__:main

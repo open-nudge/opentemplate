@@ -1,0 +1,12 @@
+mdformat_gfm_alerts/__init__.py,sha256=OD_pNRoMWl4S1ZzvLzXNXGONppbdFsjS5t352lQDUqw,348
+mdformat_gfm_alerts/plugin.py,sha256=cWk4gyE0X_Mp7IruDG4CJXPejFJIsHGVU_Lj7P0m-p0,1520
+mdformat_gfm_alerts/py.typed,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+mdformat_gfm_alerts/mdit_plugins/__init__.py,sha256=wGOlc_WIclfhsjoJsh-XM3NMfi-xRuv9GscG_RFumxI,116
+mdformat_gfm_alerts/mdit_plugins/_gfm_alerts.py,sha256=KqaUsENm1o28x9gImVRGkNJhLVun8ODZ_63iz735sX4,5206
+mdformat_gfm_alerts-2.0.0.dist-info/entry_points.txt,sha256=jQKzHT_2aI33GY4gP_whib4D3tBRpKvOTPJS189UMUE,60
+mdformat_gfm_alerts-2.0.0.dist-info/licenses/LICENSE,sha256=hzqPXgmLv4e3Lkx2jyCqZuPv4OodmG9RcCivu8TdGEc,1066
+mdformat_gfm_alerts-2.0.0.dist-info/WHEEL,sha256=G2gURzTEtmeR8nrdXUJfNiB3VYVxigPQ-bEQujpNiNs,82
+mdformat_gfm_alerts-2.0.0.dist-info/METADATA,sha256=BWn93xndLEJCMSbZTBqRUsBgW1fSltfh-y9AY_o1Yg0,2923
+mdformat_gfm_alerts-2.0.0.dist-info/INSTALLER,sha256=HJ_PH3ON_57c-2bKRUXO9CyXplIbeZLcxyNei3dWqfo,3
+mdformat_gfm_alerts-2.0.0.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+mdformat_gfm_alerts-2.0.0.dist-info/RECORD,,
