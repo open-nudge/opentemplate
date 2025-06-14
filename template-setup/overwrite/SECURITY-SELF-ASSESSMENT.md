@@ -14,9 +14,9 @@ Source: https://tag-security.cncf.io/community/assessments/guide/self-assessment
 - [Metadata](#metadata)
     - [Security links](#security-links)
 - [Overview](#overview)
+    - [Background](#background)
     - [Actors](#actors)
     - [Actions](#actions)
-    - [Background](#background)
     - [Goals](#goals)
     - [Non-goals](#non-goals)
 - [Self-assessment use](#self-assessment-use)
@@ -37,11 +37,11 @@ Source: https://tag-security.cncf.io/community/assessments/guide/self-assessment
 
 | Category          | Resource                                                                                                   |
 | ----------------- | ---------------------------------------------------------------------------------------------------------- |
-| Assessment Stage  | Complete                                                                                                   |
+| Assessment Stage  | Incomplete                                                                                                 |
 | Creator           | open-nudge                                                                                                 |
 | Software          | [https://github.com/open-nudge/opentemplate](https://github.com/open-nudge/opentemplate)                   |
 | Website           | [https://open-nudge.github.io/opentemplate](https://open-nudge.github.io/opentemplate)                     |
-| Security Provider | Yes                                                                                                        |
+| Security Provider | No                                                                                                         |
 | Languages         | Python                                                                                                     |
 | SBOM              | [https://github.com/open-nudge/opentemplate/releases](https://github.com/open-nudge/opentemplate/releases) |
 
@@ -60,8 +60,7 @@ The simplest to use, yet the most comprehensive Python template
 
 ### Background
 
-This project provides a base for Python projects, which provides
-developer workflows, security posture and best practices.
+TBD
 
 ### Actors
 
@@ -70,30 +69,15 @@ developer workflows, security posture and best practices.
 
 ### Actions
 
-- [OSSF Scorecard](https://github.com/ossf/scorecard)
-- [Security file](./SECURITY.md)
-- [Security Insights Specification](https://github.com/open-nudge/opentemplate/blob/main/SECURITY-INSIGHTS.yml)
-    as defined [here](https://github.com/ossf/security-insights-spec)
-- [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
-- [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
-- [Renovate Bot](https://github.com/open-nudge/opentemplate/blob/main/.github/renovate.json)
-    for automated dependency updates
-- [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
-- [Sigstore signing](https://github.com/open-nudge/opentemplate/releases)
-    as seen [here](https://github.com/sigstore/sigstore-python)
-- GitHub Actions CI/CD pipelines with minimal permissions
-- GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
-- [Pre-commit hooks](https://pre-commit.com/) for local code quality
-    and security verification
+TBD
 
 ### Goals
 
-Provide high quality secure project template free of charge.
+TBD
 
 ### Non-goals
 
-Full automation of security for any type of Python projects
-(e.g. web projects using cloud services).
+TBD
 
 ## Self-assessment use
 
@@ -163,8 +147,7 @@ file.
 
 ### Incident response
 
-Project maintainers will respond to security incidents privately
-on a case-by-case basis.
+TBD
 
 ## Appendix
 

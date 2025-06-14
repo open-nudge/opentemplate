@@ -55,9 +55,10 @@ runs:
         TEMPLATE_REPOSITORY: "${{ inputs.template-repository }}"
         REPOSITORY: "${{ inputs.repository }}"
       shell: "bash"
+      # || true if the directory is named the same as the template repository
       run: |
         cp -r template-setup/overwrite/* .
-      # mv "src/${TEMPLATE_REPOSITORY}" "src/${REPOSITORY}"
+        mv "src/${TEMPLATE_REPOSITORY}" "src/${REPOSITORY}" || true
     - name: "Change template data"
       shell: "bash"
       env:
