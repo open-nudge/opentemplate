@@ -81,9 +81,9 @@ jobs:
         # yamllint disable rule:indentation
         run: |
           if git diff --exit-code .pre-commit-config.yaml; then
-            echo "changed=true" >> "${GITHUB_OUTPUT}"
-          else
             echo "changed=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
           fi
         # yamllint enable rule:indentation
       - name: "Run pre-commit with updated dependencies"
