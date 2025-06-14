@@ -33,12 +33,12 @@ SPDX-License-Identifier: Apache-2.0
 </div>
 
 <p align="center">
-✨ <a href="#features">Features</a>
-🚀 <a href="#quick-start">Quick start</a>
+✨ <a href="features">Features</a>
+🚀 <a href="quick-start">Quick start</a>
 📚 <a href="https://open-nudge.github.io/opentemplate">Documentation</a>
-🤝 <a href="#contribute">Contribute</a>
+🤝 <a href="contribute">Contribute</a>
 👍 <a href="https://github.com/open-nudge/opentemplate/blob/main/ADOPTERS.md">Adopters</a>
-📜 <a href="#legal">Legal</a>
+📜 <a href="legal">Legal</a>
 </p>
 <!-- vale on -->
 
@@ -48,115 +48,69 @@ ______________________________________________________________________
 
 ## Features
 
-__opentemplate__ is a Python template with the following features:
+__opentemplate__ is a … allowing you to:
 
-- [__Truly open source__](https://open-nudge.github.io/opentemplate/template/about/philosophy):
-    no tokens, no fees, no premium plans, open source software only
-- [__Ease of use__](https://open-nudge.github.io/opentemplate/template/quickstart/usage):
-    clone templated repo, run `pdm setup` and __focus on your code__
-- [__Consistency__](https://open-nudge.github.io/opentemplate/template/configuration/basic):
-    `pre-commit` and `GitHub Actions` share the same config (`pyproject.toml`)
-- [__Security__](https://open-nudge.github.io/opentemplate/template/details/security):
-    [SLSA](https://slsa.dev/) L3+ (public/enterprise) or L2 (private),
-    [OSSF Best Practices](https://github.com/ossf/scorecard)
-- [__Batteries included__](https://open-nudge.github.io/opentemplate/template/details):
-    multiple checkers for Python, YAML, Markdown, prose, etc.
-- [__Performance__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
-    Parallel checks, builds, minimally-sized caches and checkouts
+- __Feature 1__: Description of the feature
+- __Feature 2__: Description of the feature
+- __Feature 3__: Description of the feature
+- __Feature 4__: Description of the feature
+- __Feature 5__: Description of the feature
 
 ## Quick start
 
 ### Installation
 
-> [!NOTE]
-> [Install `pdm`](https://pdm-project.org/en/latest/#recommended-installation-method)
-> (if you don't have it already), for Linux/MacOS:
-
 ```sh
-curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+> pip install opentemplate
 ```
-
-1. Create a new GitHub repository using this template
-    (green `Use this template` button)
-1. Name your repo (__use underscore `_`, not hyphens `-`__)
-1. Add project description (__necessary!__)
-1. __Wait until the setup commit appears__
-    (performed by `github-actions[bot]`, it may take a few minutes)
-1. Clone the repository
-1. Run `pdm setup` command locally to setup development environment
-
-> [!IMPORTANT]
-> For more details read the
-> [documentation](https://open-nudge.github.io/opentemplate/template/quickstart/installation)
 
 ### Usage
 
-1. Create a new branch
-1. Optionally add dependencies to `pyproject.toml`
-1. Write code in `/src/<project_name>` and tests in `/tests`
-1. Use `git add`, `git commit` and `git push` your changes
-1. `pre-commit` will guide you through the process
+```python
+import opentemplate
 
-> [!IMPORTANT]
-> For more details read the
-> [documentation](https://open-nudge.github.io/opentemplate/template/quickstart/usage)
+...
+```
 
 ### Examples
 
 <details>
-  <summary><b><big>Run checkers or fixers manually</big></b> (click me)</summary>
+  <summary><b><big>Short</big></b> (click me)</summary>
 &nbsp;
 
-```sh
-> pdm check-<group> # pdm fix-<group>
-```
+Description of the example
 
-Note that all `check` and `fix` commands are grouped for your convenience:
-
-```sh
-> pdm check-all # pdm fix-all
+```python
+# Short example
 ```
 
 </details>
 
 <details>
-  <summary><b><big>Adjust template</big></b> (click me)</summary>
+  <summary><b><big>Common</big></b> (click me)</summary>
 &nbsp;
 
-> Most of the adjustments can be done by __only__ editing `pyproject.toml`
+Description of the example
 
-Common changes to `pyproject.toml`:
-
-- Add dev dependencies under `[dependency-groups]`
-    (everything is named `dev-<group>`)
-- Modify `[tool.pdm.scripts]` for custom command
-    (`check-<group>` or `fix-<group>`, the latter modifies files)
-- Use `[tool.<name>]` to adjust specific tool configuration
-
-> __Adjusting these sections will affect `pre-commit` and `GitHub Actions`__
+```python
+# Common use case
+```
 
 </details>
 
 <details>
-  <summary><b><big>Disable some pre-commit check</big></b> (click me)</summary>
+  <summary><b><big>Advanced</big></b> (click me)</summary>
 &nbsp;
 
-> Disabling checks should be done cautiously!
+Description of the example
 
-`pre-commit` checks are defined in `.pre-commit-config.yaml`.
-
-Disable a check using `SKIP` environment variable:
-
-```sh
-SKIP='<group1>,<group2>` git commit -m <message>
+```python
+# Something advanced and cool
 ```
 
-For details, refer to the `id` fields in `.pre-commit-config.yaml`.
-
-> Some commands have both `<group>-fix` and `<group>-check`
-> for different actions!
-
 </details>
+
+<!-- md-dead-link-check: off -->
 
 <!-- mkdocs remove start -->
 
@@ -164,17 +118,17 @@ For details, refer to the `id` fields in `.pre-commit-config.yaml`.
 
 We welcome your contributions! Start here:
 
-- [Code of Conduct](/CODE_OF_CONDUCT.md)
-- [Contributing Guide](/CONTRIBUTING.md)
-- [Roadmap](/ROADMAP.md)
-- [Changelog](/CHANGELOG.md)
-- [Report security vulnerabilities](/SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Contributing Guide](CONTRIBUTING.md)
+- [Roadmap](ROADMAP.md)
+- [Changelog](CHANGELOG.md)
+- [Report security vulnerabilities](SECURITY.md)
 - [Open an Issue](https://github.com/open-nudge/opentemplate/issues)
 
 ## Legal
 
 - This project is licensed under the _Apache 2.0 License_ - see
-    the [LICENSE](/LICENSE.md) file for details.
+    the [LICENSE](LICENSE.md) file for details.
 - This project is copyrighted by _open-nudge_ - the
     appropriate copyright notice is included in each file.
 

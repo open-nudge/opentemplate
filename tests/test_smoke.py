@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""Smoke tests of the package."""
+"""Smoke tests of the opentemplate package."""
 
 from __future__ import annotations
 

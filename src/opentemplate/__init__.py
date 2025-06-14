@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""Official documentation."""
+"""opentemplate official documentation."""
 
 from __future__ import annotations
 
