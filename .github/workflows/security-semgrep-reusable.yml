@@ -68,14 +68,14 @@ jobs:
 
       - name: "Setup PDM"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/pdm-setup"
+        uses: "open-nudge/opentemplate/.github/actions/pdm-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           # Sigstore, python-semantic-release etc.
           group: "security"
       - name: "PDM Compatibility"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/pdm-compatibility"
+        uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
 
       - name: "Run Semgrep"
@@ -85,7 +85,7 @@ jobs:
           pdm run check-security --sarif-output="${SEMGREP_FILE}"
       - name: "Upload files"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/sarif-upload"
+        uses: "open-nudge/opentemplate/.github/actions/sarif-upload@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           name: "${{ inputs.name }}"

@@ -32,6 +32,6 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/shell-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/shell-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

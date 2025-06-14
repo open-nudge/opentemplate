@@ -33,9 +33,9 @@ find "${directory}" -type f -name '*.yml' -print0 | while IFS= read -r -d '' fil
 
     awk -v repo="${repo}" -v ref="${ref}" -v comment="${comment}" '
     {
-        if ($0 ~ /uses: ".\/\.github\//) {
+        if ($0 ~ /uses: "\.\/\.github\//) {
             gsub(/uses: "\.\/\.github\//, "uses: \"" repo "/.github/");
-            gsub(/\.yml"/, ".yml@" ref "\"");
+            sub(/"$/, "@" ref "\"");  # Add @ref before the closing quote
             if (comment != "") {
                 $0 = $0 " " comment;
             }

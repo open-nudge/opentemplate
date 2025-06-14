@@ -33,6 +33,6 @@ jobs:
       contents: "read"
     name: "Security Semgrep"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/security-semgrep-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/security-semgrep-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

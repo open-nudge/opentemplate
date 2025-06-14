@@ -7,11 +7,12 @@ SPDX-License-Identifier: Apache-2.0
 
 # Security self-assessment of opentemplate
 
+Source: https://tag-security.cncf.io/community/assessments/guide/self-assessment/
+
 ## Table of Contents
 
 - [Metadata](#metadata)
     - [Security links](#security-links)
-    - [Intended use](#intended-use)
 - [Overview](#overview)
     - [Actors](#actors)
     - [Actions](#actions)
@@ -36,11 +37,11 @@ SPDX-License-Identifier: Apache-2.0
 
 | Category          | Resource                                                                                                   |
 | ----------------- | ---------------------------------------------------------------------------------------------------------- |
-| Assessment Stage  | Incomplete                                                                                                 |
+| Assessment Stage  | Complete                                                                                                   |
 | Creator           | open-nudge                                                                                                 |
 | Software          | [https://github.com/open-nudge/opentemplate](https://github.com/open-nudge/opentemplate)                   |
 | Website           | [https://open-nudge.github.io/opentemplate](https://open-nudge.github.io/opentemplate)                     |
-| Security Provider | No                                                                                                         |
+| Security Provider | Yes                                                                                                        |
 | Languages         | Python                                                                                                     |
 | SBOM              | [https://github.com/open-nudge/opentemplate/releases](https://github.com/open-nudge/opentemplate/releases) |
 
@@ -53,13 +54,14 @@ SPDX-License-Identifier: Apache-2.0
 | Dependencies      | [https://github.com/open-nudge/opentemplate/blob/main/pyproject.toml](https://github.com/open-nudge/opentemplate/blob/main/pyproject.toml)               |
 | Release Artifacts | [https://github.com/open-nudge/opentemplate/releases](https://github.com/open-nudge/opentemplate/releases)                                               |
 
-### Intended use
-
-TBD
-
 ## Overview
 
 The simplest to use, yet the most comprehensive Python template
+
+### Background
+
+This project provides a base for Python projects, which provides
+developer workflows, security posture and best practices.
 
 ### Actors
 
@@ -68,19 +70,30 @@ The simplest to use, yet the most comprehensive Python template
 
 ### Actions
 
-TBD
-
-### Background
-
-TBD
+- [OSSF Scorecard](https://github.com/ossf/scorecard)
+- [Security file](./SECURITY.md)
+- [Security Insights Specification](https://github.com/open-nudge/opentemplate/blob/main/SECURITY-INSIGHTS.yml)
+    as defined [here](https://github.com/ossf/security-insights-spec)
+- [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
+- [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
+- [Renovate Bot](https://github.com/open-nudge/opentemplate/blob/main/.github/renovate.json)
+    for automated dependency updates
+- [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
+- [Sigstore signing](https://github.com/open-nudge/opentemplate/releases)
+    as seen [here](https://github.com/sigstore/sigstore-python)
+- GitHub Actions CI/CD pipelines with minimal permissions
+- GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
+- [Pre-commit hooks](https://pre-commit.com/) for local code quality
+    and security verification
 
 ### Goals
 
-TBD
+Provide high quality secure project template free of charge.
 
 ### Non-goals
 
-TBD
+Full automation of security for any type of Python projects
+(e.g. web projects using cloud services).
 
 ## Self-assessment use
 
@@ -150,8 +163,12 @@ file.
 
 ### Incident response
 
-TBD
+Project maintainers will respond to security incidents privately
+on a case-by-case basis.
 
 ## Appendix
 
-TBD
+- Project is largely aligned with the
+    [Open Source Security Foundation best practices](https://www.bestpractices.dev/en)
+- Some false negatives regarding the best practices were spotted
+    (e.g. not using fuzzing), consult `scorecard.yml` for more information

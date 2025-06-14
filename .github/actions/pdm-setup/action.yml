@@ -127,7 +127,7 @@ runs:
         mv "${TEMPORARY}/pdm.lock" ./
     - name: "PDM Compatibility"
       # yamllint disable rule:line-length
-      uses: "./.github/actions/pdm-compatibility"
+      uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
       # yamllint enable rule:line-length
 
     - name: "Install group dependencies"
@@ -157,7 +157,7 @@ runs:
 
     - name: "PDM Compatibility"
       # yamllint disable rule:line-length
-      uses: "./.github/actions/pdm-compatibility"
+      uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
       # yamllint enable rule:line-length
       with:
         restore: true

@@ -24,6 +24,6 @@ jobs:
     permissions:
       contents: "write"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/template-update-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/template-update-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

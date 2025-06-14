@@ -1,0 +1,107 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Template Test"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+  merge_group:
+    types:
+      - "checks_requested"
+  workflow_dispatch:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  template-test:
+    timeout-minutes: 30
+    name: "Template Test"
+    permissions:
+      contents: "read"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            docs.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            grafana.com:443
+            guides.github.com:443
+            img.shields.io:443
+            objects.githubusercontent.com:443
+            opennudge.com:443
+            opensource.org:443
+            openssf.org:443
+            pdm-project.org:443
+            pdm.fming.dev:443
+            peps.python.org:443
+            pre-commit.com:443
+            proxy.golang.org:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+            scorecard.dev:443
+            semver.org:443
+            slsa.dev:443
+            storage.googleapis.com:443
+            sum.golang.org:443
+            tag-security.cncf.io:443
+            www.bestpractices.dev:443
+            www.conventionalcommits.org:443
+      - name: "Checkout repository"
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          persist-credentials: false
+      - name: "Setup git credentials"
+        # yamllint disable rule:line-length
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
+        # yamllint enable rule:line-length
+      - name: "Setup template"
+        # yamllint disable rule:line-length
+        uses: "open-nudge/opentemplate/.github/actions/template-setup@main" # zizmor: ignore[unpinned-uses]
+        # yamllint enable rule:line-length
+        with:
+          template-repository: "opentemplate"
+          repository: "template_test"
+          template-owner: "open-nudge"
+          owner: "open-nudge"
+          template-description: >-
+            The simplest to use, yet the most comprehensive Python template
+          description: "Test opentemplate setup"
+      - name: "Setup git credentials"
+        # yamllint disable rule:line-length
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
+        # yamllint enable rule:line-length
+      - name: "Create new branch"
+        run: >
+          git checkout -b template-test
+      - name: "Check outdated PDM packages"
+        run: >
+          pdm outdated -v --include-sub
+      - name: "Setup dev environment"
+        run: >
+          pdm setup
+
+  pre-commit-test:
+    name: "pre-commit"
+    permissions:
+      contents: "read"
+      pull-requests: "write"
+    # yamllint disable rule:line-length
+    uses: "open-nudge/opentemplate/.github/workflows/pre-commit-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+...

@@ -29,7 +29,7 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/github-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/github-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 
   github-actions:
@@ -40,7 +40,7 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/github-actions-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/github-actions-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 
   github-workflows:
@@ -51,7 +51,7 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/github-workflows-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/github-workflows-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 
   github-renovate:
@@ -62,6 +62,6 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/github-renovate-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/github-renovate-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...
