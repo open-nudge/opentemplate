@@ -133,6 +133,10 @@ runs:
       shell: "bash"
       run: >
         pdm run -v fix-markdown $(git diff --name-only -- '*.md')
+    - name: "Make all files executable"
+      shell: "bash"
+      run: >
+        find . -type f -name "*.sh" -exec chmod a+x {} +
     - name: "Git status"
       shell: "bash"
       run: >
