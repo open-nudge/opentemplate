@@ -77,7 +77,7 @@ jobs:
             ./
       - name: "Upload files"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/sarif-upload"
+        uses: "open-nudge/opentemplate/.github/actions/sarif-upload@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           name: "${{ inputs.name }}"

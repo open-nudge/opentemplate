@@ -36,6 +36,6 @@ jobs:
       && github.ref == 'refs/heads/bot/dependencies-dev-security'
     name: "Security Semgrep Renovate"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/security-semgrep-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/security-semgrep-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

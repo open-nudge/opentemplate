@@ -56,7 +56,7 @@ jobs:
         # yamllint enable rule:line-length
       - name: "Setup template"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/template-setup"
+        uses: "open-nudge/opentemplate/.github/actions/template-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           template-repository: "opentemplate"
@@ -74,7 +74,7 @@ jobs:
           .github/workflows/template-test.yml
       - name: "Setup git credentials"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/git-setup"
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
       - name: "Push changes"
         # __pypackages__ is ignored, but automatic PDM setup needs it for now
@@ -310,7 +310,7 @@ jobs:
     name: "Cache Setup"
     permissions:
       contents: "read"
-    uses: "./.github/workflows/cache-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/cache-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # Checkout main as otherwise the files will not be available
     with:
       ref: "main"
@@ -329,7 +329,7 @@ jobs:
       contents: "read"
       # Needed for GitHub OIDC token if publish_results is true
       id-token: "write"
-    uses: "./.github/workflows/security-scorecard-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     with:
       sarif: true
 ...

@@ -185,11 +185,11 @@ jobs:
 
       - name: "Setup git credentials"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/git-setup"
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
       - name: "Setup PDM"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/pdm-setup"
+        uses: "open-nudge/opentemplate/.github/actions/pdm-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           group: "${{ inputs.group }}"
@@ -197,7 +197,7 @@ jobs:
           python-version: "${{ inputs.python-version }}"
       - name: "PDM Compatibility"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/pdm-compatibility"
+        uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
 
       - name: "Download artifacts"

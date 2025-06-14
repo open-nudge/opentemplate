@@ -29,6 +29,6 @@ jobs:
       contents: "read"
       pull-requests: "write"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/pre-commit-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/pre-commit-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

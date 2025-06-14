@@ -28,7 +28,7 @@ jobs:
       contents: "read"
     name: "Sarif OSV-Scanner"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/security-osv-scanner-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/security-osv-scanner-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       name: "osv-scanner-${{ github.sha }}"
@@ -45,7 +45,7 @@ jobs:
       contents: "read"
     name: "Sarif Semgrep"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/security-semgrep-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/security-semgrep-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       name: "semgrep-${{ github.sha }}"

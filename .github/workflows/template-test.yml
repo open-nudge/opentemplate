@@ -61,11 +61,11 @@ jobs:
           persist-credentials: false
       - name: "Setup git credentials"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/git-setup"
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
       - name: "Setup template"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/template-setup"
+        uses: "open-nudge/opentemplate/.github/actions/template-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           template-repository: "opentemplate"
@@ -77,7 +77,7 @@ jobs:
           description: "Test opentemplate setup"
       - name: "Setup git credentials"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/git-setup"
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
       - name: "Create new branch"
         run: >
@@ -95,6 +95,6 @@ jobs:
       contents: "read"
       pull-requests: "write"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/pre-commit-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/pre-commit-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

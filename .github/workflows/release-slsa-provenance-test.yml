@@ -31,7 +31,7 @@ jobs:
       contents: "write" # To add assets to a release.
       id-token: "write" # To sign the provenance.
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/release-slsa-provenance-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-slsa-provenance-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     with:
       test: true
 ...

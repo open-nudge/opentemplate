@@ -34,6 +34,6 @@ jobs:
       # Needed for GitHub OIDC token if publish_results is true
       id-token: "write"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/security-scorecard-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

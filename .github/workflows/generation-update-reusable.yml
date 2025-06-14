@@ -47,11 +47,11 @@ jobs:
         # yamllint enable rule:line-length
       - name: "Setup git credentials"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/git-setup"
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
       - name: "Setup PDM"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/pdm-setup"
+        uses: "open-nudge/opentemplate/.github/actions/pdm-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           group: "generation"
@@ -77,7 +77,7 @@ jobs:
         if: >
           steps.check-changes.outputs.changed == 'true' && inputs.pull-request
         # yamllint disable rule:line-length
-        uses: "./.github/actions/pull-request"
+        uses: "open-nudge/opentemplate/.github/actions/pull-request@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           commit-message: "update static generation"

@@ -18,7 +18,7 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/release-sbom-run-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       type: "legal"
@@ -37,7 +37,7 @@ jobs:
       id-token: "write"
       attestations: "write"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       artifact: "${{ needs.sbom-legal.outputs.artifact }}"
@@ -113,7 +113,7 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/release-sbom-run-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       type: "python"
@@ -146,7 +146,7 @@ jobs:
 
     # SLSA Level 3+ needs outside workflow to run to perform the signing
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       # Unfortunately could not easily reuse the artifact from the sbom
@@ -201,7 +201,7 @@ jobs:
       - name: "Perform action setup"
         id: "setup"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/release-sbom-setup"
+        uses: "open-nudge/opentemplate/.github/actions/release-sbom-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           identifier: "sbom-github-${{ github.sha }}"
@@ -236,7 +236,7 @@ jobs:
       - "sbom-github"
     # SLSA Level 3+ needs outside workflow to run to perform the signing
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     # May fail on private repos without access to private sigstore instance
     with:

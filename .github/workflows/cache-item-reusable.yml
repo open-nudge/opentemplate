@@ -91,7 +91,7 @@ jobs:
           ref: "${{ inputs.ref }}"
       - name: "Setup PDM and cache"
         # yamllint disable rule:line-length
-        uses: "./.github/actions/pdm-setup"
+        uses: "open-nudge/opentemplate/.github/actions/pdm-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           group: "${{ inputs.group }}"

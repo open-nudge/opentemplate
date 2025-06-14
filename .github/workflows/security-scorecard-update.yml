@@ -27,7 +27,7 @@ jobs:
       id-token: "write"
     name: "Security Scorecard Update"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/security-scorecard-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       sarif: true

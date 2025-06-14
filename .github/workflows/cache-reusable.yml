@@ -61,7 +61,7 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/cache-item-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/cache-item-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       group: "${{ matrix.install.group }}"
@@ -98,7 +98,7 @@ jobs:
           - "commit"
           - "pre-commit"
     # yamllint disable rule:line-length
-    uses: "./.github/workflows/cache-item-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/cache-item-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       group: "${{ matrix.group }}"
