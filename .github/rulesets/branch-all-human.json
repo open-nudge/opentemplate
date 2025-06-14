@@ -1,0 +1,27 @@
+{
+  "enforcement": "active",
+  "name": "branch-all-human",
+  "rules": [
+    {
+      "type": "required_signatures"
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 2740,
+      "actor_type": "Integration",
+      "bypass_mode": "pull_request"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "~ALL"
+      ],
+      "exclude": [
+        "refs/heads/gh-pages"
+      ]
+    }
+  },
+  "target": "branch"
+}

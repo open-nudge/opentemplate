@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Cache Reusable"
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "The ref to checkout"
+        type: "string"
+        default: ""
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  # This cache is any OS + multiple Python versions
+  core:
+    name: >
+      Core | ${{ matrix.os }}
+      | python-${{ matrix.python-version }}
+      ${{ matrix.install.all && '| all ' || '| core ' }}
+      ${{ matrix.install.all && '' || matrix.install.group != '' &&
+      format('| {0}', matrix.install.group) || '' }}
+    strategy:
+      fail-fast: true
+      matrix:
+        install:
+          # Main + optional dependencies + release
+          - group: "release"
+            all: false
+          # Main + optional dependencies + tests
+          - group: "tests"
+            all: false
+          # SBOM of the whole project
+          - group: ""
+            all: true
+        python-version:
+          #
+          #           DO NOT EDIT UNTIL end marker
+          #
+          # [[[cog
+          # import cog
+          # import cogeol
+          #
+          # for version in reversed(cogeol.scientific()):
+          #     cycle = version["cycle"]
+          #     cog.outl(f'          - "{cycle}"')
+          # ]]]
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          # [[[end]]] (sum: l3d2zGv79j)
+        os:
+          - "ubuntu-latest"
+          - "macos-latest"
+          - "windows-latest"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/cache-item-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      group: "${{ matrix.install.group }}"
+      core: true
+      all: "${{ matrix.install.all }}"
+      python-version: "${{ matrix.python-version }}"
+      os: "${{ matrix.os }}"
+      ref: "${{ github.event.inputs.ref }}"
+
+  dev:
+    name: "Dev | ${{ matrix.group}}"
+    permissions:
+      contents: "read"
+    strategy:
+      fail-fast: true
+      matrix:
+        # --no-editable not needed for dev dependencies
+        group:
+          - "tests"
+          - "docs"
+          - "python"
+          - "shell"
+          - "yaml"
+          - "markdown"
+          - "ini"
+          - "pyproject"
+          - "code"
+          - "citation"
+          - "release"
+          - "security"
+          - "github"
+          - "legal"
+          - "generation"
+          - "commit"
+          - "pre-commit"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/cache-item-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      group: "${{ matrix.group }}"
+      ref: "${{ github.event.inputs.ref }}"
+...

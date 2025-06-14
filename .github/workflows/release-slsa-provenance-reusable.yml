@@ -1,0 +1,92 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release SLSA Provenance Reusable"
+
+on:
+  workflow_call:
+    inputs:
+      upload-assets:
+        description: "Upload assets to the release"
+        type: "boolean"
+        default: false
+      test:
+        description: "Whether to run in test mode (hashing dummy test file)"
+        type: "boolean"
+        default: false
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  # Works on public repositories only
+  hash-artifacts:
+    name: "Hash Artifacts"
+    timeout-minutes: 10
+    outputs:
+      hashes: "${{ steps.hashes.outputs.hashes }}"
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: "read"
+
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          egress-policy: "block"
+          allowed-endpoints: >+
+      - name: "Download artifacts"
+        # yamllint disable rule:line-length
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
+        # yamllint enable rule:line-length
+        with:
+          pattern: "*${{ github.sha }}*"
+      - name: "Test file"
+        if: >
+          inputs.test
+        # yamllint disable rule:line-length
+        run: |
+          # shellcheck disable=SC2086
+          echo "${GITHUB_SHA}" > "test-${GITHUB_SHA}"
+        # yamllint enable rule:line-length
+      - name: "Artifacts to hash"
+        if: >
+          ! inputs.test
+        run: >
+          find . -type f -name "*${GITHUB_SHA}*"
+      - name: "Hash Files"
+        id: "hashes"
+        # yamllint disable rule:line-length
+        run: |
+          # shellcheck disable=SC2086,SC2046
+          echo "hashes=$(sha256sum $(find . -type f -name "*${GITHUB_SHA}*") | base64 -w0)" >> "$GITHUB_OUTPUT"
+        # yamllint enable rule:line-length
+
+  # Works on public repositories only
+  # This is SLSA Level 3+
+  # Only runs for public repositories due to possible data leakage
+  # See comments below
+  provenance-attestation:
+    name: "Provenance Attestation"
+    needs:
+      - "hash-artifacts"
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      actions: "read" # To read the workflow path.
+      contents: "write" # To add assets to a release.
+      id-token: "write" # To sign the provenance.
+    # yamllint disable rule:line-length
+    # Currently this action needs to be referred by tag. More details at:
+    # https://github.com/slsa-framework/slsa-github-generator#verification-of-provenance
+    uses: "slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0"
+    # yamllint enable rule:line-length
+    with:
+      provenance-name: "slsa-provenance-multiple-${{ github.sha }}.intoto.jsonl"
+      base64-subjects: "${{ needs.hash-artifacts.outputs.hashes }}"
+      upload-assets: "${{ inputs.upload-assets }}"
+      continue-on-error: true
+...

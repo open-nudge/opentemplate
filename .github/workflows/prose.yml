@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Prose"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "**.md"
+      - "**.py"
+      - "**.sh"
+      - "!LICENSE.md"
+      - "!docs/LICENSE.md"
+      - "!LICENSES/*"
+      - ".github/workflows/prose.yml"
+  merge_group:
+    types:
+      - "checks_requested"
+
+permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prose:
+    name: "Prose"
+    permissions:
+      contents: "read"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    container:
+      # yamllint disable rule:line-length
+      image: "docker.io/jdkato/vale@sha256:a744bc4f8164bceab6bda0fad6253dcd9cdab2365b437aa5e08fe4f07d6e3357" # v3.8.0
+      # yamllint enable rule:line-length
+    steps:
+      - name: "Checkout repository"
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        # Exclude license files from the checkout
+        # Sparse checkout does not work within the Vale container
+        with:
+          persist-credentials: false
+      - name: "Sync Vale Packages"
+        run: >
+          /bin/vale sync
+      - name: "Prose Linter"
+        run: >
+          /bin/vale .
+...

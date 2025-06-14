@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: © 2024 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+cff-version: "1.2.0"
+abstract: "The simplest to use, yet the most comprehensive Python template"
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "open-nudge"
+url: "https://github.com/open-nudge/opentemplate"
+repository-code: "https://github.com/open-nudge/opentemplate"
+title: "opentemplate"
+license: "Apache-2.0"
+keywords:
+  - "python"

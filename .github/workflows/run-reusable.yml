@@ -1,0 +1,242 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Run"
+
+on:
+  workflow_call:
+    inputs:
+      # COMMAND
+      command:
+        description: "Command to run (probably using `pdm run`)"
+        type: "string"
+        required: true
+      # PDM INSTALLATION
+      group:
+        description: "Group to install, if any"
+        type: "string"
+        default: ""
+      core:
+        description: "Whether to install core (+ optional) dependencies"
+        type: "boolean"
+        default: false
+      # CHECKOUT
+      full-checkout:
+        description: "Whether to clone the full repository"
+        type: "boolean"
+        default: false
+      sparse-checkout:
+        description: "Additional files to sparse checkout."
+        type: "string"
+        default: ""
+      cone:
+        description: "Whether to use cone mode for sparse checkout"
+        type: "boolean"
+        default: false
+      ref:
+        description: "The ref to checkout"
+        type: "string"
+        default: ""
+      fetch-depth:
+        description: "The depth to fetch"
+        type: "number"
+        default: 1
+      # ARTIFACT DOWNLOAD
+      download:
+        description: "Whether to download artifacts"
+        type: "boolean"
+        default: false
+      download-name:
+        description: >
+          Name of the artifact to download, if any.
+          If unspecified and download is true, will download all artifacts.
+        type: "string"
+        default: ""
+      download-pattern:
+        description: >
+          Pattern of the artifact to download, if any.
+          Ignored if download-name is specified.
+        type: "string"
+        default: ""
+      # ARTIFACT UPLOAD
+      upload-name:
+        description: "Name of the artifact to upload, if any"
+        type: "string"
+        default: ""
+      upload-path:
+        description: "Path to the artifact to upload, if any"
+        type: "string"
+        default: ""
+      upload-include-hidden:
+        description: "Whether to include hidden files in the artifact upload"
+        type: "boolean"
+        default: false
+      # SYSTEM
+      os:
+        description: "Operating system to run on"
+        type: "string"
+        default: "ubuntu-latest"
+      python-version:
+        description: "Python version used to run tests"
+        type: "string"
+        #
+        #           DO NOT EDIT UNTIL end marker
+        #
+        # [[[cog
+        # import cog
+        # import cogeol
+        #
+        # cycle = cogeol.scientific()[-1]["cycle"]
+        # cog.out(f'        default: "{cycle}"')
+        # ]]]
+        default: "3.11"
+        # [[[end]]] (sum: w9GfzS/bue)
+
+      # ADDITIONAL
+      additional-allowed-endpoints:
+        description: "Additional endpoints to allow"
+        type: "string"
+        default: ""
+      timeout-minutes:
+        description: "Timeout in minutes"
+        type: "number"
+        default: 30
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  run-reusable:
+    name: "Run"
+    permissions:
+      contents: "read"
+    timeout-minutes: "${{ inputs.timeout-minutes }}"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          allowed-endpoints: >
+            api.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            pdm-project.org:443
+            pdm.fming.dev:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            objects.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+            ${{ inputs.additional-allowed-endpoints }}
+
+      - name: "Full repository checkout"
+        if: >
+          inputs.full-checkout
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          ref: "${{ inputs.ref }}"
+          fetch-depth: "${{ inputs.fetch-depth }}"
+          persist-credentials: false
+      - name: "Sparse repository checkout"
+        if: >
+          ! inputs.full-checkout
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        # yamllint disable rule:indentation
+        with:
+          ref: "${{ inputs.ref }}"
+          fetch-depth: "${{ inputs.fetch-depth }}"
+          sparse-checkout: |
+            ${{
+              inputs.cone
+              &&
+              format(
+                'LICENSES
+                .github/actions/git-setup
+                .github/actions/pdm-setup
+                .github/actions/pdm-compatibility
+                {0}',
+                inputs.sparse-checkout
+              )
+              ||
+              format(
+                'README.md
+                LICENSE.md
+                LICENSES/*
+                .github/actions/git-setup
+                .github/actions/pdm-setup
+                .github/actions/pdm-compatibility
+                pyproject.toml
+                pdm.lock
+                {0}',
+                inputs.sparse-checkout
+              )
+            }}$
+          # yamllint enable rule:indentation
+          sparse-checkout-cone-mode: "${{ inputs.cone }}"
+          persist-credentials: false
+
+      - name: "Setup git credentials"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/git-setup"
+        # yamllint enable rule:line-length
+      - name: "Setup PDM"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/pdm-setup"
+        # yamllint enable rule:line-length
+        with:
+          group: "${{ inputs.group }}"
+          core: "${{ inputs.core }}"
+          python-version: "${{ inputs.python-version }}"
+      - name: "PDM Compatibility"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/pdm-compatibility"
+        # yamllint enable rule:line-length
+
+      - name: "Download artifacts"
+        if: >
+          inputs.download
+          || inputs.download-name != ''
+          || inputs.download-pattern != ''
+        # yamllint disable rule:line-length
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
+        # yamllint enable rule:line-length
+        with:
+          name: "${{ inputs.download-name }}"
+          pattern: "${{ inputs.download-pattern }}"
+
+      # nosemgrep
+      - name: "Run command" # zizmor: ignore[template-injection]
+        env:
+          # GH_TOKEN is used by, for example, zizmor
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_REPO: "${{ github.repository }}"
+        run: |
+          ${{ inputs.command }}
+
+      - name: "Check repository content"
+        run: >
+          ls -la
+      - name: "Upload artifacts"
+        if: >
+          inputs.upload-path != ''
+          && inputs.upload-name != ''
+        # yamllint disable rule:line-length
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
+        # yamllint enable rule:line-length
+        with:
+          name: "${{ inputs.upload-name }}"
+          path: "${{ inputs.upload-path }}"
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: "error"
+          include-hidden-files: "${{ inputs.upload-include-hidden }}"
+...

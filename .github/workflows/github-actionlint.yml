@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "GitHub actionlint"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/*"
+      - ".github/actions/*"
+  merge_group:
+    types:
+      - "checks_requested"
+
+permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  github-actionlint:
+    name: "GitHub actionlint"
+    timeout-minutes: 30
+    permissions:
+      contents: "read"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Harden Runner" # zizmor: ignore[known-vulnerable-actions]
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          # Uses docker container,
+          # disable-sudo-and-containers impossible
+          disable-sudo: true
+          egress-policy: "block"
+          allowed-endpoints: |
+            github.com:443
+      - name: "Checkout repository"
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          sparse-checkout: |
+            .github/workflows
+            .github/actions
+          persist-credentials: false
+      - name: "Check workflow files"
+        # yamllint disable rule:line-length
+        uses: "docker://rhysd/actionlint:1.7.1@sha256:435ecdb63b1169e80ca3e136290072548c07fc4d76a044cf5541021712f8f344" # v1.7.1
+        # yamllint enable rule:line-length
+        with:
+          args: "-color"
+...

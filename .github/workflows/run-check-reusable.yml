@@ -1,0 +1,83 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Check"
+
+on:
+  workflow_call:
+    inputs:
+      # COMMAND
+      check:
+        description: "Prefix for the concurrency group"
+        required: true
+        type: "string"
+      arguments:
+        description: "Additional arguments to pass to the run command"
+        type: "string"
+        default: ""
+      # CHECKOUT
+      full-checkout:
+        description: "Whether to clone the full repository"
+        required: false
+        type: "boolean"
+        default: false
+      sparse-checkout:
+        description: "Additional files to sparse checkout."
+        type: "string"
+        default: ""
+      cone:
+        description: "Whether to use cone mode for sparse checkout"
+        type: "boolean"
+        default: false
+      ref:
+        description: "The ref to checkout"
+        required: false
+        type: "string"
+      # PDM INSTALLATION
+      group:
+        description: >
+          The group of the dependency to install.
+          Same as `check` if unspecified.
+        required: false
+        type: "string"
+        default: ""
+      core:
+        description: "Whether to install core (+ optional) dependencies"
+        type: "boolean"
+        default: false
+      # ADDITIONAL
+      timeout-minutes:
+        description: "Timeout in minutes"
+        required: false
+        type: "number"
+        default: 30
+      additional-allowed-endpoints:
+        description: "Additional endpoints to allow"
+        required: false
+        type: "string"
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  run-check-reusable:
+    name: "Check"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      command: |
+        pdm run check-${{ inputs.check }} ${{ inputs.arguments }}
+      group: "${{ inputs.group || inputs.check }}"
+      core: "${{ inputs.core }}"
+      full-checkout: "${{ inputs.full-checkout }}"
+      sparse-checkout: "${{ inputs.sparse-checkout }}"
+      cone: "${{ inputs.cone }}"
+      ref: "${{ inputs.ref }}"
+      timeout-minutes: "${{ inputs.timeout-minutes }}"
+      additional-allowed-endpoints: "${{ inputs.additional-allowed-endpoints }}"
+...

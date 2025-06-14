@@ -1,0 +1,229 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release SBOM Run Reusable"
+
+on:
+  workflow_call:
+    inputs:
+      # SBOM
+      type:
+        description: "Type of SBOM to create"
+        type: "string"
+        required: true
+      files:
+        description: "Files used for SBOM attestation (can also be a command)"
+        type: "string"
+        required: true
+      # PDM
+      group:
+        description: "Group of dependencies to install"
+        type: "string"
+        default: ""
+      core:
+        description: "Whether to install core dependencies"
+        type: "boolean"
+        default: false
+      all:
+        description: "Whether to install all dependencies"
+        type: "boolean"
+        default: false
+      # Checkout
+      full-checkout:
+        description: "Whether to clone the full repository"
+        type: "boolean"
+        default: false
+      sparse-checkout:
+        description: "Additional files to sparse checkout."
+        type: "string"
+        default: ""
+      cone:
+        description: "Whether to use cone mode for sparse checkout"
+        type: "boolean"
+        default: false
+      # SYSTEM
+      os:
+        description: "Operating system to run on"
+        type: "string"
+        default: "ubuntu-latest"
+      python-version:
+        description: "Python version used to run tests"
+        type: "string"
+        #
+        #           DO NOT EDIT UNTIL end marker
+        #
+        # [[[cog
+        # import cog
+        # import cogeol
+        #
+        # cycle = cogeol.scientific()[-1]["cycle"]
+        # cog.out(f'        default: "{cycle}"')
+        # ]]]
+        default: "3.11"
+        # [[[end]]] (sum: w9GfzS/bue)
+
+      # ADDITIONAL
+      additional-allowed-endpoints:
+        description: "Additional endpoints to allow"
+        type: "string"
+        default: ""
+      timeout-minutes:
+        description: "Timeout in minutes"
+        type: "number"
+        default: 10
+
+    outputs:
+      artifact:
+        description: "Name of the uploaded artifact"
+        value: "${{ jobs.release-sbom-run-reusable.outputs.artifact }}"
+
+permissions: {} # yamllint disable-line rule:braces
+
+defaults:
+  run:
+    shell: "bash"
+
+# Add checkout
+jobs:
+  release-sbom-run-reusable:
+    name: "Release SBOM Run Reusable"
+    permissions:
+      contents: "read"
+    timeout-minutes: "${{ inputs.timeout-minutes }}"
+    runs-on: "${{ inputs.os }}"
+    outputs:
+      artifact: "${{ steps.setup.outputs.artifact }}"
+    env:
+      # yamllint disable rule:indentation
+      IDENTIFIER: "sbom-${{ inputs.type }}-${{
+                    inputs.all
+                    && format(
+                      'all-{0}-{1}-{2}',
+                      inputs.python-version,
+                      inputs.os,
+                      github.sha
+                    )
+                    || format(
+                      '{0}-{1}-{2}-{3}-{4}',
+                      inputs.core && 'core' || 'dev',
+                      inputs.group != '' && inputs.group || 'none',
+                      inputs.python-version,
+                      inputs.os,
+                      github.sha
+                    )
+                  }}"
+      # yamllint enable rule:indentation
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+            files.pythonhosted.org:443
+            pdm-project.org:443
+            pdm.fming.dev:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            objects.githubusercontent.com:443
+            ${{ inputs.additional-allowed-endpoints }}
+      - name: "Full repository checkout"
+        if: >
+          inputs.full-checkout
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          persist-credentials: false
+      - name: "Sparse repository checkout"
+        if: >
+          ! inputs.full-checkout
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        # yamllint disable rule:indentation
+        with:
+          sparse-checkout: |
+            ${{
+              inputs.cone
+              &&
+              format(
+                'LICENSES
+                .github/actions/git-setup
+                .github/actions/pdm-setup
+                .github/actions/pdm-compatibility
+                .github/actions/release-sbom-setup
+                {0}',
+                inputs.sparse-checkout
+              )
+              ||
+              format(
+                'README.md
+                LICENSE.md
+                LICENSES/*
+                .github/actions/git-setup
+                .github/actions/pdm-setup
+                .github/actions/pdm-compatibility
+                .github/actions/release-sbom-setup
+                pyproject.toml
+                pdm.lock
+                {0}',
+                inputs.sparse-checkout
+              )
+            }}$
+          # yamllint enable rule:indentation
+          sparse-checkout-cone-mode: "${{ inputs.cone }}"
+          persist-credentials: false
+
+      - name: "Setup git credentials"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/git-setup"
+        # yamllint enable rule:line-length
+      - name: "Setup PDM"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/pdm-setup"
+        # yamllint enable rule:line-length
+        with:
+          group: "${{ inputs.group }}"
+          core: "${{ inputs.core }}"
+          all: "${{ inputs.all }}"
+          python-version: "${{ inputs.python-version }}"
+      - name: "PDM Compatibility"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/pdm-compatibility"
+        # yamllint enable rule:line-length
+      - name: "Perform action setup"
+        id: "setup"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/release-sbom-setup"
+        # yamllint enable rule:line-length
+        with:
+          identifier: "${{ env.IDENTIFIER }}"
+          files: >-
+            ${{ inputs.files }}
+      - name: "Create Python SBOM"
+        env:
+          TYPE: "${{ inputs.type }}"
+          # yamllint disable rule:line-length
+          OUTPUT_FILE: "${{ steps.setup.outputs.sbom }}"
+          # yamllint enable rule:line-length
+        run: >
+          pdm run "sbom-${TYPE}" > "${OUTPUT_FILE}"
+      - name: "Upload artifacts"
+        # yamllint disable rule:line-length
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
+        # yamllint enable rule:line-length
+        with:
+          name: "${{ steps.setup.outputs.artifact }}"
+          path: "${{ steps.setup.outputs.sbom-directory }}"
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: "error"
+...

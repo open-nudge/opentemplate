@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Pull Request"
+description: >
+  Make a pull request from the current branch
+inputs:
+  branch-name:
+    description: "Branch name to create a PR from"
+    required: true
+  commit-message:
+    description: "Commit message"
+    required: true
+  token:
+    description: "GitHub token"
+    default: "{{ github.token }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Push changes"
+      shell: "bash"
+      env:
+        BRANCH_NAME: "${{ inputs.branch-name }}"
+        COMMIT_MESSAGE: "${{ inputs.commit-message }}"
+      run: |
+        git add --all
+        git commit -s -m "fix: ${COMMIT_MESSAGE} [template]"
+        git push -u origin "${BRANCH_NAME}"
+    - name: "Create pull request"
+      shell: "bash"
+      env:
+        GITHUB_TOKEN: "${{ inputs.token }}"
+      run: >
+        gh pr create
+        --title "fix: ${COMMIT_MESSAGE} [template]"
+        --base main
+        --head "${BRANCH_NAME}"
+...

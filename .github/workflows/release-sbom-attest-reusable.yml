@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release SBOM Attest Reusable"
+
+on:
+  workflow_call:
+    inputs:
+      # SBOM
+      artifact:
+        description: >
+          Name of the artifact to download.
+          NOTE: SBOM should be in JSON format and be named as the artifact.
+        type: "string"
+        required: true
+      # Other
+      continue-on-error:
+        description: "Whether to continue on error"
+        type: "boolean"
+        default: true
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-sbom-attest-reusable:
+    name: "Release SBOM Attest Reusable"
+    permissions:
+      id-token: "write"
+      attestations: "write"
+    timeout-minutes: 30
+    runs-on: "ubuntu-latest"
+    continue-on-error: "${{ inputs.continue-on-error }}"
+    env:
+      ATTESTATION_NAME: "attestation-${{ inputs.artifact }}.intoto.jsonl"
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            fulcio.sigstore.dev:443
+            rekor.sigstore.dev:443
+      - name: "Download artifacts"
+        # yamllint disable rule:line-length
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
+        # yamllint enable rule:line-length
+        with:
+          name: "${{ inputs.artifact }}"
+      - name: "Attest SBOM"
+        # yamllint disable rule:line-length
+        uses: "actions/attest-sbom@115c3be05ff3974bcbd596578934b3f9ce39bf68" # v2.2.0
+        # yamllint enable rule:line-length
+        id: "attestation"
+        with:
+          sbom-path: "${{ inputs.artifact }}.json"
+          subject-checksums: "checksums.txt"
+      - name: "Rename attestation"
+        env:
+          BUNDLE_PATH: "${{ steps.attestation.outputs.bundle-path }}"
+        run: >
+          mv "${BUNDLE_PATH}" "${ATTESTATION_NAME}"
+      - name: "Upload SBOM attestation"
+        # yamllint disable rule:line-length
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
+        # yamllint enable rule:line-length
+        with:
+          name: "attestation-${{ inputs.artifact }}"
+          path: "attestation-${{ inputs.artifact }}.intoto.jsonl"
+...

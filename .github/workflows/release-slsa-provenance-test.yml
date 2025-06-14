@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Cache Test"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/release-slsa-provenance-test.yml"
+      - ".github/workflows/release-slsa-provenance-reusable.yml"
+  merge_group:
+    types:
+      - "checks_requested"
+  workflow_dispatch:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-slsa-provenance-test:
+    name: "Release SLSA Provenance Test"
+    if: >
+      github.event.repository.visibility == 'public'
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      actions: "read" # To read the workflow path.
+      contents: "write" # To add assets to a release.
+      id-token: "write" # To sign the provenance.
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/release-slsa-provenance-reusable.yml"
+    with:
+      test: true
+...

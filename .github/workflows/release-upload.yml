@@ -1,0 +1,119 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release Upload"
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: "Tag name of the release"
+        required: true
+        type: "string"
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-upload:
+    name: "Release Upload"
+    permissions:
+      contents: "write"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+            uploads.github.com:443
+      - name: "Checkout repository"  # zizmor: ignore[artipacked]
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          ref: "gh-pages"
+      - name: "Download artifacts"
+        # yamllint disable rule:line-length
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
+        # yamllint enable rule:line-length
+        with:
+          pattern: "*${{ github.sha }}*"
+      - name: "Upload assets to release"
+        continue-on-error: true
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          TAG: "${{ inputs.tag }}"
+        # Should also upload the attestations created by gh-action-pypi-publish
+        # yamllint disable rule:line-length
+        run: |
+          gh release edit "${TAG}" --verify-tag --latest --notes-file "CHANGELOGS-${GITHUB_SHA}/LATEST.md"
+          # shellcheck disable=SC2046
+          gh release upload --clobber "${TAG}" $(find . -type f -name "*${GITHUB_SHA}*")
+        # yamllint enable rule:line-length
+      - name: "Clear directory contents"
+        run: >
+          find . -maxdepth 1 -mindepth 1
+          ! -name "versions.json"
+          ! -name "index.html"
+          ! -regex './v[0-9]+\.[0-9]+'
+          ! -name "site-${GITHUB_SHA}"
+          ! -name '.*'
+          -exec rm -rf {} +
+      - name: "Update documentation content"
+        env:
+          TAG: "${{ inputs.tag }}"
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          JSON_FILE="versions.json"
+
+          VERSION_XY="$(echo "${TAG}" | cut -d. -f1,2)"
+
+          TMP_FILE="$(mktemp)"
+
+          jq --arg verXY "${VERSION_XY}" '
+            (
+              map(
+                if .version == $verXY then
+                  empty
+                elif .aliases | index("latest") then
+                  .aliases -= ["latest"]
+                else
+                  .
+                end
+              )
+              + [
+                {
+                  version: $verXY,
+                  title: $verXY,
+                  aliases: ["latest"]
+                }
+              ]
+            )
+          ' "${JSON_FILE}" > "${TMP_FILE}"
+
+          mv --force "${TMP_FILE}" "${JSON_FILE}"
+          mv --force "site-${GITHUB_SHA}" "${VERSION_XY}"
+          ln -sfn "${VERSION_XY}" "latest"
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Upload documentation"
+        env:
+          TAG: "${{ inputs.tag }}"
+        # yamllint disable rule:line-length
+        run: |
+          git config --global user.email github-actions[bot]@users.noreply.github.com
+          git config --global user.name github-actions[bot]
+          git add --force --all
+          git commit --message "feat: update ${TAG} [skip ci]"
+          git push origin gh-pages
+        # yamllint enable rule:line-length
+...

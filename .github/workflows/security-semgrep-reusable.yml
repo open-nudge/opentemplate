@@ -1,0 +1,94 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Security Semgrep Reusable"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: "Name of the artifact (default: '' - no artifact upload)"
+        type: "string"
+        default: ""
+      sarif:
+        description: "Upload SARIF file to CodeQL"
+        type: "boolean"
+        default: false
+      continue-on-error:
+        description: "Whether to continue on error"
+        type: "boolean"
+        default: false
+      file:
+        description: "Name/path of the created SARIF file"
+        type: "string"
+        default: "semgrep.sarif"
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  security-semgrep-reusable:
+    name: "Security Semgrep Reusable"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      # Writing security events to upload SARIF file to security tab
+      security-events: "write"
+      # Only need to read contents
+      contents: "read"
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            pdm-project.org:443
+            pdm.fming.dev:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            objects.githubusercontent.com:443
+            semgrep.dev:443
+      - name: "Checkout repository"
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          persist-credentials: false
+
+      - name: "Setup PDM"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/pdm-setup"
+        # yamllint enable rule:line-length
+        with:
+          # Sigstore, python-semantic-release etc.
+          group: "security"
+      - name: "PDM Compatibility"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/pdm-compatibility"
+        # yamllint enable rule:line-length
+
+      - name: "Run Semgrep"
+        env:
+          SEMGREP_FILE: "${{ inputs.file }}"
+        run: >
+          pdm run check-security --sarif-output="${SEMGREP_FILE}"
+      - name: "Upload files"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/sarif-upload"
+        # yamllint enable rule:line-length
+        with:
+          name: "${{ inputs.name }}"
+          file: "${{ inputs.file }}"
+          sarif: "${{ inputs.sarif }}"
+...

@@ -1,0 +1,267 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    "group:githubArtifactActions",
+    ":gitSignOff",
+    "docker:enableMajor",
+    "schedule:automergeWeekends",
+    "security:openssf-scorecard"
+  ],
+  "labels": [
+    "deps",
+    "bot"
+  ],
+  "branchPrefix": "bot/",
+  "rebaseWhen": "auto",
+  "automerge": true,
+  "autoApprove": true,
+  "automergeStrategy": "squash",
+  "automergeType": "pr",
+  "prConcurrentLimit": 0,
+  "semanticCommits": "disabled",
+  "commitMessagePrefix": "fix:",
+  "commitMessageAction": "update",
+  "gitAuthor": "github-actions[bot] <github-actions[bot]@users.noreply.github.com>",
+  "prHourlyLimit": 0,
+  "dependencyDashboard": false,
+  "platformAutomerge": true,
+  "packageRules": [
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "labels": [
+        "actions"
+      ]
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchPackageNames": [
+        "slsa-framework/slsa-github-generator"
+      ],
+      "pinDigests": false
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "labels": [
+        "python"
+      ]
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "project.dependencies",
+        "project.optional-dependencies"
+      ],
+      "groupName": "dependencies",
+      "labels": [
+        "src"
+      ]
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "tool.pdm.dev-dependencies"
+      ],
+      "matchPackageNames": [
+        "hypothesis",
+        "/^pytest/"
+      ],
+      "groupName": "dependencies (dev-test)",
+      "labels": [
+        "tests"
+      ]
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "tool.pdm.dev-dependencies"
+      ],
+      "matchPackageNames": [
+        "cairosvg",
+        "markdown",
+        "mike",
+        "/^mkdocs/",
+        "pillow",
+        "pygments",
+        "pymdown-extensions",
+        "termynal"
+      ],
+      "groupName": "dependencies (dev-docs)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "tool.pdm.dev-dependencies"
+      ],
+      "matchPackageNames": [
+        "fawltydeps",
+        "interrogate",
+        "ruff"
+      ],
+      "groupName": "dependencies (dev-python)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "tool.pdm.dev-dependencies"
+      ],
+      "matchPackageNames": [
+        "basedpyright"
+      ],
+      "groupName": "dependencies (dev-python-typing)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "yamllint"
+      ],
+      "groupName": "dependencies (dev-yaml)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "shellcheck-py"
+      ],
+      "groupName": "dependencies (dev-shell)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "/^md/",
+        "pymarkdownlnt"
+      ],
+      "groupName": "dependencies (dev-markdown)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "pyinilint"
+      ],
+      "groupName": "dependencies (dev-ini)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "validate-pyproject",
+        "pyproject-fmt"
+      ],
+      "groupName": "dependencies (dev-pyproject)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "semgrep"
+      ],
+      "groupName": "dependencies (dev-security)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "zizmor",
+        "check-jsonschema"
+      ],
+      "groupName": "dependencies (dev-github)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "reuse"
+      ],
+      "groupName": "dependencies (dev-legal)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "cogapp",
+        "cogeol"
+      ],
+      "groupName": "dependencies (dev-generation)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "conventional-pre-commit"
+      ],
+      "groupName": "dependencies (dev-commit)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "editorconfig-checker",
+        "codespell"
+      ],
+      "groupName": "dependencies (dev-code)"
+    }
+  ]
+}

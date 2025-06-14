@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+locale: "en_US.UTF-8"
+extends: "default"
+
+ignore-from-file: ".gitignore"
+
+rules:
+  anchors:
+    forbid-undeclared-aliases: true
+    forbid-duplicated-anchors: true
+    forbid-unused-anchors: true
+  braces:
+    forbid: true
+    level: "error"
+  brackets:
+    forbid: true
+    level: "error"
+  comments:
+    require-starting-space: true
+    ignore-shebangs: true
+    min-spaces-from-content: 1
+    level: "error"
+  comments-indentation:
+    level: "error"
+  document-end:
+    present: true
+    level: "error"
+  document-start:
+    present: true
+    level: "error"
+  empty-lines: "enable"
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: true
+    forbid-in-block-sequences: true
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: true
+  key-duplicates: "enable"
+  key-ordering: "disable"
+  line-length:
+    max: 80
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: false
+  new-line-at-end-of-file: "enable"
+  new-lines: "enable"
+  octal-values: "disable"
+  quoted-strings:
+    quote-type: "double"
+    required: true
+    allow-quoted-quotes: false
+  trailing-spaces: "enable"
+  truthy:
+    check-keys: false
+...

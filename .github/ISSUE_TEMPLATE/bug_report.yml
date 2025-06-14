@@ -1,0 +1,128 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Bug Report"
+description: "File a bug report"
+title: "fix: "
+labels:
+  - "fix"
+body:
+  - type: "markdown"
+    id: "header"
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this bug report!
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      # yamllint disable rule:line-length
+      label: "Terms"
+      description: >
+        By submitting this issue, you agree to follow this project's
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "checkboxes"
+    id: "check"
+    attributes:
+      label: "Similar Issue Check"
+      description: "Check if a similar issue already exists."
+      options:
+        - label: "I have searched for similar issues."
+          required: true
+  - type: "textarea"
+    id: "bug"
+    attributes:
+      label: "Bug Description"
+      description: "What did you expect to happen vs what actually happened?"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "src"
+    attributes:
+      label: "Source Code/Command"
+      description: "Code or command ran (auto-formatted into code)."
+      render: "shell"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "reproduce"
+    attributes:
+      label: "Reproduction Steps"
+      description: "Steps to reproduce the bug (if applicable)."
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: false
+  - type: "input"
+    id: "version"
+    attributes:
+      label: "Software Version"
+      description: "Which version of the software are you using?"
+      placeholder: "vX.Y.Z"
+    validations:
+      required: true
+  - type: "input"
+    id: "python-version"
+    attributes:
+      label: "Python Version"
+      description: |
+        What Python version are you using?
+
+        Run `python --version` in your terminal.
+      placeholder: "vX.Y.Z"
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "os"
+    attributes:
+      label: "Operating System"
+      description: "Which operating system are you using?"
+      multiple: false
+      options:
+        - "Linux"
+        - "MacOS"
+        - "Windows"
+        - "Other"
+    validations:
+      required: true
+  - type: "dropdown"
+    attributes:
+      label: "Willing To Help"
+      description: "Are you willing to help fix the issue? We will assist you."
+      multiple: false
+      options:
+        - "Yes"
+        - "Maybe"
+        - "No"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "fix"
+    attributes:
+      label: "Possible Fix"
+      description: "If you have an idea for a fix, provide it here (optional)."
+      placeholder: "Consider adding a `sort` argument to `foo()` in `bar.py`"
+    validations:
+      required: false
+  - type: "textarea"
+    id: "additional"
+    attributes:
+      label: "Additional Info"
+      description: "Any extra details that might help us resolve this issue."
+    validations:
+      required: false
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...

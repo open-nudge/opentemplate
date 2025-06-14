@@ -1,0 +1,1028 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# You can specify ignored vulnerabilities in this file.
+# See here: https://google.github.io/osv-scanner/configuration/ for configuration
+# See here: https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection
+# for the checks performed by OSSF Scorecard related to OSV scanning
+
+[[IgnoredVulns]]
+id = "GHSA-7cx3-6m66-7c5m"
+reason = "tornado is not used directly in this project (dev dependency)."
+
+[[IgnoredVulns]]
+id = "GHSA-cpwx-vrp4-4pq7"
+reason = "Jinja2 is not directly used in the project (dev dependency)."
+
+[[IgnoredVulns]]
+id = "PYSEC-2022-42969"
+reason = "Affects SVN, which is not used in this project."
+
+[[IgnoredVulns]]
+id = "GHSA-w596-4wvx-j9j6"
+reason = "Affects SVN or pytest<7.2.0, which are not used in this project."
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pytest-asyncio"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "fawltydeps"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "more-itertools"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdformat-mkdocs"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "types-python-dateutil"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jsonschema"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "typing-inspection"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "semantic-version"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "ply"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "click-option-group"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "beartype"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "basedpyright"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nodejs-wheel-binaries"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "backrefs"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "check-jsonschema"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "git-cliff"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "ipython-pygments-lexers"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "isort"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdformat-footnote"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdformat-frontmatter"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdformat-gfm-alerts"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "regress"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "ninja"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-awesome-nav"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-github-admonitions-plugin"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cogeol"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "click"
+license.ignore = true
+reason = "dev dependency"
+
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "appnope"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "bleach"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "comm"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "conventional-pre-commit"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "decorator"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "ipykernel"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jupyter-client"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jupyter-core"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jupyterlab-pygments"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jupytext"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "matplotlib-inline"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdformat"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdformat-gfm"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdformat-tables"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdit-py-plugins"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-redirects"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nbclient"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nbconvert"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nbformat"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nest-asyncio"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pexpect"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "prompt-toolkit"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "ptyprocess"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pylyzer"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pywin32"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pyzmq"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "soupsieve"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "termynal"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "traitlets"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "annotated-types"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "application-properties"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "arrow"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "attrs"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "binaryornot"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "boltons"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "bracex"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cairocffi"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cairosvg"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "certifi"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cffconvert"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "chardet"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "codespell"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "colorama"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "columnar"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cryptography"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "csscompressor"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cssselect2"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "deadlink"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "defusedxml"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "dnspython"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "exceptiongroup"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "face"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "fastjsonschema"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "filelock"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "fqdn"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "ghp-import"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "gitdb"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "glom"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "griffe"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "grpclib"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "htmlmin2"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "httpcore"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "httpx"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "hypothesis"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "id"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "idna"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "importlib-metadata"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "importlib-resources"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "iniconfig"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "interrogate"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "isoduration"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jinja2"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jsonpointer"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jsonschema-specifications"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "libcst"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "markdown"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "markdown-it-py"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "markupsafe"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mdurl"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mergedeep"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-autorefs"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-gen-files"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-get-deps"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-literate-nav"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-material"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-material-extensions"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocs-section-index"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocstrings"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "mkdocstrings-python"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "msgspec"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "networkx"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nodeenv"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "opentelemetry-instrumentation"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "opentelemetry-instrumentation-requests"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "opentelemetry-util-http"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "packaging"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pathspec"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pillow"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "platformdirs"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pydantic"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pydantic"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pyinilint"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pymarkdownlnt"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pymdown-extensions"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pyparsing"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pytest-html"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pytest-metadata"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pytest-randomly"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "python-dateutil"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "python-debian"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pyyaml-env-tag"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "referencing"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "regex"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "reuse"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "rfc3987"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "rfc8785"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "rpds-py"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "semgrep"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "setuptools"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "sigstore"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "sigstore-protobuf-specs"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "sigstore-rekor-types"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "smmap"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "sniffio"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "tinycss2"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "toml-fmt-common"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "tomli"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "toolz"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "tuf"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "typing-extensions"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "urllib3"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "validate-pyproject"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "verspec"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "virtualenv"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "wcmatch"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "webencodings"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "wrapt"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "yamllint"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "zipp"
+license.ignore = true
+reason = "dev dependency"

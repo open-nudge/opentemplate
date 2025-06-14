@@ -1,0 +1,36 @@
+{
+  "enforcement": "active",
+  "name": "branch-default-human",
+  "rules": [
+    {
+      "parameters": {
+        "required_approving_review_count": "PLACEHOLDER_REVIEWERS",
+        "require_last_push_approval": "PLACEHOLDER_LAST_PUSH_APPROVAL",
+        "require_code_owner_review": true,
+        "dismiss_stale_reviews_on_push": true,
+        "required_review_thread_resolution": true,
+        "automatic_copilot_code_review_enabled": true,
+        "allowed_merge_methods": [
+          "squash"
+        ]
+      },
+      "type": "pull_request"
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 2740,
+      "actor_type": "Integration",
+      "bypass_mode": "pull_request"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "~DEFAULT_BRANCH"
+      ],
+      "exclude": []
+    }
+  },
+  "target": "branch"
+}

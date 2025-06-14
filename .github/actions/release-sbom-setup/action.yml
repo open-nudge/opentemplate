@@ -1,0 +1,71 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Setup SBOMs"
+description: "Setup form SBOMs creation to be later attested."
+
+inputs:
+  identifier:
+    description: "Identifier of the artifact to save later."
+    required: true
+  files:
+    description: "Files to hash. Can also be a command"
+    required: true
+  extension:
+    description: "Extension of the SBOM file."
+    default: ".json"
+
+outputs:
+  artifact:
+    description: "Name of the artifact to download."
+    value: "${{ steps.setup.outputs.artifact }}"
+  sbom:
+    description: "Path to the SBOM."
+    value: "${{ steps.setup.outputs.sbom }}"
+  sbom-directory:
+    description: "Directory to store SBOMs."
+    value: "${{ steps.setup.outputs.sbom-directory }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Perform setup"
+      id: "setup"
+      shell: "bash"
+      env:
+        IDENTIFIER: "${{ inputs.identifier }}"
+        SBOM_DIRECTORY: "sbom-${{ github.sha }}"
+        SBOM: "${{ inputs.identifier }}${{ inputs.extension }}"
+      run: |
+        mkdir "${SBOM_DIRECTORY}"
+        echo "artifact=${IDENTIFIER}" >> "${GITHUB_OUTPUT}"
+        echo "sbom-directory=${SBOM_DIRECTORY}" >> "${GITHUB_OUTPUT}"
+        echo "sbom=${SBOM_DIRECTORY}/${SBOM}" >> "${GITHUB_OUTPUT}"
+      # See here for more information about the sum:
+      # https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md#provenance-for-artifacts-built-across-multiple-operating-systems
+    - name: "Hash Files (Linux/MacOS)" # zizmor: ignore[template-injection]
+      if: >
+        runner.os != 'Windows'
+      shell: "bash"
+      env:
+        OUTPUT_FILE: "sbom-${{ github.sha }}/checksums.txt"
+      run: >
+        shasum -a 256 ${{ inputs.files }} > "${OUTPUT_FILE}"
+    - name: "Hash Files (Windows)" # zizmor: ignore[template-injection]
+      if: >
+        runner.os == 'Windows'
+      shell: "bash"
+      env:
+        OUTPUT_FILE: "sbom-${{ github.sha }}/checksums.txt"
+      run: >
+        sha256sum -t ${{ inputs.files }} > "${OUTPUT_FILE}"
+    - name: "Check checksums"
+      shell: "bash"
+      env:
+        OUTPUT_FILE: "sbom-${{ github.sha }}/checksums.txt"
+      run: |
+        cat "${OUTPUT_FILE}"
+...

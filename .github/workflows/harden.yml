@@ -1,0 +1,335 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Harden"
+
+on:
+  workflow_dispatch:
+    inputs:
+      organization:
+        description: "Account/organization plan"
+        type: "choice"
+        options:
+          - "Free"
+          - "Pro/Team"
+          - "Enterprise"
+      reviewers:
+        description: "Number of reviewers available to review pull requests"
+        type: "choice"
+        default: "0 (single contributor)"
+        options:
+          - "0 (single contributor)"
+          - "1"
+          - "2 (or more)"
+        required: true
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  harden:
+    name: "Harden"
+    # Only for checkout, rest of the operations are done via token
+    # with Administrator and Pages write permissions
+    permissions:
+      # Checkout operation
+      contents: "read"
+      # Closing the issue
+      issues: "write"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+      - name: "Normalize type of account/organization"
+        id: "organization"
+        env:
+          ORGANIZATION: "${{ inputs.organization }}"
+        # yamllint disable rule:indentation
+        run: |
+          case "${ORGANIZATION}" in
+            "Free")
+              echo "type=free" >> "${GITHUB_OUTPUT}"
+              ;;
+            "Pro/Team")
+              echo "type=pro" >> "${GITHUB_OUTPUT}"
+              ;;
+            *)
+              echo "type=enterprise" >> "${GITHUB_OUTPUT}"
+              ;;
+          esac
+        # yamllint enable rule:indentation
+      - name: "Normalize reviewers values"
+        id: "reviewers"
+        env:
+          REVIEWERS: "${{ inputs.reviewers }}"
+        # yamllint disable rule:indentation
+        run: |
+          case "${REVIEWERS}" in
+            "0 (single contributor)")
+              echo "count=0" >> "${GITHUB_OUTPUT}"
+              ;;
+            "1")
+              echo "count=1" >> "${GITHUB_OUTPUT}"
+              ;;
+            *)
+              echo "count=2" >> "${GITHUB_OUTPUT}"
+              ;;
+          esac
+        # yamllint enable rule:indentation
+      - name: "Calculate settings for the repository"
+        id: "settings"
+        env:
+          REPOSITORY_VISIBILITY: "${{ github.event.repository.visibility }}"
+        # yamllint disable rule:indentation
+        run: |
+          case "${REPOSITORY_VISIBILITY}" in
+            "public" | "internal" )
+              echo "advanced_security=true" >> "${GITHUB_OUTPUT}"
+              echo "secret_scanning=true" >> "${GITHUB_OUTPUT}"
+              ;;
+            *)
+              echo "visibility=private" >> "${GITHUB_OUTPUT}"
+              ;;
+          esac
+        # yamllint enable rule:indentation
+      - name: "Checkout repository"
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          sparse-checkout: |
+            .github/rulesets
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: "Wait for template setup to finish (guard)"
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          printf "Waiting for branch 'gh-pages' to exist on GitHub...\n"
+
+          while true; do
+            # Check if the branch exists on the remote repository
+            if git ls-remote --exit-code --heads origin gh-pages &>/dev/null; then
+              printf "Branch 'gh-pages' exists!\n"
+              break
+            fi
+
+            sleep 1
+          done
+      - name: "Adjust reviewers in rulesets"
+        env:
+          REVIEWERS: "${{ steps.reviewers.outputs.count }}"
+          LAST_PUSH_APPROVAL: >-
+            ${{ steps.reviewers.outputs.count != '0' && 'true' || 'false' }}
+        run: >
+          sed -i \
+            -e "s/\"PLACEHOLDER_REVIEWERS\"/${REVIEWERS}/g" \
+            -e "s/\"PLACEHOLDER_LAST_PUSH_APPROVAL\"/${LAST_PUSH_APPROVAL}/g" \
+            .github/rulesets/branch-default-human.json
+      - name: "Check reviewers changed correctly"
+        run: >
+          cat .github/rulesets/branch-default-human.json
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Apply rulesets (public/enterprise/pro/team only)"
+        # Administration write
+        # https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28#create-a-repository-ruleset
+        if: >
+          github.event.repository.visibility == 'public'
+          || steps.organization.outputs.type == 'enterprise'
+          || steps.organization.outputs.type == 'pro'
+        env:
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # yamllint disable rule:line-length
+          RULES_ENDPOINT: >-
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/rulesets
+          # yamllint enable rule:line-length
+        # yamllint disable rule:indentation rule:line-length
+        run: >
+          find .github/rulesets -name "*.json" -print0 | parallel -0 -j0 --halt now,fail=1 \
+            "gh api --method POST \
+              -H 'Accept: application/vnd.github+json' \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              '${RULES_ENDPOINT}' \
+              --input {}"
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Enable GitHub Pages (public/enterprise only)"
+        # Administration AND Pages write
+        # https://docs.github.com/en/rest/pages/pages?apiVersion=2022-11-28#create-a-github-pages-site
+        if: >
+          github.event.repository.visibility == 'public'
+          || steps.organization.outputs.type == 'enterprise'
+        env:
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # yamllint disable rule:line-length
+          PAGES_ENDPOINT: >-
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/pages
+          # yamllint enable rule:line-length
+        run: >
+          gh api
+          --method POST
+          -H "Accept: application/vnd.github+json"
+          -H "X-GitHub-Api-Version: 2022-11-28"
+          "${PAGES_ENDPOINT}"
+          -f "source[branch]=gh-pages" -f "source[path]=/docs"
+          -f "build_type=workflow"
+      - name: "Apply general settings for the repository"
+        # Administration write
+        # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
+        env:
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # yamllint disable rule:line-length
+          ENDPOINT: >-
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}
+          HOMEPAGE: >-
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+          # yamllint enable rule:line-length
+        # yamllint disable rule:indentation
+        run: >
+          cat <<EOF | gh api
+          --method PATCH
+          -H "Accept: application/vnd.github+json"
+          -H "X-GitHub-Api-Version: 2022-11-28"
+          "${ENDPOINT}"
+          --input -
+            {
+              "allow_auto_merge": true,
+              "allow_merge_commit": false,
+              "allow_rebase_merge": false,
+              "allow_squash_merge": true,
+              "allow_update_branch": true,
+              "delete_branch_on_merge": true,
+              "use_squash_pr_title_as_default": true,
+              "has_issues": true,
+              "has_projects": true,
+              "has_wiki": false,
+              "homepage": "${HOMEPAGE}",
+              "squash_merge_commit_title": "PR_TITLE",
+              "squash_merge_commit_message": "COMMIT_MESSAGES",
+              "web_commit_signoff_required": true
+            }
+          EOF
+        # yamllint enable rule:indentation
+      - name: "Enable security features for the repository (best effort)"
+        # Administration write
+        # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
+        continue-on-error: true
+        env:
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # yamllint disable rule:line-length
+          ENDPOINT: >-
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}
+          # yamllint enable rule:line-length
+        # yamllint disable rule:indentation
+        run: >
+          cat <<EOF | gh api
+          --method PATCH
+          -H "Accept: application/vnd.github+json"
+          -H "X-GitHub-Api-Version: 2022-11-28"
+          "${ENDPOINT}"
+          --input -
+            {
+              "security_and_analysis": {
+                "advanced_security": {
+                  "status": "enabled"
+                },
+                "secret_scanning": {
+                  "status": "enabled"
+                },
+                "secret_scanning_ai_detection": {
+                  "status": "enabled"
+                },
+                "secret_scanning_push_protection": {
+                  "status": "enabled"
+                },
+                "secret_scanning_non_provider_patterns": {
+                  "status": "enabled"
+                }
+              }
+            }
+          EOF
+        # yamllint enable rule:indentation
+      - name: "Enable discussions"
+        # Discussions cannot be managed via API currently
+        # See here: https://github.com/orgs/community/discussions/46930
+        # Administration write
+        env:
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+        run: >
+          gh repo edit --enable-discussions=true
+      - name: "Enable private vulnerability reporting (public only)"
+        # Administration write
+        # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-private-vulnerability-reporting-for-a-repository
+        # More info:
+        # https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability
+        if: >
+          github.event.repository.visibility == 'public'
+        env:
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # yamllint disable rule:line-length
+          PRIVATE_VULNERABILITY_REPORTING_ENDPOINT: >-
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/private-vulnerability-reporting
+          # yamllint enable rule:line-length
+        run: >
+          gh api
+          --method PUT
+          -H "Accept: application/vnd.github+json"
+          -H "X-GitHub-Api-Version: 2022-11-28"
+          "${PRIVATE_VULNERABILITY_REPORTING_ENDPOINT}"
+      - name: "Enable vulnerability alerts (public only)"
+        # Administration write
+        # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-vulnerability-alerts
+        # More info:
+        # https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-dependabot-alerts
+        if: >
+          github.event.repository.visibility == 'public'
+        env:
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # yamllint disable rule:line-length
+          VULNERABILITY_ALERTS_ENDPOINT: >-
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/vulnerability-alerts
+          # yamllint enable rule:line-length
+        # yamllint disable rule:indentation
+        run: >
+          gh api
+          --method PUT
+          -H "Accept: application/vnd.github+json"
+          -H "X-GitHub-Api-Version: 2022-11-28"
+          "${VULNERABILITY_ALERTS_ENDPOINT}"
+        # yamllint enable rule:indentation
+      - name: "Close the issue"
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          REPOSITORY: "${{ github.event.repository.name }}"
+        run: >
+          gh issue close 1 --reason "completed"
+
+  # Update security-scorecard as hardening increases the score significantly
+  hardened-scorecard:
+    needs: "harden"
+    name: "Hardened Scorecard"
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      # Writing security events to upload SARIF file to security tab
+      security-events: "write"
+      # Only need to read contents
+      contents: "read"
+      # Needed for GitHub OIDC token if publish_results is true
+      id-token: "write"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/security-scorecard-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      sarif: true
+...

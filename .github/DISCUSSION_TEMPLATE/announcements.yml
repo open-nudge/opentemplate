@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+labels:
+  - "announcement"
+body:
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      label: "Terms"
+      # yamllint disable rule:line-length
+      description: >
+        By submitting this announcement, you agree to follow our
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      # yamllint enable rule:line-length
+      options:
+        # yamllint disable rule:line-length
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "checkboxes"
+    id: "authorization"
+    attributes:
+      label: "Authorization"
+      description: >
+        By submitting this issue, you confirm that you have the authority
+        to make an announcement on behalf of the project.
+      options:
+        - label: >
+            I have the authority to make an announcement
+            on behalf of the project.
+          required: true
+  - type: "input"
+    id: "version"
+    attributes:
+      label: "Software Version"
+      description: "What version of this software is this announcement for?"
+      placeholder: "vX.Y.Z"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "announcements"
+    attributes:
+      label: "Announcement"
+      description: "Add your announcement below."
+    validations:
+      required: true
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...

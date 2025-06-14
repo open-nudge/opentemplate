@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release Check"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+  merge_group:
+    types:
+      - "checks_requested"
+
+permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  citation:
+    name: "Release Check"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/release-check-reusable.yml"
+    # yamllint enable rule:line-length
+...

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Python Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  python-reusable:
+    name: "Python Reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-check-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      check: "python"
+      sparse-checkout: |
+        **.py
+...

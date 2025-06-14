@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release SBOMs Test"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/release-sboms-test.yml"
+      - ".github/workflows/release-sboms-reusable.yml"
+  merge_group:
+    types:
+      - "checks_requested"
+  workflow_dispatch:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-sboms-test:
+    name: "Release SBOMs Test"
+    permissions:
+      id-token: "write"
+      attestations: "write"
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/release-sboms-reusable.yml"
+    # yamllint enable rule:line-length
+...

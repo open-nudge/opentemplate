@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+blank_issues_enabled: false
+contact_links:
+  - name: "Security Issues"
+    about: "Check the security policy."
+  - name: "Question, Problem"
+    about: "Ask a general question in GitHub Discussions."
+    url: >
+      https://github.com/open-nudge/opentemplate/discussions/categories/q-a
+  - name: "Projects"
+    about: "Share projects built with opentemplate."
+    url: >
+      https://github.com/open-nudge/opentemplate/discussions/categories/show-and-tell
+  - name: "Tips and Tricks"
+    about: >
+      Share useful code snippets, tips, or resources related to opentemplate.
+    url: >
+      https://github.com/open-nudge/opentemplate/discussions/categories/show-and-tell
+...

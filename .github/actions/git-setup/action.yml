@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Git Setup"
+description: "Setup git credentials for pushing etc."
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup git"
+      shell: "bash"
+      # yamllint disable rule:line-length
+      run: |
+        git config --global user.email github-actions[bot]@users.noreply.github.com
+        git config --global user.name github-actions[bot]
+      # yamllint enable rule:line-length
+...

@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Template Update Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  template-update-reusable:
+    name: "Template Update Reusable"
+    permissions:
+      contents: "write"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Placeholder operation"
+        run: >
+          echo "Placeholder operation, template update not implemented :("
+...

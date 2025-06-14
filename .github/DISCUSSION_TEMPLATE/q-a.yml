@@ -1,0 +1,137 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+labels:
+  - "question"
+body:
+  - type: "markdown"
+    attributes:
+      value: "Thanks for your interest in opentemplate!"
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      label: "Terms"
+      # yamllint disable rule:line-length
+      description: >
+        By submitting this question, you agree to follow this project's
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "checkboxes"
+    id: "search-checklist"
+    attributes:
+      label: "Search Checklist"
+      description: "Please confirm the following checks."
+      options:
+        - label: "I verified that this question is related to this project."
+          required: true
+        - label: "I searched online and found no answer."
+          required: true
+        - label: >
+            I checked [Stack Overflow](https://stackoverflow.com)
+            and found no answer.
+          required: true
+        - label: "I reviewed the opentemplate documentation."
+          required: true
+        - label: "I searched GitHub Discussions but found nothing relevant."
+          required: true
+        - label: >
+            I searched this project's GitHub issues and found nothing relevant.
+          required: true
+        - label: "I followed all tutorials and still need help."
+          required: true
+  - type: "textarea"
+    id: "details"
+    attributes:
+      label: "Question Description"
+      description: "Clearly explain your question in detail."
+    validations:
+      required: true
+  - type: "textarea"
+    id: "tried"
+    attributes:
+      label: "What Have You Tried?"
+      description: "Describe what you've tried to solve your question."
+    validations:
+      required: true
+  - type: "textarea"
+    id: "src"
+    attributes:
+      label: "Code/Command"
+      description: >
+        Provide relevant code or command (optional, auto-formatted).
+      render: "shell"
+    validations:
+      required: false
+  - type: "textarea"
+    id: "reproduce"
+    attributes:
+      label: "Reproduction Steps"
+      description: "Steps to reproduce (if applicable)."
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: false
+  - type: "input"
+    id: "version"
+    attributes:
+      label: "Software Version"
+      description: "What version of this software are you using?"
+      placeholder: "vX.Y.Z"
+    validations:
+      required: true
+  - type: "input"
+    id: "python-version"
+    attributes:
+      label: "Python Version"
+      description: >
+        What version of Python are you using?
+        Run `python --version` to check.
+      placeholder: "vX.Y.Z"
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "os"
+    attributes:
+      label: "Operating System"
+      description: "What OS are you using?"
+      multiple: false
+      options:
+        - "Linux"
+        - "macOS"
+        - "Windows"
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "willing_to_help"
+    attributes:
+      label: "Willing to Help?"
+      description: "Would you contribute if this leads to a feature/bug fix?"
+      multiple: false
+      options:
+        - "Yes"
+        - "Maybe"
+        - "No"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "additional"
+    attributes:
+      label: "Additional Info"
+      description: "Any other context that might help (optional)."
+    validations:
+      required: false
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...

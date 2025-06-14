@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "SBOM Upload"
+description: >
+  Predefined SBOM upload including GitHub SHAs and proper identifiers
+
+inputs:
+  file:
+    description: >
+      Name of the artifact in the GitHub Actions UI
+    default: ""
+  name:
+    description: >
+      A path to the file to upload (and artifact name)
+    default: ""
+  sarif:
+    description: >
+      Whether the artifact is a SARIF file
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Upload artifact"
+      # yamllint disable rule:line-length
+      uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
+      # yamllint enable rule:line-length
+      if: >
+        inputs.name != ''
+      with:
+        name: "${{ inputs.name }}"
+        path: "${{ inputs.file }}"
+        retention-days: 7
+        overwrite: true
+    - name: "Upload SARIF file to GitHub Advanced Security Dashboard"
+      if: >
+        inputs.sarif == 'true'
+      # SARIF upload may fail if there is no integration enabled
+      continue-on-error: true
+      # yamllint disable rule:line-length
+      uses: "github/codeql-action/upload-sarif@fca7ace96b7d713c7035871441bd52efbe39e27e" # v3.28.19
+      # yamllint enable rule:line-length
+      with:
+        sarif_file: "${{ inputs.file }}"
+...

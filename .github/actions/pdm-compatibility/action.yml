@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "PDM Compatibility"
+description: >
+  Compatibility bridge between local PDM and GitHub Actions.
+
+inputs:
+  restore:
+    description: >
+      Whether to restore the __pypackages__ and pdm.toml files.
+      If unspecified, they will be moved to the temporary directory.
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Remove __pypackages__ and pdm.toml"
+      if: >
+        inputs.restore == 'false'
+      shell: "bash"
+      env:
+        TEMPORARY: "${{ runner.temp }}"
+      run: |
+        mv __pypackages__ "${TEMPORARY}/" 2>/dev/null || true
+        mv pdm.toml "${TEMPORARY}/" 2>/dev/null || true
+    - name: "Restore __pypackages__ and pdm.toml"
+      if: >
+        inputs.restore == 'true'
+      shell: "bash"
+      env:
+        TEMPORARY: "${{ runner.temp }}"
+      run: |
+        mv "${TEMPORARY}/__pypackages__" ./ 2>/dev/null || true
+        mv "${TEMPORARY}/pdm.toml" ./  2>/dev/null || true
+...

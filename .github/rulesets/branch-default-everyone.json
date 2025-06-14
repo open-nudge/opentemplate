@@ -1,0 +1,19 @@
+{
+  "enforcement": "active",
+  "name": "branch-default-everyone",
+  "rules": [
+    {
+      "type": "deletion"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "~DEFAULT_BRANCH",
+        "refs/heads/gh-pages"
+      ],
+      "exclude": []
+    }
+  },
+  "target": "branch"
+}

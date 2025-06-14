@@ -1,0 +1,102 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Become an Adopter"
+description: "Add yourself to the list of adopters"
+title: "feat: add a new adopter"
+labels:
+  - "docs"
+body:
+  - type: "markdown"
+    id: "header"
+    attributes:
+      value: |
+        Thank you for adopting this project! Please fill out the form below.
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      label: "Terms"
+      # yamllint disable rule:line-length
+      description: >
+        By submitting this issue, you agree to follow this project's
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "checkboxes"
+    id: "authorization"
+    attributes:
+      label: "Authorization"
+      description: "I confirm I have the authority to add this adopter."
+      options:
+        - label: "I have the authority to add this adopter."
+          required: true
+  - type: "checkboxes"
+    id: "agreement"
+    attributes:
+      label: "Agreement"
+      description: >
+        I understand that maintainers decide the placement of adopter info.
+      options:
+        - label: >
+            I agree that maintainers decide the placement of my adopter info.
+          required: true
+  - type: "checkboxes"
+    id: "check"
+    attributes:
+      label: "Adopter Exists Check"
+      description: "I have checked if this adopter is already listed."
+      options:
+        - label: "I have verified that this adopter is not listed."
+          required: true
+  - type: "input"
+    id: "name"
+    attributes:
+      label: "Adopter Name"
+      description: >
+        Company, organization, or project adopting opentemplate.
+    validations:
+      required: true
+  - type: "input"
+    id: "url"
+    attributes:
+      label: "Adopter URL"
+      description: "Provide the adopter's website or project page."
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "type"
+    attributes:
+      label: "Adopter Type"
+      description: "What type of adopter is this?"
+      multiple: false
+      options:
+        - "Company"
+        - "Organization"
+        - "Project"
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "contributor"
+    attributes:
+      label: "Who Will Add This Adopter?"
+      # yamllint disable rule:line-length
+      description: >
+        File to edit: [ADOPTERS.md](https://github.com/open-nudge/opentemplate/blob/main/ADOPTERS.md)
+      # yamllint enable rule:line-length
+      multiple: false
+      options:
+        - "Me"
+        - "Maintainers"
+    validations:
+      required: true
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...

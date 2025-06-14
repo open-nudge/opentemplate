@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+
+nav:
+  - "index.md"
+  - "philosophy.md"
+  - "comparison.md"
+  - "tips-and-tricks.md"
+  - "faq.md"
+...

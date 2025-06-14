@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+
+nav:
+  - "index.md"
+  - "security.md"
+  - "tests.md"
+  - "python.md"
+  - "documentation.md"
+  - "github-actions.md"
+  - "scheduled-jobs.md"
+  - "legal.md"
+  - "prose.md"
+  - "other-languages.md"
+...

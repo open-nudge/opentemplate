@@ -1,0 +1,169 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "PDM Setup"
+description: "Setup PDM and install dev dependencies for opentemplate."
+inputs:
+  group:
+    description: >
+      Dev dependencies group to install.
+      If unspecified, no group will be installed.
+    required: false
+    default: ""
+  core:
+    description: >
+      If true, the main and optional dependencies will be installed.
+    required: false
+    default: "false"
+  all:
+    description: >
+      If true, all dependencies will be installed.
+    required: false
+    default: "false"
+  python-version:
+    description: >
+      Version range or exact version of a Python version to use,
+      using SemVer's version range syntax.
+    required: false
+    #
+    #           DO NOT EDIT UNTIL end marker
+    #
+    # [[[cog
+    # import cog
+    # import cogeol
+    #
+    # cycle = cogeol.scientific()[-1]["cycle"]
+    # cog.out(f'    default: "{cycle}"')
+    # ]]]
+    default: "3.11"
+    # [[[end]]] (checksum: 33dfa76bc2c8ade8410d8ef5a13bf62e)
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Validate the group"
+      id: "preprocess"
+      shell: "bash"
+      env:
+        GROUP: "${{ inputs.group }}"
+        VALID_GROUPS: >
+          all
+          code
+          tests
+          docs
+          python
+          typing
+          shell
+          yaml
+          markdown
+          ini
+          pyproject
+          citation
+          security
+          github
+          legal
+          release
+          generation
+          commit
+          pre-commit
+      # yamllint disable rule:indentation
+      run: |
+        if [ -z "${GROUP}" ]; then
+          exit 0
+        fi
+
+        for valid_group in ${VALID_GROUPS}; do
+          if [ "${GROUP}" = "${valid_group}" ]; then
+            exit 0
+          fi
+        done
+
+        echo "::error title=Invalid group::The group '${GROUP}' is forbidden."
+        exit 1
+      # yamllint enable rule:indentation
+    - name: "Save original pdm.lock"
+      shell: "bash"
+      env:
+        TEMPORARY: "${{ runner.temp }}"
+      run: >
+        cp pdm.lock "${TEMPORARY}/pdm.lock"
+    - name: "Add cache info to pdm.lock"
+      shell: "bash"
+      env:
+        # yamllint disable rule:indentation
+        CACHE_CONTENT: >-
+          ${{
+            inputs.all == 'false'
+            && format(
+              '{0}-{1}-{2}',
+              inputs.core == 'false' && 'no-core' || 'core',
+              inputs.group == '' && 'no-group' || inputs.group,
+              inputs.python-version
+            )
+            || format('all-{0}', inputs.python-version)
+          }}
+        # yamllint enable rule:indentation
+        TEMPORARY: "${{ runner.temp }}"
+      run: |
+        echo "# ${CACHE_CONTENT}" >> pdm.lock
+        echo "::info:: Cache type '${CACHE_CONTENT}'"
+    - name: "Setup Caching PDM"
+      id: "setup-pdm"
+      # yamllint disable rule:line-length
+      uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0"  # v4.4
+      # yamllint enable rule:line-length
+      with:
+        python-version: "${{ inputs.python-version }}"
+        cache: true
+        cache-restore-exact-match: true
+    - name: "Restore original pdm.lock"
+      shell: "bash"
+      env:
+        TEMPORARY: "${{ runner.temp }}"
+      run: >
+        mv "${TEMPORARY}/pdm.lock" ./
+    - name: "PDM Compatibility"
+      # yamllint disable rule:line-length
+      uses: "./.github/actions/pdm-compatibility"
+      # yamllint enable rule:line-length
+
+    - name: "Install group dependencies"
+      if: >
+        inputs.all == 'false'
+        && inputs.group != ''
+      shell: "bash"
+      env:
+        GROUP: "${{ inputs.group }}"
+      run: >
+        pdm install --no-self --no-default -G dev-${GROUP} --no-editable
+    - name: "Install core dependencies"
+      if: >
+        inputs.all == 'false'
+        && inputs.core == 'true'
+      shell: "bash"
+      run: >
+        pdm install --prod -G:all --no-editable
+    - name: "Install everything"
+      shell: "bash"
+      env:
+        group: "${{ inputs.group }}"
+      if: >
+        inputs.all == 'true'
+      run: >
+        pdm install -G:all --no-editable
+
+    - name: "PDM Compatibility"
+      # yamllint disable rule:line-length
+      uses: "./.github/actions/pdm-compatibility"
+      # yamllint enable rule:line-length
+      with:
+        restore: true
+
+    - name: "List repository content"
+      shell: "bash"
+      run: >
+        ls -la
+...

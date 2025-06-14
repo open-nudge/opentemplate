@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "GitHub Actions Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  github-actions-reusable:
+    name: "GitHub Actions Reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-check-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      check: "github-actions"
+      arguments: ".github/actions/*/action.yml"
+      group: "github"
+      sparse-checkout: |
+        .github/actions/*/action.yml
+...

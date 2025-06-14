@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Generation Update Test"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/generation-update*.yml"
+  merge_group:
+    types:
+      - "checks_requested"
+  workflow_dispatch:
+
+permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  group: >-
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generation-update-test:
+    name: "Generation Update Test"
+    permissions:
+      contents: "read"
+      pull-requests: "write"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/generation-update-reusable.yml"
+    # yamllint enable rule:line-length
+...

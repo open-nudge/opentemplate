@@ -1,0 +1,86 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Tests Reusable"
+
+permissions: {} # yamllint disable-line rule:braces
+
+on:
+  workflow_call:
+
+jobs:
+  tests-reusable:
+    strategy:
+      matrix:
+        python:
+          #
+          #           DO NOT EDIT UNTIL end marker
+          #
+          # [[[cog
+          # import cog
+          # import cogeol
+          #
+          # for version in reversed(cogeol.scientific()):
+          #     cycle = version['cycle']
+          #     cog.outl(f'          - "{cycle}"')
+          # ]]]
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          # [[[end]]] (sum: l3d2zGv79j)
+        os:
+          - "ubuntu-latest"
+          - "macos-latest"
+          - "windows-latest"
+    name: >
+      Tests | ${{ matrix.os }} | python-${{ matrix.python }}
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      # yamllint disable rule:line-length
+      command: |
+        pdm run tests
+        mv .coverage coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
+      # yamllint enable rule:line-length
+      sparse-checkout: |
+        **.py
+      group: "tests"
+      core: true
+      # yamllint disable rule:line-length
+      upload-name: >
+        coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}
+      # yamllint enable rule:line-length
+      upload-path: >
+        coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
+      python-version: "${{ matrix.python }}"
+      os: "${{ matrix.os }}"
+
+  coverage:
+    name: "Coverage"
+    needs: "tests-reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      # yamllint disable rule:line-length
+      command: |
+        pdm run coverage combine --debug=pathmap --keep $(find coverage-*-${{ github.sha }}/ -name "coverage-*-${{ github.sha }}.sqlite")
+        pdm run coverage html --skip-empty
+        pdm run coverage report
+      # yamllint enable rule:line-length
+      # Needed for source code
+      sparse-checkout: |
+        **.py
+      group: "tests"
+      download-pattern: "coverage-*-${{ github.sha }}"
+      upload-name: "coverage-combined-${{ github.sha }}"
+      upload-path: "htmlcov"
+...

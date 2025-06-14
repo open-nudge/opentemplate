@@ -1,0 +1,28 @@
+{
+  "enforcement": "active",
+  "name": "branch-bot-human",
+  "rules": [
+    {
+      "type": "creation"
+    },
+    {
+      "type": "update"
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 2740,
+      "actor_type": "Integration",
+      "bypass_mode": "pull_request"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/heads/bot*"
+      ],
+      "exclude": []
+    }
+  },
+  "target": "branch"
+}

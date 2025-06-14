@@ -1,0 +1,365 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# Renovate does not support revision pinning for now, see:
+# https://github.com/renovatebot/renovate/issues/22567
+default_stages:
+  - "pre-commit"
+default_install_hook_types:
+  - "pre-commit"
+  - "commit-msg"
+  - "pre-push"
+  - "post-checkout"
+  - "post-merge"
+fail_fast: true
+repos:
+  ##############################################################################
+  #
+  #                       NON PYPROJECT BASED CHECKS
+  #
+  ##############################################################################
+  - repo: "https://github.com/siderolabs/conform"
+    rev: "e1fdd4c4624bafa674a905595a26c8d0797ddb6c"  # frozen: v0.1.0-alpha.30
+    hooks:
+      # pre-push due to PGP signature
+      - id: "conform"
+        alias: "policy"
+        name: "<<<CHECK>>> Policy"
+        verbose: true
+        stages:
+          - "pre-push"
+        entry: "conform enforce"
+        pass_filenames: false
+  - repo: "https://github.com/trufflesecurity/trufflehog"
+    rev: "52d0ee5f5419ca938d3b7e358fe6f32131565026"  # frozen: v3.89.1
+    hooks:
+      - id: "trufflehog"
+        alias: "secrets"
+        name: "<<<CHECK>>> Secrets"
+        verbose: true
+  - repo: "https://github.com/google/osv-scanner/"
+    rev: "a2a23858b9650035f019219937f91ae615474b4d"  # frozen: v2.0.2
+    hooks:
+      - id: "osv-scanner"
+        name: "<<<CHECK>>> OSV Scanner"
+        args:
+          - "-r"
+          - "--licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0"
+          - "./"
+  - repo: "https://github.com/errata-ai/vale"
+    rev: "44c18b3d2ebc971c160cec26cd179a3f73d37f58"  # frozen: v3.12.0
+    hooks:
+      - id: "vale"
+        alias: "setup-natural-language"
+        entry: "vale sync"
+        name: "<<<SETUP>>> Natural language"
+        verbose: true
+        pass_filenames: false
+        require_serial: true
+        stages:
+          - "pre-commit"
+  - repo: "https://github.com/errata-ai/vale"
+    rev: "44c18b3d2ebc971c160cec26cd179a3f73d37f58"  # frozen: v3.12.0
+    hooks:
+      - id: "vale"
+        alias: "natural-language"
+        name: "<<<CHECK>>> Natural language"
+        verbose: true
+  - repo: "https://github.com/rhysd/actionlint"
+    rev: "03d0035246f3e81f36aed592ffb4bebf33a03106"  # frozen: v1.7.7
+    hooks:
+      - id: "actionlint"
+        alias: "github-actions-actionlint"
+        name: "<<<CHECK>>> GitHub Actions actionlint"
+        verbose: true
+  # Pre-commit provided hooks
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: "cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b"  # frozen: v5.0.0
+    hooks:
+      - id: "no-commit-to-branch"
+        alias: "main-branch-clean"
+        name: "<<<CHECK>>> Main branch clean"
+      - id: "end-of-file-fixer"
+        alias: "end-of-file"
+        name: "<<<FIX>>> End of file"
+        stages:
+          - "pre-commit"
+      - id: "mixed-line-ending"
+        name: "<<<FIX>>> Mixed line ending"
+      - id: "pretty-format-json"
+        alias: "json"
+        name: "<<<FIX>>> JSON"
+        args:
+          - "--autofix"
+          - "--no-sort-keys"
+      - id: "name-tests-test"
+        alias: "pytest-file-naming"
+        name: "<<<CHECK>>> Pytest file naming"
+        args:
+          - "--pytest-test-first"
+      - id: "trailing-whitespace"
+        name: "<<<CHECK>>> Trailing whitespace"
+        stages:
+          - "pre-commit"
+      - id: "check-added-large-files"
+        alias: "large-file"
+        name: "<<<CHECK>>> Large file"
+        stages:
+          - "pre-commit"
+      - id: "check-case-conflict"
+        alias: "case-conflict"
+        name: "<<<CHECK>>> Case conflict"
+      - id: "check-executables-have-shebangs"
+        alias: "shebang"
+        name: "<<<CHECK>>> Shebang"
+        stages:
+          - "pre-commit"
+      - id: "check-shebang-scripts-are-executable"
+        alias: "script-executable"
+        name: "<<<CHECK>>> Script executable"
+        stages:
+          - "pre-commit"
+      - id: "check-merge-conflict"
+        alias: "merge-conflict"
+        name: "<<<CHECK>>> Merge conflict"
+      - id: "check-symlinks"
+        alias: "symlink"
+        name: "<<<CHECK>>> Symlink"
+      - id: "check-toml"
+        alias: "toml"
+        name: "<<<CHECK>>> TOML"
+      - id: "forbid-submodules"
+        alias: "git-submodules"
+        name: "<<<CHECK>>> Git submodules"
+  ############################################################################
+  #
+  #                         PYPROJECT BASED CHECKS
+  #
+  ############################################################################
+  - repo: "local"
+    hooks:
+      - id: "dco"
+        verbose: true
+        name: "<<<CHECK>>> DCO"
+        language: "fail"
+        entry: >
+          Changing DCO is prohibited according to the DCO itself.
+          If you wish to change/remove it, please do so in a separate commit
+          and disable this check.
+        files: "^DCO.md$"
+      - id: "commit"
+        verbose: true
+        name: "<<<CHECK>>> Commit"
+        entry: "pdm run -v check-commit"
+        language: "system"
+        stages:
+          - "commit-msg"
+        always_run: true
+      - id: "generation"
+        verbose: true
+        name: "<<<FIX>>> Generation"
+        entry: "pdm run -v fix-generation"
+        pass_filenames: false
+        language: "system"
+        require_serial: true
+        always_run: true
+      - id: "pre-commit"
+        verbose: true
+        name: "<<<FIX>>> Pre-commit"
+        entry: "pdm run -v pre-commit autoupdate --freeze"
+        pass_filenames: false
+        language: "system"
+        require_serial: true
+        always_run: true
+      - id: "fix-legal"
+        name: "<<<FIX>>> Legal"
+        entry: "pdm run -v fix-legal"
+        language: "system"
+        require_serial: true
+        exclude: "^(pdm.lock.*|DCO.md|LICENSE.md|LICENSES/.*)$"
+      - id: "check-legal"
+        verbose: true
+        name: "<<<CHECK>>> Legal"
+        entry: "pdm run -v check-legal"
+        language: "system"
+        require_serial: true
+        pass_filenames: false
+      - id: "code"
+        verbose: true
+        name: "<<<FIX>>> Code"
+        entry: "pdm run -v fix-code"
+        language: "system"
+        require_serial: true
+        types:
+          - "file"
+      - id: "renovate"
+        verbose: true
+        name: "<<<CHECK>>> Renovate"
+        entry: "pdm run -v check-renovate"
+        language: "system"
+        require_serial: true
+        types:
+          - "file"
+        files: "^.github/renovate.json$"
+      - id: "fix-shell"
+        verbose: true
+        name: "<<<FIX>>> Shell"
+        entry: "pdm run -v fix-shell"
+        language: "system"
+        require_serial: true
+        types:
+          - "shell"
+      - id: "check-shell"
+        verbose: true
+        name: "<<<CHECK>>> Shell"
+        entry: "pdm run -v check-shell"
+        language: "system"
+        require_serial: true
+        types:
+          - "shell"
+      - id: "github"
+        verbose: true
+        name: "<<<CHECK>>> GitHub"
+        entry: "pdm run -v check-github"
+        language: "system"
+        require_serial: true
+        types:
+          - "file"
+        files: "^(.github/actions/.*/action.yml|.github/workflows/.*.yml)$"
+      - id: "github-actions"
+        verbose: true
+        name: "<<<CHECK>>> GitHub Actions"
+        entry: "pdm run -v check-github-actions"
+        language: "system"
+        require_serial: true
+        types:
+          - "file"
+        files: "^.github/actions/.*/action.yml$"
+      - id: "github-workflows"
+        verbose: true
+        name: "<<<CHECK>>> GitHub Workflows"
+        entry: "pdm run -v check-github-workflows"
+        language: "system"
+        require_serial: true
+        types:
+          - "file"
+        files: "^.github/workflows/.*.yml$"
+      - id: "pyproject"
+        verbose: true
+        name: "<<<CHECK>>> pyproject"
+        entry: "pdm run -v check-pyproject"
+        files: "^pyproject.toml$"
+        language: "system"
+      - id: "pdm-sync"
+        verbose: true
+        name: "<<<CHECK>>> PDM sync"
+        entry: "pdm sync -v"
+        pass_filenames: false
+        language: "system"
+        stages:
+          - "post-checkout"
+          - "post-merge"
+        always_run: true
+      - id: "pdm-lock"
+        verbose: true
+        name: "<<<CHECK>>> PDM lock (use `pdm run lock` to fix)"
+        entry: "pdm lock -v --check"
+        pass_filenames: false
+        language: "system"
+        files: "^pyproject.toml$"
+      - id: "pre-commit-config"
+        verbose: true
+        name: "<<<CHECK>>> pre-commit config"
+        entry: "pdm run -v check-pre-commit-config"
+        files: "^.pre-commit-config.yaml$"
+        language: "system"
+      - id: "pre-commit-hooks"
+        verbose: true
+        name: "<<<CHECK>>> pre-commit hooks"
+        entry: "pdm run -v check-pre-commit-hooks"
+        files: "^.pre-commit-hooks.yaml$"
+        language: "system"
+      - id: "citation"
+        verbose: true
+        name: "<<<CHECK>>> Citation"
+        entry: "pdm run -v check-citation"
+        files: "^CITATION.cff$"
+        language: "system"
+      - id: "ini"
+        verbose: true
+        name: "<<<CHECK>>> INI"
+        entry: "pdm run -v check-ini"
+        language: "system"
+        require_serial: true
+        types_or:
+          - "ini"
+          - "editorconfig"
+      - id: "markdown"
+        verbose: true
+        name: "<<<FIX>>> Markdown"
+        entry: "pdm run -v fix-markdown"
+        language: "system"
+        require_serial: true
+        types:
+          - "markdown"
+        exclude: "^(DCO.md|template-setup/.*|LICENSE.md|LICENSES/.*)$"
+      - id: "yaml"
+        verbose: true
+        name: "<<<CHECK>>> YAML"
+        entry: "pdm run -v check-yaml"
+        language: "system"
+        require_serial: true
+        types:
+          - "yaml"
+      - id: "docs"
+        verbose: true
+        name: "<<<CHECK>>> Docs"
+        entry: "pdm run -v check-docs"
+        pass_filenames: false
+        language: "system"
+        require_serial: true
+        types:
+          - "file"
+        files: "^(docs/.*|pyproject.toml|mkdocs.yml|src/.*.py|.*.md)$"
+      - id: "python"
+        verbose: true
+        name: "<<<FIX>>> Python"
+        entry: "pdm run -v fix-python"
+        language: "system"
+        require_serial: true
+        types:
+          - "python"
+      - id: "typing"
+        verbose: true
+        name: "<<<CHECK>>> Typing"
+        entry: "pdm run -v check-typing"
+        language: "system"
+        require_serial: true
+        types:
+          - "python"
+      - id: "security"
+        verbose: true
+        name: "<<<CHECK>>> Security"
+        entry: "pdm run -v check-security"
+        language: "system"
+        require_serial: true
+      - id: "release"
+        name: "<<<CHECK>>> Release"
+        entry: "pdm run -v check-release"
+        pass_filenames: false
+        language: "system"
+        require_serial: true
+        always_run: true
+      - id: "tests-all"
+        verbose: true
+        name: "<<<CHECK>>> Tests all"
+        entry: "pdm run -v tests-all"
+        pass_filenames: false
+        language: "system"
+        require_serial: true
+        types:
+          - "python"
+...

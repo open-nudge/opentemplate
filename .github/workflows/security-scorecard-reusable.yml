@@ -1,0 +1,118 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Security Scorecard Reusable"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: "Name of the artifact (default: '' - no artifact upload)"
+        type: "string"
+        default: ""
+      sarif:
+        description: "Upload SARIF file to CodeQL"
+        type: "boolean"
+        default: false
+      file:
+        description: "Name/path of the created SARIF file"
+        type: "string"
+        default: "scorecard.sarif"
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  security-scorecard-reusable:
+    name: "Security Scorecard Reusable"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      # Writing security events to upload SARIF file to security tab
+      security-events: "write"
+      # Only need to read contents
+      contents: "read"
+      # Needed for GitHub OIDC token if publish_results is true
+      id-token: "write"
+    steps:
+      - name: "Harden Runner" # zizmor: ignore[known-vulnerable-actions]
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.deps.dev:443
+            api.github.com:443
+            api.osv.dev:443
+            api.scorecard.dev:443
+            api.securityscorecards.dev:443
+            auth.docker.io:443
+            fulcio.sigstore.dev:443
+            github.com:443
+            index.docker.io:443
+            oss-fuzz-build-logs.storage.googleapis.com:443
+            rekor.sigstore.dev:443
+            tuf-repo-cdn.sigstore.dev:443
+            www.bestpractices.dev:443
+      - name: "Checkout repository"
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          persist-credentials: false
+      - name: "Run analysis"
+        if: >
+          github.event.repository.visibility == 'public'
+        # yamllint disable rule:line-length
+        uses: "ossf/scorecard-action@05b42c624433fc40578a4040d5cf5e36ddca8cde" # v2.4.2
+        with:
+          results_file: "${{ inputs.file }}"
+          results_format: "sarif"
+          # (Optional) "write" PAT token. Uncomment the `repo_token` line below if:
+          # - you want to enable the Branch-Protection check on a *public* repository, or
+          # - you are installing Scorecard on a *private* repository
+          # To create the PAT, follow the steps in
+          # https://github.com/ossf/scorecard-action?tab=readme-ov-file#authentication-with-fine-grained-pat-optional
+          # repo_token: ${{ secrets.SCORECARD_TOKEN }}
+
+          # Public repositories:
+          #   - Publish results to OpenSSF REST API for easy access by consumers
+          #   - Allows the repository to include the Scorecard badge.
+          #   - See https://github.com/ossf/scorecard-action#publishing-results.
+          # For private repositories:
+          #   - `publish_results` will always be set to `false`, regardless
+          #     of the value entered here.
+          publish_results: "${{ inputs.sarif }}"
+          # yamllint enable rule:line-length
+          # Everything below is the same as ../actions/sarif-upload/action.yml
+          # but had to be copy-pasted as custom actions are not allowed by
+          # ossf/scorecard-action
+      - name: "Upload artifact"
+        # yamllint disable rule:line-length
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
+        # yamllint enable rule:line-length
+        if: >
+          inputs.name != ''
+        with:
+          name: "${{ inputs.name }}"
+          path: "${{ inputs.file }}"
+          retention-days: 7
+          overwrite: true
+      - name: "Upload SARIF file to GitHub Advanced Security Dashboard"
+        if: >
+          inputs.sarif
+        # SARIF upload may fail if there is no integration enabled
+        continue-on-error: true
+        # yamllint disable rule:line-length
+        uses: "github/codeql-action/upload-sarif@fca7ace96b7d713c7035871441bd52efbe39e27e" # v3.28.19
+        # yamllint enable rule:line-length
+        with:
+          sarif_file: "${{ inputs.file }}"
+...

@@ -1,0 +1,139 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Template Setup"
+description: "Setup opennudge/opentemplate template"
+
+inputs:
+  template-repository:
+    description: >
+      Name of the template repository
+    required: true
+  repository:
+    description: >
+      A name of the repository to create
+    required: true
+  template-owner:
+    description: >
+      Owner of the template repository
+    required: true
+  owner:
+    description: >
+      Owner of the repository to create
+    required: true
+  template-description:
+    description: >
+      Description of the template repository
+    required: true
+  description:
+    description: >
+      Description of the repository
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Remove template specific dependent data (e.g. links)"
+      shell: "bash"
+      run: >
+        rm -rf docs/template/index.md docs/template/README.md
+    - name: "Recreate template specific data independently"
+      shell: "bash"
+      run: |
+        cp -r README.md docs/template/README.md
+        cd docs/template
+        ln -s README.md index.md
+    - name: "Remove project-specific directories"
+      shell: "bash"
+      run: >
+        rm -rf src tests
+    - name: "Overwrite files"
+      env:
+        TEMPLATE_REPOSITORY: "${{ inputs.template-repository }}"
+        REPOSITORY: "${{ inputs.repository }}"
+      shell: "bash"
+      run: |
+        cp -r template-setup/overwrite/* .
+      # mv "src/${TEMPLATE_REPOSITORY}" "src/${REPOSITORY}"
+    - name: "Change template data"
+      shell: "bash"
+      env:
+        TEMPLATE_REPOSITORY: "${{ inputs.template-repository }}"
+        REPOSITORY: "${{ inputs.repository }}"
+        TEMPLATE_OWNER: "${{ inputs.template-owner }}"
+        OWNER: "${{ inputs.owner }}"
+        TEMPLATE_DESCRIPTION: "${{ inputs.template-description }}"
+        DESCRIPTION: "${{ inputs.description }}"
+        SKIP_N_LINES: "6"
+        EXCLUDE_LIST: >
+          ./docs/template
+          ./.cache
+          ./.git
+          ./.github/actions
+          ./.github/workflows
+      run: >
+        ./template-setup/rename.sh
+        "${TEMPLATE_REPOSITORY}"
+        "${REPOSITORY}"
+        "${TEMPLATE_OWNER}"
+        "${OWNER}"
+        "${TEMPLATE_DESCRIPTION}"
+        "${DESCRIPTION}"
+        "${SKIP_N_LINES}"
+        "${EXCLUDE_LIST}"
+    # We can now work in standard working-directory
+    # Cookiecutter recreated original repository at the same location
+    - name: "Create .gitignore header and specific entries"
+      shell: "bash"
+      # REUSE-IgnoreStart
+      run: |
+        echo '# SPDX-FileCopyrightText: © 2025 GitHub <https://github.com>
+        #
+        # SPDX-License-Identifier: CC0-1.0
+
+        .python-version
+        ' > .gitignore
+      # REUSE-IgnoreEnd
+    - name: "Add the latest Python .gitignore"
+      shell: "bash"
+      run: >
+        curl
+        https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
+        >> .gitignore
+    - name: "Setup PDM"
+      # yamllint disable rule:line-length
+      uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0"  # v4.4
+      # yamllint enable rule:line-length
+    - name: "Create pdm.lock"
+      shell: "bash"
+      run: >
+        pdm run lock
+    - name: "Add pdm.lock license"
+      shell: "bash"
+      # REUSE-IgnoreStart
+      run: |
+        echo "SPDX-FileCopyrightText: NONE" > pdm.lock.license
+        echo "" >> pdm.lock.license
+        echo "SPDX-License-Identifier: CC0-1.0" >> pdm.lock.license
+      # REUSE-IgnoreEnd
+    - name: "Remove trailing whitespace from .gitignore"
+      shell: "bash"
+      run: >
+        sed --in-place 's/[[:space:]]\+$//' .gitignore
+    - name: "Install markdown formatter"
+      shell: "bash"
+      run: >
+        pdm install --no-self --no-default -G dev-markdown --no-editable
+    - name: "Run markdown formatting"
+      continue-on-error: true
+      shell: "bash"
+      run: >
+        pdm run -v fix-markdown $(git diff --name-only -- '*.md')
+    - name: "Git status"
+      shell: "bash"
+      run: >
+        git status
+...

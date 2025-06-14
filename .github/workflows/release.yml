@@ -1,0 +1,254 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release"
+
+on:
+  release:
+    types:
+      - "published"
+
+permissions: {} # yamllint disable-line rule:braces
+
+# post runs on release changelog action
+# Only keep one release running at a time
+# The latest release will be the one that is kept
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Do not run the release for Renovate Bot updates.
+# For it, run changelog generation and that should be it.
+jobs:
+  sboms:
+    name: "SBOMs"
+    permissions:
+      id-token: "write"
+      attestations: "write"
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/release-sboms-reusable.yml"
+    # yamllint enable rule:line-length
+
+  sarifs:
+    name: "SARIFs"
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      # Writing security events to upload SARIF file to security tab
+      security-events: "write"
+      # Only need to read contents
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/release-sarifs-reusable.yml"
+    # yamllint enable rule:line-length
+
+  tests:
+    name: "Tests"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/tests-reusable.yml"
+
+  docs:
+    name: "Docs"
+    permissions:
+      contents: "write"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      # Double checkout used to refresh the content of generated docs, which
+      # happens on some linux distributions at least.
+      # yamllint disable rule:line-length
+      command: |
+        export TAG="$(echo ${{ github.event.release.tag_name }} | cut -d. -f1,2)"
+        pdm run mike deploy "${TAG}" --branch "site-${{ github.sha }}" --ignore-remote-status
+        git checkout "site-${{ github.sha }}" -- .
+        mv "${TAG}" "site-${{ github.sha }}"
+      # yamllint enable rule:line-length
+      group: "docs"
+      core: true
+      fetch-depth: 0
+      full-checkout: true
+      additional-allowed-endpoints: >
+        fonts.google.com:443
+        fonts.gstatic.com:443
+      upload-name: >-
+        ${{ format('site-{0}', github.sha) }}
+      upload-path: >-
+        ${{ format('site-{0}', github.sha) }}
+
+  # Works regardless of repo type
+  package-create:
+    name: "Package Create"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      command: "pdm build -v"
+      core: true
+      upload-name: "dist-${{ github.sha }}"
+      upload-path: "dist"
+
+  changelog:
+    name: "Changelog"
+    if: >
+      always()
+    needs:
+      - "package-create"
+    permissions:
+      contents: "read"
+      pull-requests: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      download: true
+      download-name: "dist-${{ github.sha }}"
+      # yamllint disable rule:line-length
+      command: |
+        mkdir -p CHANGELOGS-${{ github.sha }}
+        export PYTHON_PACKAGE_VERSION="$(echo dist-${{ github.sha }}/dist/*.tar.gz | cut -d '-' -f 2 | cut -d '.' -f 1-3)"
+        pdm run changelog > CHANGELOGS-${{ github.sha }}/CHANGELOG-${{ github.sha }}.md
+        pdm run changelog-latest > CHANGELOGS-${{ github.sha }}/LATEST.md
+      # yamllint enable rule:line-length
+      group: "release"
+      # Full history to generate full changelog
+      fetch-depth: 0
+      upload-name: "CHANGELOGS-${{ github.sha }}"
+      upload-path: "CHANGELOGS-${{ github.sha }}"
+
+  package-upload:
+    name: "Package Upload (${{ matrix.repository.name }})"
+    needs:
+      - "sboms"
+      - "sarifs"
+      - "tests"
+      - "docs"
+      - "package-create"
+      - "changelog"
+    permissions:
+      id-token: "write" # To sign the provenance.
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      matrix:
+        repository:
+          - url: "https://pypi.org/simple/"
+            endpoints: |
+              pypi.org:443
+              files.pythonhosted.org:443
+            attestations: true
+            name: "PyPI"
+            skip: "${{ github.event.repository.private }}"
+            # Example for a test repository
+            # - url: "https://test.pypi.org/simple/"
+            #   endpoints: |
+            #     test.pypi.org:443
+            #     files.pythonhosted.org:443
+            #   attestations: true
+            #   name: "PyPI Test"
+            #   skip: >
+            #     ${{ github.event.repository.visibility != 'public' }}
+
+    # Change to the opentemplate reusable workflow
+    # once the issue below is resolved for SLSA3 compatibility
+    # https://github.com/pypi/warehouse/issues/11096
+    steps:
+      - name: "Harden Runner"
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            fulcio.sigstore.dev:443
+            rekor.sigstore.dev:443
+            api.github.com:443
+            files.pythonhosted.org:443
+            ghcr.io:443
+            github.com:443
+            pkg-containers.githubusercontent.com:443
+            pypi.org:443
+      - name: "Download artifacts"
+        # yamllint disable rule:line-length
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
+        with:
+          name: "dist-${{ github.sha }}"
+          path: "dist"
+      - name: "Upload python package"
+        if: >
+          ! matrix.repository.skip
+        # yamllint disable rule:line-length
+        uses: "pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc" # v1.12.4
+        # yamllint enable rule:line-length
+        with:
+          repository-url: "${{ matrix.repository.url }}"
+          packages-dir: "dist"
+          attestations: "${{ matrix.repository.attestations }}"
+          print-hash: true
+      - name: "Rename artifacts"
+        # yamllint disable rule:indentation
+        run: |
+          # Add GITHUB_SHA to artifacts before the first dot
+          for f in dist/*; do
+            base=$(basename "${f}")
+            dir=$(dirname "${f}")
+
+            prefix="${base%%-*}"
+            suffix="${base#"${prefix}"}"
+
+            mv "${f}" "${dir}/${prefix}-${GITHUB_SHA}${suffix}"
+          done
+        # yamllint enable rule:indentation
+      - name: "Upload artifacts"
+        # yamllint disable rule:line-length
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
+        # yamllint enable rule:line-length
+        with:
+          name: "dist-${{ github.sha }}"
+          path: "dist"
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: "error"
+
+  slsa-provenance:
+    name: "SLSA Provenance"
+    needs:
+      - "package-upload"
+    if: >
+      github.event.repository.visibility == 'public'
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      contents: "write"
+      id-token: "write" # To sign the provenance.
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/release-slsa-provenance-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      upload-assets: true
+
+  github-upload:
+    name: "GitHub Upload"
+    needs:
+      - "slsa-provenance"
+    permissions:
+      contents: "write"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/release-upload.yml"
+    # yamllint enable rule:line-length
+    with:
+      tag: "${{ github.event.release.tag_name }}"
+...

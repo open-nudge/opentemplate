@@ -1,0 +1,1333 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+[build-system]
+build-backend = "pdm.backend"
+
+requires = [
+  "commition[pdm]>=0.0.1",
+  "pdm-backend>=2",
+]
+
+[project]
+name = "opentemplate"
+
+description = "The simplest to use, yet the most comprehensive Python template"
+readme = "README.md"
+
+license = "Apache-2.0"
+maintainers = [
+  { name = "open-nudge" },
+]
+authors = [
+  { name = "open-nudge" },
+]
+#
+#           DO NOT EDIT UNTIL end marker
+#
+# [[[cog
+# import cog
+# import cogeol
+#
+# cycle = cogeol.scientific()[-1]["cycle"]
+# cog.out(f'requires-python = ">={cycle}"')
+# ]]]
+requires-python = ">=3.11"
+# [[[end]]] (sum: YimYlx3sLU)
+
+# Full list of classifiers: https://pypi.org/classifiers/
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # for version in reversed(cogeol.scientific()):
+  #     cycle = version["cycle"]
+  #     cog.outl(f'  "Programming Language :: Python :: {cycle}",')
+  # ]]]
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  # [[[end]]] (sum: FeG7grp2Dw)
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+dynamic = [ "version" ]
+
+###############################################################################
+#
+#                              DEPENDENCIES
+#
+###############################################################################
+
+dependencies = [
+]
+
+urls.Changelog = "https://github.com/open-nudge/opentemplate/blob/master/CHANGELOG.md"
+urls.Documentation = "https://open-nudge.github.io/opentemplate"
+urls.Homepage = "https://open-nudge.github.io/opentemplate"
+urls.Issues = "https://github.com/open-nudge/opentemplate/issues"
+urls.Repository = "https://github.com/open-nudge/opentemplate"
+
+[dependency-groups]
+dev-tests = [
+  # Fuzz/property testing for Python
+  "coverage>=7",
+  "hypothesis>=6",
+  "pytest>=8",
+  "pytest-asyncio>=1",
+  "pytest-html>=4",
+  "pytest-pretty-terminal>=1",
+  "pytest-randomly>=3",
+]
+
+dev-docs = [
+  # Needed for mkdocs-social
+  "cairosvg>=2",
+  "markdown>=3",
+  "mike>=2",
+  "mkdocs-awesome-nav>=3",
+  "mkdocs-gen-files>=0.5.0",
+  "mkdocs-git-revision-date-localized-plugin>=1",
+  "mkdocs-github-admonitions-plugin>=0.0.3",
+  "mkdocs-jupyter>=0.25.1",
+  "mkdocs-link-marker>=0.1.3",
+  "mkdocs-literate-nav>=0.6.0",
+  "mkdocs-material>=9",
+  "mkdocs-minify-plugin>=0.8.0",
+  "mkdocs-open-in-new-tab>=1",
+  "mkdocs-redirects>=1",
+  "mkdocs-section-index>=0.3.4",
+  "mkdocstrings>=0.25.0",
+  "mkdocstrings-python>=1",
+  # Needed for mkdocs-social
+  "pillow>=10",
+  "pygments>=2",
+  "pymdown-extensions>=10",
+  "termynal>=0.12.1",
+]
+
+dev-python = [
+  "fawltydeps>=0.17.0",
+  "interrogate>=1",
+  "ruff>=0.5.6",
+]
+
+dev-typing = [
+  "basedpyright>=1.28.1"
+]
+
+dev-shell = [
+  "shellcheck-py>=0.10.0",
+]
+
+dev-yaml = [
+  "yamllint>=1",
+]
+
+dev-markdown = [
+  "md-dead-link-check>=1.2.0",
+  "mdformat>=0.7.19",
+  "mdformat_frontmatter>=2",
+  "mdformat_footnote>=0.1.1",
+  "mdformat-gfm>=0.3.7",
+  "mdformat_gfm_alerts>=1",
+  "mdformat-mkdocs>=4",
+  "pymarkdownlnt>=0.9.21",
+]
+
+dev-ini = [
+  "pyinilint>=0.17",
+]
+
+dev-pyproject = [
+  "validate-pyproject>=0.18",
+]
+
+dev-code = [
+  "editorconfig-checker>=3",
+  "codespell>=2",
+]
+
+dev-citation = [
+  # Has to be pinned due to latest fixes not pushed to PyPI
+  # Citations will not be updated by renovate due to this issue as well
+  "cffconvert @ git+https://github.com/citation-file-format/cffconvert@b6045d78aac9e02b039703b030588d54d53262ac",
+]
+
+dev-security = [
+  # Semgrep may be a little rough for some releases, specify it ONLY for one version
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # cycle = cogeol.scientific()[-1]["cycle"]
+  # cog.out(f'''  "semgrep>=1; platform_system!='Windows' and python_version=='{cycle}'"''')
+  # ]]]
+  "semgrep>=1; platform_system!='Windows' and python_version=='3.11'"
+  # [[[end]]] (sum: 0aEPMwHm+9)
+]
+
+dev-github = [
+  "zizmor>=1",
+  "check-jsonschema>=0.31.2",
+]
+
+dev-legal = [
+  "reuse>=4",
+]
+
+dev-release = [
+  "spdx-tools>=0.8.3",
+  "cyclonedx-bom>=4",
+  "git-cliff>=2",
+  "reuse>=4",
+]
+
+dev-generation = [
+  "cogapp>=3",
+  "cogeol>=0.0.1",
+]
+
+dev-commit = [
+  "conventional-pre-commit>=4",
+]
+
+dev-pre-commit = [
+  "pre-commit>=3",
+]
+
+dev-all = [
+  { include-group = "dev-tests" },
+  { include-group = "dev-docs" },
+  { include-group = "dev-python" },
+  { include-group = "dev-typing" },
+  { include-group = "dev-shell" },
+  { include-group = "dev-yaml" },
+  { include-group = "dev-markdown" },
+  { include-group = "dev-ini" },
+  { include-group = "dev-pyproject" },
+  { include-group = "dev-code" },
+  { include-group = "dev-citation" },
+  { include-group = "dev-security" },
+  { include-group = "dev-github" },
+  { include-group = "dev-legal" },
+  { include-group = "dev-release" },
+  { include-group = "dev-generation" },
+  { include-group = "dev-commit" },
+  { include-group = "dev-pre-commit" },
+]
+
+###############################################################################
+#
+#                             TOOL SETTINGS
+#
+###############################################################################
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.version]
+source = "call"
+getter = "commition.plugin.pdm:git"
+
+[tool.ruff]
+line-length = 80
+src = [
+  "src",
+  "test",
+]
+extend-exclude = [
+  ".pdm-plugins",
+]
+unsafe-fixes = false
+
+show-fixes = true
+
+format.docstring-code-format = true
+lint.select = [
+  "ALL",
+]
+lint.extend-ignore = [
+  "ANN401",
+  # ruff recommended for fixer compatibility
+  "COM812",
+  # simplify implicit str concatenation (ruff-format recommended)
+  "ISC001",
+  # Prefer absolute imports over relative imports from parent modules
+  "TID252",
+]
+
+lint.extend-per-file-ignores."tests/**.py" = [
+  # Pytest should not be a module
+  "INP001",
+  "S101",
+]
+lint.extend-per-file-ignores."template-setup/overwrite/tests/**.py" = [
+  # Pytest should not be a module
+  "INP001",
+  "S101",
+]
+lint.flake8-bandit.check-typed-exception = true
+lint.flake8-boolean-trap.extend-allowed-calls = [
+  "django.db.models.Value",
+  "pydantic.Field",
+]
+lint.flake8-builtins.builtins-allowed-modules = [
+  "id",
+]
+lint.flake8-import-conventions.banned-from = [
+  "numpy",
+  "pandas",
+  "polars",
+  "typing",
+]
+lint.flake8-pytest-style.parametrize-values-type = "tuple"
+lint.flake8-type-checking.strict = true
+lint.isort.detect-same-package = false
+lint.isort.lines-between-types = 1
+lint.isort.required-imports = [ "from __future__ import annotations" ]
+lint.isort.section-order = [
+  "future",
+  "standard-library",
+  "third-party",
+  # Additional section for machine learning
+  "ml",
+  # Additional section for pytest
+  "testing",
+  "first-party",
+  "local-folder",
+]
+lint.isort.sections.ml = [
+  "pandas",
+  "numpy",
+  "polars",
+  "matplotlib",
+  "seaborn",
+  "scipy",
+  "sklearn",
+  "statsmodels",
+  "nltk",
+  "spacy",
+  "gensim",
+  "tensorflow",
+  "torch",
+  "pytorch-lightning",
+  "lightning",
+  "coremltools",
+  "torchmetrics",
+  "xgboost",
+  "lightgbm",
+  "catboost",
+  "fastai",
+  "mlflow",
+  "neptune",
+  "dvc",
+  "wandb",
+  "dask",
+  "pyspark",
+]
+lint.isort.sections.testing = [ "pytest*", "hypothesis" ]
+lint.mccabe.max-complexity = 6
+lint.pep8-naming.classmethod-decorators = [
+  "pydantic.validator",
+]
+lint.pycodestyle.max-doc-length = 80
+# Detecting very long lines
+lint.pycodestyle.max-line-length = 120
+
+lint.pydocstyle.convention = "google"
+lint.pydocstyle.ignore-decorators = [ "typing.overload" ]
+
+# These are largely opinionated, adjust as needed
+lint.pylint.max-branches = 6
+lint.pylint.max-locals = 10
+lint.pylint.max-nested-blocks = 3
+lint.pylint.max-public-methods = 10
+lint.pylint.max-returns = 5
+lint.pylint.max-statements = 20
+
+[tool.codespell]
+skip = "*pdm.lock,*__pypackages__/*"
+ignore-words-list = "intoto"
+check-filenames = true
+interactive = 0
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+source = [
+  "src",
+  "tests",
+]
+source_pkgs = [
+  "opentemplate",
+]
+omit = [
+  "src/opentemplate/**"
+]
+
+[tool.coverage.paths]
+source = [
+  "src/opentemplate",
+  "**/opentemplate",
+]
+
+[tool.coverage.report]
+exclude_also = [
+  "def __repr__",
+  "if self.debug:",
+  "if settings.DEBUG",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if 0:",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "if typing.TYPE_CHECKING:",
+  "class .*\\bProtocol\\):",
+  "@(abc\\.)?abstractmethod",
+]
+
+fail_under = 100
+precision = 2
+show_missing = true
+skip_empty = true
+
+[tool.fawltydeps]
+ignore_undeclared = [
+  "mkdocs_gen_files",
+  "pytest",
+  "hypothesis",
+  "opentemplate",
+]
+
+ignore_unused = [
+  "basedpyright",
+  "cairosvg",
+  "cffconvert",
+  "check-jsonschema",
+  "cogapp",
+  "cogeol",
+  "conventional-pre-commit",
+  "coverage",
+  "cyclonedx-bom",
+  "editorconfig-checker",
+  "git-cliff",
+  "hypothesis",
+  "interrogate",
+  "markdown",
+  "md-dead-link-check",
+  "mdformat",
+  "mdformat-gfm",
+  "mdformat_footnote",
+  "mdformat_frontmatter",
+  "semgrep",
+  "shellcheck-py",
+  "termynal",
+  "validate-pyproject",
+  "yamllint",
+  "zizmor",
+  "codespell",
+  "fawltydeps",
+  "mdformat-mkdocs",
+  "mdformat_gfm_alerts",
+  "mike",
+  "mkdocs-awesome-nav",
+  "mkdocs-gen-files",
+  "mkdocs-git-revision-date-localized-plugin",
+  "mkdocs-github-admonitions-plugin",
+  "mkdocs-jupyter",
+  "mkdocs-link-marker",
+  "mkdocs-literate-nav",
+  "mkdocs-material",
+  "mkdocs-minify-plugin",
+  "mkdocs-open-in-new-tab",
+  "mkdocs-redirects",
+  "mkdocs-section-index",
+  "mkdocstrings",
+  "mkdocstrings-python",
+  "pillow",
+  "pre-commit",
+  "pygments",
+  "pyinilint",
+  "pymarkdownlnt",
+  "pymdown-extensions",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-html",
+  "pytest-pretty-terminal",
+  "pytest-randomly",
+  "reuse",
+  "ruff",
+  "spdx-tools",
+]
+
+[tool.interrogate]
+verbose = 1
+style = "google"
+fail-under = 100
+exclude = [
+  "build",
+  "test",
+  ".pdm-plugins",
+]
+
+[tool.basedpyright]
+exclude = [
+  "**/node_modules",
+  "**/__pycache__",
+  "**/.*",
+  "**/__pypackages__",
+  "site/*",
+  "docs/scripts/gen_ref_pages.py",
+  "docs/scripts/preprocess_files.py",
+]
+
+pythonPlatform = "All"
+
+#
+#           DO NOT EDIT UNTIL end marker
+#
+# [[[cog
+# import cog
+# import cogeol
+#
+# cycle = cogeol.scientific()[-1]["cycle"]
+# cog.out(f'pythonVersion = "{cycle}"')
+# ]]]
+pythonVersion = "3.11"
+# [[[end]]] (sum: XMgb7wOez5)
+
+failOnWarnings = true
+
+analyzeUnannotatedFunctions = true
+deprecateTypingAliases = true
+strictGenericNarrowing = true
+
+typeCheckingMode = "all"
+
+# Specific rule settings
+reportAny = "none"
+reportUnknownVariableType = "none"
+reportUnknownMemberType = "none"
+reportMissingTypeStubs = "none"
+# A lot of false positives
+reportPrivateLocalImportUsage = "none"
+reportPrivateImportUsage = "none"
+
+extraPaths = [
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # cycle = cogeol.scientific()[-1]["cycle"]
+  # cog.out(f'  "__pypackages__/{cycle}/lib"')
+  # ]]]
+  "__pypackages__/3.11/lib"
+  # [[[end]]] (sum: Uf7Jgq+ShT)
+]
+
+[tool.pymarkdown]
+# Disabled as it does not play well with GitHub admonitions
+plugins.md007.enabled = false
+plugins.md028.enabled = false
+plugins.md033.enabled = false
+plugins.md034.enabled = false
+# Disabled as the first line is SPDX license header
+plugins.md041.enabled = false
+plugins.md042.enabled = false
+
+[tool.md_dead_link_check]
+exclude_links = [
+  "https://github.com/open-nudge/opentemplate*",
+  "https://open-nudge.github.io/opentemplate*",
+  "/LICENSE.md",
+  "https://open-nudge.github.io*",
+  "templateskip",
+]
+
+exclude_files = [
+  "template-setup/overwrite/*",
+  "pypackages/*",
+]
+
+[tool.commition]
+include_paths = [
+  "src/*",
+  "pyproject.toml",
+]
+
+exclude_commiters = [
+  "github-actions[bot]",
+]
+
+###############################################################################
+#
+#                                   CHANGELOG
+#
+###############################################################################
+
+
+[tool.git-cliff.changelog]
+header = """
+"""
+# template for the changelog body
+# https://keats.github.io/tera/docs/#introduction
+body = """
+{%- macro remote_url() -%}
+  https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
+{%- endmacro -%}
+
+{%- if version -%}
+  {% if previous.version %}
+    # [{{ version | trim_start_matches(pat="v") }}]({{ self::remote_url() }}/compare/{{ previous.version }}..{{ version }}) \
+    - {{ timestamp | date(format="%Y-%m-%d") }} \
+    ([vs HEAD]({{ self::remote_url() }}/compare/{{ version }}..HEAD))
+  {%- else -%}
+    # {{ version | trim_start_matches(pat="v") }} - {{ timestamp | date(format="%Y-%m-%d") }} \
+    ([vs HEAD]({{ self::remote_url() }}/compare/{{ version }}..HEAD))
+  {%- endif %}
+{%- else -%}
+# Untagged ([vs HEAD]({{ self::remote_url() }}/compare/..HEAD))
+{%- endif %}
+
+__Commits by type__
+
+{% set total = commits | length -%}
+
+{%- set human = self::count_commits(commits=commits, bot=false) -%}
+{%- set bot = self::count_commits(commits=commits, bot=true) -%}
+
+{%- set python = self::count_commits(commits=commits, label="python") -%}
+{%- set other = self::count_commits(commits=commits, label="python", contains=false) -%}
+
+Total | Human | Bots | Python | Other
+:---: | :---: | :---:|  :---: | :---:
+{{ total }} | {{ human }} | {{ bot }} | {{ python }} | {{ other }}
+
+__Commits by labels__
+
+{% set security = self::count_commits(commits=commits, label="security") -%}
+{%- set tests = self::count_commits(commits=commits, label="tests") -%}
+{%- set legal = self::count_commits(commits=commits, label="legal") -%}
+{%- set docs = self::count_commits(commits=commits, label="docs") -%}
+{%- set actions = self::count_commits(commits=commits, label="actions") -%}
+{%- set deps = self::count_commits(commits=commits, label="deps") -%}
+{%- set config = self::count_commits(commits=commits, label="config") -%}
+
+Security | Tests | Legal | Docs | Actions | Config | Dependencies |
+  :---:  | :---: | :---: | :---:|  :---:  |  :---: |    :---:     |
+{{ security }} | {{ tests }} | {{ legal }} | {{ docs }} | {{ actions }} | {{ config }} | {{ deps }}
+
+{% set python_data = [python, "Python", true, get_env(name="PYTHON_PACKAGE_VERSION", default="")] -%}
+{%- set other_data = [other, "Other", false, ""] -%}
+{%- set data = [python_data, other_data] -%}
+
+{%- for item in data%}
+  {%- if item[0] != "0" -%}
+    ## {{ item[1] }} ({% if item[3] %}v{{ item[3] }}, {% endif %}{{ item[0] }} commits)
+    {{- self::display(
+      commits=commits | filter(attribute="breaking", value=true),
+      header="Breaking changes",
+      python=item[2],
+      display_group=true,
+    )-}}
+    {{- self::display(
+      commits=commits | filter(attribute="breaking", value=false) | filter(attribute="group", value="feat"),
+      header="Features",
+      python=item[2],
+    )-}}
+    {{- self::display(
+      commits=commits | filter(attribute="breaking", value=false) | filter(attribute="group", value="fix"),
+      header="Fixes",
+      python=item[2],
+    )-}}
+    {{- self::display(
+      commits=commits,
+      header="Bots",
+      python=item[2],
+      display_group=true,
+      bot=true,
+    )-}}
+  {% endif -%}
+{% endfor %}
+
+{%- macro count_commits(commits, label=false, bot="ignore", contains=true) -%}
+  {% set counter = 0 %}
+  {%- for commit in commits %}
+    {%- if
+      (
+        not label or
+        (
+          (contains and commit.remote.pr_labels and label in commit.remote.pr_labels)
+          or
+          (not contains and commit.remote.pr_labels and label not in commit.remote.pr_labels)
+        )
+      )
+      and
+      (
+        bot == "ignore"
+        or
+        (not bot and not "[bot]" in commit.author.name)
+        or
+        (bot and "[bot]" in commit.author.name)
+      )
+    -%}
+      {%- set_global counter = counter + 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {{- counter -}}
+{%- endmacro -%}
+
+{%- macro display(commits, header, python, bot=false, display_group=false) -%}
+  {%- set n_commits = self::count_commits(
+    commits=commits,
+    label="python",
+    bot=bot,
+    contains=python,
+  ) -%}
+  {%- if n_commits != "0" %}
+
+    ### {{ header }} ({{ n_commits }} commits)
+
+  {% endif -%}
+  {%- for commit in commits -%}
+    {%- if
+      (
+        python == "ignore"
+        or
+        (python and commit.remote.pr_labels and "python" in commit.remote.pr_labels)
+        or
+        (not python and commit.remote.pr_labels and "python" not in commit.remote.pr_labels)
+      )
+      and
+      (
+        bot == "ignore"
+        or
+        (bot and "[bot]" in commit.author.name)
+        or
+        (not bot and not "[bot]" in commit.author.name)
+      )
+    -%}
+      - \
+      {% if display_group -%}
+        {% if commit.group == "feat" -%}[FEATURE] \
+        {% elif commit.group == "fix" -%}[FIX] \
+        {% else -%}[?] \
+        {% endif -%}
+      {%- endif -%}
+      {{ commit.message | split(pat="\n") | first | upper_first | trim }} \
+      {% if commit.remote.username -%}
+        (by [__@{{ commit.remote.username }}__](https://github.com/{{ commit.remote.username }})) \
+      {% elif "[bot]" in commit.author.name -%}
+        (by __@{{ commit.author.name }}__ [BOT]) \
+      {% elif commit.author.name -%}
+        (by __@{{ commit.author.name }}__) \
+      {% endif -%}
+      {% if commit.remote.pr_number -%}
+        ([#{{ commit.remote.pr_number }}]({{ self::remote_url() }}/pull/{{ commit.remote.pr_number }}))
+      {%- endif %}
+      {%- if commit.remote.pr_labels and commit.remote.pr_labels | length > 0 %}
+        {%- for label in commit.remote.pr_labels -%}
+          {%- if label == "security" %} [SECURITY]
+          {%- elif label == "tests" %} [TESTS]
+          {%- elif label == "legal" %} [LEGAL]
+          {%- elif label == "docs" %} [DOCS]
+          {%- elif label == "actions" %} [ACTIONS]
+          {%- elif label == "config" %} [CONFIG]
+          {%- elif label == "deps" %} [DEPS]
+          {%- endif -%}
+        {%- endfor %}
+      {%- endif %}
+    {%- endif %}
+  {% endfor -%}
+{%- endmacro -%}
+"""
+
+footer = ""
+trim = true
+
+[tool.git-cliff.git]
+# parse the commits based on https://www.conventionalcommits.org
+conventional_commits = true
+# filter out the commits that are not conventional
+filter_unconventional = true
+# regex for parsing and grouping commits
+commit_parsers = [
+  { message= "^feat", group = "feat" },
+  { message= "^fix", group = "fix" },
+]
+# filter out the commits that are not matched by commit parsers
+filter_commits = true
+# sort the tags topologically
+topo_order = false
+# sort the commits inside sections by oldest/newest order
+sort_commits = "oldest"
+
+###############################################################################
+#
+#                               SCRIPTS
+#
+###############################################################################
+
+[tool.pdm.scripts]
+
+###############################################################################
+#
+#                             SCRIPTS.TEST
+#
+###############################################################################
+
+tests = { composite = [
+  "pdm run coverage run -m pytest -x --pretty {args:tests}",
+  "pdm run coverage report",
+] }
+
+tests-all = { composite = [
+  "setup-environment",
+  "pdm install --prod -G:all --no-editable",
+  "pdm install -G dev-tests --no-editable",
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # Note: We start with the latest Python version to ensure the oldest one
+  # is the one that is used after any pipeline
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # for version in cogeol.scientific():
+  #     cycle = version["cycle"]
+  #     cog.outl(f'  "pdm use {cycle}",')
+  #     cog.outl(
+  #         '  "pdm run tests {args:tests}",'
+  #     )
+  # ]]]
+  "pdm use 3.13",
+  "pdm run tests {args:tests}",
+  "pdm use 3.12",
+  "pdm run tests {args:tests}",
+  "pdm use 3.11",
+  "pdm run tests {args:tests}",
+  # [[[end]]] (sum: R5ZEP5Ahja)
+] }
+
+###############################################################################
+#
+#                              SCRIPTS.PYTHON
+#
+###############################################################################
+
+check-python = { composite = [
+  "fawltydeps --detailed --code {args:.}",
+  "ruff format --check {args:.}",
+  "ruff check {args:.}",
+  "interrogate {args:.}",
+] }
+
+fix-python = { composite = [
+  "fawltydeps --detailed --code {args:.}",
+  "ruff format {args:.}",
+  "ruff check --fix {args:.}",
+  "interrogate {args:.}",
+] }
+
+###############################################################################
+#
+#                              SCRIPTS.TYPING
+#
+###############################################################################
+
+check-typing = "basedpyright --stats"
+
+###############################################################################
+#
+#                               SCRIPTS.SHELL
+#
+###############################################################################
+
+check-shell = "shellcheck -x -S style -o all"
+
+fix-shell = { shell = "pdm run shellcheck -x -S style -o all {args} | git apply --allow-empty" }
+
+###############################################################################
+#
+#                               SCRIPTS.YAML
+#
+###############################################################################
+
+check-yaml = { composite = [
+  "yamllint {args:.}",
+] }
+
+###############################################################################
+#
+#                              SCRIPTS.MARKDOWN
+#
+###############################################################################
+
+# @ is ignored for version pinning in pyproject.toml (as seen in cffconvert)
+# issues and blob are ignored as the repo might be private and unreachable
+check-markdown = { composite = [
+  "mdformat --check {args:.}",
+  "pymarkdownlnt scan -r {args:.}",
+  "md-dead-link-check {args:.}",
+] }
+
+fix-markdown = { composite = [
+  # Fix to exclude given files
+  "mdformat {args:.}",
+  "pymarkdownlnt fix -r {args:.}",
+  "pymarkdownlnt scan -r {args:.}",
+  "md-dead-link-check {args:.}",
+] }
+
+###############################################################################
+#
+#                             SCRIPTS.INI
+#
+###############################################################################
+
+check-ini = "pyinilint"
+
+###############################################################################
+#
+#                           SCRIPTS.PYPROJECT
+#
+###############################################################################
+
+check-pyproject = { composite = [
+  "validate-pyproject {args:pyproject.toml}",
+] }
+
+###############################################################################
+#
+#                            SCRIPTS.CITATION
+#
+###############################################################################
+
+check-citation = "cffconvert --validate -i {args:CITATION.cff}"
+
+###############################################################################
+#
+#                             SCRIPTS.CODE
+#
+###############################################################################
+
+check-code = { composite = [
+  "codespell {args:.}",
+  "ec",
+] }
+
+fix-code = { composite = [
+  "codespell --write-changes {args:.}",
+  "ec",
+] }
+
+###############################################################################
+#
+#                              SCRIPTS.DOCS
+#
+###############################################################################
+
+check-docs = "mkdocs build"
+
+###############################################################################
+#
+#                            SCRIPTS.PRE-COMMIT
+#
+###############################################################################
+
+check-pre-commit-config = "pre-commit validate-config {args:.pre-commit-config.yaml}"
+check-pre-commit-hooks = "pre-commit validate-manifest {args:.pre-commit-hooks.yaml}"
+
+###############################################################################
+#
+#                              SCRIPTS.SECURITY
+#
+###############################################################################
+
+check-security = { cmd = [
+  "semgrep",
+  "scan",
+  "--config=p/python",
+  "--config=p/secrets",
+  "--config=p/security-audit",
+  "--config=p/ci",
+  "--config=p/github-actions",
+  "--config=p/bandit",
+  "--config=p/gitleaks",
+  "--error",
+  "--metrics=off",
+  "--severity=INFO",
+  "--strict",
+  "{args:.}",
+] }
+
+###############################################################################
+#
+#                         SCRIPTS.RENOVATE (GH ACTIONS)
+#
+###############################################################################
+
+check-renovate = { cmd = [
+  "check-jsonschema",
+  "--builtin-schema",
+  "vendor.renovate",
+  "{args:./.github/renovate.json}",
+] }
+
+###############################################################################
+#
+#                         SCRIPTS.ACTIONS (GH ACTIONS)
+#
+###############################################################################
+
+check-github-actions = { composite = [
+  "check-jsonschema --verbose --builtin-schema vendor.github-actions",
+] }
+
+###############################################################################
+#
+#                         SCRIPTS.WORKFLOWS (GH ACTIONS)
+#
+###############################################################################
+
+check-github-workflows = { composite = [
+  "check-jsonschema --verbose --builtin-schema github-workflows-require-timeout",
+  "check-jsonschema --verbose --builtin-schema github-workflows",
+] }
+
+###############################################################################
+#
+#                   SCRIPTS.GITHUB (GH ACTIONS + GH WORKFLOWS)
+#
+###############################################################################
+
+check-github = "zizmor --persona auditor --verbose {args:.}"
+
+###############################################################################
+#
+#                               SCRIPTS.LEGAL
+#
+###############################################################################
+
+check-legal = "reuse lint"
+
+# See here: https://github.com/pdm-project/pdm/issues/2937
+fix-legal = { shell = """
+  bash -c \
+  "pdm run reuse annotate \
+    --license='$(basename $(readlink -f LICENSE.md) .txt)' \
+    --copyright='open-nudge <https://github.com/open-nudge>' \
+    --contributor='$(git config get user.name) <$(git config get user.email)>' \
+    --copyright-prefix=spdx-symbol \
+    --merge-copyrights \
+    --recursive \
+    --fallback-dot-license \
+  {args:.}"
+""" }
+
+###############################################################################
+#
+#                              SCRIPTS.GENERATION
+#
+###############################################################################
+
+check-generation = { cmd = [
+  "cog",
+  "-c",
+  "--check",
+  """{args:
+  pyproject.toml
+  ./.github/workflows/cache-item-reusable.yml
+  ./.github/workflows/cache-reusable.yml
+  ./.github/workflows/run-reusable.yml
+  ./.github/workflows/tests-reusable.yml
+  ./.github/workflows/release-sbom-attest-reusable.yml
+  ./.github/workflows/release-sbom-run-reusable.yml
+  ./.github/workflows/release-sboms-reusable.yml
+  }
+  """,
+] }
+
+fix-generation = { cmd = [
+  "cog",
+  "-c",
+  "-r",
+  """{args:
+  pyproject.toml
+  ./.github/workflows/cache-item-reusable.yml
+  ./.github/workflows/cache-reusable.yml
+  ./.github/workflows/run-reusable.yml
+  ./.github/workflows/tests-reusable.yml
+  ./.github/workflows/release-sbom-attest-reusable.yml
+  ./.github/workflows/release-sbom-run-reusable.yml
+  ./.github/workflows/release-sboms-reusable.yml
+  }
+  """,
+] }
+
+
+###############################################################################
+#
+#                         SCRIPTS.ALL (CONVENIENCE)
+#
+###############################################################################
+
+check-all = { composite = [
+  "check-generation",
+  "check-citation",
+  "check-markdown",
+  "check-yaml",
+  "check-pre-commit",
+  "check-pyproject",
+  "check-legal",
+  "check-workflows",
+  "check-security",
+  "check-docs",
+  "check-python",
+] }
+
+fix-all = { composite = [
+  "fix-generation",
+  "check-citation",
+  "fix-markdown",
+  "check-yaml",
+  "check-pre-commit",
+  "fix-pyproject",
+  "fix-legal",
+  "check-legal",
+  "check-workflows",
+  "check-security",
+  "check-docs",
+  "fix-python",
+] }
+
+###############################################################################
+#
+#                               SCRIPTS.SETUP
+#
+###############################################################################
+
+lock = "pdm lock -G:all"
+
+setup-environment = { composite = [
+  "pdm self update",
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # for version in cogeol.scientific():
+  #     cycle = version["cycle"]
+  #     cog.outl(f'  "pdm python install {cycle}",')
+  # ]]]
+  "pdm python install 3.13",
+  "pdm python install 3.12",
+  "pdm python install 3.11",
+  # [[[end]]] (sum: uZEo+p96oZ)
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # for version in cogeol.scientific()[:-1]:
+  #     cycle = version["cycle"]
+  #     cog.outl(f'  "pdm use {cycle}",')
+  #     cog.outl(f'  "pdm install --prod -G:all --no-editable",')
+  #     cog.outl(f'  "pdm install -G dev-tests --no-editable",')
+  # ]]]
+  "pdm use 3.13",
+  "pdm install --prod -G:all --no-editable",
+  "pdm install -G dev-tests --no-editable",
+  "pdm use 3.12",
+  "pdm install --prod -G:all --no-editable",
+  "pdm install -G dev-tests --no-editable",
+  # [[[end]]] (sum: S4abFf8hbc)
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # cycle = cogeol.scientific()[-1]["cycle"]
+  # cog.outl(f'  "pdm use {cycle}",')
+  # ]]]
+  "pdm use 3.11",
+  # [[[end]]] (sum: aXoMTrp8k2)
+] }
+
+setup = { composite = [
+  "setup-environment",
+  "pdm install -G:all --no-editable",
+  "pdm run pre-commit install --install-hooks",
+] }
+
+###############################################################################
+#
+#                         PRE-COMMIT CHECKS ALIASES
+#
+###############################################################################
+
+pre-commit-all = "pre-commit run {args:''} --all-files"
+
+###############################################################################
+#
+#                             SCRIPTS.SBOM
+#
+###############################################################################
+
+# Check here for syntax:
+sbom-python = { shell = """
+  bash -c \
+  'pdm run cyclonedx-py environment $(pdm info --python) \
+    --PEP-639 --mc-type library \
+    --schema-version 1.6'
+""" }
+
+sbom-legal = { shell = """
+  bash -c \
+  " pdm run reuse spdx \
+      --add-license-concluded \
+      --creator-organization='open-nudge <https://github.com/open-nudge>' \
+      --creator-person='$(git config get user.name) <$(git config get user.email)>' \
+    > .sbom-legal.spdx \
+    && pdm run pyspdxtools \
+      --version "SPDX-2.2" --novalidation \
+      -i .sbom-legal.spdx -o .sbom-legal.json \
+    && ( cat .sbom-legal.json && rm .sbom-legal.spdx .sbom-legal.json )"
+""" }
+
+sbom-all = { composite = [
+  "sbom-python",
+  "sbom-legal",
+] }
+
+###############################################################################
+#
+#                             SCRIPTS.CHANGELOG
+#
+###############################################################################
+
+changelog = { cmd = "pdm run git-cliff" }
+changelog-latest = { cmd = "pdm run git-cliff --latest" }
+
+###############################################################################
+#
+#                              SCRIPTS.RELEASE
+#
+###############################################################################
+
+check-release = { composite = [
+  "sbom-all",
+  "changelog",
+  "changelog-latest",
+  "pdm build",
+] }
+
+###############################################################################
+#
+#                         COMMITTING (move to opentemplate later)
+#
+###############################################################################
+
+check-commit = "conventional-pre-commit --strict --scopes '' feat fix feat! fix!"
+
+# Manual testing
+commit = { shell = """
+echo "By committing to this repository, you agree to the Developer Certificate of Origin (DCO)."
+printf "See here: https://developercertificate.org/ for more information.\n"
+git commit --signoff --gpg-sign
+""" }
+
+# Manual testing
+commit-type = { shell = """
+echo "By committing to this repository, you agree to the Developer Certificate of Origin (DCO)."
+printf "See here: https://developercertificate.org/ for more information.\n"
+
+options=("fix" "feat" "fix!" "feat!")
+PS3="Select commit type (1-4) or Quit (5): "
+select opt in "${options[@]}" "Quit"; do
+    case "$REPLY" in
+    1) break;;
+    2) break;;
+    3) break;;
+    4) break;;
+    5) exit 0; break;;
+    *) echo "Invalid option."; continue;;
+    esac
+done
+
+read -r -p "\nCommit title message: " title
+
+echo "\nYour commit will be: '$opt: $title'\n"
+
+git commit -S --signoff -m "$opt: $title"
+""" }
+
+# Manual testing
+commit-guided = { shell = """
+echo "By committing to this repository, you agree to the Developer Certificate of Origin (DCO)."
+printf "See here: https://developercertificate.org/ for more information.\n"
+
+echo "Please provide commit type (one of fix/feat/fix!/feat!):"
+echo "- fix: A bug fix (not breaking backward compatibility)."
+echo "- feat: A new feature (not breaking backward compatibility)."
+echo "- fix!: A bug fix (breaking backward compatibility)."
+echo "- feat!: A new feature (breaking backward compatibility)."
+echo ""
+
+options=("fix" "feat" "fix!" "feat!")
+PS3="Select commit type (1-4) or Quit (5): "
+select opt in "${options[@]}" "Quit"; do
+    case "$REPLY" in
+    1) break;;
+    2) break;;
+    3) break;;
+    4) break;;
+    5) exit 0; break;;
+    *) echo "Invalid option.";continue;;
+    esac
+done
+
+printf "\nYou picked %s type.\n" "$opt"
+
+echo "Please provide commit title message:"
+echo "- Use the imperative, present tense: 'change' not 'changed' nor 'changes'"
+echo "- Short (72 chars or less) informative summary of changes"
+echo "- Lowercase"
+echo "- No dot at the end\n"
+echo "Example: 'add performance tests'\n"
+
+read -r -p "Commit title message: " title
+
+echo "\nYour commit will be: '$opt: $title'\n"
+
+read -p "Would you like to make this commit? (Y/N): " \
+  confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+
+git commit -S --signoff -m "$opt: $title"
+""" }

@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Commit Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  commit-reusable:
+    name: "Commit Reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-check-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      check: "commit"
+      arguments: >-
+        <(git log -1 --format=%s)
+      ref: "${{ github.event.pull_request.head.sha }}"
+...

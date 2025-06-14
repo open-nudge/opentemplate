@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+body:
+  - type: "markdown"
+    attributes:
+      value: "Thanks for your interest in opentemplate!"
+  - type: "markdown"
+    attributes:
+      value: >
+        Please consider other categories before submitting a general question.
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      label: "Terms"
+      # yamllint disable rule:line-length
+      description: >
+        By submitting this discussion, you agree to follow this project's
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "checkboxes"
+    id: "verification"
+    attributes:
+      label: "Verification"
+      description: >
+        Did you check that no other category fits your question better?
+      options:
+        - label: >
+            I verified that the question is not related to any other category.
+          required: true
+  - type: "textarea"
+    id: "general"
+    attributes:
+      label: "General"
+      description: >
+        Add discussions that do not fit into any other category below.
+    validations:
+      required: true
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...

@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release SARIFs Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  ###############################################################################
+  #
+  #                             SECURITY JOBS
+  #
+  ###############################################################################
+  sarif-osv-scanner:
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      # Require writing security events to upload SARIF file to security tab
+      security-events: "write"
+      # Only need to read contents
+      contents: "read"
+    name: "Sarif OSV-Scanner"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/security-osv-scanner-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      name: "osv-scanner-${{ github.sha }}"
+      file: "osv-scanner-${{ github.sha }}.sarif"
+
+  sarif-semgrep:
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      # Require writing security events to upload SARIF file to security tab
+      security-events: "write"
+      # Only need to read contents
+      contents: "read"
+    name: "Sarif Semgrep"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/security-semgrep-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      name: "semgrep-${{ github.sha }}"
+      file: "semgrep-${{ github.sha }}.sarif"
+...

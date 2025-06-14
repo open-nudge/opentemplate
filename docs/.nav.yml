@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+
+ignore: "*README.md"
+
+nav:
+  - Overview: "index.md"
+  - Reference: "reference/"
+  - glob: "*/"
+    ignore_no_matches: true
+    flatten_single_child_sections: false
+  - For contributors:
+      - Contributing guide: "CONTRIBUTING.md"
+      - Roadmap: "ROADMAP.md"
+      - Changelog: "CHANGELOG.md"
+      - Governance: "GOVERNANCE.md"
+  - Security:
+      - General: "SECURITY.md"
+      - Dependency policy: "SECURITY-DEPENDENCY.md"
+      - Self assessment: "SECURITY-SELF-ASSESSMENT.md"
+  - Legal:
+      - Code of conduct: "CODE_OF_CONDUCT.md"
+      - License: "LICENSE.md"
+      - Developer certificate of origin: "DCO.md"
+  - Hall of fame:
+      - Adopters: "ADOPTERS.md"
+      - Announcements: "ANNOUNCEMENTS.md"
+  - Template: "template"
+...

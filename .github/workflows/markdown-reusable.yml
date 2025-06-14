@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Markdown Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  markdown-reusable:
+    name: "Markdown Reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      # Workaround for __pypackages__/README.md
+      # It is collected automatically by md-dead-link-check
+      command: >
+        rm -rf .git &&
+        git init --initial-branch main &&
+        pdm run check-markdown
+        $(find . -name '*.md'
+        ! -name 'DCO.md'
+        ! -name 'LICENSE.md'
+        ! -path './LICENSES/*'
+        ! -path './.venv/*'
+        ! -path './__pypackages__/*'
+        ! -path './template-setup/settings-issue/*'
+        ! -path './template-setup/overwrite/*')
+      group: "markdown"
+      sparse-checkout: |
+        **.md
+...

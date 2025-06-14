@@ -1,0 +1,107 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "New Feature"
+description: "Request a feature for the project"
+title: "feat: "
+labels:
+  - "feat"
+body:
+  - type: "markdown"
+    id: "header"
+    attributes:
+      value: |
+        Thanks for sharing your idea with us!
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      label: "Terms"
+      # yamllint disable rule:line-length
+      description: >
+        By submitting this issue, you agree to follow this project's
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "checkboxes"
+    id: "check"
+    attributes:
+      label: "Similar Issue Check"
+      description: >
+        Check if a similar feature request already exists.
+      options:
+        - label: "I have searched for similar issues."
+          required: true
+  - type: "textarea"
+    id: "problem"
+    attributes:
+      label: "Problem Definition"
+      description: >
+        Clearly describe the problem you want to solve with this feature.
+    validations:
+      required: true
+  - type: "checkboxes"
+    id: "alternatives-check"
+    attributes:
+      label: "Alternatives Considered"
+      description: "Did you consider alternative solutions?"
+      options:
+        - label: "I have considered alternatives."
+          required: true
+  - type: "textarea"
+    id: "alternatives"
+    attributes:
+      label: "Considered Alternatives"
+      description: >
+        List alternative solutions you considered (leave blank if none).
+      placeholder: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: false
+  - type: "textarea"
+    id: "similar-solutions"
+    attributes:
+      label: "Similar Solutions"
+      description: >
+        Describe and link similar solutions in other projects
+        (leave blank if none).
+      placeholder: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: false
+  - type: "dropdown"
+    attributes:
+      label: "Willing to Help"
+      description: >
+        Would you like to help develop this feature? We can assist you.
+      multiple: false
+      options:
+        - "Yes"
+        - "Maybe"
+        - "No"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "additional"
+    attributes:
+      label: "Additional Info"
+      description: >
+        Any extra context that could help with this request.
+    validations:
+      required: false
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...

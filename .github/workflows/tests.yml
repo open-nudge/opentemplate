@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Tests"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "src/**"
+      - "test/**"
+      - "pyproject.toml"
+      - "pdm.lock"
+      - ".github/workflows/tests.yml"
+      - ".github/workflows/tests-reusable.yml"
+      - ".github/workflows/run-reusable.yml"
+  merge_group:
+    types:
+      - "checks_requested"
+  workflow_dispatch:
+
+permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-tests:
+    name: "Tests"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/tests-reusable.yml"
+    # yamllint enable rule:line-length
+...

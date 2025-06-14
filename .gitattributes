@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Auto-detect and normalize text files
+* text=auto eol=lf
+
+# Declare binary files
+*.png binary
+*.jpg binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.egg binary
+*.whl binary
+*.pyd binary
+*.so binary

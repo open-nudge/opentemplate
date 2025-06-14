@@ -1,0 +1,167 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# yamllint disable rule:line-length
+site_name: >-
+  opentemplate
+site_description: >-
+  The simplest to use, yet the most comprehensive Python template
+site_url: >-
+  https://open-nudge.github.io/opentemplate/
+repo_url: >-
+  https://github.com/open-nudge/opentemplate
+repo_name: >-
+  open-nudge/opentemplate
+# yamllint enable rule:line-length
+
+exclude_docs: |
+  README.md
+
+validation:
+  omitted_files: "warn"
+  absolute_links: "warn"  # Or 'relative_to_docs' - new in MkDocs 1.6
+  unrecognized_links: "warn"
+  anchors: "warn"  # New in MkDocs 1.6
+
+theme:
+  name: "material"
+  palette:
+    - scheme: "slate"
+      primary: "blue grey"
+      accent: "indigo"
+  features:
+    # Navigation
+    - "navigation.tabs"
+    - "navigation.tabs.sticky"
+    - "navigation.sections"
+    - "navigation.tracking"
+    - "navigation.instant"
+    - "navigation.instant.progress"
+    - "navigation.top"
+    - "toc.integrate"
+    # Search
+    - "search.suggest"
+    - "search.highlight"
+    - "search.share"
+    # Footer
+    - "navigation.footer"
+  icon:
+    repo: "fontawesome/brands/github"
+    admonition:
+      note: "octicons/tag-16"
+      abstract: "octicons/checklist-16"
+      info: "octicons/info-16"
+      tip: "octicons/squirrel-16"
+      success: "octicons/check-16"
+      question: "octicons/question-16"
+      warning: "octicons/alert-16"
+      failure: "octicons/x-circle-16"
+      danger: "octicons/zap-16"
+      bug: "octicons/bug-16"
+      example: "octicons/beaker-16"
+      quote: "octicons/quote-16"
+
+extra:
+  version:
+    provider: "mike"
+    alias: true
+  generator: false
+  social:
+    - icon: "fontawesome/brands/github"
+      link: "https://github.com/open-nudge"
+      name: >-
+        open-nudge
+
+copyright: "© 2025 open-nudge"
+
+plugins:
+  - "search"
+  - "social"
+  - "tags"
+  - "awesome-nav"
+  - "open-in-new-tab"
+  - "link-marker"
+  - gen-files:
+      scripts:
+        - "docs/scripts/gen_ref_pages.py"
+        - "docs/scripts/preprocess_files.py"
+  - literate-nav:
+      nav_file: "SUMMARY.md"
+  - "section-index"
+  - "gh-admonitions"
+  - mkdocstrings:
+      default_handler: "python"
+      handlers:
+        python:
+          options:
+            show_bases: true
+            # show_category_heading: true
+            show_root_full_path: true
+            show_root_members_full_path: true
+            show_object_full_path: true
+            inherited_members: true
+            members_order: "source"
+            filters:
+              - "!^_"
+              - "^__"
+              - "!^__enter__$"
+              - "!^__exit__$"
+            docstring_style: "google"
+            docstring_options:
+              ignore_init_summary: true
+            docstring_section_style: "table"
+            merge_init_into_class: true
+            separate_signature: true
+  - termynal:
+      prompt_literal_start:
+        - "$"
+        - ">"
+  - git-revision-date-localized:
+      type: "iso_datetime"
+      fallback_to_build_date: true
+  - minify:
+      minify_html: true
+      htmlmin_opts:
+        remove_comments: true
+  - mike:
+      canonical_version: "latest"
+
+# https://squidfunk.github.io/mkdocs-material/reference/
+markdown_extensions:
+  - "admonition"
+  - "attr_list"
+  - "abbr"
+  - "def_list"
+  - "footnotes"
+  - "md_in_html"
+  - "tables"
+  - "pymdownx.arithmatex"
+  - "pymdownx.betterem"
+  - "pymdownx.critic"
+  - "pymdownx.emoji"
+  - "pymdownx.smartsymbols"
+  - "pymdownx.saneheaders"
+  - "pymdownx.details"
+  - "pymdownx.snippets"
+  - "pymdownx.inlinehilite"
+  - "pymdownx.critic"
+  - "pymdownx.caret"
+  - "pymdownx.keys"
+  - "pymdownx.mark"
+  - "pymdownx.tilde"
+  - "pymdownx.superfences"
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+      title: "Page Contents"
+  - "pymdownx.striphtml"
+...

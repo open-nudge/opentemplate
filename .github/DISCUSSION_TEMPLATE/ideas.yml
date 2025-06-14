@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+labels:
+  - "feat"
+body:
+  - type: "markdown"
+    attributes:
+      value: "Thanks for your interest in opentemplate!"
+  - type: "markdown"
+    attributes:
+      value: >
+        If your feature request relates to a problem, bug,
+        or general implementation plan,
+        consider submitting an issue instead.
+  - type: "markdown"
+    attributes:
+      value: >
+        Link to the issue tracker:
+        [issues](https://github.com/open-nudge/opentemplate/issues/new/choose)
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      label: "Terms"
+      # yamllint disable rule:line-length
+      description: >
+        By submitting this idea, you agree to follow this project's
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "input"
+    id: "version"
+    attributes:
+      label: "Software Version"
+      description: "What version of this software does your idea relate to?"
+      placeholder: "vX.Y.Z"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "idea"
+    attributes:
+      label: "Idea"
+      description: "Describe your idea in detail."
+    validations:
+      required: true
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...

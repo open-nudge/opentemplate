@@ -1,0 +1,86 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Security OSV-Scanner Reusable"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: "Name of the artifact (default: '' - no artifact upload)"
+        type: "string"
+        default: ""
+      sarif:
+        description: "Upload SARIF file to CodeQL"
+        type: "boolean"
+        default: false
+      continue-on-error:
+        description: "Whether to continue on error"
+        type: "boolean"
+        default: false
+      file:
+        description: "Name/path of the created SARIF file"
+        type: "string"
+        default: "osv-scanner.sarif"
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  security-osv-scanner-reusable:
+    name: "Security OSV-Scanner Reusable"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 30
+    permissions:
+      # Required to upload SARIF file to CodeQL.
+      # See: https://github.com/github/codeql-action/issues/2117
+      actions: "read"
+      # Writing security events to upload SARIF file to security tab
+      security-events: "write"
+      # Only need to read contents
+      contents: "read"
+    steps:
+
+      - name: "Harden Runner" # zizmor: ignore[known-vulnerable-actions]
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # yamllint enable rule:line-length
+        with:
+          # Uses docker container,
+          # disable-sudo-and-containers impossible
+          disable-sudo: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.deps.dev:443
+            api.github.com:443
+            api.osv.dev:443
+            github.com:443
+      - name: "Checkout repository"
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          persist-credentials: false
+      - name: "Run scanner"
+        # yamllint disable rule:line-length
+        uses: "google/osv-scanner/actions/scanner@a2a23858b9650035f019219937f91ae615474b4d" # v2.0.2
+        # yamllint enable rule:line-length
+        continue-on-error: "${{ inputs.continue-on-error }}"
+        with:
+          scan-args: |-
+            --format=sarif
+            --output=${{ inputs.file }}
+            --recursive
+            --licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0
+            ./
+      - name: "Upload files"
+        # yamllint disable rule:line-length
+        uses: "./.github/actions/sarif-upload"
+        # yamllint enable rule:line-length
+        with:
+          name: "${{ inputs.name }}"
+          file: "${{ inputs.file }}"
+          sarif: "${{ inputs.sarif }}"
+...

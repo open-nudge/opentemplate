@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Citation Renovate"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+  merge_group:
+    types:
+      - "checks_requested"
+
+permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  cancel-in-progress: true
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+
+jobs:
+  citation-renovate:
+    name: "Citation Renovate"
+    if: |
+      github.event.pull_request.user.login == 'renovate[bot]'
+      && github.ref == 'refs/heads/bot/dependencies-dev-citation'
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/citation-reusable.yml"
+    # yamllint enable rule:line-length
+...

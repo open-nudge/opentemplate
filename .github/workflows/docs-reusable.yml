@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Docs Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  docs-reusable:
+    name: "Docs Reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "./.github/workflows/run-reusable.yml"
+    # yamllint enable rule:line-length
+    with:
+      command: |
+        pdm run check-docs
+      group: "docs"
+      core: true
+      fetch-depth: 0
+      sparse-checkout: |
+        **.md
+        **.py
+        mkdocs.yml
+      additional-allowed-endpoints: >
+        fonts.google.com:443
+        fonts.gstatic.com:443
+...

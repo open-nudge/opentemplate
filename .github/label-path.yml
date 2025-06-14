@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+actions:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+
+deps:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/renovate.json"
+          - "pyproject.toml"
+          - "pdm.lock"
+          - ".pre-commit-config.yaml"
+          - ".github/workflows/renovate-*.yml"
+
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".conform.yaml"
+          - ".editorconfig"
+          - ".yamllint.yml"
+          - ".gitignore"
+          - "pyproject.toml"
+          - "commitlint.config.js"
+          - ".pre-commit-config.yaml"
+          - ".github/renovate.json"
+          - "mkdocs.yml"
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "/**.md"
+          - "mkdocs.yml"
+          - "docs/**"
+          - ".github/**/*docs*.yml"
+          - ".github/actions/ISSUE_TEMPLATE/**"
+          - ".github/actions/PULL_REQUEST_TEMPLATE.md"
+          - ".github/actions/DISCUSSION_TEMPLATE/**"
+legal:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "LICENSE.md"
+          - "CODEOWNERS"
+          - "CODE_OF_CONDUCT.md"
+          - "COPYRIGHT.txt"
+          - "DCO.md"
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "SECURITY-*.md"
+          - ".github/**/*security*.yml"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tests/**"
+          - ".github/**/*test*.yml"
+
+src:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**"
+
+python:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**.py"
+          - "tests/**.py"
+          - ".github/**/*python*.yml"
+...

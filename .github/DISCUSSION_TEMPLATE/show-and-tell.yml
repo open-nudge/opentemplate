@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+labels:
+  - "announcement"
+body:
+  - type: "markdown"
+    attributes:
+      value: "Thanks for your interest in opentemplate!"
+  - type: "checkboxes"
+    id: "terms"
+    attributes:
+      label: "Terms"
+      # yamllint disable rule:line-length
+      description: >
+        By submitting this announcement, you agree to follow this project's
+        [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: >
+            I agree to follow this project's
+            [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
+          required: true
+          # yamllint enable rule:line-length
+  - type: "input"
+    id: "version"
+    attributes:
+      label: "Software Version"
+      description: "What version of this software is your project using?"
+      placeholder: "vX.Y.Z"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "announcements"
+    attributes:
+      label: "Announcement"
+      description: "Add your project announcement here."
+    validations:
+      required: true
+  - type: "markdown"
+    attributes:
+      value: "Thank you for completing the form!"
+...
