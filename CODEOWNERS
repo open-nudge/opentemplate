@@ -6,3 +6,5 @@
 # Define the code owners for the repository manually
 # See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 # for more information
+#
+* @szymonmaszke
