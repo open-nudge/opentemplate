@@ -1,3 +1,0 @@
-[mdformat.parser_extension]
-tables=mdformat_tables
-

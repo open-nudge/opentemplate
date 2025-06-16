@@ -1,2 +1,0 @@
-[console_scripts]
-md-dead-link-check = md_dead_link_check.__main__:main
