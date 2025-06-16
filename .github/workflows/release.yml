@@ -143,7 +143,7 @@ jobs:
       fail-fast: true
       matrix:
         repository:
-          - url: "https://pypi.org/simple/"
+          - url: "https://upload.pypi.org/legacy/"
             endpoints: |
               pypi.org:443
               files.pythonhosted.org:443
