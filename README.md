@@ -40,7 +40,6 @@ SPDX-License-Identifier: Apache-2.0
 👍 <a href="https://github.com/open-nudge/opentemplate/blob/main/ADOPTERS.md">Adopters</a>
 📜 <a href="#legal">Legal</a>
 </p>
-<!-- vale on -->
 
 ______________________________________________________________________
 
@@ -48,21 +47,26 @@ ______________________________________________________________________
 
 ## Features
 
-__opentemplate__ is a Python template with the following features:
+__opentemplate__ is a Python template which is:
 
 - [__Truly open source__](https://open-nudge.github.io/opentemplate/template/about/philosophy):
     no tokens, no fees, no premium plans, open source software only
-- [__Ease of use__](https://open-nudge.github.io/opentemplate/template/quickstart/usage):
+- [__Easy to use__](https://open-nudge.github.io/opentemplate/template/quickstart/usage):
     clone templated repo, run `pdm setup` and __focus on your code__
-- [__Consistency__](https://open-nudge.github.io/opentemplate/template/configuration/basic):
-    `pre-commit` and `GitHub Actions` share the same config (`pyproject.toml`)
-- [__Security__](https://open-nudge.github.io/opentemplate/template/details/security):
-    [SLSA](https://slsa.dev/) L3+ (public/enterprise) or L2 (private),
+- [__State of the art__](https://open-nudge.github.io/opentemplate/template/details):
+    best checkers for Python, YAML, Markdown, prose, and more unified
+- [__Secure__](https://open-nudge.github.io/opentemplate/template/details/security):
+    [SLSA Level 3](https://slsa.dev/spec/v1.0-rc1/levels), [SBOMs](https://www.cisa.gov/sbom),
+    [attestations](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds),
+    [secured egress](https://github.com/step-security/harden-runner),
     [OSSF Best Practices](https://github.com/ossf/scorecard)
-- [__Batteries included__](https://open-nudge.github.io/opentemplate/template/details):
-    multiple checkers for Python, YAML, Markdown, prose, etc.
-- [__Performance__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
-    Parallel checks, builds, minimally-sized caches and checkouts
+- [__Consistent__](https://open-nudge.github.io/opentemplate/template/configuration/basic):
+    all pipelines (`GitHub Actions`, `pre-commit`)
+    share the same `pyproject.toml` config
+- [__Performant__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
+    parallel checks, builds, minimally-sized caches and checkouts
+
+<!-- vale on -->
 
 ## Quick start
 
