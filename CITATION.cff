@@ -5,7 +5,8 @@
 
 ---
 cff-version: "1.2.0"
-abstract: "The simplest to use, yet the most comprehensive Python template"
+abstract: >-
+  All-in-one Python template. One click. Everything included.
 message: "If you use this software, please cite it as below."
 authors:
   - family-names: "open-nudge"

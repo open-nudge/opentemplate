@@ -56,7 +56,7 @@ Source: https://tag-security.cncf.io/community/assessments/guide/self-assessment
 
 ## Overview
 
-The simplest to use, yet the most comprehensive Python template
+All-in-one Python template. One click. Everything included.
 
 ### Background
 
