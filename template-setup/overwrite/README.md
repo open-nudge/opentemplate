@@ -14,7 +14,7 @@ SPDX-License-Identifier: Apache-2.0
 <!-- pyml disable-num-lines 30 line-length-->
 
 <p align="center">
-    <em>The simplest to use, yet the most comprehensive Python template</em>
+    <em>All-in-one Python template. One click. Everything included.</em>
 </p>
 
 <div align="center">

@@ -16,14 +16,14 @@ As the project's core language, `Python` undergoes the most extensive linting.
 
 The following tools are used, in order:
 
-- __Dependency analysis:__ [`FawltyDeps`](https://github.com/tweag/FawltyDeps)
-    (may produce false positives; see [Adjustments](#adjustments))
 - __Code formatting and linting:__ [`ruff`](https://github.com/astral-sh/ruff)
     (all checks enabled by default)
-- __Docstring coverage:__ [`interrogate`](https://github.com/econchick/interrogate)
-    (checks all functions, classes, and modules, including private ones)
 - __Type checking:__ [`basedpyright`](https://github.com/DetachHead/basedpyright)
     (run as a separate `typing` step)
+- __Docstring coverage:__ [`interrogate`](https://github.com/econchick/interrogate)
+    (checks all functions, classes, and modules, including private ones)
+- __Static dependency analysis:__ [`FawltyDeps`](https://github.com/tweag/FawltyDeps)
+    (may produce false positives; see [Adjustments](#adjustments))
 
 ## Adjustments
 

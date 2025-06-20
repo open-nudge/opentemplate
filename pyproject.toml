@@ -14,7 +14,7 @@ requires = [
 [project]
 name = "opentemplate"
 
-description = "The simplest to use, yet the most comprehensive Python template"
+description = "All-in-one Python template. One click. Everything included."
 readme = "README.md"
 
 license = "Apache-2.0"

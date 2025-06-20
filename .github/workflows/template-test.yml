@@ -80,7 +80,7 @@ jobs:
           template-owner: "open-nudge"
           owner: "open-nudge"
           template-description: >-
-            The simplest to use, yet the most comprehensive Python template
+            All-in-one Python template. One click. Everything included.
           description: "Test opentemplate setup"
       - name: "Setup git credentials"
         # yamllint disable rule:line-length
