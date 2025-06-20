@@ -173,6 +173,11 @@ __opentemplate__ is a Python template which is:
 - __GitHub Actions cache__ - after each merge
     to the `main` branch, dependencies are cached __per-group and
     per-OS__ for maximum performance
+- __Minimal checkouts and triggers__ - each workflow is
+    __triggered based on appropriate path__ and performs
+    [`sparse-checkout`](https://github.blog/open-source/git/bring-your-monorepo-down-to-size-with-sparse-checkout/)
+    when possible to minimize the amount of data transferred;
+    __great for large repositories with many files and large history__
 - __Dependency updates__: [Renovate](https://docs.renovatebot.com/)
     updates all dependencies in a grouped manner once a week
 - __Templates__: __every possible template included__ (discussions,
