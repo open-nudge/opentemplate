@@ -5,7 +5,7 @@
 groups = ["default", "dev-all", "dev-citation", "dev-code", "dev-commit", "dev-docs", "dev-generation", "dev-github", "dev-ini", "dev-legal", "dev-markdown", "dev-pre-commit", "dev-pyproject", "dev-python", "dev-release", "dev-security", "dev-shell", "dev-tests", "dev-typing", "dev-yaml"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:f9b23fb3ac397e95b6e3916b22075515c6e1831ade90fcb0b155f8445a6ac578"
+content_hash = "sha256:c640eab8ac771f451d8ad814a62f1a6964fccf6a38447a95b93d54d150e146e4"
 
 [[metadata.targets]]
 requires_python = ">=3.11"
@@ -179,7 +179,7 @@ name = "attrs"
 version = "25.3.0"
 requires_python = ">=3.8"
 summary = "Classes Without Boilerplate"
-groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-legal", "dev-markdown", "dev-python", "dev-release", "dev-security", "dev-tests"]
+groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-legal", "dev-markdown", "dev-python", "dev-release", "dev-security", "dev-tests", "dev-typing"]
 files = [
     {file = "attrs-25.3.0-py3-none-any.whl", hash = "sha256:427318ce031701fea540783410126f03899a97ffc6f61596ad581ac2e40e3bc3"},
     {file = "attrs-25.3.0.tar.gz", hash = "sha256:75d7cefc7fb576747b2c81b4442d4d4a1ce0900973527c011d1030fd3bf4af1b"},
@@ -593,7 +593,7 @@ name = "colorama"
 version = "0.4.6"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 summary = "Cross-platform colored terminal text."
-groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-legal", "dev-python", "dev-release", "dev-security", "dev-tests"]
+groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-legal", "dev-python", "dev-release", "dev-security", "dev-tests", "dev-typing"]
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
@@ -643,7 +643,7 @@ name = "coverage"
 version = "7.9.1"
 requires_python = ">=3.9"
 summary = "Code coverage measurement for Python"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 files = [
     {file = "coverage-7.9.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:95c765060e65c692da2d2f51a9499c5e9f5cf5453aeaf1420e3fc847cc060582"},
     {file = "coverage-7.9.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:ba383dc6afd5ec5b7a0d0c23d38895db0e15bcba7fb0fa8901f245267ac30d86"},
@@ -1148,18 +1148,18 @@ files = [
 
 [[package]]
 name = "hypothesis"
-version = "6.135.13"
+version = "6.135.14"
 requires_python = ">=3.9"
 summary = "A library for property-based testing"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 dependencies = [
     "attrs>=22.2.0",
     "exceptiongroup>=1.0.0; python_version < \"3.11\"",
     "sortedcontainers<3.0.0,>=2.1.0",
 ]
 files = [
-    {file = "hypothesis-6.135.13-py3-none-any.whl", hash = "sha256:02f757c0ca75ea7999521e02c11b318ead902d287e37c906817861f218d9422a"},
-    {file = "hypothesis-6.135.13.tar.gz", hash = "sha256:6009c0a11753554efd5413c2145a5badfdb391cdf19f60619613ce5430762ad3"},
+    {file = "hypothesis-6.135.14-py3-none-any.whl", hash = "sha256:0dd5b8095e36bd288367c631f864a16c30500b01b17943dcea681233f7421860"},
+    {file = "hypothesis-6.135.14.tar.gz", hash = "sha256:2666df50b3cc40ea08b161a5389d6a1cd5aa3cab0dd8fde0ae339389714a4f67"},
 ]
 
 [[package]]
@@ -1218,7 +1218,7 @@ name = "iniconfig"
 version = "2.1.0"
 requires_python = ">=3.8"
 summary = "brain-dead simple config-ini parsing"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 files = [
     {file = "iniconfig-2.1.0-py3-none-any.whl", hash = "sha256:9deba5723312380e77435581c6bf4935c94cbfab9b1ed33ef8d238ea168eb760"},
     {file = "iniconfig-2.1.0.tar.gz", hash = "sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7"},
@@ -1351,7 +1351,7 @@ name = "jinja2"
 version = "3.1.6"
 requires_python = ">=3.7"
 summary = "A very fast and expressive template engine."
-groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-tests"]
+groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-tests", "dev-typing"]
 dependencies = [
     "MarkupSafe>=2.0",
 ]
@@ -1609,7 +1609,7 @@ name = "markupsafe"
 version = "3.0.2"
 requires_python = ">=3.9"
 summary = "Safely add untrusted strings to HTML/XML markup."
-groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-tests"]
+groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-tests", "dev-typing"]
 files = [
     {file = "MarkupSafe-3.0.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:9025b4018f3a1314059769c7bf15441064b2207cb3f065e6ea1e7359cb46db9d"},
     {file = "MarkupSafe-3.0.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:93335ca3812df2f366e80509ae119189886b0f3c2b81325d39efdb84a1e2ae93"},
@@ -2542,7 +2542,7 @@ name = "packaging"
 version = "25.0"
 requires_python = ">=3.8"
 summary = "Core utilities for Python packages"
-groups = ["dev-all", "dev-docs", "dev-python", "dev-release", "dev-security", "dev-tests"]
+groups = ["dev-all", "dev-docs", "dev-python", "dev-release", "dev-security", "dev-tests", "dev-typing"]
 files = [
     {file = "packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484"},
     {file = "packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"},
@@ -2707,7 +2707,7 @@ name = "pluggy"
 version = "1.6.0"
 requires_python = ">=3.9"
 summary = "plugin and hook calling mechanisms for python"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 files = [
     {file = "pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746"},
     {file = "pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3"},
@@ -3010,7 +3010,7 @@ name = "pygments"
 version = "2.19.1"
 requires_python = ">=3.8"
 summary = "Pygments is a syntax highlighting package written in Python."
-groups = ["dev-all", "dev-docs", "dev-security", "dev-tests"]
+groups = ["dev-all", "dev-docs", "dev-security", "dev-tests", "dev-typing"]
 files = [
     {file = "pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c"},
     {file = "pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f"},
@@ -3088,7 +3088,7 @@ name = "pytest"
 version = "8.4.1"
 requires_python = ">=3.9"
 summary = "pytest: simple powerful testing with Python"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 dependencies = [
     "colorama>=0.4; sys_platform == \"win32\"",
     "exceptiongroup>=1; python_version < \"3.11\"",
@@ -3108,7 +3108,7 @@ name = "pytest-asyncio"
 version = "1.0.0"
 requires_python = ">=3.9"
 summary = "Pytest support for asyncio"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 dependencies = [
     "pytest<9,>=8.2",
     "typing-extensions>=4.12; python_version < \"3.10\"",
@@ -3123,7 +3123,7 @@ name = "pytest-html"
 version = "4.1.1"
 requires_python = ">=3.8"
 summary = "pytest plugin for generating HTML reports"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 dependencies = [
     "jinja2>=3.0.0",
     "pytest-metadata>=2.0.0",
@@ -3139,7 +3139,7 @@ name = "pytest-metadata"
 version = "3.1.1"
 requires_python = ">=3.8"
 summary = "pytest plugin for test session metadata"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 dependencies = [
     "pytest>=7.0.0",
 ]
@@ -3153,7 +3153,7 @@ name = "pytest-pretty-terminal"
 version = "1.1.0"
 requires_python = ">=3.8"
 summary = "pytest plugin for generating prettier terminal output"
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 dependencies = [
     "pytest>=3.4.1",
 ]
@@ -3167,7 +3167,7 @@ name = "pytest-randomly"
 version = "3.16.0"
 requires_python = ">=3.9"
 summary = "Pytest plugin to randomly order tests and control random.seed."
-groups = ["dev-all", "dev-tests"]
+groups = ["dev-all", "dev-tests", "dev-typing"]
 dependencies = [
     "importlib-metadata>=3.6; python_version < \"3.10\"",
     "pytest",
@@ -3748,7 +3748,7 @@ files = [
 name = "sortedcontainers"
 version = "2.4.0"
 summary = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
-groups = ["dev-all", "dev-release", "dev-tests"]
+groups = ["dev-all", "dev-release", "dev-tests", "dev-typing"]
 files = [
     {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
     {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
