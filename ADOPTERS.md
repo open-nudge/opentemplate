@@ -17,10 +17,15 @@ This page lists organizations, companies and projects using opentemplate.
 
 <!-- Add organizations using opentemplate here -->
 
+- [opennudge](https://github.com/open-nudge) - The organization behind opentemplate
+
 ## Companies
 
 <!-- Add companies using opentemplate here -->
 
 ## Projects
+
+- [cogeol](https://github.com/open-nudge/cogeol) - Align
+    with supported Python versions - automated with endoflife.date
 
 <!-- Add projects using opentemplate here -->

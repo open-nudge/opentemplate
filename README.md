@@ -66,6 +66,10 @@ __opentemplate__ is a Python template which is:
 - [__Performant__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
     parallel checks, builds, minimally-sized caches and checkouts
 
+> [!IMPORTANT]
+> __An example repository using `opentemplate`
+> [here](https://github.com/open-nudge/cogeol)__
+
 <!-- vale on -->
 
 ### Code quality (Python focused)
