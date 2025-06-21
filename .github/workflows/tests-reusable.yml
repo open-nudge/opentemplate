@@ -10,6 +10,15 @@ permissions: {} # yamllint disable-line rule:braces
 
 on:
   workflow_call:
+    inputs:
+      additional-allowed-endpoints:
+        description: "Additional endpoints to allow"
+        type: "string"
+        default: ""
+      timeout-minutes:
+        description: "Timeout in minutes"
+        type: "number"
+        default: 30
 
 jobs:
   tests-reusable:
@@ -60,6 +69,9 @@ jobs:
         coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       python-version: "${{ matrix.python }}"
       os: "${{ matrix.os }}"
+      additional-allowed-endpoints: >
+        ${{ inputs.additional-allowed-endpoints }}
+      timeout-minutes: "${{ inputs.timeout-minutes }}"
 
   coverage:
     name: "Coverage"
