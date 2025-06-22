@@ -570,12 +570,12 @@ exclude_files = [
 ]
 
 [tool.commition]
-include_paths = [
+path_include = [
   "src/*",
   "pyproject.toml",
 ]
 
-exclude_commiters = [
+author_name_exclude = [
   "github-actions[bot]",
 ]
 
