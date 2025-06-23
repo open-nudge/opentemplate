@@ -70,6 +70,10 @@ __opentemplate__ is a Python template which is:
 > __An example repository using `opentemplate`
 > [here](https://github.com/open-nudge/cogeol)__
 
+> [!CAUTION]
+> __All files in this repo will be copied to your project,
+> using the title and description you provide.__
+
 <!-- vale on -->
 
 ### Code quality (Python focused)
@@ -244,7 +248,7 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 1. Clone the repository
 1. Run `pdm setup` command locally to setup development environment
 
-> [!IMPORTANT]
+> [!TIP]
 > For more details read the
 > [documentation](https://open-nudge.github.io/opentemplate/template/quickstart/installation)
 
@@ -256,13 +260,13 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 1. Use `git add`, `git commit` and `git push` your changes
 1. `pre-commit` will guide you through the process
 
-> [!IMPORTANT]
+> [!TIP]
 > For more details read the
 > [documentation](https://open-nudge.github.io/opentemplate/template/quickstart/usage)
 
 ### Examples
 
-> [!TIP]
+> [!CAUTION]
 > Click on each example to see it in action!
 
 <details>
