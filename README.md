@@ -70,6 +70,10 @@ __opentemplate__ is a Python template which is:
 > __An example repository using `opentemplate`
 > [here](https://github.com/open-nudge/cogeol)__
 
+> [!CAUTION]
+> __All files in this repo will be copied to your project,
+> using the title and description you provide.__
+
 <!-- vale on -->
 
 ### Code quality (Python focused)
@@ -207,13 +211,17 @@ __opentemplate__ is a Python template which is:
 ## Comparison
 
 - Broader scope than other [`cookiecutter`](https://github.com/cookiecutter/cookiecutter)
-    templates (e.g. security, GitHub Actions, extensive docs, one-click setup,
-    deprecation policies etc.).
+    templates (e.g. one-click and one-command setup, security,
+    GitHub Actions, comprehensive docs, rulesets. deprecation policies,
+    automated copyrights and more).
+    Check [here](https://github.com/fpgmaas/cookiecutter-uv)
+    or [here](https://github.com/audreyfeldroy/cookiecutter-pypackage)
+    to compare yourself.
 - Truly FOSS (no freemium, no paid plans, no tokens) when compared to commercial
     offerings like [`snyk`](https://snyk.io/) or
     [`jit.io`](https://www.jit.io/). Additionally Python-centric and sticks
-    with tools widely known by developers (GitHub interface and
-    their own environment).
+    with tools widely known by developers (their own environment and
+    GitHub interface).
 
 > [!TIP]
 > See detailed comparison in the
@@ -240,7 +248,7 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 1. Clone the repository
 1. Run `pdm setup` command locally to setup development environment
 
-> [!IMPORTANT]
+> [!TIP]
 > For more details read the
 > [documentation](https://open-nudge.github.io/opentemplate/template/quickstart/installation)
 
@@ -252,18 +260,33 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 1. Use `git add`, `git commit` and `git push` your changes
 1. `pre-commit` will guide you through the process
 
-> [!IMPORTANT]
+> [!TIP]
 > For more details read the
 > [documentation](https://open-nudge.github.io/opentemplate/template/quickstart/usage)
 
 ### Examples
+
+> [!CAUTION]
+> Click on each example to see it in action!
 
 <details>
   <summary><b><big>Run checkers or fixers manually</big></b> (click me)</summary>
 &nbsp;
 
 ```sh
-> pdm check-<group> # pdm fix-<group>
+> pdm check-<group> [FILE1, FILE2, ...] # pdm fix-<group>
+```
+
+For example, to check __all Python files__:
+
+```sh
+> pdm check-python
+```
+
+Or to check `/src/__init__.py`:
+
+```sh
+> pdm check-python src/__init__.py
 ```
 
 Note that all `check` and `fix` commands are grouped for your convenience:
@@ -303,13 +326,39 @@ Common changes to `pyproject.toml`:
 Disable a check using `SKIP` environment variable:
 
 ```sh
-SKIP='<group1>,<group2>` git commit -m <message>
+SKIP="<group1>,<group2>" git commit -m <message>
+```
+
+For example, the following will skip `DCO` and `ini` checks
+and Python fixes (which would modify files):
+
+```sh
+SKIP="dco,ini,fix-python" git commit -m <message>
 ```
 
 For details, refer to the `id` fields in `.pre-commit-config.yaml`.
 
 > Some commands have both `<group>-fix` and `<group>-check`
 > for different actions!
+
+</details>
+
+<details>
+  <summary><b><big>Disable GitHub Actions checks</big></b> (click me)</summary>
+&nbsp;
+
+> Disabling checks should be done cautiously!
+
+When making a commit you can add one of the following
+strings to the message:
+
+- `[skip ci]`
+- `[ci skip]`
+- `[no ci]`
+- `[skip actions]`
+- `[actions skip]`
+
+> Note that you can also merge pull requests __even if the checks fail__.
 
 </details>
 
