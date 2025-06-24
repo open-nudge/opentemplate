@@ -197,6 +197,7 @@ jobs:
           packages-dir: "dist"
           attestations: "${{ matrix.repository.attestations }}"
           print-hash: true
+          skip-existing: true
       - name: "Rename artifacts"
         # yamllint disable rule:indentation
         run: |
