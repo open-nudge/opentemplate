@@ -41,7 +41,7 @@ repos:
         name: "<<<CHECK>>> Secrets"
         verbose: true
   - repo: "https://github.com/google/osv-scanner/"
-    rev: "4f77b30556bb6d171b5d55f01da4fb0261b9da7d"  # frozen: v2.0.3
+    rev: "9267fda97136812f3217852fd380104487cf4a00"  # frozen: v2.1.0
     hooks:
       - id: "osv-scanner"
         name: "<<<CHECK>>> OSV Scanner"
