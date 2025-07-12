@@ -9,6 +9,14 @@
 # for the checks performed by OSSF Scorecard related to OSV scanning
 
 [[IgnoredVulns]]
+id = "PYSEC-2025-61"
+reason = "pillow is not used directly in this project (dev dependency)."
+
+[[IgnoredVulns]]
+id = "GHSA-xg8h-j46f-w952"
+reason = "pillow is not used directly in this project (dev dependency)."
+
+[[IgnoredVulns]]
 id = "GHSA-7cx3-6m66-7c5m"
 reason = "tornado is not used directly in this project (dev dependency)."
 
