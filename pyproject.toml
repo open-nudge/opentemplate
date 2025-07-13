@@ -201,7 +201,7 @@ dev-release = [
 
 dev-generation = [
   "cogapp>=3",
-  "cogeol>=0.0.1",
+  "cogeol>=0.1.5",
 ]
 
 dev-commit = [
