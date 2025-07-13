@@ -10,7 +10,7 @@ from __future__ import annotations
 from importlib.metadata import version
 
 __version__ = version("opentemplate")
-"""Current opentemplate version."""
+"""Latest opentemplate version."""
 
 del version
 
