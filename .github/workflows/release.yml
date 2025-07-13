@@ -98,6 +98,8 @@ jobs:
       upload-name: "dist-${{ github.sha }}"
       upload-path: "dist"
       fetch-depth: 0
+      sparse-checkout: |
+        src/**
 
   changelog:
     name: "Changelog"
