@@ -96,6 +96,8 @@ plugins:
       default_handler: "python"
       handlers:
         python:
+          paths:
+            - "src"
           options:
             show_bases: true
             # show_category_heading: true
