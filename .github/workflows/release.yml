@@ -147,9 +147,15 @@ jobs:
       matrix:
         repository:
           - url: "https://upload.pypi.org/legacy/"
-            endpoints: |
+            endpoints: >
+              fulcio.sigstore.dev:443
+              ghcr.io:443
+              pkg-containers.githubusercontent.com:443
               pypi.org:443
-              files.pythonhosted.org:443
+              pypi.python.org:443
+              rekor.sigstore.dev:443
+              tuf-repo-cdn.sigstore.dev:443
+              upload.pypi.org:443
             attestations: true
             name: "PyPI"
             skip: "${{ github.event.repository.private }}"
@@ -174,14 +180,7 @@ jobs:
         with:
           disable-sudo: true
           egress-policy: "block"
-          allowed-endpoints: >
-            fulcio.sigstore.dev:443
-            ghcr.io:443
-            pkg-containers.githubusercontent.com:443
-            pypi.org:443
-            rekor.sigstore.dev:443
-            tuf-repo-cdn.sigstore.dev:443
-            upload.pypi.org:443
+          allowed-endpoints: "${{ matrix.repository.endpoints }}"
       - name: "Download artifacts"
         # yamllint disable rule:line-length
         uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
