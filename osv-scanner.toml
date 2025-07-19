@@ -7,6 +7,9 @@
 # See here: https://google.github.io/osv-scanner/configuration/ for configuration
 # See here: https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection
 # for the checks performed by OSSF Scorecard related to OSV scanning
+[[IgnoredVulns]]
+id = "GHSA-9548-qrrj-x5pj"
+reason = "AIOHTTP is not used directly in this project (dev dependency)."
 
 [[IgnoredVulns]]
 id = "PYSEC-2025-61"
