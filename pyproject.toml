@@ -797,14 +797,12 @@ sort_commits = "oldest"
 ###############################################################################
 
 tests = { composite = [
+  "pdm run refresh",
   "pdm run coverage run -m pytest -x --pretty {args:tests}",
   "pdm run coverage report",
 ] }
 
 tests-all = { composite = [
-  "setup-environment",
-  "pdm install --prod -G:all --no-editable",
-  "pdm install -G dev-tests --no-editable",
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -1131,7 +1129,12 @@ fix-all = { composite = [
 
 lock = "pdm lock -G:all"
 
-setup-environment = { composite = [
+refresh = { composite = [
+  "pdm install --prod -G:all --no-editable",
+  "pdm install -G dev-tests --no-editable",
+] }
+
+setup = { composite = [
   "pdm self update",
   #
   #           DO NOT EDIT UNTIL end marker
@@ -1158,16 +1161,13 @@ setup-environment = { composite = [
   # for version in cogeol.scientific()[:-1]:
   #     cycle = version["cycle"]
   #     cog.outl(f'  "pdm use {cycle}",')
-  #     cog.outl(f'  "pdm install --prod -G:all --no-editable",')
-  #     cog.outl(f'  "pdm install -G dev-tests --no-editable",')
+  #     cog.outl(f'  "pdm run refresh",')
   # ]]]
   "pdm use 3.13",
-  "pdm install --prod -G:all --no-editable",
-  "pdm install -G dev-tests --no-editable",
+  "pdm run refresh",
   "pdm use 3.12",
-  "pdm install --prod -G:all --no-editable",
-  "pdm install -G dev-tests --no-editable",
-  # [[[end]]] (sum: S4abFf8hbc)
+  "pdm run refresh",
+  # [[[end]]] (sum: 7Y0OJ5MOhi)
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -1180,10 +1180,6 @@ setup-environment = { composite = [
   # ]]]
   "pdm use 3.11",
   # [[[end]]] (sum: aXoMTrp8k2)
-] }
-
-setup = { composite = [
-  "setup-environment",
   "pdm install -G:all --no-editable",
   "pdm run pre-commit install --install-hooks",
 ] }
