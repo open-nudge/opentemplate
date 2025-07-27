@@ -529,6 +529,7 @@ reportMissingTypeStubs = "none"
 # A lot of false positives
 reportPrivateLocalImportUsage = "none"
 reportPrivateImportUsage = "none"
+reportPrivateUsage = "none"
 
 extraPaths = [
   #
