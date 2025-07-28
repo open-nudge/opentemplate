@@ -194,7 +194,7 @@ dev-legal = [
 
 dev-release = [
   "spdx-tools>=0.8.3",
-  "cyclonedx-bom>=4",
+  "cyclonedx-bom>=7",
   "git-cliff>=2",
   "reuse>=4",
 ]
@@ -1211,8 +1211,7 @@ pre-commit-all = "pre-commit run {args:''} --all-files"
 sbom-python = { shell = """
   bash -c \
   'pdm run cyclonedx-py environment $(pdm info --python) \
-    --PEP-639 --mc-type library \
-    --schema-version 1.6'
+    --mc-type library'
 """ }
 
 sbom-legal = { shell = """
