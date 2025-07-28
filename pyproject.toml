@@ -488,6 +488,10 @@ exclude = [
 ]
 
 [tool.basedpyright]
+executionEnvironments = [
+  { root = "src" }
+]
+
 exclude = [
   "**/node_modules",
   "**/__pycache__",
@@ -529,7 +533,11 @@ reportMissingTypeStubs = "none"
 # A lot of false positives
 reportPrivateLocalImportUsage = "none"
 reportPrivateImportUsage = "none"
+# Already checked by ruff
 reportPrivateUsage = "none"
+# Highlights non-issues in many cases and
+# hard to turn off file by file
+reportImportCycles = "none"
 
 extraPaths = [
   #
