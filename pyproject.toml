@@ -488,6 +488,10 @@ exclude = [
 ]
 
 [tool.basedpyright]
+executionEnvironments = [
+  { root = "src" }
+]
+
 exclude = [
   "**/node_modules",
   "**/__pycache__",
