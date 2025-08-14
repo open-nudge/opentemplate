@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - "**.sh"
+      - ".github/actions/pdm-*.yml"
       - ".github/workflows/shell.yml"
       - ".github/workflows/shell-reusable.yml"
       - ".github/workflows/run-*reusable.yml"

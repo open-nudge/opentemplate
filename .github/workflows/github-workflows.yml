@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - ".github/workflows/*.yml"
+      - ".github/actions/*.yml"
   merge_group:
     types:
       - "checks_requested"

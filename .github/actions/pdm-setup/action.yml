@@ -51,7 +51,6 @@ runs:
         GROUP: "${{ inputs.group }}"
         VALID_GROUPS: >
           all
-          text
           tests
           docs
           python
@@ -69,6 +68,7 @@ runs:
           generation
           commit
           pre-commit
+          text
           pytest
           json
           toml
