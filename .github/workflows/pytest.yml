@@ -4,18 +4,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Code"
+name: "pytest"
 
 on:
   pull_request:
     branches:
       - "main"
-    paths-ignore:
-      - "DCO.md"
-      - "docs/DCO.md"
-      - "LICENSE.md"
-      - "docs/LICENSE.md"
-      - "LICENSES/*"
+    paths:
+      - "tests/**.py"
+      - ".github/workflows/pytest.yml"
+      - ".github/workflows/pytest-reusable.yml"
+      - ".github/workflows/run-*reusable.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -28,11 +27,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  code:
-    name: "Code"
+  json:
+    name: "pytest"
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "open-nudge/opentemplate/.github/workflows/code-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "open-nudge/opentemplate/.github/workflows/pytest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

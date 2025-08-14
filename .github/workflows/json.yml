@@ -4,12 +4,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Code Renovate"
+name: "JSON"
 
 on:
   pull_request:
     branches:
       - "main"
+    paths:
+      - "**.json"
+      - ".github/workflows/json.yml"
+      - ".github/workflows/json-reusable.yml"
+      - ".github/workflows/run-*reusable.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -22,14 +27,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  code-renovate:
-    name: "Code Renovate"
-    if: |
-      github.event.pull_request.user.login == 'renovate[bot]'
-      && github.ref == 'refs/heads/bot/dependencies-dev-code'
+  json:
+    name: "JSON"
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "open-nudge/opentemplate/.github/workflows/code-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "open-nudge/opentemplate/.github/workflows/json-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

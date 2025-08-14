@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Text Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  text-reusable:
+    name: "Text Reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      check: "text"
+      full-checkout: true
+...

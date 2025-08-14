@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "TOML Reusable"
+
+on:
+  workflow_call:
+
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  json-reusable:
+    name: "TOML Reusable"
+    permissions:
+      contents: "read"
+    # yamllint disable rule:line-length
+    uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      check: "toml"
+      sparse-checkout: |
+        **.toml
+...

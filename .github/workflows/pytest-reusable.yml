@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Code Reusable"
+name: "pytest Reusable"
 
 on:
   workflow_call:
@@ -12,14 +12,15 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  code-reusable:
-    name: "Code Reusable"
+  pytest-reusable:
+    name: "pytest Reusable"
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
-      check: "code"
-      full-checkout: true
+      check: "pytest"
+      sparse-checkout: |
+        tests/**.py
 ...
