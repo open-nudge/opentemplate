@@ -13,6 +13,7 @@ on:
     paths:
       - ".github/workflows/*.yml"
       - ".github/actions/*/action.yml"
+      - ".github/actions/pdm-*.yml"
   merge_group:
     types:
       - "checks_requested"

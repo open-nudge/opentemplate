@@ -88,7 +88,6 @@ jobs:
           - "markdown"
           - "ini"
           - "pyproject"
-          - "code"
           - "citation"
           - "release"
           - "security"
@@ -97,6 +96,10 @@ jobs:
           - "generation"
           - "commit"
           - "pre-commit"
+          - "text"
+          - "json"
+          - "toml"
+          - "pytest"
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/cache-item-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length

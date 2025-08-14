@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - "**.py"
+      - ".github/actions/pdm-*.yml"
       - ".github/workflows/python.yml"
       - ".github/workflows/python-reusable.yml"
       - ".github/workflows/run-*reusable.yml"

@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - "pyproject.toml"
+      - ".github/actions/pdm-*.yml"
       - ".github/workflows/pyproject.yml"
       - ".github/workflows/pyproject-reusable.yml"
       - ".github/workflows/run-*reusable.yml"

@@ -506,6 +506,7 @@ ignore_unused = [
   "mkdocstrings-python",
   "pillow",
   "pre-commit",
+  "pre-commit-hooks",
   "pygments",
   "pyinilint",
   "pymarkdownlnt",

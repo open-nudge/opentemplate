@@ -11,6 +11,9 @@ on:
     branches:
       - "main"
     paths:
+      - ".github/actions/pdm-*/action.yml"
+      - ".github/actions/git-setup/action.yml"
+      - ".github/actions/release-sbom-setup/action.yml"
       - ".github/workflows/release-sboms-test.yml"
       - ".github/workflows/release-sboms-reusable.yml"
   merge_group:

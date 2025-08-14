@@ -11,6 +11,9 @@ on:
     branches:
       - "main"
     paths:
+      - ".github/actions/pdm-*.yml"
+      - ".github/actions/git-setup/action.yml"
+      - ".github/actions/pull-request/action.yml"
       - ".github/workflows/generation-update*.yml"
   merge_group:
     types:

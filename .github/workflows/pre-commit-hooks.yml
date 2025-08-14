@@ -11,6 +11,7 @@ on:
     branches:
       - "main"
     paths:
+      - ".github/actions/pdm-*.yml"
       - ".pre-commit-hooks.yaml"
       - ".github/workflows/pre-commit-hooks.yml"
       - ".github/workflows/run-*reusable.yml"
