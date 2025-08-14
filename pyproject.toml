@@ -7,7 +7,7 @@
 build-backend = "pdm.backend"
 
 requires = [
-  "commition[pdm]>=0.0.1",
+  "comver>=0.2.0",
   "pdm-backend>=2",
 ]
 
@@ -156,10 +156,6 @@ dev-pyproject = [
   "validate-pyproject>=0.18",
 ]
 
-dev-code = [
-  "editorconfig-checker>=3",
-  "codespell>=2",
-]
 
 dev-citation = [
   # Has to be pinned due to latest fixes not pushed to PyPI
@@ -212,6 +208,44 @@ dev-pre-commit = [
   "pre-commit>=3",
 ]
 
+dev-text = [
+  "editorconfig-checker>=3",
+  "codespell>=2",
+  "pre-commit-hooks>=6",
+]
+
+# Groups below are currently taken mostly out of the pre-commit-hooks,
+# each separated to be more semantically coherent and expandable.
+
+dev-file = [
+  "pre-commit-hooks>=6",
+]
+
+dev-json = [
+  "pre-commit-hooks>=6",
+]
+
+# NOT RUNNING TESTS, checks around test files themselves
+dev-pytest = [
+  "pre-commit-hooks>=6",
+]
+
+dev-branch = [
+  "pre-commit-hooks>=6",
+]
+
+dev-executable = [
+  "pre-commit-hooks>=6",
+]
+
+dev-symlink = [
+  "pre-commit-hooks>=6",
+]
+
+dev-toml = [
+  "pre-commit-hooks>=6",
+]
+
 dev-all = [
   { include-group = "dev-tests" },
   { include-group = "dev-docs" },
@@ -222,7 +256,7 @@ dev-all = [
   { include-group = "dev-markdown" },
   { include-group = "dev-ini" },
   { include-group = "dev-pyproject" },
-  { include-group = "dev-code" },
+  { include-group = "dev-text" },
   { include-group = "dev-citation" },
   { include-group = "dev-security" },
   { include-group = "dev-github" },
@@ -231,11 +265,20 @@ dev-all = [
   { include-group = "dev-generation" },
   { include-group = "dev-commit" },
   { include-group = "dev-pre-commit" },
+  # Currently pre-commit separated
+  { include-group = "dev-file" },
+  { include-group = "dev-json" },
+  # Checks around pytest files, not running tests!
+  { include-group = "dev-pytest" },
+  { include-group = "dev-branch" },
+  { include-group = "dev-executable" },
+  { include-group = "dev-symlink" },
+  { include-group = "dev-toml" },
 ]
 
 ###############################################################################
 #
-#                             TOOL SETTINGS
+#                             SETTINGS
 #
 ###############################################################################
 
@@ -244,7 +287,7 @@ distribution = true
 
 [tool.pdm.version]
 source = "call"
-getter = "commition.plugin.pdm:git"
+getter = "comver.plugin:pdm"
 
 [tool.ruff]
 line-length = 80
@@ -578,22 +621,21 @@ exclude_files = [
   "pypackages/*",
 ]
 
-[tool.commition]
-path_include = [
+[tool.comver]
+path_includes = [
   "src/*",
   "pyproject.toml",
 ]
 
-author_name_exclude = [
-  "github-actions[bot]",
+message_excludes = [
+  ".*\\[no version\\].*",
+  ".*\\[skip version\\].*",
+  ".*\\[version skip\\].*",
 ]
 
-###############################################################################
-#
-#                                   CHANGELOG
-#
-###############################################################################
-
+author_name_excludes = [
+  ".*\\[bot\\].*",
+]
 
 [tool.git-cliff.changelog]
 header = """
@@ -791,17 +833,11 @@ topo_order = false
 # sort the commits inside sections by oldest/newest order
 sort_commits = "oldest"
 
-###############################################################################
-#
-#                               SCRIPTS
-#
-###############################################################################
-
 [tool.pdm.scripts]
 
 ###############################################################################
 #
-#                             SCRIPTS.TEST
+#                               TESTING
 #
 ###############################################################################
 
@@ -810,7 +846,6 @@ tests = { composite = [
   "pdm run coverage run -m pytest -x --pretty {args:tests}",
   "pdm run coverage report",
 ] }
-
 tests-all = { composite = [
   #
   #           DO NOT EDIT UNTIL end marker
@@ -840,7 +875,7 @@ tests-all = { composite = [
 
 ###############################################################################
 #
-#                              SCRIPTS.PYTHON
+#                           CHECKS AND FIXERS
 #
 ###############################################################################
 
@@ -850,7 +885,6 @@ check-python = { composite = [
   "ruff check {args:.}",
   "interrogate {args:.}",
 ] }
-
 fix-python = { composite = [
   "fawltydeps --detailed --code {args:.}",
   "ruff format {args:.}",
@@ -858,39 +892,12 @@ fix-python = { composite = [
   "interrogate {args:.}",
 ] }
 
-###############################################################################
-#
-#                              SCRIPTS.TYPING
-#
-###############################################################################
-
 check-typing = "basedpyright --stats {args:src tests}"
 
-###############################################################################
-#
-#                               SCRIPTS.SHELL
-#
-###############################################################################
-
 check-shell = "shellcheck -x -S style -o all"
-
 fix-shell = { shell = "pdm run shellcheck -x -S style -o all {args} | git apply --allow-empty" }
 
-###############################################################################
-#
-#                               SCRIPTS.YAML
-#
-###############################################################################
-
-check-yaml = { composite = [
-  "yamllint {args:.}",
-] }
-
-###############################################################################
-#
-#                              SCRIPTS.MARKDOWN
-#
-###############################################################################
+check-yaml = "yamllint {args:.}"
 
 # @ is ignored for version pinning in pyproject.toml (as seen in cffconvert)
 # issues and blob are ignored as the repo might be private and unreachable
@@ -899,79 +906,66 @@ check-markdown = { composite = [
   "pymarkdownlnt scan -r {args:.}",
   "md-dead-link-check {args:.}",
 ] }
-
 fix-markdown = { composite = [
-  # Fix to exclude given files
   "mdformat {args:.}",
   "pymarkdownlnt fix -r {args:.}",
   "pymarkdownlnt scan -r {args:.}",
   "md-dead-link-check {args:.}",
 ] }
 
-###############################################################################
-#
-#                             SCRIPTS.INI
-#
-###############################################################################
-
 check-ini = "pyinilint"
 
-###############################################################################
-#
-#                           SCRIPTS.PYPROJECT
-#
-###############################################################################
-
-check-pyproject = { composite = [
-  "validate-pyproject {args:pyproject.toml}",
-] }
-
-###############################################################################
-#
-#                            SCRIPTS.CITATION
-#
-###############################################################################
+check-pyproject = "validate-pyproject {args:pyproject.toml}"
 
 check-citation = "cffconvert --validate -i {args:CITATION.cff}"
 
-###############################################################################
-#
-#                             SCRIPTS.CODE
-#
-###############################################################################
-
-check-code = { composite = [
-  "codespell {args:.}",
-  "ec",
-] }
-
-fix-code = { composite = [
-  "codespell --write-changes {args:.}",
-  "ec",
-] }
-
-###############################################################################
-#
-#                              SCRIPTS.DOCS
-#
-###############################################################################
-
 check-docs = "mkdocs build"
-
-###############################################################################
-#
-#                            SCRIPTS.PRE-COMMIT
-#
-###############################################################################
 
 check-pre-commit-config = "pre-commit validate-config {args:.pre-commit-config.yaml}"
 check-pre-commit-hooks = "pre-commit validate-manifest {args:.pre-commit-hooks.yaml}"
 
-###############################################################################
-#
-#                              SCRIPTS.SECURITY
-#
-###############################################################################
+# Scripts below are (mostly) separated from pre-commit-hooks to group them semantically
+# This approach allows opentemplate to run pre-commit checks directly
+# which circumvents buggy venv creation within `pdm` environment
+
+# See definitions and specification here:
+# https://github.com/pre-commit/pre-commit-hooks/blob/main/.pre-commit-hooks.yaml
+
+check-text = { composite = [
+  "check-shebang-scripts-are-executable",
+  "check-merge-conflict",
+  "codespell",
+  "ec",
+] }
+
+fix-text = { composite = [
+  "end-of-file-fixer",
+  "trailing-whitespace-fixer",
+  "check-shebang-scripts-are-executable",
+  "check-merge-conflict",
+  "codespell --write-changes",
+  "ec",
+] }
+
+# No CI
+check-file = "check-added-large-files"
+
+check-json = "check-json"
+
+check-pytest = "name-tests-test"
+
+# No CI
+check-branch = "no-commit-to-branch"
+
+# No CI
+check-executable = "check-executables-have-shebangs"
+
+# No CI
+check-symlink = "check-symlinks"
+
+check-toml = "check-toml"
+
+# End of separated pre-commit hooks
 
 check-security = { cmd = [
   "semgrep",
@@ -990,11 +984,6 @@ check-security = { cmd = [
   "{args:.}",
 ] }
 
-###############################################################################
-#
-#                         SCRIPTS.RENOVATE (GH ACTIONS)
-#
-###############################################################################
 
 check-renovate = { cmd = [
   "check-jsonschema",
@@ -1003,43 +992,16 @@ check-renovate = { cmd = [
   "{args:./.github/renovate.json}",
 ] }
 
-###############################################################################
-#
-#                         SCRIPTS.ACTIONS (GH ACTIONS)
-#
-###############################################################################
-
-check-github-actions = { composite = [
-  "check-jsonschema --verbose --builtin-schema vendor.github-actions",
-] }
-
-###############################################################################
-#
-#                         SCRIPTS.WORKFLOWS (GH ACTIONS)
-#
-###############################################################################
+check-github-actions = "check-jsonschema --verbose --builtin-schema vendor.github-actions"
 
 check-github-workflows = { composite = [
   "check-jsonschema --verbose --builtin-schema github-workflows-require-timeout",
   "check-jsonschema --verbose --builtin-schema github-workflows",
 ] }
 
-###############################################################################
-#
-#                   SCRIPTS.GITHUB (GH ACTIONS + GH WORKFLOWS)
-#
-###############################################################################
-
 check-github = "zizmor --persona auditor --verbose {args:.}"
 
-###############################################################################
-#
-#                               SCRIPTS.LEGAL
-#
-###############################################################################
-
 check-legal = "reuse lint"
-
 # See here: https://github.com/pdm-project/pdm/issues/2937
 fix-legal = { shell = """
   bash -c \
@@ -1053,12 +1015,6 @@ fix-legal = { shell = """
     --fallback-dot-license \
   {args:.}"
 """ }
-
-###############################################################################
-#
-#                              SCRIPTS.GENERATION
-#
-###############################################################################
 
 check-generation = { cmd = [
   "cog",
@@ -1076,7 +1032,6 @@ check-generation = { cmd = [
   }
   """,
 ] }
-
 fix-generation = { cmd = [
   "cog",
   "-c",
@@ -1094,45 +1049,11 @@ fix-generation = { cmd = [
   """,
 ] }
 
+fix-all = "pre-commit run {args:''} --all-files"
 
 ###############################################################################
 #
-#                         SCRIPTS.ALL (CONVENIENCE)
-#
-###############################################################################
-
-check-all = { composite = [
-  "check-generation",
-  "check-citation",
-  "check-markdown",
-  "check-yaml",
-  "check-pre-commit",
-  "check-pyproject",
-  "check-legal",
-  "check-workflows",
-  "check-security",
-  "check-docs",
-  "check-python",
-] }
-
-fix-all = { composite = [
-  "fix-generation",
-  "check-citation",
-  "fix-markdown",
-  "check-yaml",
-  "check-pre-commit",
-  "fix-pyproject",
-  "fix-legal",
-  "check-legal",
-  "check-workflows",
-  "check-security",
-  "check-docs",
-  "fix-python",
-] }
-
-###############################################################################
-#
-#                               SCRIPTS.SETUP
+#                 NON-CHECKS (setup, sboms, changelogs etc.)
 #
 ###############################################################################
 
@@ -1193,19 +1114,6 @@ setup = { composite = [
   "pdm run pre-commit install --install-hooks",
 ] }
 
-###############################################################################
-#
-#                         PRE-COMMIT CHECKS ALIASES
-#
-###############################################################################
-
-pre-commit-all = "pre-commit run {args:''} --all-files"
-
-###############################################################################
-#
-#                             SCRIPTS.SBOM
-#
-###############################################################################
 
 # Check here for syntax:
 sbom-python = { shell = """
@@ -1232,20 +1140,8 @@ sbom-all = { composite = [
   "sbom-legal",
 ] }
 
-###############################################################################
-#
-#                             SCRIPTS.CHANGELOG
-#
-###############################################################################
-
 changelog = { cmd = "pdm run git-cliff" }
 changelog-latest = { cmd = "pdm run git-cliff --latest" }
-
-###############################################################################
-#
-#                              SCRIPTS.RELEASE
-#
-###############################################################################
 
 check-release = { composite = [
   "sbom-all",
@@ -1256,7 +1152,7 @@ check-release = { composite = [
 
 ###############################################################################
 #
-#                         COMMITTING (move to opentemplate later)
+#                     COMMITTING (move to opentemplate later)
 #
 ###############################################################################
 

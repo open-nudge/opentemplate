@@ -261,7 +261,19 @@
         "editorconfig-checker",
         "codespell"
       ],
-      "groupName": "dependencies (dev-code)"
+      "groupName": "dependencies (dev-text)"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchDepTypes": [
+        "dependency-groups"
+      ],
+      "matchPackageNames": [
+        "pre-commit-hooks"
+      ],
+      "groupName": "dependencies (dev-multiple)"
     }
   ]
 }

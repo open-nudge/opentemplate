@@ -34,14 +34,14 @@ repos:
         entry: "conform enforce"
         pass_filenames: false
   - repo: "https://github.com/trufflesecurity/trufflehog"
-    rev: "a05cf0859455b5b16317ee22d809887a4043cdf0"  # frozen: v3.90.2
+    rev: "0c9fbff42893900f6cc15010c408d70d6013819c"  # frozen: v3.90.4
     hooks:
       - id: "trufflehog"
         alias: "secrets"
         name: "<<<CHECK>>> Secrets"
         verbose: true
   - repo: "https://github.com/google/osv-scanner/"
-    rev: "9267fda97136812f3217852fd380104487cf4a00"  # frozen: v2.1.0
+    rev: "04a8728383d8f286cf2b0f110e68482e8773df6e"  # frozen: v2.2.1
     hooks:
       - id: "osv-scanner"
         name: "<<<CHECK>>> OSV Scanner"
@@ -76,64 +76,64 @@ repos:
         name: "<<<CHECK>>> GitHub Actions actionlint"
         verbose: true
   # Pre-commit provided hooks
-  - repo: "https://github.com/pre-commit/pre-commit-hooks"
-    rev: "cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b"  # frozen: v5.0.0
-    hooks:
-      - id: "no-commit-to-branch"
-        alias: "main-branch-clean"
-        name: "<<<CHECK>>> Main branch clean"
-      - id: "end-of-file-fixer"
-        alias: "end-of-file"
-        name: "<<<FIX>>> End of file"
-        stages:
-          - "pre-commit"
-      - id: "mixed-line-ending"
-        name: "<<<FIX>>> Mixed line ending"
-      - id: "pretty-format-json"
-        alias: "json"
-        name: "<<<FIX>>> JSON"
-        args:
-          - "--autofix"
-          - "--no-sort-keys"
-      - id: "name-tests-test"
-        alias: "pytest-file-naming"
-        name: "<<<CHECK>>> Pytest file naming"
-        args:
-          - "--pytest-test-first"
-      - id: "trailing-whitespace"
-        name: "<<<CHECK>>> Trailing whitespace"
-        stages:
-          - "pre-commit"
-      - id: "check-added-large-files"
-        alias: "large-file"
-        name: "<<<CHECK>>> Large file"
-        stages:
-          - "pre-commit"
-      - id: "check-case-conflict"
-        alias: "case-conflict"
-        name: "<<<CHECK>>> Case conflict"
-      - id: "check-executables-have-shebangs"
-        alias: "shebang"
-        name: "<<<CHECK>>> Shebang"
-        stages:
-          - "pre-commit"
-      - id: "check-shebang-scripts-are-executable"
-        alias: "script-executable"
-        name: "<<<CHECK>>> Script executable"
-        stages:
-          - "pre-commit"
-      - id: "check-merge-conflict"
-        alias: "merge-conflict"
-        name: "<<<CHECK>>> Merge conflict"
-      - id: "check-symlinks"
-        alias: "symlink"
-        name: "<<<CHECK>>> Symlink"
-      - id: "check-toml"
-        alias: "toml"
-        name: "<<<CHECK>>> TOML"
-      - id: "forbid-submodules"
-        alias: "git-submodules"
-        name: "<<<CHECK>>> Git submodules"
+  # - repo: "https://github.com/pre-commit/pre-commit-hooks"
+  #   rev: "cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b"  # frozen: v5.0.0
+  #   hooks:
+  #     - id: "no-commit-to-branch"
+  #       alias: "main-branch-clean"
+  #       name: "<<<CHECK>>> Main branch clean"
+  #     - id: "end-of-file-fixer"
+  #       alias: "end-of-file"
+  #       name: "<<<FIX>>> End of file"
+  #       stages:
+  #         - "pre-commit"
+  #     - id: "mixed-line-ending"
+  #       name: "<<<FIX>>> Mixed line ending"
+  #     - id: "pretty-format-json"
+  #       alias: "json"
+  #       name: "<<<FIX>>> JSON"
+  #       args:
+  #         - "--autofix"
+  #         - "--no-sort-keys"
+  #     - id: "name-tests-test"
+  #       alias: "pytest-file-naming"
+  #       name: "<<<CHECK>>> Pytest file naming"
+  #       args:
+  #         - "--pytest-test-first"
+  #     - id: "trailing-whitespace"
+  #       name: "<<<CHECK>>> Trailing whitespace"
+  #       stages:
+  #         - "pre-commit"
+  #     - id: "check-added-large-files"
+  #       alias: "large-file"
+  #       name: "<<<CHECK>>> Large file"
+  #       stages:
+  #         - "pre-commit"
+  #     - id: "check-case-conflict"
+  #       alias: "case-conflict"
+  #       name: "<<<CHECK>>> Case conflict"
+  #     - id: "check-executables-have-shebangs"
+  #       alias: "shebang"
+  #       name: "<<<CHECK>>> Shebang"
+  #       stages:
+  #         - "pre-commit"
+  #     - id: "check-shebang-scripts-are-executable"
+  #       alias: "script-executable"
+  #       name: "<<<CHECK>>> Script executable"
+  #       stages:
+  #         - "pre-commit"
+  #     - id: "check-merge-conflict"
+  #       alias: "merge-conflict"
+  #       name: "<<<CHECK>>> Merge conflict"
+  #     - id: "check-symlinks"
+  #       alias: "symlink"
+  #       name: "<<<CHECK>>> Symlink"
+  #     - id: "check-toml"
+  #       alias: "toml"
+  #       name: "<<<CHECK>>> TOML"
+  #     - id: "forbid-submodules"
+  #       alias: "git-submodules"
+  #       name: "<<<CHECK>>> Git submodules"
   ############################################################################
   #
   #                         PYPROJECT BASED CHECKS
@@ -141,6 +141,16 @@ repos:
   ############################################################################
   - repo: "local"
     hooks:
+      - id: "pdm-sync"
+        verbose: true
+        name: "<<<CHECK>>> PDM sync"
+        entry: "pdm sync -v"
+        pass_filenames: false
+        language: "system"
+        stages:
+          - "post-checkout"
+          - "post-merge"
+        always_run: true
       - id: "dco"
         verbose: true
         name: "<<<CHECK>>> DCO"
@@ -150,6 +160,13 @@ repos:
           If you wish to change/remove it, please do so in a separate commit
           and disable this check.
         files: "^DCO.md$"
+      - id: "branch"
+        verbose: true
+        name: "<<<CHECK>>> Branch"
+        entry: "pdm run -v check-branch"
+        language: "system"
+        pass_filenames: false
+        always_run: true
       - id: "commit"
         verbose: true
         name: "<<<CHECK>>> Commit"
@@ -158,6 +175,11 @@ repos:
         stages:
           - "commit-msg"
         always_run: true
+      - id: "file"
+        verbose: true
+        name: "<<<CHECK>>> File"
+        entry: "pdm run -v check-file"
+        language: "system"
       - id: "generation"
         verbose: true
         name: "<<<FIX>>> Generation"
@@ -166,6 +188,13 @@ repos:
         language: "system"
         require_serial: true
         always_run: true
+      - id: "pdm-lock"
+        verbose: true
+        name: "<<<CHECK>>> PDM lock (use `pdm run lock` to fix)"
+        entry: "pdm lock -v --check"
+        pass_filenames: false
+        language: "system"
+        files: "^pyproject.toml$"
       - id: "pre-commit"
         verbose: true
         name: "<<<FIX>>> Pre-commit"
@@ -187,14 +216,14 @@ repos:
         language: "system"
         require_serial: true
         pass_filenames: false
-      - id: "code"
+      - id: "text"
         verbose: true
-        name: "<<<FIX>>> Code"
-        entry: "pdm run -v fix-code"
+        name: "<<<FIX>>> Text"
+        entry: "pdm run -v fix-text"
         language: "system"
         require_serial: true
         types:
-          - "file"
+          - "text"
       - id: "renovate"
         verbose: true
         name: "<<<CHECK>>> Renovate"
@@ -204,22 +233,6 @@ repos:
         types:
           - "file"
         files: "^.github/renovate.json$"
-      - id: "fix-shell"
-        verbose: true
-        name: "<<<FIX>>> Shell"
-        entry: "pdm run -v fix-shell"
-        language: "system"
-        require_serial: true
-        types:
-          - "shell"
-      - id: "check-shell"
-        verbose: true
-        name: "<<<CHECK>>> Shell"
-        entry: "pdm run -v check-shell"
-        language: "system"
-        require_serial: true
-        types:
-          - "shell"
       - id: "github"
         verbose: true
         name: "<<<CHECK>>> GitHub"
@@ -253,23 +266,6 @@ repos:
         entry: "pdm run -v check-pyproject"
         files: "^pyproject.toml$"
         language: "system"
-      - id: "pdm-sync"
-        verbose: true
-        name: "<<<CHECK>>> PDM sync"
-        entry: "pdm sync -v"
-        pass_filenames: false
-        language: "system"
-        stages:
-          - "post-checkout"
-          - "post-merge"
-        always_run: true
-      - id: "pdm-lock"
-        verbose: true
-        name: "<<<CHECK>>> PDM lock (use `pdm run lock` to fix)"
-        entry: "pdm lock -v --check"
-        pass_filenames: false
-        language: "system"
-        files: "^pyproject.toml$"
       - id: "pre-commit-config"
         verbose: true
         name: "<<<CHECK>>> pre-commit config"
@@ -288,6 +284,44 @@ repos:
         entry: "pdm run -v check-citation"
         files: "^CITATION.cff$"
         language: "system"
+      - id: "pytest"
+        verbose: true
+        name: "<<<CHECK>>> Pytest"
+        entry: "pdm run -v check-pytest"
+        language: "system"
+        files: '(^|/)tests/.+\.py$'  # yamllint disable-line rule:quoted-strings
+      - id: "symlink"
+        verbose: true
+        name: "<<<CHECK>>> Symlink"
+        entry: "pdm run -v check-symlink"
+        language: "system"
+        require_serial: true
+        types:
+          - "symlink"
+      - id: "fix-shell"
+        verbose: true
+        name: "<<<FIX>>> Shell"
+        entry: "pdm run -v fix-shell"
+        language: "system"
+        require_serial: true
+        types:
+          - "shell"
+      - id: "check-shell"
+        verbose: true
+        name: "<<<CHECK>>> Shell"
+        entry: "pdm run -v check-shell"
+        language: "system"
+        require_serial: true
+        types:
+          - "shell"
+      - id: "executable"
+        verbose: true
+        name: "<<<CHECK>>> Executable"
+        entry: "pdm run -v check-executable"
+        language: "system"
+        require_serial: true
+        types:
+          - "executable"
       - id: "ini"
         verbose: true
         name: "<<<CHECK>>> INI"
@@ -297,6 +331,22 @@ repos:
         types_or:
           - "ini"
           - "editorconfig"
+      - id: "toml"
+        verbose: true
+        name: "<<<CHECK>>> TOML"
+        entry: "pdm run -v check-toml"
+        language: "system"
+        require_serial: true
+        types:
+          - "toml"
+      - id: "json"
+        verbose: true
+        name: "<<<CHECK>>> JSON"
+        entry: "pdm run -v check-json"
+        language: "system"
+        require_serial: true
+        types:
+          - "json"
       - id: "markdown"
         verbose: true
         name: "<<<FIX>>> Markdown"
