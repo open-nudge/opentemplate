@@ -17,9 +17,15 @@ jobs:
     permissions:
       contents: "read"
     # yamllint disable rule:line-length
-    uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
-      check: "text"
+      # Workaround for __pypackages__/README.md
+      # It is collected automatically by pre-commit-hooks
+      command: >
+        rm -rf .git &&
+        git init --initial-branch main &&
+        pdm run check-text
+      group: "text"
       full-checkout: true
 ...
