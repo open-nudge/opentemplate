@@ -14,17 +14,20 @@ SPDX-License-Identifier: Apache-2.0
 Except Python a few other "complementary" languages (mostly markup)
 are verified by both `pre-commit` and CI pipelines, namely:
 
-- Generic code checks - [`codespell`](https://github.com/codespell-project/codespell)
+- Generic text checks - [`codespell`](https://github.com/codespell-project/codespell)
     verifies spelling and compliance with [`editorconfig`](https://editorconfig.org/)
     is checked by
-    [`editorconfig-checker`](https://github.com/editorconfig-checker/editorconfig-checker)
+    [`editorconfig-checker`](https://github.com/editorconfig-checker/editorconfig-checker).
+    Additionally `opentemplate` looks for merge conflict strings and whether
+    scripts with `shebang` (`#`) is executable
 - `yaml` - responsible for GitHub Actions workflows, `mkdocs.yml`,
     `.pre-commit-config.yaml`, performed by
     [adrienverge/yamllint](https://github.com/adrienverge/yamllint)
 - `pyproject.toml` - responsible for Python project configuration,
     validated by [abravalheri/validate-pyproject](https://github.com/abravalheri/validate-pyproject)
-- `json` - responsible mainly `renovate.json`, performed by
+- `json` - responsible mainly for `renovate.json`, performed by
     [pre-commit/pre-commit-hooks](https://github.com/pre-commit/pre-commit-hooks)
+- `toml` - basic syntax correctness checks
 - `ini` responsible for `.editorconfig` and `.vale.ini`,
     performed by [danieljrmay/pyinilint](https://gitlab.com/danieljrmay/pyinilint)
 - `markdown` - any `markdown` files, see [prose](prose.md) for more information)
