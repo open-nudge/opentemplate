@@ -69,7 +69,8 @@ TBD
 
 ### Actions
 
-TBD
+- Core security features are provided by
+    [opentemplate](https://github.com/open-nudge/opentemplate) [](templateskip)
 
 ### Goals
 

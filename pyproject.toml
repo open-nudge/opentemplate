@@ -953,7 +953,7 @@ check-file = "check-added-large-files"
 
 check-json = "check-json"
 
-check-pytest = "name-tests-test"
+check-pytest = "name-tests-test --pytest-test-first"
 
 # No CI
 check-branch = "no-commit-to-branch"
