@@ -34,7 +34,7 @@ repos:
         entry: "conform enforce"
         pass_filenames: false
   - repo: "https://github.com/trufflesecurity/trufflehog"
-    rev: "0c9fbff42893900f6cc15010c408d70d6013819c"  # frozen: v3.90.4
+    rev: "0f58ae7c5036094a1e3e750d18772af92821b503"  # frozen: v3.90.5
     hooks:
       - id: "trufflehog"
         alias: "secrets"
@@ -75,65 +75,6 @@ repos:
         alias: "github-actions-actionlint"
         name: "<<<CHECK>>> GitHub Actions actionlint"
         verbose: true
-  # Pre-commit provided hooks
-  # - repo: "https://github.com/pre-commit/pre-commit-hooks"
-  #   rev: "cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b"  # frozen: v5.0.0
-  #   hooks:
-  #     - id: "no-commit-to-branch"
-  #       alias: "main-branch-clean"
-  #       name: "<<<CHECK>>> Main branch clean"
-  #     - id: "end-of-file-fixer"
-  #       alias: "end-of-file"
-  #       name: "<<<FIX>>> End of file"
-  #       stages:
-  #         - "pre-commit"
-  #     - id: "mixed-line-ending"
-  #       name: "<<<FIX>>> Mixed line ending"
-  #     - id: "pretty-format-json"
-  #       alias: "json"
-  #       name: "<<<FIX>>> JSON"
-  #       args:
-  #         - "--autofix"
-  #         - "--no-sort-keys"
-  #     - id: "name-tests-test"
-  #       alias: "pytest-file-naming"
-  #       name: "<<<CHECK>>> Pytest file naming"
-  #       args:
-  #         - "--pytest-test-first"
-  #     - id: "trailing-whitespace"
-  #       name: "<<<CHECK>>> Trailing whitespace"
-  #       stages:
-  #         - "pre-commit"
-  #     - id: "check-added-large-files"
-  #       alias: "large-file"
-  #       name: "<<<CHECK>>> Large file"
-  #       stages:
-  #         - "pre-commit"
-  #     - id: "check-case-conflict"
-  #       alias: "case-conflict"
-  #       name: "<<<CHECK>>> Case conflict"
-  #     - id: "check-executables-have-shebangs"
-  #       alias: "shebang"
-  #       name: "<<<CHECK>>> Shebang"
-  #       stages:
-  #         - "pre-commit"
-  #     - id: "check-shebang-scripts-are-executable"
-  #       alias: "script-executable"
-  #       name: "<<<CHECK>>> Script executable"
-  #       stages:
-  #         - "pre-commit"
-  #     - id: "check-merge-conflict"
-  #       alias: "merge-conflict"
-  #       name: "<<<CHECK>>> Merge conflict"
-  #     - id: "check-symlinks"
-  #       alias: "symlink"
-  #       name: "<<<CHECK>>> Symlink"
-  #     - id: "check-toml"
-  #       alias: "toml"
-  #       name: "<<<CHECK>>> TOML"
-  #     - id: "forbid-submodules"
-  #       alias: "git-submodules"
-  #       name: "<<<CHECK>>> Git submodules"
   ############################################################################
   #
   #                         PYPROJECT BASED CHECKS
@@ -208,7 +149,7 @@ repos:
         entry: "pdm run -v fix-legal"
         language: "system"
         require_serial: true
-        exclude: "^(pdm.lock.*|DCO.md|LICENSE.md|LICENSES/.*)$"
+        exclude: "^(pdm.lock.*|DCO.md|.gitignore|LICENSE.md|LICENSES/.*)$"
       - id: "check-legal"
         verbose: true
         name: "<<<CHECK>>> Legal"
