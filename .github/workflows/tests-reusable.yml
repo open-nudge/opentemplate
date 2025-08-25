@@ -59,6 +59,7 @@ jobs:
       # yamllint enable rule:line-length
       sparse-checkout: |
         **.py
+        tests/**
       group: "tests"
       core: true
       # yamllint disable rule:line-length
