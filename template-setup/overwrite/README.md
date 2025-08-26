@@ -60,6 +60,13 @@ __opentemplate__ is a … allowing you to:
 
 ### Installation
 
+> [!TIP]
+> You can use your favorite package manager like
+> [`uv`](https://github.com/astral-sh/uv),
+> [`hatch`](https://github.com/pypa/hatch)
+> or [`pdm`](https://github.com/pdm-project/pdm)
+> instead of `pip`.
+
 ```sh
 > pip install opentemplate
 ```
