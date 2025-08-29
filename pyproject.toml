@@ -881,13 +881,13 @@ tests-all = { composite = [
 ###############################################################################
 
 check-python = { composite = [
-  "fawltydeps --detailed --code {args:.}",
+  "fawltydeps --detailed",
   "ruff format --check {args:.}",
   "ruff check {args:.}",
   "interrogate {args:.}",
 ] }
 fix-python = { composite = [
-  "fawltydeps --detailed --code {args:.}",
+  "fawltydeps --detailed",
   "ruff format {args:.}",
   "ruff check --fix {args:.}",
   "interrogate {args:.}",
