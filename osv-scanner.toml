@@ -37,6 +37,18 @@ reason = "Affects SVN or pytest<7.2.0, which are not used in this project."
 
 [[PackageOverrides]]
 ecosystem = "PyPI"
+name = "xmltodict"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "zizmor"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
 name = "pytest-asyncio"
 license.ignore = true
 reason = "dev dependency"

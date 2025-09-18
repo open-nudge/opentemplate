@@ -121,6 +121,7 @@ dev-python = [
   "fawltydeps>=0.17.0",
   "interrogate>=1",
   "ruff>=0.5.6",
+  "pynudger>=0.2.1",
 ]
 
 dev-typing = [
@@ -517,6 +518,7 @@ ignore_unused = [
   "pytest-pretty-terminal",
   "pytest-randomly",
   "reuse",
+  "pynudger",
   "ruff",
   "spdx-tools",
 ]
@@ -881,15 +883,17 @@ tests-all = { composite = [
 ###############################################################################
 
 check-python = { composite = [
-  "fawltydeps --detailed",
   "ruff format --check {args:.}",
   "ruff check {args:.}",
+  "pynudger check {args}",
+  "fawltydeps --detailed",
   "interrogate {args:.}",
 ] }
 fix-python = { composite = [
-  "fawltydeps --detailed",
   "ruff format {args:.}",
   "ruff check --fix {args:.}",
+  "pynudger check {args}",
+  "fawltydeps --detailed",
   "interrogate {args:.}",
 ] }
 

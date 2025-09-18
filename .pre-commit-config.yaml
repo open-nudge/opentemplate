@@ -34,7 +34,7 @@ repos:
         entry: "conform enforce"
         pass_filenames: false
   - repo: "https://github.com/trufflesecurity/trufflehog"
-    rev: "0f58ae7c5036094a1e3e750d18772af92821b503"  # frozen: v3.90.5
+    rev: "466da5b0bb161144f6afca9afe5d57975828c410"  # frozen: v3.90.8
     hooks:
       - id: "trufflehog"
         alias: "secrets"
