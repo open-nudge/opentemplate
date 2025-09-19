@@ -34,12 +34,8 @@ jobs:
     runs-on: "ubuntu-latest"
     timeout-minutes: 30
     permissions:
-      # Required to upload SARIF file to CodeQL.
-      # See: https://github.com/github/codeql-action/issues/2117
-      actions: "read"
-      # Writing security events to upload SARIF file to security tab
-      security-events: "write"
-      # Only need to read contents
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
     steps:
 

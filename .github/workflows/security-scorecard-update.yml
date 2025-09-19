@@ -16,15 +16,10 @@ permissions: {} # yamllint disable-line rule:braces
 jobs:
   security-scorecard-update:
     permissions:
-      # Required to upload SARIF file to CodeQL.
-      # See: https://github.com/github/codeql-action/issues/2117
-      actions: "read"
-      # Require writing security events to upload SARIF file to security tab
-      security-events: "write"
-      # Only need to read contents
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to to upload SARIF file to tab
+      id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
-      # Needed for GitHub OIDC token if publish_results is true
-      id-token: "write"
     name: "Security Scorecard Update"
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]

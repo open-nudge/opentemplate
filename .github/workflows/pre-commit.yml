@@ -27,7 +27,7 @@ jobs:
     name: "pre-commit"
     permissions:
       contents: "read"
-      pull-requests: "write"
+      pull-requests: "write" # Needed to create pull request with update
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/pre-commit-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length

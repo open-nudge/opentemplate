@@ -18,8 +18,8 @@ jobs:
     timeout-minutes: 10
     name: "Stale"
     permissions:
-      issues: "write"
-      pull-requests: "write"
+      issues: "write" # Needed to close stale issues
+      pull-requests: "write" # Needed to close stale pull requests
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"

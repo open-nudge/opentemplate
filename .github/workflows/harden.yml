@@ -34,10 +34,8 @@ jobs:
     # Only for checkout, rest of the operations are done via token
     # with Administrator and Pages write permissions
     permissions:
-      # Checkout operation
       contents: "read"
-      # Closing the issue
-      issues: "write"
+      issues: "write" # Needed to close the issue
     timeout-minutes: 10
     runs-on: "ubuntu-latest"
     steps:
@@ -319,14 +317,10 @@ jobs:
     name: "Hardened Scorecard"
     permissions:
       # Required to upload SARIF file to CodeQL.
-      # See: https://github.com/github/codeql-action/issues/2117
-      actions: "read"
-      # Writing security events to upload SARIF file to security tab
-      security-events: "write"
-      # Only need to read contents
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Writing security events to upload SARIF file
       contents: "read"
-      # Needed for GitHub OIDC token if publish_results is true
-      id-token: "write"
+      id-token: "write" # Needed for GitHub OIDC token if publish_results
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length

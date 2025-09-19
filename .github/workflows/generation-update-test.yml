@@ -32,7 +32,7 @@ jobs:
     name: "Generation Update Test"
     permissions:
       contents: "read"
-      pull-requests: "write"
+      pull-requests: "write" # Needed to create pull requests
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/generation-update-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length

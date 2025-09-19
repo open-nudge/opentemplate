@@ -31,7 +31,7 @@ jobs:
     timeout-minutes: 10
     name: "Pull Request"
     permissions:
-      pull-requests: "read"
+      pull-requests: "read" # Needed to process pull request data
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"

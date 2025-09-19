@@ -15,7 +15,7 @@ jobs:
   template-update-reusable:
     name: "Template Update Reusable"
     permissions:
-      contents: "write"
+      contents: "write" # Needed to update repository contents
     timeout-minutes: 10
     runs-on: "ubuntu-latest"
     steps:

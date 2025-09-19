@@ -22,7 +22,7 @@ jobs:
     name: "pre-commit Reusable"
     permissions:
       contents: "read"
-      pull-requests: "write"
+      pull-requests: "write" # Needed to create pull request
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"

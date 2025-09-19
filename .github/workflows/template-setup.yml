@@ -18,7 +18,7 @@ jobs:
     timeout-minutes: 30
     name: "Skeleton"
     permissions:
-      contents: "write"
+      contents: "write" # Needed to push changes
     if: >
       github.event.head_commit.message == 'Initial commit'
     runs-on: "ubuntu-latest"
@@ -123,7 +123,7 @@ jobs:
     name: "Settings"
     permissions:
       contents: "read"
-      issues: "write"
+      issues: "write"  # Needed to close issues
     if: >
       github.event.head_commit.message == 'Initial commit'
     runs-on: "ubuntu-latest"
@@ -320,15 +320,10 @@ jobs:
     needs: "skeleton"
     name: "Security Scorecard Setup"
     permissions:
-      # Required to upload SARIF file to CodeQL.
-      # See: https://github.com/github/codeql-action/issues/2117
-      actions: "read"
-      # Writing security events to upload SARIF file to security tab
-      security-events: "write"
-      # Only need to read contents
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to to upload SARIF file to tab
+      id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
-      # Needed for GitHub OIDC token if publish_results is true
-      id-token: "write"
     uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     with:
       sarif: true
