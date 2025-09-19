@@ -28,8 +28,8 @@ jobs:
   release-sbom-attest-reusable:
     name: "Release SBOM Attest Reusable"
     permissions:
-      id-token: "write"
-      attestations: "write"
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
     timeout-minutes: 30
     runs-on: "ubuntu-latest"
     continue-on-error: "${{ inputs.continue-on-error }}"

@@ -27,8 +27,8 @@ jobs:
   release-sboms-test:
     name: "Release SBOMs Test"
     permissions:
-      id-token: "write"
-      attestations: "write"
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
       contents: "read"
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/release-sboms-reusable.yml@main" # zizmor: ignore[unpinned-uses]

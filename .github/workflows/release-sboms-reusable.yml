@@ -34,8 +34,8 @@ jobs:
       - "sbom-legal"
     # SLSA Level 3+ needs outside workflow to run to perform the signing
     permissions:
-      id-token: "write"
-      attestations: "write"
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
@@ -135,8 +135,8 @@ jobs:
       ${{ matrix.os }} |
       ${{ matrix.dependencies.name }}
     permissions:
-      id-token: "write"
-      attestations: "write"
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
     needs:
       - "sbom-python-create-matrix"
       - "sbom-python"
@@ -230,8 +230,8 @@ jobs:
   sbom-github-attest:
     name: "SBOM GitHub Attest"
     permissions:
-      id-token: "write"
-      attestations: "write"
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
     needs:
       - "sbom-github"
     # SLSA Level 3+ needs outside workflow to run to perform the signing

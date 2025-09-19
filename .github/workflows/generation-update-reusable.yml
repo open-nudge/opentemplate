@@ -22,7 +22,7 @@ jobs:
     name: "Generation Update Reusable"
     permissions:
       contents: "read"
-      pull-requests: "write"
+      pull-requests: "write" # Needed to create pull requests
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"

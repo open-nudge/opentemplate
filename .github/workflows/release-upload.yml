@@ -20,7 +20,7 @@ jobs:
   release-upload:
     name: "Release Upload"
     permissions:
-      contents: "write"
+      contents: "write" # Needed to write documentation to gh-pages directly
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
 

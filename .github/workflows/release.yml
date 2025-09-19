@@ -27,8 +27,8 @@ jobs:
   sboms:
     name: "SBOMs"
     permissions:
-      id-token: "write"
-      attestations: "write"
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
       contents: "read"
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/release-sboms-reusable.yml@main" # zizmor: ignore[unpinned-uses]
@@ -37,12 +37,8 @@ jobs:
   sarifs:
     name: "SARIFs"
     permissions:
-      # Required to upload SARIF file to CodeQL.
-      # See: https://github.com/github/codeql-action/issues/2117
-      actions: "read"
-      # Writing security events to upload SARIF file to security tab
-      security-events: "write"
-      # Only need to read contents
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to security tab
       contents: "read"
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/release-sarifs-reusable.yml@main" # zizmor: ignore[unpinned-uses]
@@ -58,7 +54,7 @@ jobs:
   docs:
     name: "Docs"
     permissions:
-      contents: "write"
+      contents: "write" # Needed to write documentation to gh-pages directly
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
@@ -109,7 +105,7 @@ jobs:
       - "package-create"
     permissions:
       contents: "read"
-      pull-requests: "read"
+      pull-requests: "read" # Needed to read PR metadata during changelog gen
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
@@ -139,7 +135,7 @@ jobs:
       - "package-create"
       - "changelog"
     permissions:
-      id-token: "write" # To sign the provenance.
+      id-token: "write" # Needed to sign the provenance
     runs-on: "ubuntu-latest"
     timeout-minutes: 30
     strategy:
@@ -231,11 +227,9 @@ jobs:
     if: >
       github.event.repository.visibility == 'public'
     permissions:
-      # Required to upload SARIF file to CodeQL.
-      # See: https://github.com/github/codeql-action/issues/2117
-      actions: "read"
-      contents: "write"
-      id-token: "write" # To sign the provenance.
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      contents: "write" # Needed to upload SARIF file to CodeQL
+      id-token: "write" # Needed to sign the provenance
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/release-slsa-provenance-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
@@ -247,7 +241,7 @@ jobs:
     needs:
       - "slsa-provenance"
     permissions:
-      contents: "write"
+      contents: "write" # Needed to push to the release
     # yamllint disable rule:line-length
     uses: "open-nudge/opentemplate/.github/workflows/release-upload.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length

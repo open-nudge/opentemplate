@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 10
     name: "Labeler"
     permissions:
-      pull-requests: "write"
+      pull-requests: "write" # Needed to create label
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
