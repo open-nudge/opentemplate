@@ -62,8 +62,8 @@ on:
         # cycle = cogeol.scientific()[-1]["cycle"]
         # cog.out(f'        default: "{cycle}"')
         # ]]]
-        default: "3.11"
-        # [[[end]]] (sum: w9GfzS/bue)
+        default: "3.12"
+        # [[[end]]] (sum: lAlMRZbmJy)
 
       # ADDITIONAL
       additional-allowed-endpoints:
@@ -133,6 +133,7 @@ jobs:
             pypi.org:443
             raw.githubusercontent.com:443
             objects.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
             ${{ inputs.additional-allowed-endpoints }}
       - name: "Full repository checkout"
         if: >
