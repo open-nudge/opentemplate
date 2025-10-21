@@ -115,7 +115,7 @@ jobs:
       # yamllint disable rule:line-length
       command: |
         mkdir -p CHANGELOGS-${{ github.sha }}
-        export PYTHON_PACKAGE_VERSION="$(echo dist-${{ github.sha }}/dist/*.tar.gz | cut -d '-' -f 2 | cut -d '.' -f 1-3)"
+        export PYTHON_PACKAGE_VERSION=$(basename dist-${{ github.sha }}/dist/*.tar.gz | cut -d '-' -f 2)
         pdm run changelog > CHANGELOGS-${{ github.sha }}/CHANGELOG-${{ github.sha }}.md
         pdm run changelog-latest > CHANGELOGS-${{ github.sha }}/LATEST.md
       # yamllint enable rule:line-length
