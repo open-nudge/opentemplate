@@ -20,7 +20,7 @@ SPDX-License-Identifier: Apache-2.0
 <!-- ## Additional information -->
 
 <!--
-Provide any additional information that may be relevant and were
+Provide any additional information that may be relevant and was
 not covered by the issue description.
 
 Usually you would include technical details, implementation choices and so on.
