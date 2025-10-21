@@ -34,14 +34,14 @@ repos:
         entry: "conform enforce"
         pass_filenames: false
   - repo: "https://github.com/trufflesecurity/trufflehog"
-    rev: "466da5b0bb161144f6afca9afe5d57975828c410"  # frozen: v3.90.8
+    rev: "ad6fc8fb446b8fafbf7ea8193d2d6bfd42f45690"  # frozen: v3.90.11
     hooks:
       - id: "trufflehog"
         alias: "secrets"
         name: "<<<CHECK>>> Secrets"
         verbose: true
   - repo: "https://github.com/google/osv-scanner/"
-    rev: "16ed4529c0d0cc1ddf1bed2fb08deba187339673"  # frozen: v2.2.2
+    rev: "a66ef4bd60622d94e536ee3ee5592ea1e3e9a382"  # frozen: v2.2.3
     hooks:
       - id: "osv-scanner"
         name: "<<<CHECK>>> OSV Scanner"
@@ -69,7 +69,7 @@ repos:
         name: "<<<CHECK>>> Natural language"
         verbose: true
   - repo: "https://github.com/rhysd/actionlint"
-    rev: "03d0035246f3e81f36aed592ffb4bebf33a03106"  # frozen: v1.7.7
+    rev: "e7d448ef7507c20fc4c88a95d0c448b848cd6127"  # frozen: v1.7.8
     hooks:
       - id: "actionlint"
         alias: "github-actions-actionlint"

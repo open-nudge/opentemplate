@@ -88,14 +88,14 @@ jobs:
         # ]]]
         run: |
           echo "matrix=$(echo '{
-            "python-version": ["3.11", "3.12", "3.13"],
+            "python-version": ["3.12", "3.13", "3.14"],
             "os": ["ubuntu-latest", "macos-latest", "windows-latest"],
             "dependencies": [
               {"name": "dev", "group": "", "all": true},
               {"name": "package", "group": "release", "all": false}
             ]
           }' | jq -r 'tojson')" >> "${GITHUB_OUTPUT}"
-        # [[[end]]] (sum: q1QeclzB43)
+        # [[[end]]] (sum: /s03rma5wq)
         # yamllint enable rule:indentation
 
   # Works regardless of repo type

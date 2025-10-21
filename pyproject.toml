@@ -34,8 +34,8 @@ authors = [
 # cycle = cogeol.scientific()[-1]["cycle"]
 # cog.out(f'requires-python = ">={cycle}"')
 # ]]]
-requires-python = ">=3.11"
-# [[[end]]] (sum: YimYlx3sLU)
+requires-python = ">=3.12"
+# [[[end]]] (sum: ChWHeFtwKI)
 
 # Full list of classifiers: https://pypi.org/classifiers/
 classifiers = [
@@ -54,10 +54,10 @@ classifiers = [
   #     cycle = version["cycle"]
   #     cog.outl(f'  "Programming Language :: Python :: {cycle}",')
   # ]]]
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  # [[[end]]] (sum: FeG7grp2Dw)
+  "Programming Language :: Python :: 3.14",
+  # [[[end]]] (sum: n4HYN0jbX1)
   "Topic :: Software Development :: Libraries",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
@@ -176,8 +176,8 @@ dev-security = [
   # cycle = cogeol.scientific()[-1]["cycle"]
   # cog.out(f'''  "semgrep>=1; platform_system!='Windows' and python_version=='{cycle}'"''')
   # ]]]
-  "semgrep>=1; platform_system!='Windows' and python_version=='3.11'"
-  # [[[end]]] (sum: 0aEPMwHm+9)
+  "semgrep>=1; platform_system!='Windows' and python_version=='3.12'"
+  # [[[end]]] (sum: xEbnmglzzV)
 ]
 
 dev-github = [
@@ -560,8 +560,8 @@ pythonPlatform = "All"
 # cycle = cogeol.scientific()[-1]["cycle"]
 # cog.out(f'pythonVersion = "{cycle}"')
 # ]]]
-pythonVersion = "3.11"
-# [[[end]]] (sum: XMgb7wOez5)
+pythonVersion = "3.12"
+# [[[end]]] (sum: CWmwxUtwUJ)
 
 failOnWarnings = true
 
@@ -596,8 +596,8 @@ extraPaths = [
   # cycle = cogeol.scientific()[-1]["cycle"]
   # cog.out(f'  "__pypackages__/{cycle}/lib"')
   # ]]]
-  "__pypackages__/3.11/lib"
-  # [[[end]]] (sum: Uf7Jgq+ShT)
+  "__pypackages__/3.12/lib"
+  # [[[end]]] (sum: cwShhPR5Lt)
 ]
 
 [tool.pymarkdown]
@@ -867,13 +867,13 @@ tests-all = { composite = [
   #         '  "pdm run tests {args:tests}",'
   #     )
   # ]]]
+  "pdm use 3.14",
+  "pdm run tests {args:tests}",
   "pdm use 3.13",
   "pdm run tests {args:tests}",
   "pdm use 3.12",
   "pdm run tests {args:tests}",
-  "pdm use 3.11",
-  "pdm run tests {args:tests}",
-  # [[[end]]] (sum: R5ZEP5Ahja)
+  # [[[end]]] (sum: l+CVH9xxZS)
 ] }
 
 ###############################################################################
@@ -1082,10 +1082,10 @@ setup = { composite = [
   #     cycle = version["cycle"]
   #     cog.outl(f'  "pdm python install {cycle}",')
   # ]]]
+  "pdm python install 3.14",
   "pdm python install 3.13",
   "pdm python install 3.12",
-  "pdm python install 3.11",
-  # [[[end]]] (sum: uZEo+p96oZ)
+  # [[[end]]] (sum: EKFElxllOV)
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -1098,11 +1098,11 @@ setup = { composite = [
   #     cog.outl(f'  "pdm use {cycle}",')
   #     cog.outl(f'  "pdm run refresh",')
   # ]]]
+  "pdm use 3.14",
+  "pdm run refresh",
   "pdm use 3.13",
   "pdm run refresh",
-  "pdm use 3.12",
-  "pdm run refresh",
-  # [[[end]]] (sum: 7Y0OJ5MOhi)
+  # [[[end]]] (sum: /IUGZwEqDU)
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -1113,8 +1113,8 @@ setup = { composite = [
   # cycle = cogeol.scientific()[-1]["cycle"]
   # cog.outl(f'  "pdm use {cycle}",')
   # ]]]
-  "pdm use 3.11",
-  # [[[end]]] (sum: aXoMTrp8k2)
+  "pdm use 3.12",
+  # [[[end]]] (sum: VskYZaUrei)
   "pdm install -G:all --no-editable",
   "pdm run pre-commit install --install-hooks",
 ] }

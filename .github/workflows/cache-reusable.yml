@@ -50,10 +50,10 @@ jobs:
           #     cycle = version["cycle"]
           #     cog.outl(f'          - "{cycle}"')
           # ]]]
-          - "3.11"
           - "3.12"
           - "3.13"
-          # [[[end]]] (sum: l3d2zGv79j)
+          - "3.14"
+          # [[[end]]] (sum: wgdYaRbI0v)
         os:
           - "ubuntu-latest"
           - "macos-latest"

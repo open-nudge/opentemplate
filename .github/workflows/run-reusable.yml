@@ -92,8 +92,8 @@ on:
         # cycle = cogeol.scientific()[-1]["cycle"]
         # cog.out(f'        default: "{cycle}"')
         # ]]]
-        default: "3.11"
-        # [[[end]]] (sum: w9GfzS/bue)
+        default: "3.12"
+        # [[[end]]] (sum: lAlMRZbmJy)
 
       # ADDITIONAL
       additional-allowed-endpoints:
