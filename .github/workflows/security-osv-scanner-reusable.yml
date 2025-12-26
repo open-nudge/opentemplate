@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Security OSV-Scanner Reusable"
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security OSV-Scanner Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:

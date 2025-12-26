@@ -536,72 +536,19 @@ exclude = [
   ".pdm-plugins",
 ]
 
-[tool.basedpyright]
-executionEnvironments = [
-  { root = "src" }
-]
-
-exclude = [
-  "**/node_modules",
-  "**/__pycache__",
-  "**/.*",
-  "**/__pypackages__",
-  "site/*",
-  "docs/scripts/gen_ref_pages.py",
-  "docs/scripts/preprocess_files.py",
-]
-
-pythonPlatform = "All"
-
-#
-#           DO NOT EDIT UNTIL end marker
-#
-# [[[cog
-# import cog
-# import cogeol
-#
-# cycle = cogeol.scientific()[-1]["cycle"]
-# cog.out(f'pythonVersion = "{cycle}"')
-# ]]]
-pythonVersion = "3.12"
-# [[[end]]] (sum: CWmwxUtwUJ)
-
-failOnWarnings = true
-
-analyzeUnannotatedFunctions = true
-deprecateTypingAliases = true
-strictGenericNarrowing = true
-
-typeCheckingMode = "all"
-
-# Specific rule settings
-reportAny = "none"
-reportUnknownVariableType = "none"
-reportUnknownMemberType = "none"
-reportMissingTypeStubs = "none"
-# A lot of false positives
-reportPrivateLocalImportUsage = "none"
-reportPrivateImportUsage = "none"
-# Already checked by ruff
-reportPrivateUsage = "none"
-# Highlights non-issues in many cases and
-# hard to turn off file by file
-reportImportCycles = "none"
-
-extraPaths = [
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # cycle = cogeol.scientific()[-1]["cycle"]
-  # cog.out(f'  "__pypackages__/{cycle}/lib"')
-  # ]]]
-  "__pypackages__/3.12/lib"
-  # [[[end]]] (sum: cwShhPR5Lt)
-]
+[tool.ty.rules]
+# https://docs.astral.sh/ty/reference/rules
+ambiguous-protocol-member = "error"
+deprecated = "error"
+ignore-comment-unknown-rule = "error"
+invalid-ignore-comment = "error"
+possibly-missing-attribute = "error"
+possibly-missing-implicit-call = "error"
+redundant-cast = "error"
+unresolved-global = "error"
+unsupported-base = "error"
+unused-ignore-comment = "error"
+useless-overload-body = "error"
 
 [tool.pymarkdown]
 # Disabled as it does not play well with GitHub admonitions
@@ -902,7 +849,7 @@ fix-python = { composite = [
   "noqaexplain check {args:.}",
 ] }
 
-check-typing = "basedpyright --stats {args:src tests}"
+check-typing = "ty check {args}"
 
 check-shell = { composite = [
   "shellcheck -x -S style -o all",

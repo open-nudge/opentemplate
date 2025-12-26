@@ -14,6 +14,10 @@ on:
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}
+
 jobs:
   stale:
     timeout-minutes: 10

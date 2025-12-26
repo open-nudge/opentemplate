@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Run"
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Run"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:

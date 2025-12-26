@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import pathlib
 
-import mkdocs_gen_files
+import mkdocs_gen_files  # ty: ignore[unresolved-import]
 
 
 def main() -> None:

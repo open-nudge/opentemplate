@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Release SBOMs Reusable"
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Release SBOMs Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
