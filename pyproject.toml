@@ -838,7 +838,7 @@ check-python = { composite = [
   "pynudger check {args}",
   "fawltydeps --detailed",
   "interrogate {args:.}",
-  "noqaexplain check {args:.}",
+  "noqaexplain check {args}",
 ] }
 fix-python = { composite = [
   "ruff format {args:.}",
@@ -846,7 +846,7 @@ fix-python = { composite = [
   "pynudger check {args}",
   "fawltydeps --detailed",
   "interrogate {args:.}",
-  "noqaexplain check {args:.}",
+  "noqaexplain check {args}",
 ] }
 
 check-typing = "ty check {args}"
@@ -860,7 +860,7 @@ fix-shell = { shell = "pdm run shellcheck -x -S style -o all {args} | git apply 
 
 check-yaml = { composite = [
   "yamllint {args:.}",
-  "noqaexplain check {args:.}",
+  "noqaexplain check {args}",
 ] }
 
 
@@ -900,7 +900,6 @@ check-text = { composite = [
   "check-shebang-scripts-are-executable",
   "check-merge-conflict",
   "codespell",
-  "ec",
 ] }
 
 fix-text = { composite = [
@@ -909,7 +908,6 @@ fix-text = { composite = [
   "check-shebang-scripts-are-executable",
   "check-merge-conflict",
   "codespell --write-changes",
-  "ec",
 ] }
 
 # No CI
