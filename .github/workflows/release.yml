@@ -11,6 +11,7 @@ on:
     types:
       - "published"
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 # post runs on release changelog action
@@ -30,7 +31,9 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sboms-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 
@@ -40,7 +43,9 @@ jobs:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to security tab
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sarifs-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 
@@ -48,19 +53,25 @@ jobs:
     name: "Tests"
     permissions:
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/tests-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
 
   docs:
     name: "Docs"
     permissions:
       contents: "write" # Needed to write documentation to gh-pages directly
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       # Double checkout used to refresh the content of generated docs, which
       # happens on some linux distributions at least.
+      # enq: long command, splitting is unreadable
       # yamllint disable rule:line-length
       command: |
         export TAG="$(echo ${{ github.event.release.tag_name }} | cut -d. -f1,2)"
@@ -85,7 +96,9 @@ jobs:
     name: "Package Create"
     permissions:
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
@@ -106,12 +119,15 @@ jobs:
     permissions:
       contents: "read"
       pull-requests: "read" # Needed to read PR metadata during changelog gen
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       download: true
       download-name: "dist-${{ github.sha }}"
+      # enq: long command, splitting is unreadable
       # yamllint disable rule:line-length
       command: |
         mkdir -p CHANGELOGS-${{ github.sha }}
@@ -170,22 +186,26 @@ jobs:
     # https://github.com/pypi/warehouse/issues/11096
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        uses: "step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76" # v2.14.0
         # yamllint enable rule:line-length
         with:
           disable-sudo: true
           egress-policy: "block"
           allowed-endpoints: "${{ matrix.repository.endpoints }}"
       - name: "Download artifacts"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
+        # yamllint enable rule:line-length
         with:
           name: "dist-${{ github.sha }}"
           path: "dist"
       - name: "Upload python package"
         if: >
           ! matrix.repository.skip
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e" # v1.13.0
         # yamllint enable rule:line-length
@@ -196,6 +216,7 @@ jobs:
           print-hash: true
           skip-existing: true
       - name: "Rename artifacts"
+        # enq: complex script, indentation rules would make it unreadable
         # yamllint disable rule:indentation
         run: |
           # Add GITHUB_SHA to artifacts before the first dot
@@ -210,6 +231,7 @@ jobs:
           done
         # yamllint enable rule:indentation
       - name: "Upload artifacts"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
         # yamllint enable rule:line-length
@@ -230,7 +252,9 @@ jobs:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       contents: "write" # Needed to upload SARIF file to CodeQL
       id-token: "write" # Needed to sign the provenance
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-slsa-provenance-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
@@ -242,7 +266,9 @@ jobs:
       - "slsa-provenance"
     permissions:
       contents: "write" # Needed to push to the release
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-upload.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:

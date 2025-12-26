@@ -1,5 +1,5 @@
 {
-  "name": "tags-all-everyone",
+  "name": "tags-all",
   "target": "tag",
   "enforcement": "active",
   "conditions": {

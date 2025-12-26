@@ -26,6 +26,7 @@ on:
         type: "string"
         default: "semgrep.sarif"
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
@@ -39,8 +40,9 @@ jobs:
       contents: "read"
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        uses: "step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76" # v2.14.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -56,6 +58,7 @@ jobs:
             objects.githubusercontent.com:443
             semgrep.dev:443
       - name: "Checkout repository"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         # yamllint enable rule:line-length
@@ -63,14 +66,18 @@ jobs:
           persist-credentials: false
 
       - name: "Setup PDM"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
+        # enq: unpinned as it allows projects to use the latest
         uses: "open-nudge/opentemplate/.github/actions/pdm-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           # Sigstore, python-semantic-release etc.
           group: "security"
       - name: "PDM Compatibility"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
+        # enq: unpinned as it allows projects to use the latest
         uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
 
@@ -80,7 +87,9 @@ jobs:
         run: >
           pdm run check-security --sarif-output="${SEMGREP_FILE}"
       - name: "Upload files"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
+        # enq: unpinned as it allows projects to use the latest
         uses: "open-nudge/opentemplate/.github/actions/sarif-upload@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:

@@ -1,5 +1,5 @@
 {
-  "name": "branch-all-everyone",
+  "name": "branch-all",
   "target": "branch",
   "enforcement": "active",
   "conditions": {

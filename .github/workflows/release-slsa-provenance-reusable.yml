@@ -18,6 +18,7 @@ on:
         type: "boolean"
         default: false
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
@@ -33,13 +34,15 @@ jobs:
 
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        uses: "step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76" # v2.14.0
         # yamllint enable rule:line-length
         with:
           egress-policy: "block"
           allowed-endpoints: >+
       - name: "Download artifacts"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
         # yamllint enable rule:line-length
@@ -48,11 +51,8 @@ jobs:
       - name: "Test file"
         if: >
           inputs.test
-        # yamllint disable rule:line-length
         run: |
-          # shellcheck disable=SC2086
           echo "${GITHUB_SHA}" > "test-${GITHUB_SHA}"
-        # yamllint enable rule:line-length
       - name: "Artifacts to hash"
         if: >
           ! inputs.test
@@ -60,8 +60,10 @@ jobs:
           find . -type f -name "*${GITHUB_SHA}*"
       - name: "Hash Files"
         id: "hashes"
+        # enq: one liner is clearer in this case
         # yamllint disable rule:line-length
         run: |
+          # enq: string splitting is intentional here to handle multiple files
           # shellcheck disable=SC2086,SC2046
           echo "hashes=$(sha256sum $(find . -type f -name "*${GITHUB_SHA}*") | base64 -w0)" >> "$GITHUB_OUTPUT"
         # yamllint enable rule:line-length
@@ -79,6 +81,7 @@ jobs:
       actions: "read" # To read the workflow path.
       contents: "write" # To add assets to a release.
       id-token: "write" # To sign the provenance.
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # Currently this action needs to be referred by tag. More details at:
     # https://github.com/slsa-framework/slsa-github-generator#verification-of-provenance

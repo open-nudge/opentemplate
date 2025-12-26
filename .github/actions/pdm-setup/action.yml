@@ -72,6 +72,7 @@ runs:
           pytest
           json
           toml
+      # enq: multiline bash more readable without indentation
       # yamllint disable rule:indentation
       run: |
         if [ -z "${GROUP}" ]; then
@@ -96,6 +97,7 @@ runs:
     - name: "Add cache info to pdm.lock"
       shell: "bash"
       env:
+        # enq: complex multiline expression more readable with indentation
         # yamllint disable rule:indentation
         CACHE_CONTENT: >-
           ${{
@@ -115,6 +117,7 @@ runs:
         echo "::info:: Cache type '${CACHE_CONTENT}'"
     - name: "Setup Caching PDM"
       id: "setup-pdm"
+      # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
       uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0"  # v4.4
       # yamllint enable rule:line-length
@@ -129,7 +132,9 @@ runs:
       run: >
         mv "${TEMPORARY}/pdm.lock" ./
     - name: "PDM Compatibility"
+      # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
+      # enq: unpinned as it allows projects to use the latest
       uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
       # yamllint enable rule:line-length
 
@@ -159,7 +164,9 @@ runs:
         pdm install -G:all --no-editable
 
     - name: "PDM Compatibility"
+      # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
+      # enq: unpinned as it allows projects to use the latest
       uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
       # yamllint enable rule:line-length
       with:

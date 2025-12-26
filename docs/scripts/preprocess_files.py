@@ -73,6 +73,7 @@ class _LinkReplacer:
 
         self.path = pathlib.Path(
             "/",
+            # enq: ad-hoc script, full type checking wasn't performed here
             *subpath,  # pyright: ignore[reportUnknownArgumentType]
         )
 

@@ -13,14 +13,17 @@ directory="${1:-./workflows}"
 skip_files="${2:-}" # Comma-separated list of files to skip
 repo="${3:-open-nudge/opentemplate}" # Customizable repository reference
 
+# enq: we assume bash here as it's a much simpler solution
 # shellcheck disable=SC3045,SC3011
 IFS=',' read -r -a skip_array <<< "${skip_files}"
 
+# enq: we assume bash here as it's a much simpler solution
 # shellcheck disable=SC3045
 find "${directory}" -type f -name '*.yml' -print0 | while IFS= read -r -d '' file; do
     [ -f "${file}" ] || continue  # Skip if no files match
 
     # Check if file should be skipped
+    # enq: we assume bash here as it's a much simpler solution
     # shellcheck disable=SC3054
     for skip in "${skip_array[@]}"; do
         if [ "$(basename "${file}")" = "${skip}" ]; then

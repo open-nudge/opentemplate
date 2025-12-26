@@ -122,20 +122,23 @@ dev-python = [
   "interrogate>=1",
   "ruff>=0.5.6",
   "pynudger>=0.2.1",
+  "noqaexplain>=0.1.0",
 ]
 
 dev-typing = [
   # Needed to type check testing as well
   { include-group = "dev-tests" },
-  "basedpyright>=1.28.1",
+  "ty>=0.0.7",
 ]
 
 dev-shell = [
   "shellcheck-py>=0.10.0",
+  "noqaexplain>=0.1.0",
 ]
 
 dev-yaml = [
   "yamllint>=1",
+  "noqaexplain>=0.1.0",
 ]
 
 dev-markdown = [
@@ -157,11 +160,8 @@ dev-pyproject = [
   "validate-pyproject>=0.18",
 ]
 
-
 dev-citation = [
-  # Has to be pinned due to latest fixes not pushed to PyPI
-  # Citations will not be updated by renovate due to this issue as well
-  "cffconvert @ git+https://github.com/citation-file-format/cffconvert@b6045d78aac9e02b039703b030588d54d53262ac",
+  "check-jsonschema>=0.31.2",
 ]
 
 dev-security = [
@@ -209,8 +209,8 @@ dev-pre-commit = [
   "pre-commit>=3",
 ]
 
+
 dev-text = [
-  "editorconfig-checker>=3",
   "codespell>=2",
   "pre-commit-hooks>=6",
 ]
@@ -315,6 +315,9 @@ lint.extend-ignore = [
   "ISC001",
   # Prefer absolute imports over relative imports from parent modules
   "TID252",
+  # While correct, semgrep does not support this yet
+  "UP046",
+  "UP047",
 ]
 
 lint.extend-per-file-ignores."tests/**.py" = [
@@ -461,7 +464,6 @@ ignore_undeclared = [
 ]
 
 ignore_unused = [
-  "basedpyright",
   "cairosvg",
   "cffconvert",
   "check-jsonschema",
@@ -470,7 +472,6 @@ ignore_unused = [
   "conventional-pre-commit",
   "coverage",
   "cyclonedx-bom",
-  "editorconfig-checker",
   "git-cliff",
   "hypothesis",
   "interrogate",
@@ -480,6 +481,7 @@ ignore_unused = [
   "mdformat-gfm",
   "mdformat_footnote",
   "mdformat_frontmatter",
+  "noqaexplain",
   "semgrep",
   "shellcheck-py",
   "termynal",
@@ -520,6 +522,7 @@ ignore_unused = [
   "reuse",
   "pynudger",
   "ruff",
+  "ty",
   "spdx-tools",
 ]
 
@@ -888,6 +891,7 @@ check-python = { composite = [
   "pynudger check {args}",
   "fawltydeps --detailed",
   "interrogate {args:.}",
+  "noqaexplain check {args:.}",
 ] }
 fix-python = { composite = [
   "ruff format {args:.}",
@@ -895,14 +899,23 @@ fix-python = { composite = [
   "pynudger check {args}",
   "fawltydeps --detailed",
   "interrogate {args:.}",
+  "noqaexplain check {args:.}",
 ] }
 
 check-typing = "basedpyright --stats {args:src tests}"
 
-check-shell = "shellcheck -x -S style -o all"
+check-shell = { composite = [
+  "shellcheck -x -S style -o all",
+  "noqaexplain check",
+] }
+
 fix-shell = { shell = "pdm run shellcheck -x -S style -o all {args} | git apply --allow-empty" }
 
-check-yaml = "yamllint {args:.}"
+check-yaml = { composite = [
+  "yamllint {args:.}",
+  "noqaexplain check {args:.}",
+] }
+
 
 # @ is ignored for version pinning in pyproject.toml (as seen in cffconvert)
 # issues and blob are ignored as the repo might be private and unreachable
@@ -922,7 +935,7 @@ check-ini = "pyinilint"
 
 check-pyproject = "validate-pyproject {args:pyproject.toml}"
 
-check-citation = "cffconvert --validate -i {args:CITATION.cff}"
+check-citation = "check-jsonschema --verbose --builtin-schema vendor.citation-file-format {args:CITATION.cff}"
 
 check-docs = "mkdocs build"
 
@@ -989,13 +1002,6 @@ check-security = { cmd = [
   "{args:.}",
 ] }
 
-
-check-renovate = { cmd = [
-  "check-jsonschema",
-  "--builtin-schema",
-  "vendor.renovate",
-  "{args:./.github/renovate.json}",
-] }
 
 check-github-actions = "check-jsonschema --verbose --builtin-schema vendor.github-actions"
 

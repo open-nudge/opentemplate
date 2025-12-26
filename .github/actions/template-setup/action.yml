@@ -105,6 +105,7 @@ runs:
         https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
         >> .gitignore
     - name: "Setup PDM"
+      # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
       uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0"  # v4.4
       # yamllint enable rule:line-length

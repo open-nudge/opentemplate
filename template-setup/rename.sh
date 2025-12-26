@@ -32,6 +32,7 @@ if [ -n "${EXCLUDE_LIST}" ]; then
   done
 fi
 
+# enq: word splitting in EXCLUDE_ARGS is intentional
 # shellcheck disable=SC2086
 find . ${EXCLUDE_ARGS} -type f \
   -exec sh -c '

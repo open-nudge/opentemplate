@@ -6,6 +6,7 @@
 ---
 name: "Tests Reusable"
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 on:
@@ -48,10 +49,13 @@ jobs:
       Tests | ${{ matrix.os }} | python-${{ matrix.python }}
     permissions:
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
+      # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
       command: |
         pdm run tests
@@ -62,10 +66,8 @@ jobs:
         tests/**
       group: "tests"
       core: true
-      # yamllint disable rule:line-length
       upload-name: >
         coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}
-      # yamllint enable rule:line-length
       upload-path: >
         coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       python-version: "${{ matrix.python }}"
@@ -79,10 +81,13 @@ jobs:
     needs: "tests-reusable"
     permissions:
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
+      # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
       command: |
         pdm run coverage combine --debug=pathmap --keep $(find coverage-*-${{ github.sha }}/ -name "coverage-*-${{ github.sha }}.sqlite")

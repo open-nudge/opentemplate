@@ -46,6 +46,8 @@ runs:
         echo "sbom=${SBOM_DIRECTORY}/${SBOM}" >> "${GITHUB_OUTPUT}"
       # See here for more information about the sum:
       # https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md#provenance-for-artifacts-built-across-multiple-operating-systems
+      # enq: env vars do not get expanded properly otherwise
+      # enq: action is used internally only, but proceed with caution!
     - name: "Hash Files (Linux/MacOS)" # zizmor: ignore[template-injection]
       if: >
         runner.os != 'Windows'
@@ -54,6 +56,8 @@ runs:
         OUTPUT_FILE: "sbom-${{ github.sha }}/checksums.txt"
       run: >
         shasum -a 256 ${{ inputs.files }} > "${OUTPUT_FILE}"
+      # enq: env vars do not get expanded properly otherwise
+      # enq: action is used internally only, but proceed with caution!
     - name: "Hash Files (Windows)" # zizmor: ignore[template-injection]
       if: >
         runner.os == 'Windows'

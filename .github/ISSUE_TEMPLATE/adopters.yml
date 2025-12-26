@@ -19,6 +19,7 @@ body:
     id: "terms"
     attributes:
       label: "Terms"
+      # enq: links will be generated and likely too long (over 80 chars)
       # yamllint disable rule:line-length
       description: >
         By submitting this issue, you agree to follow this project's
@@ -86,6 +87,7 @@ body:
     id: "contributor"
     attributes:
       label: "Who Will Add This Adopter?"
+      # enq: links will be generated and likely too long (over 80 chars)
       # yamllint disable rule:line-length
       description: >
         File to edit: [ADOPTERS.md](https://github.com/open-nudge/opentemplate/blob/main/ADOPTERS.md)

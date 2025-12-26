@@ -11,12 +11,14 @@ body:
     id: "terms"
     attributes:
       label: "Terms"
+      # enq: links will be generated and likely too long (over 80 chars)
       # yamllint disable rule:line-length
       description: >
         By submitting this announcement, you agree to follow our
         [Code of Conduct](https://github.com/open-nudge/opentemplate/blob/main/CODE_OF_CONDUCT.md)
       # yamllint enable rule:line-length
       options:
+        # enq: links will be generated and likely too long (over 80 chars)
         # yamllint disable rule:line-length
         - label: >
             I agree to follow this project's

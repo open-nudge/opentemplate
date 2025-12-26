@@ -26,6 +26,7 @@ on:
           - "2 (or more)"
         required: true
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
@@ -40,6 +41,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
         # yamllint enable rule:line-length
@@ -53,6 +55,7 @@ jobs:
         id: "organization"
         env:
           ORGANIZATION: "${{ inputs.organization }}"
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: |
           case "${ORGANIZATION}" in
@@ -71,6 +74,7 @@ jobs:
         id: "reviewers"
         env:
           REVIEWERS: "${{ inputs.reviewers }}"
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: |
           case "${REVIEWERS}" in
@@ -89,6 +93,7 @@ jobs:
         id: "settings"
         env:
           REPOSITORY_VISIBILITY: "${{ github.event.repository.visibility }}"
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: |
           case "${REPOSITORY_VISIBILITY}" in
@@ -102,6 +107,7 @@ jobs:
           esac
         # yamllint enable rule:indentation
       - name: "Checkout repository"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         # yamllint enable rule:line-length
@@ -111,6 +117,7 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - name: "Wait for template setup to finish (guard)"
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation rule:line-length
         run: |
           printf "Waiting for branch 'gh-pages' to exist on GitHub...\n"
@@ -147,10 +154,12 @@ jobs:
           || steps.organization.outputs.type == 'pro'
         env:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           RULES_ENDPOINT: >-
             /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/rulesets
           # yamllint enable rule:line-length
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation rule:line-length
         run: >
           find .github/rulesets -name "*.json" -print0 | parallel -0 -j0 --halt now,fail=1 \
@@ -168,6 +177,7 @@ jobs:
           || steps.organization.outputs.type == 'enterprise'
         env:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           PAGES_ENDPOINT: >-
             /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/pages
@@ -185,12 +195,14 @@ jobs:
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
         env:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           ENDPOINT: >-
             /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}
           HOMEPAGE: >-
             https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
           # yamllint enable rule:line-length
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: >
           cat <<EOF | gh api
@@ -223,10 +235,12 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           ENDPOINT: >-
             /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}
           # yamllint enable rule:line-length
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: >
           cat <<EOF | gh api
@@ -273,6 +287,7 @@ jobs:
           github.event.repository.visibility == 'public'
         env:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           PRIVATE_VULNERABILITY_REPORTING_ENDPOINT: >-
             /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/private-vulnerability-reporting
@@ -292,10 +307,12 @@ jobs:
           github.event.repository.visibility == 'public'
         env:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           VULNERABILITY_ALERTS_ENDPOINT: >-
             /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/vulnerability-alerts
           # yamllint enable rule:line-length
+        # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: >
           gh api
@@ -321,7 +338,9 @@ jobs:
       security-events: "write" # Writing security events to upload SARIF file
       contents: "read"
       id-token: "write" # Needed for GitHub OIDC token if publish_results
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
