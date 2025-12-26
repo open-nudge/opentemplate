@@ -1,18 +1,12 @@
 {
   "enforcement": "active",
-  "name": "branch-all-human",
+  "name": "branch-except-gh-pages",
   "rules": [
     {
       "type": "required_signatures"
     }
   ],
-  "bypass_actors": [
-    {
-      "actor_id": 2740,
-      "actor_type": "Integration",
-      "bypass_mode": "pull_request"
-    }
-  ],
+  "bypass_actors": [],
   "conditions": {
     "ref_name": {
       "include": [

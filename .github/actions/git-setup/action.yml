@@ -12,6 +12,7 @@ runs:
   steps:
     - name: "Setup git"
       shell: "bash"
+      # enq: single lines more readable
       # yamllint disable rule:line-length
       run: |
         git config --global user.email github-actions[bot]@users.noreply.github.com

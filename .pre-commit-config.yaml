@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-# Renovate does not support revision pinning for now, see:
-# https://github.com/renovatebot/renovate/issues/22567
 default_stages:
   - "pre-commit"
 default_install_hook_types:
@@ -34,14 +32,14 @@ repos:
         entry: "conform enforce"
         pass_filenames: false
   - repo: "https://github.com/trufflesecurity/trufflehog"
-    rev: "ad6fc8fb446b8fafbf7ea8193d2d6bfd42f45690"  # frozen: v3.90.11
+    rev: "ef6e76c3c4023279497fab4721ffa071a722fd05"  # frozen: v3.92.4
     hooks:
       - id: "trufflehog"
         alias: "secrets"
         name: "<<<CHECK>>> Secrets"
         verbose: true
   - repo: "https://github.com/google/osv-scanner/"
-    rev: "a66ef4bd60622d94e536ee3ee5592ea1e3e9a382"  # frozen: v2.2.3
+    rev: "d03774202cbaf17a260c2f4a073585baee524b45"  # frozen: v2.3.1
     hooks:
       - id: "osv-scanner"
         name: "<<<CHECK>>> OSV Scanner"
@@ -50,7 +48,7 @@ repos:
           - "--licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0"
           - "./"
   - repo: "https://github.com/errata-ai/vale"
-    rev: "44c18b3d2ebc971c160cec26cd179a3f73d37f58"  # frozen: v3.12.0
+    rev: "27593b0e0e7eb8f0c2b7fae0d93fa1cfaabceb2f"  # frozen: v3.13.0
     hooks:
       - id: "vale"
         alias: "setup-natural-language"
@@ -62,14 +60,14 @@ repos:
         stages:
           - "pre-commit"
   - repo: "https://github.com/errata-ai/vale"
-    rev: "44c18b3d2ebc971c160cec26cd179a3f73d37f58"  # frozen: v3.12.0
+    rev: "27593b0e0e7eb8f0c2b7fae0d93fa1cfaabceb2f"  # frozen: v3.13.0
     hooks:
       - id: "vale"
         alias: "natural-language"
         name: "<<<CHECK>>> Natural language"
         verbose: true
   - repo: "https://github.com/rhysd/actionlint"
-    rev: "e7d448ef7507c20fc4c88a95d0c448b848cd6127"  # frozen: v1.7.8
+    rev: "a443f344ff32813837fa49f7aa6cbc478d770e62"  # frozen: v1.7.9
     hooks:
       - id: "actionlint"
         alias: "github-actions-actionlint"
@@ -165,15 +163,6 @@ repos:
         require_serial: true
         types:
           - "text"
-      - id: "renovate"
-        verbose: true
-        name: "<<<CHECK>>> Renovate"
-        entry: "pdm run -v check-renovate"
-        language: "system"
-        require_serial: true
-        types:
-          - "file"
-        files: "^.github/renovate.json$"
       - id: "github"
         verbose: true
         name: "<<<CHECK>>> GitHub"
@@ -230,6 +219,7 @@ repos:
         name: "<<<CHECK>>> Pytest"
         entry: "pdm run -v check-pytest"
         language: "system"
+        # enq: double quotes do not forward regex properly
         files: '(^|/)tests/.+\.py$'  # yamllint disable-line rule:quoted-strings
       - id: "symlink"
         verbose: true

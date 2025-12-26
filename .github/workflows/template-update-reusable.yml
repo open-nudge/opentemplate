@@ -4,11 +4,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Template Update Reusable"
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Template Update Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
@@ -21,5 +23,5 @@ jobs:
     steps:
       - name: "Placeholder operation"
         run: >
-          echo "Placeholder operation, template update not implemented :("
+          echo "Placeholder operation, template update not yet implemented."
 ...

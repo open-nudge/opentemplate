@@ -1,6 +1,6 @@
 {
   "enforcement": "active",
-  "name": "branch-default-everyone",
+  "name": "branch-long-running",
   "rules": [
     {
       "type": "deletion"

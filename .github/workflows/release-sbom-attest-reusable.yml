@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Release SBOM Attest Reusable"
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Release SBOM Attest Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
@@ -22,6 +23,7 @@ on:
         type: "boolean"
         default: true
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
@@ -37,8 +39,9 @@ jobs:
       ATTESTATION_NAME: "attestation-${{ inputs.artifact }}.intoto.jsonl"
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        uses: "step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76" # v2.14.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -48,12 +51,14 @@ jobs:
             fulcio.sigstore.dev:443
             rekor.sigstore.dev:443
       - name: "Download artifacts"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093" # v4.3.0
         # yamllint enable rule:line-length
         with:
           name: "${{ inputs.artifact }}"
       - name: "Attest SBOM"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/attest-sbom@115c3be05ff3974bcbd596578934b3f9ce39bf68" # v2.2.0
         # yamllint enable rule:line-length
@@ -67,6 +72,7 @@ jobs:
         run: >
           mv "${BUNDLE_PATH}" "${ATTESTATION_NAME}"
       - name: "Upload SBOM attestation"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
         # yamllint enable rule:line-length

@@ -18,6 +18,7 @@ body:
   - type: "checkboxes"
     id: "terms"
     attributes:
+      # enq: links will be generated and likely too long (over 80 chars)
       # yamllint disable rule:line-length
       label: "Terms"
       description: >

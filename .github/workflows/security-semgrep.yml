@@ -14,6 +14,7 @@ on:
     types:
       - "checks_requested"
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 concurrency:
@@ -28,7 +29,9 @@ jobs:
       security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
     name: "Security Semgrep"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/security-semgrep-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

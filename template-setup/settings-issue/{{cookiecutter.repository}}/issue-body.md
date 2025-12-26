@@ -15,7 +15,6 @@ SPDX-License-Identifier: Apache-2.0
 
 Enable the following for all repositories:
 
-- __[Mend Renovate Bot App for GitHub](https://github.com/marketplace/renovate)__ (automatically updates dependencies).
 - __[StepSecurity Actions Security](https://github.com/apps/stepsecurity-actions-security)__ (manages GitHub Actions egress rules).
 
 > [!NOTE]

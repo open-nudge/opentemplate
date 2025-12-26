@@ -5,7 +5,7 @@ SPDX-FileContributor: szymonmaszke <github@maszke.co>
 SPDX-License-Identifier: Apache-2.0
 -->
 
-<!--- pyml disable-next-line first-line-heading,first-line-h1-->
+<!--- pyml disable-next-line first-line-heading,first-line-h1 -->
 
 ## Checklist
 

@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
+# enq: automatically generated description might be too long for yamllint
 # yamllint disable rule:line-length
 site_name: >-
   opentemplate

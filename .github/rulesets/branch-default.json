@@ -1,6 +1,6 @@
 {
   "enforcement": "active",
-  "name": "branch-default-human",
+  "name": "branch-default",
   "rules": [
     {
       "parameters": {
@@ -17,13 +17,7 @@
       "type": "pull_request"
     }
   ],
-  "bypass_actors": [
-    {
-      "actor_id": 2740,
-      "actor_type": "Integration",
-      "bypass_mode": "pull_request"
-    }
-  ],
+  "bypass_actors": [],
   "conditions": {
     "ref_name": {
       "include": [

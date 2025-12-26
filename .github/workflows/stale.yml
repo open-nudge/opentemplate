@@ -11,7 +11,12 @@ on:
   workflow_call:
   workflow_dispatch:
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}
 
 jobs:
   stale:
@@ -23,8 +28,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        uses: "step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76" # v2.14.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -33,6 +39,7 @@ jobs:
             api.github.com:443
             github.com:443
       - name: "Mark stale PRs"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/stale@5bef64f19d7facfb25b37b414482c7164d639639" # v9.1.0
         # yamllint enable rule:line-length

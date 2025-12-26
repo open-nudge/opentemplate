@@ -5,6 +5,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# enq: no need for this check as we'll run in bash only environments
 # shellcheck disable=SC3040,SC2312
 set -eu
 

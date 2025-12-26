@@ -7,6 +7,7 @@
 name: "Pull Request"
 
 on:
+  # enq: can be used as it's a low-risk action with no custom code execution
   pull_request_target: # zizmor: ignore[dangerous-triggers]
     types:
       - "opened"
@@ -19,6 +20,7 @@ on:
     types:
       - "checks_requested"
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 concurrency:
@@ -35,8 +37,10 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        # enq: unpinned as it allows projects to use the latest
+        uses: "step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76" # v2.14.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -44,6 +48,7 @@ jobs:
           allowed-endpoints: |
             api.github.com:443
       - name: "Lint Pull Request"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "amannn/action-semantic-pull-request@0723387faaf9b38adef4775cd42cfd5155ed6017" # v5.5.3
         # yamllint enable rule:line-length

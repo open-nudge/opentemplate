@@ -19,6 +19,7 @@ body:
     id: "terms"
     attributes:
       label: "Terms"
+      # enq: links will be generated and likely too long (over 80 chars)
       # yamllint disable rule:line-length
       description: >
         By submitting this issue, you agree to follow this project's

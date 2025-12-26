@@ -4,11 +4,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Release SBOMs Reusable"
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Release SBOMs Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
 
+# enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
@@ -17,7 +19,9 @@ jobs:
     name: "SBOM Legal"
     permissions:
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
@@ -36,7 +40,9 @@ jobs:
     permissions:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
@@ -46,12 +52,14 @@ jobs:
   sbom-python-create-matrix:
     name: "Create Matrix"
     runs-on: "ubuntu-latest"
+    # enq: the only way to set permissions to none in GH Actions
     permissions: {} # yamllint disable-line rule:braces
     outputs:
       matrix: "${{ steps.matrix.outputs.matrix }}"
     timeout-minutes: 10
     steps:
       - name: "Harden runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
         # yamllint enable rule:line-length
@@ -61,6 +69,7 @@ jobs:
           allowed-endpoints: >+
       - name: "Create Matrix"
         id: "matrix"
+        # enq: indentation disabled as the generated code needs to be indented
         # yamllint disable rule:indentation
         #
         #           DO NOT EDIT UNTIL end marker
@@ -112,11 +121,14 @@ jobs:
       matrix: "${{ fromJson(needs.sbom-python-create-matrix.outputs.matrix) }}"
     permissions:
       contents: "read"
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       type: "python"
+      # enq: one liner is more readable in this case
       # yamllint disable rule:line-length
       files: >-
         $(find .venv/lib -type f -name 'RECORD' -path '.venv/lib/*.dist-info/RECORD')
@@ -145,11 +157,14 @@ jobs:
       matrix: "${{ fromJson(needs.sbom-python-create-matrix.outputs.matrix) }}"
 
     # SLSA Level 3+ needs outside workflow to run to perform the signing
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       # Unfortunately could not easily reuse the artifact from the sbom
+      # enq: increased readability
       # yamllint disable rule:indentation
       artifact: "sbom-python-${{ matrix.dependencies.all
                     && format(
@@ -180,8 +195,9 @@ jobs:
       contents: "read"
     steps:
       - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0" # v2.12.0
+        uses: "step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76" # v2.14.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -190,6 +206,7 @@ jobs:
             api.github.com:443
             github.com:443
       - name: "Repository checkout"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         # yamllint enable rule:line-length
@@ -200,7 +217,9 @@ jobs:
           persist-credentials: false
       - name: "Perform action setup"
         id: "setup"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
+        # enq: unpinned as it allows projects to use the latest
         uses: "open-nudge/opentemplate/.github/actions/release-sbom-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
@@ -216,6 +235,7 @@ jobs:
           | jq '.sbom'
           > "${SBOM_FILE}"
       - name: "Upload artifacts"
+        # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
         # yamllint enable rule:line-length
@@ -235,7 +255,9 @@ jobs:
     needs:
       - "sbom-github"
     # SLSA Level 3+ needs outside workflow to run to perform the signing
+    # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     # May fail on private repos without access to private sigstore instance
