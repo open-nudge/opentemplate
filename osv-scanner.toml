@@ -41,6 +41,24 @@ reason = "Affects SVN or pytest<7.2.0, which are not used in this project."
 
 [[PackageOverrides]]
 ecosystem = "PyPI"
+name = "griffelib"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "peewee"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "python-discovery"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
 name = "pyjson5"
 license.ignore = true
 reason = "dev dependency"

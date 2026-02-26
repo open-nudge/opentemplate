@@ -106,9 +106,7 @@ def main() -> None:
         updated_content = pattern.sub(_LinkReplacer(path), content)
         updated_content = remove_blocks(updated_content)
 
-        with mkdocs_gen_files.open(
-            path.relative_to("docs"), "w"
-        ) as virtual_file:
+        with mkdocs_gen_files.open(path.relative_to("docs"), "w") as virtual_file:
             virtual_file.write(updated_content)
 
 

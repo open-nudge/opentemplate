@@ -4,11 +4,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 [build-system]
-build-backend = "pdm.backend"
+build-backend = "hatchling.build"
 
 requires = [
-  "comver>=0.2.0",
-  "pdm-backend>=2",
+  "hatchling>=1",
+  "hatch-requirements-txt>=0.4.1",
+  "comver[hatchling]>=1",
 ]
 
 [project]
@@ -62,16 +63,7 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
 ]
-dynamic = [ "version" ]
-
-###############################################################################
-#
-#                              DEPENDENCIES
-#
-###############################################################################
-
-dependencies = [
-]
+dynamic = [ "version", "dependencies", "optional-dependencies" ]
 
 urls.Changelog = "https://github.com/open-nudge/opentemplate/blob/master/CHANGELOG.md"
 urls.Documentation = "https://open-nudge.github.io/opentemplate"
@@ -283,15 +275,17 @@ dev-all = [
 #
 ###############################################################################
 
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["dependencies/dependencies.txt"]
+
+[tool.hatch.version]
+source = "comver"
+
 [tool.pdm]
 distribution = true
 
-[tool.pdm.version]
-source = "call"
-getter = "comver.plugin:pdm"
-
 [tool.ruff]
-line-length = 80
+line-length = 110
 src = [
   "src",
   "test",

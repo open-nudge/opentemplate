@@ -186,8 +186,6 @@ __opentemplate__ is a Python template which is:
     [`sparse-checkout`](https://github.blog/open-source/git/bring-your-monorepo-down-to-size-with-sparse-checkout/)
     when possible to minimize the amount of data transferred;
     __great for large repositories with many files and large history__
-- __Dependency updates__: [Renovate](https://docs.renovatebot.com/)
-    updates all dependencies in a grouped manner once a week
 - __Templates__: __every possible template included__ (discussions,
     issues, pull requests - each extensively described)
 - __Predefined labels__ - each pull request will be automatically labeled
@@ -255,7 +253,8 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 ### Usage
 
 1. Create a new branch
-1. Optionally add dependencies to `pyproject.toml`
+1. Optionally add dependencies to `dependencies/dependencies.txt`
+    (__no need to update `pyproject.toml` manually!__)
 1. Write code in `/src/<project_name>` and tests in `/tests`
 1. Use `git add`, `git commit` and `git push` your changes
 1. `pre-commit` will guide you through the process
