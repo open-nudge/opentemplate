@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -46,5 +46,5 @@ Some of the security measures undertaken in this project include:
     as seen [here](https://github.com/sigstore/sigstore-python)
 - GitHub Actions CI/CD pipelines with minimal permissions
 - GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
-- [Pre-commit hooks](https://pre-commit.com/) for local code quality
+- [Pre-commit hooks](https://prek.j178.dev/) for local code quality
     and security verification

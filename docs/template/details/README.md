@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -20,7 +20,6 @@ Explore the topics:
 - [Python](python.md) – linters and quality checks
 - [Documentation](documentation.md) – building and validating docs
 - [GitHub Actions](github-actions.md) – CI setup and workflows
-- [Scheduled jobs](scheduled-jobs.md) – automated updates and security checks
 - [Legal](legal.md) – licensing and copyright via [REUSE](https://reuse.software/)
 - [Prose](prose.md) – checks for docstrings, markdown etc.
 - [Other languages](other-languages.md) – QA for bash, JSON, etc.

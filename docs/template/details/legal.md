@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -29,7 +29,7 @@ meaning:
 > See [`SPDX-FileContributor`](https://spdx.github.io/spdx-spec/v2.2.2/file-information/#8.14)
 > for more details.
 
-- The `pre-commit` hook automatically adds missing headers (`fix-legal` in `pyproject.toml`).
+- The `prek` hook automatically adds missing headers (`fix-legal` in `pyproject.toml`).
 - `check-legal` in `pyproject.toml` ensures compliance and runs after `fix-legal`.
 
 ### License compliance
@@ -55,7 +55,7 @@ Allowed licenses (subject to change):
 
 To update allowed licenses for `osv-scanner`:
 
-- Modify `.pre-commit-config.yaml` (`id: osv-scanner`) for local changes.
+- Modify `.prek-config.yaml` (`id: osv-scanner`) for local changes.
 - Update `.github/workflows/reusable-security-osv-scanner.yml` for CI.
 
 ## Documents

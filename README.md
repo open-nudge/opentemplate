@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -61,7 +61,7 @@ __opentemplate__ is a Python template which is:
     [secured egress](https://github.com/step-security/harden-runner),
     [OSSF Best Practices](https://github.com/ossf/scorecard)
 - [__Consistent__](https://open-nudge.github.io/opentemplate/template/configuration/basic):
-    all pipelines (`GitHub Actions`, `pre-commit`)
+    all pipelines (`GitHub Actions`, `prek`)
     share the same `pyproject.toml` config
 - [__Performant__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
     parallel checks, builds, minimally-sized caches and checkouts
@@ -106,7 +106,7 @@ __opentemplate__ is a Python template which is:
     for type checking, [`FawltyDeps`](https://github.com/tweag/FawltyDeps)
     for static dependency analysis
 - __Each file is copyrighted with your git information__ -
-    copyrights added automatically by `pre-commit`,
+    copyrights added automatically by `prek`,
     see [REUSE](https://reuse.readthedocs.io/en/stable/) and
     [SPDX Licensing](https://spdx.dev/learn/handling-license-info/)
     for more information
@@ -123,9 +123,9 @@ __opentemplate__ is a Python template which is:
     [GitHub release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases),
     each release is attested and immutably versioned via
     [`commition`](https://pypi.org/project/commition/)
-- [__`pre-commit`__](https://pre-commit.com/): __all checks and fixers are run
+- [__`prek`__](https://prek.j178.dev/): __all checks and fixers are run
     before commit__, no need to remember them!
-    (`pre-commit` is also setup after running a single `pdm setup` command!)
+    (`prek` is also setup after running a single `pdm setup` command!)
 
 ### Security
 
@@ -159,7 +159,7 @@ __opentemplate__ is a Python template which is:
     running `.github/reusability/localize.sh` script. __No need
     to manage/update your own workflows!__
 - __Pinned dependencies__: all dependencies are pinned to specific versions
-    (GitHub Actions, `pre-commit` and `pdm.lock`)
+    (GitHub Actions, `prek` and `pdm.lock`)
 - __Monitored egress in GitHub Actions__: [`harden-runner`](https://github.com/step-security/harden-runner)
     with a __whitelisted minimal set of domains__ necessary to run the workflows
 - __Security documentation__: `SECURITY.md`, `SECURITY-INSIGHTS.yml`,
@@ -257,7 +257,7 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
     (__no need to update `pyproject.toml` manually!__)
 1. Write code in `/src/<project_name>` and tests in `/tests`
 1. Use `git add`, `git commit` and `git push` your changes
-1. `pre-commit` will guide you through the process
+1. `prek` will guide you through the process
 
 > [!TIP]
 > For more details read the
@@ -310,17 +310,17 @@ Common changes to `pyproject.toml`:
     (`check-<group>` or `fix-<group>`, the latter modifies files)
 - Use `[tool.<name>]` to adjust specific tool configuration
 
-> __Adjusting these sections will affect `pre-commit` and `GitHub Actions`__
+> __Adjusting these sections will affect `prek` and `GitHub Actions`__
 
 </details>
 
 <details>
-  <summary><b><big>Disable some pre-commit check</big></b> (click me)</summary>
+  <summary><b><big>Disable some prek check</big></b> (click me)</summary>
 &nbsp;
 
 > Disabling checks should be done cautiously!
 
-`pre-commit` checks are defined in `.pre-commit-config.yaml`.
+`prek` checks are defined in `.prek-config.yaml`.
 
 Disable a check using `SKIP` environment variable:
 
@@ -335,7 +335,7 @@ and Python fixes (which would modify files):
 SKIP="dco,ini,fix-python" git commit -m <message>
 ```
 
-For details, refer to the `id` fields in `.pre-commit-config.yaml`.
+For details, refer to the `id` fields in `.prek-config.yaml`.
 
 > Some commands have both `<group>-fix` and `<group>-check`
 > for different actions!

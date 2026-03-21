@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -83,7 +83,7 @@ developer workflows, security posture and best practices.
     as seen [here](https://github.com/sigstore/sigstore-python)
 - GitHub Actions CI/CD pipelines with minimal permissions
 - GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
-- [Pre-commit hooks](https://pre-commit.com/) for local code quality
+- [Pre-commit hooks](https://prek.j178.dev/) for local code quality
     and security verification
 
 ### Goals
@@ -112,9 +112,9 @@ __It should be extended by adding project-specific security information.__
 
 <!-- pyml disable-num-lines 5 line-length-->
 
-| Component | Applicability | Description of Importance                                                                                                                                                                                                                                  |
-| --------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| template  | Critical      | Base GitHub template of the repository provided by `opennudge`. Used to provide initial security posture (pipelines, pre-commit, practices, hardening etc.) See [open-nudge/opentemplate](https://github.com/open-nudge/opentemplate) for more information |
+| Component | Applicability | Description of Importance                                                                                                                                                                                                                            |
+| --------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| template  | Critical      | Base GitHub template of the repository provided by `opennudge`. Used to provide initial security posture (pipelines, prek, practices, hardening etc.) See [open-nudge/opentemplate](https://github.com/open-nudge/opentemplate) for more information |
 
 ## Project compliance
 

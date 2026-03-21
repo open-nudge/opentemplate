@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -22,46 +22,10 @@ and are run periodically as vulnerabilities evolve, namely:
 - __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
 - __Bug detection and code quality:__ [`semgrep/semgrep`](https://github.com/semgrep/semgrep)
 
-## Dependency automation
+## pre-commit
 
-Automating dependency updates ensures security and stability.
-
-### Renovate
-
-> [!IMPORTANT]
-> Only relevant workflows run when `renovate` opens a PR
-> (e.g., `markdown` checks for `dev-markdown` updates).
-
-- Updates run on weekends.
-- Dependencies are grouped by `dev-<type>`.
-- Updates are handled by `github-actions[bot]`.
-
-#### Adjustments
-
-> [!CAUTION]
-> If adding a `dev` dependency in `pyproject.toml`,
-> update `.github/renovate.json` accordingly.
-
-New `dev-<type>` groups require:
-
-- A corresponding entry in `renovate.json`.
-- (Probably) a new `.github/workflows/renovate-<type>.yml` workflow.
-
-> [!NOTE]
-> `.github/workflows/<type>-renovate.yml` should run only when the
-> branch name matches `dependencies-dev-<type>`.
-
-> [!TIP]
-> See the [GitHub Actions section](github-actions.md) for more details.
-
-### pre-commit
-
-Independent `pre-commit` hooks update weekly. All hooks run against the
+Independent `prek` hooks update weekly. All hooks run against the
 latest `main` branch state to ensure updates are correct.
-
-> [!NOTE]
-> `renovate` does not update `pre-commit` hooks due to maintainers'
-> policy ([details](https://docs.renovatebot.com/modules/manager/pre-commit/#additional-information)).
 
 ## Content generation
 
@@ -86,8 +50,7 @@ Together with GitHub Actions, these ensure:
 ## Code sources
 
 - `.github/renovate.json`
-- `.github/workflows/pre-commit-update*.yml`
+- `.github/workflows/prek-update*.yml`
 - `.github/workflows/security-osv-scanner-update*.yml`
 - `.github/workflows/security-semgrep*.yml`
-- `.github/workflows/*-renovate.yml`
 - `.github/workflows/generation*.yml`

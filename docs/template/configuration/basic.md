@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -29,15 +29,15 @@ Most adjustments are made in `pyproject.toml`, which controls:
 > [!NOTE]
 > Sections are ordered by importance and assumed frequency of change.
 
-## `pre-commit`
+## `prek`
 
 Some tools not integrated with `pyproject.toml` can be configured
-by editing `.pre-commit-config.yaml`.
+by editing `.prek-config.yaml`.
 
 > [!TIP]
 > Non-`pyproject.toml` configurations are at the beginning of the file.
 
-More details: [pre-commit documentation](https://pre-commit.com/#usage)
+More details: [prek documentation](https://prek.j178.dev/configuration/)
 
 ## GitHub Actions
 
@@ -65,5 +65,5 @@ For other modifications, check:
 ## Code sources
 
 - `pyproject.toml`
-- `.pre-commit-config.yaml`
+- `.prek-config.yaml`
 - `.github/workflows/`

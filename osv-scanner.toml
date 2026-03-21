@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -7,34 +7,6 @@
 # See here: https://google.github.io/osv-scanner/configuration/ for configuration
 # See here: https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection
 # for the checks performed by OSSF Scorecard related to OSV scanning
-[[IgnoredVulns]]
-id = "GHSA-xm59-rqc7-hhvf"
-reason = "nbconvert is not used directly in this project (dev dependency)."
-
-[[IgnoredVulns]]
-id = "GHSA-9548-qrrj-x5pj"
-reason = "AIOHTTP is not used directly in this project (dev dependency)."
-
-[[IgnoredVulns]]
-id = "PYSEC-2025-61"
-reason = "pillow is not used directly in this project (dev dependency)."
-
-[[IgnoredVulns]]
-id = "GHSA-xg8h-j46f-w952"
-reason = "pillow is not used directly in this project (dev dependency)."
-
-[[IgnoredVulns]]
-id = "GHSA-7cx3-6m66-7c5m"
-reason = "tornado is not used directly in this project (dev dependency)."
-
-[[IgnoredVulns]]
-id = "GHSA-cpwx-vrp4-4pq7"
-reason = "Jinja2 is not directly used in the project (dev dependency)."
-
-[[IgnoredVulns]]
-id = "PYSEC-2022-42969"
-reason = "Affects SVN, which is not used in this project."
-
 [[IgnoredVulns]]
 id = "GHSA-w596-4wvx-j9j6"
 reason = "Affects SVN or pytest<7.2.0, which are not used in this project."
@@ -258,7 +230,7 @@ reason = "dev dependency"
 
 [[PackageOverrides]]
 ecosystem = "PyPI"
-name = "conventional-pre-commit"
+name = "conventional-prek"
 license.ignore = true
 reason = "dev dependency"
 
@@ -1075,5 +1047,11 @@ reason = "dev dependency"
 [[PackageOverrides]]
 ecosystem = "PyPI"
 name = "zipp"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "conventional-pre-commit"
 license.ignore = true
 reason = "dev dependency"

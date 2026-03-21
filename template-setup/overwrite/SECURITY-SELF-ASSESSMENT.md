@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -99,7 +99,7 @@ __It should be extended by adding project-specific security information.__
 
 | Component | Applicability | Description of Importance                                                                                                                                                                                                                                  |
 | --------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| template  | Critical      | Base GitHub template of the repository provided by `opennudge`. Used to provide initial security posture (pipelines, pre-commit, practices, hardening etc.) See [open-nudge/opentemplate](https://github.com/open-nudge/opentemplate) for more information |
+| template  | Critical      | Base GitHub template of the repository provided by `opennudge`. Used to provide initial security posture (pipelines, prek, practices, hardening etc.) See [open-nudge/opentemplate](https://github.com/open-nudge/opentemplate) for more information |
 
 ## Project compliance
 

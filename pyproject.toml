@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -197,47 +197,33 @@ dev-commit = [
   "conventional-pre-commit>=4",
 ]
 
-dev-pre-commit = [
-  "pre-commit>=3",
-]
-
-
-dev-text = [
-  "codespell>=2",
-  "pre-commit-hooks>=6",
-]
-
-# Groups below are currently taken mostly out of the pre-commit-hooks,
-# each separated to be more semantically coherent and expandable.
-
-dev-file = [
-  "pre-commit-hooks>=6",
+dev-prek = [
+  "prek>=0.3.4",
 ]
 
 dev-json = [
-  "pre-commit-hooks>=6",
+  "prek>=0.3.4",
 ]
 
-# NOT RUNNING TESTS, checks around test files themselves
-dev-pytest = [
-  "pre-commit-hooks>=6",
-]
-
-dev-branch = [
-  "pre-commit-hooks>=6",
-]
-
-dev-executable = [
-  "pre-commit-hooks>=6",
-]
-
-dev-symlink = [
-  "pre-commit-hooks>=6",
+dev-json5 = [
+  "prek>=0.3.4",
 ]
 
 dev-toml = [
-  "pre-commit-hooks>=6",
+  "prek>=0.3.4",
 ]
+
+dev-xml = [
+  "prek>=0.3.4",
+]
+
+dev-text = [
+  "codespell>=2",
+  "prek>=0.3.4",
+]
+
+# Groups below are currently taken mostly out of the prek-hooks,
+# each separated to be more semantically coherent and expandable.
 
 dev-all = [
   { include-group = "dev-tests" },
@@ -257,16 +243,11 @@ dev-all = [
   { include-group = "dev-release" },
   { include-group = "dev-generation" },
   { include-group = "dev-commit" },
-  { include-group = "dev-pre-commit" },
-  # Currently pre-commit separated
-  { include-group = "dev-file" },
+  { include-group = "dev-prek" },
   { include-group = "dev-json" },
-  # Checks around pytest files, not running tests!
-  { include-group = "dev-pytest" },
-  { include-group = "dev-branch" },
-  { include-group = "dev-executable" },
-  { include-group = "dev-symlink" },
+  { include-group = "dev-json5" },
   { include-group = "dev-toml" },
+  { include-group = "dev-xml" },
 ]
 
 ###############################################################################
@@ -502,8 +483,8 @@ ignore_unused = [
   "mkdocstrings",
   "mkdocstrings-python",
   "pillow",
-  "pre-commit",
-  "pre-commit-hooks",
+  "prek",
+  "prek-hooks",
   "pygments",
   "pyinilint",
   "pymarkdownlnt",
@@ -880,49 +861,31 @@ check-citation = "check-jsonschema --verbose --builtin-schema vendor.citation-fi
 
 check-docs = "mkdocs build"
 
-check-pre-commit-config = "pre-commit validate-config {args:.pre-commit-config.yaml}"
-check-pre-commit-hooks = "pre-commit validate-manifest {args:.pre-commit-hooks.yaml}"
+check-prek-config = "prek validate-config {args:.prek-config.yaml}"
+check-prek-hooks = "prek validate-manifest {args:.pre-commit-hooks.yaml}"
 
-# Scripts below are (mostly) separated from pre-commit-hooks to group them semantically
-# This approach allows opentemplate to run pre-commit checks directly
+# Scripts below are (mostly) separated from prek-hooks to group them semantically
+# This approach allows opentemplate to run prek checks directly
 # which circumvents buggy venv creation within `pdm` environment
 
 # See definitions and specification here:
-# https://github.com/pre-commit/pre-commit-hooks/blob/main/.pre-commit-hooks.yaml
+# https://github.com/prek/prek-hooks/blob/main/.prek-hooks.yaml
 
 check-text = { composite = [
-  "check-shebang-scripts-are-executable",
-  "check-merge-conflict",
   "codespell",
 ] }
 
 fix-text = { composite = [
-  "end-of-file-fixer",
-  "trailing-whitespace-fixer",
-  "check-shebang-scripts-are-executable",
-  "check-merge-conflict",
   "codespell --write-changes",
 ] }
 
-# No CI
-check-file = "check-added-large-files"
+check-json = "prek run check-json --files {args}"
 
-check-json = "check-json"
+check-json5 = "prek run check-json5 --files {args}"
 
-check-pytest = "name-tests-test --pytest-test-first"
+check-toml = "prek run check-toml --files {args}"
 
-# No CI
-check-branch = "no-commit-to-branch"
-
-# No CI
-check-executable = "check-executables-have-shebangs"
-
-# No CI
-check-symlink = "check-symlinks"
-
-check-toml = "check-toml"
-
-# End of separated pre-commit hooks
+check-xml = "prek run check-xml --files {args}"
 
 check-security = { cmd = [
   "semgrep",
@@ -999,7 +962,7 @@ fix-generation = { cmd = [
   """,
 ] }
 
-fix-all = "pre-commit run {args:''} --all-files"
+fix-all = "prek run {args:''} --all-files"
 
 ###############################################################################
 #
@@ -1061,7 +1024,7 @@ setup = { composite = [
   "pdm use 3.12",
   # [[[end]]] (sum: VskYZaUrei)
   "pdm install -G:all --no-editable",
-  "pdm run pre-commit install --install-hooks",
+  "pdm run prek install --install-hooks",
 ] }
 
 

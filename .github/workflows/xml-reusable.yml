@@ -1,35 +1,20 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "pre-commit Config"
+name: "XML Reusable"
 
 on:
-  pull_request:
-    branches:
-      - "main"
-    paths:
-      - ".github/actions/pdm-*.yml"
-      - ".pre-commit-config.yaml"
-      - ".github/workflows/pre-commit-config.yml"
-      - ".github/workflows/run-*reusable.yml"
-  merge_group:
-    types:
-      - "checks_requested"
+  workflow_call:
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
-concurrency:
-  group: >
-    ${{ github.workflow_ref }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  pre-commit:
-    name: "pre-commit"
+  xml-reusable:
+    name: "XML Reusable"
     permissions:
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
@@ -38,8 +23,9 @@ jobs:
     uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
-      check: "pre-commit-config"
-      group: "pre-commit"
+      check: "xml"
+      arguments: "$(find -path '*.xml')"
+      group: "xml"
       sparse-checkout: |
-        .pre-commit-config.yaml
+        **.xml
 ...

@@ -1,19 +1,20 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "pre-commit Hooks"
+name: "JSON5"
 
 on:
   pull_request:
     branches:
       - "main"
     paths:
+      - "**.json5"
       - ".github/actions/pdm-*.yml"
-      - ".pre-commit-hooks.yaml"
-      - ".github/workflows/pre-commit-hooks.yml"
+      - ".github/workflows/json5.yml"
+      - ".github/workflows/json5-reusable.yml"
       - ".github/workflows/run-*reusable.yml"
   merge_group:
     types:
@@ -28,18 +29,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  pre-commit:
-    name: "pre-commit"
+  json5:
+    name: "JSON5"
     permissions:
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "open-nudge/opentemplate/.github/workflows/json5-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
-    with:
-      check: "pre-commit-hooks"
-      group: "pre-commit"
-      sparse-checkout: |
-        .pre-commit-hooks.yaml
 ...

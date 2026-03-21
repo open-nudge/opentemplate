@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "TOML Reusable"
+name: "JSON5 Reusable"
 
 on:
   workflow_call:
@@ -13,8 +13,8 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  toml-reusable:
-    name: "TOML Reusable"
+  json5-reusable:
+    name: "JSON5 Reusable"
     permissions:
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
@@ -23,9 +23,9 @@ jobs:
     uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
-      check: "toml"
-      arguments: "$(find -path '*.toml')"
-      group: "toml"
+      check: "json5"
+      arguments: "$(find -path '*.json5')"
+      group: "json5"
       sparse-checkout: |
-        **.toml
+        **.json5
 ...

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -54,7 +54,6 @@ jobs:
             pdm-project.org:443
             pdm.fming.dev:443
             peps.python.org:443
-            pre-commit.com:443
             proxy.golang.org:443
             pypi.org:443
             raw.githubusercontent.com:443
@@ -110,14 +109,14 @@ jobs:
         run: >
           pdm setup
 
-  pre-commit-test:
-    name: "pre-commit"
+  prek-test:
+    name: "prek"
     permissions:
       pull-requests: "write" # Needed to create pull request
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/pre-commit-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "open-nudge/opentemplate/.github/workflows/prek-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

@@ -4,17 +4,32 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "TOML Reusable"
+name: "prek Hooks"
 
 on:
-  workflow_call:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/actions/pdm-*.yml"
+      - ".prek-hooks.yaml"
+      - ".github/workflows/prek-hooks.yml"
+      - ".github/workflows/run-*reusable.yml"
+  merge_group:
+    types:
+      - "checks_requested"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  toml-reusable:
-    name: "TOML Reusable"
+  prek:
+    name: "prek"
     permissions:
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
@@ -23,9 +38,8 @@ jobs:
     uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
-      check: "toml"
-      arguments: "$(find -path '*.toml')"
-      group: "toml"
+      check: "prek-hooks"
+      group: "prek"
       sparse-checkout: |
-        **.toml
+        .prek-hooks.yaml
 ...
