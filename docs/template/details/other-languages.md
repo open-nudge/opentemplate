@@ -21,7 +21,7 @@ are verified by both `prek` and CI pipelines, namely:
     Additionally `opentemplate` looks for merge conflict strings and whether
     scripts with `shebang` (`#`) is executable
 - `yaml` - responsible for GitHub Actions workflows, `mkdocs.yml`,
-    `.prek-config.yaml`, performed by
+    `prek.toml`, performed by
     [adrienverge/yamllint](https://github.com/adrienverge/yamllint)
 - `pyproject.toml` - responsible for Python project configuration,
     validated by [abravalheri/validate-pyproject](https://github.com/abravalheri/validate-pyproject)
@@ -41,5 +41,5 @@ procedure as outlined in the [configuration section](../configuration/index.md).
 ## Code Sources
 
 - `pyproject.toml`
-- `.prek-config.yaml`
+- `prek.toml`
 - `.github/workflows/<language>*.yml`

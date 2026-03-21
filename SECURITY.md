@@ -46,5 +46,5 @@ Some of the security measures undertaken in this project include:
     as seen [here](https://github.com/sigstore/sigstore-python)
 - GitHub Actions CI/CD pipelines with minimal permissions
 - GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
-- [Pre-commit hooks](https://prek.j178.dev/) for local code quality
+- [Prek hooks](https://prek.j178.dev/) for local code quality
     and security verification

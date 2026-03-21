@@ -357,8 +357,8 @@ repo = "local"
   [[repos.hooks]]
   id = "pre-commit-config"
   verbose = true
-  name = "<<<CHECK>>> pre-commit config"
-  entry = "pdm run -v check-pre-commit-config"
+  name = "<<<CHECK>>> prek config"
+  entry = "pdm run -v check-prek-config"
   files = "^.pre-commit-config.yaml$"
   language = "system"
   priority = 70
@@ -366,8 +366,8 @@ repo = "local"
   [[repos.hooks]]
   id = "pre-commit-hooks"
   verbose = true
-  name = "<<<CHECK>>> pre-commit hooks"
-  entry = "pdm run -v check-pre-commit-hooks"
+  name = "<<<CHECK>>> prek hooks"
+  entry = "pdm run -v check-prek-hooks"
   files = "^.pre-commit-hooks.yaml$"
   language = "system"
   priority = 70

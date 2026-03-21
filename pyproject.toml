@@ -861,7 +861,7 @@ check-citation = "check-jsonschema --verbose --builtin-schema vendor.citation-fi
 
 check-docs = "mkdocs build"
 
-check-prek-config = "prek validate-config {args:.prek-config.yaml}"
+check-prek-config = "prek validate-config {args:prek.toml}"
 check-prek-hooks = "prek validate-manifest {args:.pre-commit-hooks.yaml}"
 
 # Scripts below are (mostly) separated from prek-hooks to group them semantically

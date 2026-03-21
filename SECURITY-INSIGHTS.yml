@@ -95,22 +95,20 @@ security-testing:
       - Sarif files are uploaded to the GitHub Security tab
       (for open source projects)
   - tool-type: "sast"
-    tool-name: "Pre-commit hooks"
+    tool-name: "Prek hooks"
     tool-url: >
-      https://github.com/open-nudge/opentemplate/blob/main/.prek-config.yaml
+      https://github.com/open-nudge/opentemplate/blob/main/prek.toml
     tool-version: "latest"
     integration:
       ad-hoc: true
       ci: false
       before-release: false
     comment: |
-      - "Pre-commit hooks are used for static analysis and code formatting."
+      - "Prek hooks are used for static analysis and code formatting."
       - "Check the URL for the list of prek hooks."
       - "WARNING: These hooks are not ran during CI, only locally."
       - "WARNING: These hooks might be skipped by the developer"
       - INFO: Similar/the same hooks are also ran during CI
-      (with exception of gitleaks: https://github.com/gitleaks/gitleaks and
-      prek-hooks: https://github.com/prek/prek-hooks)
   # Fuzzing
   - tool-type: "fuzz"
     tool-name: "Hypothesis"

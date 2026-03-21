@@ -105,7 +105,7 @@ may be required (as defined during [installation](installation.md)).
 ## Code sources
 
 - `pyproject.toml`
-- `.prek-config.yaml`
+- `prek.toml`
 - `.github/pr-labeler.yml`
 - `/.github/workflows/template_setup.yml`
 - `.github/workflows/python-tests.yml`

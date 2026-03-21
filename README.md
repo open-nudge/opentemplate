@@ -320,7 +320,7 @@ Common changes to `pyproject.toml`:
 
 > Disabling checks should be done cautiously!
 
-`prek` checks are defined in `.prek-config.yaml`.
+`prek` checks are defined in `prek.toml`.
 
 Disable a check using `SKIP` environment variable:
 
@@ -335,7 +335,7 @@ and Python fixes (which would modify files):
 SKIP="dco,ini,fix-python" git commit -m <message>
 ```
 
-For details, refer to the `id` fields in `.prek-config.yaml`.
+For details, refer to the `id` fields in `prek.toml`.
 
 > Some commands have both `<group>-fix` and `<group>-check`
 > for different actions!

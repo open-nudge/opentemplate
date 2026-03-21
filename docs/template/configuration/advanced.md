@@ -56,7 +56,7 @@ algorithm-like steps:
 
     1. Create a new `dev-<category>` and put the package there
 
-    1. Create appropriate entry in `.prek-config.yaml`
+    1. Create appropriate entry in `prek.toml`
         under the `- repo: "local"` section, `id: <category>`
 
     1. Create an entry in `.github/renovate.json` with appropriate
@@ -76,7 +76,7 @@ algorithm-like steps:
 
 1. __If not__:
 
-    1. Create appropriate entry in `.prek-config.yaml`
+    1. Create appropriate entry in `prek.toml`
         __if the tool is available as a `prek` hook__
         (or try to create one if not)
 
@@ -92,7 +92,7 @@ algorithm-like steps:
             __but not supported by [`renovate`](https://docs.renovatebot.com/)__
 
 > [!TIP]
-> Order of the `.prek-config.yaml` entries is important.
+> Order of the `prek.toml` entries is important.
 > Make sure to think about the implications of the changes done
 > by your entry on the whole pipeline.
 

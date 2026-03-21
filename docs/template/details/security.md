@@ -38,7 +38,7 @@ Key security checks include:
 > These checks run both locally (`prek`) and in CI/CD.
 
 > [!TIP]
-> Configuration is primarily in `pyproject.toml` and `.prek-config.yaml`,
+> Configuration is primarily in `pyproject.toml` and `prek.toml`,
 > with a few additional settings in `.github/workflows`.
 
 ## GitHub Actions

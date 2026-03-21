@@ -15,7 +15,7 @@ deps:
           - ".github/renovate.json"
           - "pyproject.toml"
           - "pdm.lock"
-          - ".prek-config.yaml"
+          - "prek.toml"
           - ".github/workflows/renovate-*.yml"
 
 config:
@@ -27,7 +27,7 @@ config:
           - ".gitignore"
           - "pyproject.toml"
           - "commitlint.config.js"
-          - ".prek-config.yaml"
+          - "prek.toml"
           - ".github/renovate.json"
           - "mkdocs.yml"
 

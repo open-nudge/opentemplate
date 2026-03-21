@@ -22,7 +22,7 @@ and are run periodically as vulnerabilities evolve, namely:
 - __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
 - __Bug detection and code quality:__ [`semgrep/semgrep`](https://github.com/semgrep/semgrep)
 
-## pre-commit
+## prek (previously pre-commit)
 
 Independent `prek` hooks update weekly. All hooks run against the
 latest `main` branch state to ensure updates are correct.

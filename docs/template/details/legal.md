@@ -55,7 +55,7 @@ Allowed licenses (subject to change):
 
 To update allowed licenses for `osv-scanner`:
 
-- Modify `.prek-config.yaml` (`id: osv-scanner`) for local changes.
+- Modify `prek.toml` (`id: osv-scanner`) for local changes.
 - Update `.github/workflows/reusable-security-osv-scanner.yml` for CI.
 
 ## Documents

@@ -32,7 +32,7 @@ Most adjustments are made in `pyproject.toml`, which controls:
 ## `prek`
 
 Some tools not integrated with `pyproject.toml` can be configured
-by editing `.prek-config.yaml`.
+by editing `prek.toml`.
 
 > [!TIP]
 > Non-`pyproject.toml` configurations are at the beginning of the file.
@@ -65,5 +65,5 @@ For other modifications, check:
 ## Code sources
 
 - `pyproject.toml`
-- `.prek-config.yaml`
+- `prek.toml`
 - `.github/workflows/`

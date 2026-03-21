@@ -48,5 +48,5 @@ The following tools ensure consistency and quality:
 ## Code Sources
 
 - `pyproject.toml`
-- `.prek-config.yaml`
+- `prek.toml`
 - `.github/workflows/prose.yml`
