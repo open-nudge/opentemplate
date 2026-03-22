@@ -99,13 +99,13 @@ jobs:
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "./.github/actions/git-setup"
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
       - name: "Setup template"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "./.github/actions/template-setup"
+        uses: "open-nudge/opentemplate/.github/actions/template-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           template-repository: "opentemplate"
@@ -119,7 +119,7 @@ jobs:
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "./.github/actions/git-setup"
+        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
       - name: "Create new branch"
         run: >
@@ -139,6 +139,6 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "./.github/workflows/prek-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/prek-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

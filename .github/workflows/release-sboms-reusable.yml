@@ -22,7 +22,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "./.github/workflows/release-sbom-run-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       type: "legal"
@@ -43,7 +43,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       artifact: "${{ needs.sbom-legal.outputs.artifact }}"
@@ -124,7 +124,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "./.github/workflows/release-sbom-run-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       type: "python"
@@ -160,7 +160,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
       # Unfortunately could not easily reuse the artifact from the sbom
@@ -220,7 +220,7 @@ jobs:
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "./.github/actions/release-sbom-setup"
+        uses: "open-nudge/opentemplate/.github/actions/release-sbom-setup@main" # zizmor: ignore[unpinned-uses]
         # yamllint enable rule:line-length
         with:
           identifier: "sbom-github-${{ github.sha }}"
@@ -258,7 +258,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     # May fail on private repos without access to private sigstore instance
     with:

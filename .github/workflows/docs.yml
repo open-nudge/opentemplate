@@ -39,6 +39,6 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "./.github/workflows/docs-reusable.yml"
+    uses: "open-nudge/opentemplate/.github/workflows/docs-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...
