@@ -51,6 +51,7 @@ jobs:
             github.blog:443
             github.com:443
             go.dev:443
+            dl.google.com:443
             grafana.com:443
             guides.github.com:443
             hypothesis.readthedocs.io:443
@@ -87,7 +88,6 @@ jobs:
             www.conventionalcommits.org:443
             www.jit.io:443
             www.mkdocs.org:443
-            api.github.com:443
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
