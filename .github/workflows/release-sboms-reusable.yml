@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -22,7 +22,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-sbom-run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       type: "legal"
@@ -43,7 +43,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
     # yamllint enable rule:line-length
     with:
       artifact: "${{ needs.sbom-legal.outputs.artifact }}"
@@ -61,7 +61,7 @@ jobs:
       - name: "Harden runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b" # v2.15.0
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -124,7 +124,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-sbom-run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       type: "python"
@@ -160,7 +160,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
     # yamllint enable rule:line-length
     with:
       # Unfortunately could not easily reuse the artifact from the sbom
@@ -197,7 +197,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b" # v2.15.0
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -220,7 +220,7 @@ jobs:
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "open-nudge/opentemplate/.github/actions/release-sbom-setup@main" # zizmor: ignore[unpinned-uses]
+        uses: "./.github/actions/release-sbom-setup"
         # yamllint enable rule:line-length
         with:
           identifier: "sbom-github-${{ github.sha }}"
@@ -258,7 +258,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-sbom-attest-reusable.yml"
     # yamllint enable rule:line-length
     # May fail on private repos without access to private sigstore instance
     with:

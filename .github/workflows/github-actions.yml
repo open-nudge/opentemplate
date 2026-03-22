@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -29,6 +29,6 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/github-actions-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/github-actions-reusable.yml"
     # yamllint enable rule:line-length
 ...

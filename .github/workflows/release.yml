@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -34,7 +34,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sboms-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-sboms-reusable.yml"
     # yamllint enable rule:line-length
 
   sarifs:
@@ -46,7 +46,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sarifs-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-sarifs-reusable.yml"
     # yamllint enable rule:line-length
 
   tests:
@@ -56,7 +56,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/tests-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/tests-reusable.yml"
     # yamllint enable rule:line-length
 
   docs:
@@ -66,7 +66,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       # Double checkout used to refresh the content of generated docs, which
@@ -99,7 +99,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       command: "pdm build -v"
@@ -122,7 +122,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       download: true
@@ -188,7 +188,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b" # v2.15.0
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
         # yamllint enable rule:line-length
         with:
           disable-sudo: true
@@ -255,7 +255,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-slsa-provenance-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-slsa-provenance-reusable.yml"
     # yamllint enable rule:line-length
     with:
       upload-assets: true
@@ -269,7 +269,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-upload.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/release-upload.yml"
     # yamllint enable rule:line-length
     with:
       tag: "${{ github.event.release.tag_name }}"

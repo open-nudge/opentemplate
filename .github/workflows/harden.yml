@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -49,7 +49,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b" # v2.15.0
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -159,7 +159,9 @@ jobs:
           || steps.organization.outputs.type == 'enterprise'
           || steps.organization.outputs.type == 'pro'
         env:
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           RULES_ENDPOINT: >-
@@ -182,7 +184,9 @@ jobs:
           github.event.repository.visibility == 'public'
           || steps.organization.outputs.type == 'enterprise'
         env:
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           PAGES_ENDPOINT: >-
@@ -200,7 +204,9 @@ jobs:
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
         env:
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           ENDPOINT: >-
@@ -240,7 +246,9 @@ jobs:
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
         continue-on-error: true
         env:
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           ENDPOINT: >-
@@ -281,7 +289,9 @@ jobs:
         # See here: https://github.com/orgs/community/discussions/46930
         # Administration write
         env:
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
         run: >
           gh repo edit --enable-discussions=true
       - name: "Enable private vulnerability reporting (public only)"
@@ -292,7 +302,9 @@ jobs:
         if: >
           github.event.repository.visibility == 'public'
         env:
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           PRIVATE_VULNERABILITY_REPORTING_ENDPOINT: >-
@@ -312,7 +324,9 @@ jobs:
         if: >
           github.event.repository.visibility == 'public'
         env:
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}"
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           # enq: one line is more readable in this case
           # yamllint disable rule:line-length
           VULNERABILITY_ALERTS_ENDPOINT: >-
@@ -347,7 +361,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/security-scorecard-reusable.yml"
     # yamllint enable rule:line-length
     with:
       sarif: true

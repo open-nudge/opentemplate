@@ -34,7 +34,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b" # v2.15.0
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -77,13 +77,13 @@ jobs:
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
+        uses: "./.github/actions/git-setup"
         # yamllint enable rule:line-length
       - name: "Setup template"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "open-nudge/opentemplate/.github/actions/template-setup@main" # zizmor: ignore[unpinned-uses]
+        uses: "./.github/actions/template-setup"
         # yamllint enable rule:line-length
         with:
           template-repository: "opentemplate"
@@ -97,7 +97,7 @@ jobs:
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "open-nudge/opentemplate/.github/actions/git-setup@main" # zizmor: ignore[unpinned-uses]
+        uses: "./.github/actions/git-setup"
         # yamllint enable rule:line-length
       - name: "Create new branch"
         run: >
@@ -117,6 +117,6 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/prek-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "./.github/workflows/prek-reusable.yml"
     # yamllint enable rule:line-length
 ...
