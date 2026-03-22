@@ -168,6 +168,7 @@ jobs:
                 .github/actions/pdm-setup
                 .github/actions/pdm-compatibility
                 .github/actions/release-sbom-setup
+                dependencies
                 {0}',
                 inputs.sparse-checkout
               )
@@ -182,6 +183,7 @@ jobs:
                 .github/actions/release-sbom-setup
                 pyproject.toml
                 pdm.lock
+                dependencies/**
                 {0}',
                 inputs.sparse-checkout
               )

@@ -27,5 +27,6 @@ jobs:
       arguments: "$(find -path '*.json5')"
       group: "json5"
       sparse-checkout: |
+        prek.toml
         **.json5
 ...

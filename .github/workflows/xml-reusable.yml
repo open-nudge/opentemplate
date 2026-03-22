@@ -27,5 +27,6 @@ jobs:
       arguments: "$(find -path '*.xml')"
       group: "xml"
       sparse-checkout: |
+        prek.toml
         **.xml
 ...

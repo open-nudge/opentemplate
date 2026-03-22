@@ -262,6 +262,9 @@ files = ["dependencies/dependencies.txt"]
 [tool.hatch.version]
 source = "comver"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/opentemplate"]
+
 [tool.pdm]
 distribution = true
 

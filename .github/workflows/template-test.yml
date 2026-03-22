@@ -41,31 +41,53 @@ jobs:
           egress-policy: "block"
           allowed-endpoints: >
             api.github.com:443
+            coverage.readthedocs.io:443
             docs.github.com:443
+            docs.pytest.org:443
+            docs.renovatebot.com:443
+            editorconfig.org:443
             files.pythonhosted.org:443
+            git-cliff.org:443
+            github.blog:443
             github.com:443
+            go.dev:443
             grafana.com:443
             guides.github.com:443
+            hypothesis.readthedocs.io:443
             img.shields.io:443
+            nox.thea.codes:443
             objects.githubusercontent.com:443
             opennudge.com:443
             opensource.org:443
             openssf.org:443
+            osv.dev:443
             pdm-project.org:443
             pdm.fming.dev:443
             peps.python.org:443
+            pre-commit.com:443
+            prek.j178.dev:443
             proxy.golang.org:443
             pypi.org:443
             raw.githubusercontent.com:443
             release-assets.githubusercontent.com:443
+            reuse.readthedocs.io:443
+            scientific-python.org:443
             scorecard.dev:443
+            semgrep.dev:443
             semver.org:443
             slsa.dev:443
+            snyk.io:443
+            spdx.dev:443
             storage.googleapis.com:443
             sum.golang.org:443
             tag-security.cncf.io:443
+            tox.wiki:443
             www.bestpractices.dev:443
+            www.cisa.gov:443
             www.conventionalcommits.org:443
+            www.jit.io:443
+            www.mkdocs.org:443
+            api.github.com:443
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
