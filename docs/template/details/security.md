@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -20,8 +20,8 @@ Key security checks include:
 - __Commit validation:__ Enforced signature and DCO sign-off
     ([`siderolabs/conform`](https://github.com/siderolabs/conform))
 
-- __Branch protection:__ No direct commits to `main`
-    ([`pre-commit/pre-commit-hooks`](https://github.com/pre-commit/pre-commit-hooks))
+- __Branch protection:__ No direct commits to `main` enforced locally by
+    [`prek` built-in `no-commit-to-branch` hook](https://prek.j178.dev/builtin/)
 
 - __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
 
@@ -35,10 +35,10 @@ Key security checks include:
 - __Pinned dependencies:__ [OSSF Scorecard](https://github.com/ossf/scorecard/blob/main/docs/checks.md#pinned-dependencies)
 
 > [!IMPORTANT]
-> These checks run both locally (`pre-commit`) and in CI/CD.
+> These checks run both locally (`prek`) and in CI/CD.
 
 > [!TIP]
-> Configuration is primarily in `pyproject.toml` and `.pre-commit-config.yaml`,
+> Configuration is primarily in `pyproject.toml` and `prek.toml`,
 > with a few additional settings in `.github/workflows`.
 
 ## GitHub Actions

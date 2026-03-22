@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -119,7 +119,7 @@ Generated via [git-cliff](https://github.com/orhun/git-cliff)
 The changelog includes:
 
 - Public version, date, and comparison link
-- Commit statistics (e.g., how many commits done by human vs bots,
+- Commit statistics (e.g., how many commits done by human compared to bots,
     types of commit like security, tests, legal etc.)
 - Python changes (Breaking, Features, Fixes, Bots)
 - Other changes (same structure as Python changes)

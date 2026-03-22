@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -14,7 +14,8 @@ on:
       - ".github/actions/pdm-*.yml"
       - ".github/workflows/cache-test.yml"
       - ".github/workflows/cache-reusable.yml"
-      - ".github/workflows/cache-reusable-item.yml"
+      - ".github/workflows/cache-item-reusable.yml"
+      - "dependencies/**"
   merge_group:
     types:
       - "checks_requested"

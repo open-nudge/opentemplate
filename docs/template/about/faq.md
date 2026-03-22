@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -80,7 +80,7 @@ This optimizes download times, which speeds up the workflows.
 
 Windows features are best-effort and may not be fully supported.
 
-In terms of pre-commit hooks, more involved commands
+In terms of prek hooks, more involved commands
 (e.g. `sbom-*` scripts or `fix-legal`) use Linux/MacOS specific features
 __and may not work__.
 

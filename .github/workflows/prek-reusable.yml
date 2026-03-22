@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
 
 ---
 # enq: reusable workflows offload concurrency limits to the caller
-name: "pre-commit Reusable"  # zizmor: ignore[concurrency-limits]
+name: "prek Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
@@ -14,9 +14,9 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  pre-commit-reusable:
+  prek-reusable:
     timeout-minutes: 30
-    name: "pre-commit Reusable"
+    name: "prek Reusable"
     permissions:
       contents: "read"
       pull-requests: "write" # Needed to create pull request
@@ -25,7 +25,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b" # v2.15.0
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
@@ -73,25 +73,25 @@ jobs:
         # yamllint enable rule:line-length
         with:
           all: true
-      - name: "Update pre-commit dependencies"
+      - name: "Update prek dependencies"
         run: >
-          pdm run -v pre-commit autoupdate --freeze
+          pdm run -v prek autoupdate --freeze
       - name: "Check for changes"
         id: "check-changes"
         # enq: indentation disable to aid readability
         # yamllint disable rule:indentation
         run: |
-          if git diff --exit-code .pre-commit-config.yaml; then
+          if git diff --exit-code prek.toml; then
             echo "changed=false" >> "${GITHUB_OUTPUT}"
           else
             echo "changed=true" >> "${GITHUB_OUTPUT}"
           fi
         # yamllint enable rule:indentation
-      - name: "Run pre-commit with updated dependencies"
+      - name: "Run prek with updated dependencies"
         env:
           SKIP: "dco,vale,fix-legal,markdown"
         if: >
           steps.check-changes.outputs.changed == 'true'
         run: >
-          pdm run -v pre-commit run --all-files
+          pdm run -v prek run --all-files
 ...

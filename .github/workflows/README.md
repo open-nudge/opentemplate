@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -19,7 +19,7 @@ CI/CD pipelines.
 > [!NOTE]
 > Configuration is stored in `.github` directory and `.github/workflows` specifically
 
-Pipelines run approximately the same steps as `pre-commit` hooks, the specific
+Pipelines run approximately the same steps as `prek` hooks, the specific
 tooling functionality is located in various other documents such as
 [legal](/docs/template/details/legal.md),
 [python](/docs/template/details/python.md),

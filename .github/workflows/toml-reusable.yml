@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -13,7 +13,7 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  json-reusable:
+  toml-reusable:
     name: "TOML Reusable"
     permissions:
       contents: "read"
@@ -24,6 +24,8 @@ jobs:
     # yamllint enable rule:line-length
     with:
       check: "toml"
+      arguments: "$(find -path '*.toml')"
+      group: "toml"
       sparse-checkout: |
         **.toml
 ...

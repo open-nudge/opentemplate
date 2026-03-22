@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -56,7 +56,7 @@ algorithm-like steps:
 
     1. Create a new `dev-<category>` and put the package there
 
-    1. Create appropriate entry in `.pre-commit-config.yaml`
+    1. Create appropriate entry in `prek.toml`
         under the `- repo: "local"` section, `id: <category>`
 
     1. Create an entry in `.github/renovate.json` with appropriate
@@ -76,8 +76,8 @@ algorithm-like steps:
 
 1. __If not__:
 
-    1. Create appropriate entry in `.pre-commit-config.yaml`
-        __if the tool is available as a `pre-commit` hook__
+    1. Create appropriate entry in `prek.toml`
+        __if the tool is available as a `prek` hook__
         (or try to create one if not)
 
     1. Add support for the tool in `.github/renovate.json/`
@@ -92,7 +92,7 @@ algorithm-like steps:
             __but not supported by [`renovate`](https://docs.renovatebot.com/)__
 
 > [!TIP]
-> Order of the `.pre-commit-config.yaml` entries is important.
+> Order of the `prek.toml` entries is important.
 > Make sure to think about the implications of the changes done
 > by your entry on the whole pipeline.
 

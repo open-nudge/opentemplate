@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -34,7 +34,7 @@ when consuming third-party packages:
     well-maintained and has a good reputation).
 - Avoid using third-party packages with known security vulnerabilities.
 - Before sending changes with new dependencies, make sure all automated
-    tests pass (`pre-commit` checks and continuous integration pipelines)
+    tests pass (`prek` checks and continuous integration pipelines)
 
 ### Versioning
 

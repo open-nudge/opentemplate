@@ -1,20 +1,35 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "pytest Reusable"
+name: "prek Config"
 
 on:
-  workflow_call:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/actions/pdm-*.yml"
+      - ".prek.toml"
+      - ".github/workflows/prek-config.yml"
+      - ".github/workflows/run-*reusable.yml"
+  merge_group:
+    types:
+      - "checks_requested"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  pytest-reusable:
-    name: "pytest Reusable"
+  prek:
+    name: "prek"
     permissions:
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
@@ -23,7 +38,8 @@ jobs:
     uses: "open-nudge/opentemplate/.github/workflows/run-check-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
-      check: "pytest"
+      check: "prek-config"
+      group: "prek"
       sparse-checkout: |
-        tests/**.py
+        prek.toml
 ...

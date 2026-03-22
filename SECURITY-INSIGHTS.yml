@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -95,22 +95,20 @@ security-testing:
       - Sarif files are uploaded to the GitHub Security tab
       (for open source projects)
   - tool-type: "sast"
-    tool-name: "Pre-commit hooks"
+    tool-name: "Prek hooks"
     tool-url: >
-      https://github.com/open-nudge/opentemplate/blob/main/.pre-commit-config.yaml
+      https://github.com/open-nudge/opentemplate/blob/main/prek.toml
     tool-version: "latest"
     integration:
       ad-hoc: true
       ci: false
       before-release: false
     comment: |
-      - "Pre-commit hooks are used for static analysis and code formatting."
-      - "Check the URL for the list of pre-commit hooks."
+      - "Prek hooks are used for static analysis and code formatting."
+      - "Check the URL for the list of prek hooks."
       - "WARNING: These hooks are not ran during CI, only locally."
       - "WARNING: These hooks might be skipped by the developer"
       - INFO: Similar/the same hooks are also ran during CI
-      (with exception of gitleaks: https://github.com/gitleaks/gitleaks and
-      pre-commit-hooks: https://github.com/pre-commit/pre-commit-hooks)
   # Fuzzing
   - tool-type: "fuzz"
     tool-name: "Hypothesis"
@@ -122,7 +120,7 @@ security-testing:
       before-release: true
     comment: |
       - "Hypothesis is used for property-based testing."
-      - "It is ran as a pre-commit hook and during CI."
+      - "It is ran as a prek hook and during CI."
 security-contacts:
   - type: "website"
     value: >

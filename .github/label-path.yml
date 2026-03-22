@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -15,7 +15,7 @@ deps:
           - ".github/renovate.json"
           - "pyproject.toml"
           - "pdm.lock"
-          - ".pre-commit-config.yaml"
+          - "prek.toml"
           - ".github/workflows/renovate-*.yml"
 
 config:
@@ -27,7 +27,7 @@ config:
           - ".gitignore"
           - "pyproject.toml"
           - "commitlint.config.js"
-          - ".pre-commit-config.yaml"
+          - "prek.toml"
           - ".github/renovate.json"
           - "mkdocs.yml"
 

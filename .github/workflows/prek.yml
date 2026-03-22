@@ -1,41 +1,37 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "pytest"
+name: "prek"
 
 on:
   pull_request:
     branches:
       - "main"
-    paths:
-      - "tests/**.py"
-      - ".github/actions/pdm-*.yml"
-      - ".github/workflows/pytest.yml"
-      - ".github/workflows/pytest-reusable.yml"
-      - ".github/workflows/run-*reusable.yml"
   merge_group:
     types:
       - "checks_requested"
+  workflow_dispatch:
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
 concurrency:
-  group: >
+  group: >-
     ${{ github.workflow_ref }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  json:
-    name: "pytest"
+  prek:
+    name: "prek"
     permissions:
       contents: "read"
+      pull-requests: "write" # Needed to create pull request with update
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/pytest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "open-nudge/opentemplate/.github/workflows/prek-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
 ...

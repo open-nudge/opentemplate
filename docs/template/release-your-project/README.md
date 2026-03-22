@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -12,7 +12,7 @@ This section explains how to release a project based on `opentemplate`.
 Release when:
 
 - You are ready to share the project (publicly or privately).
-- Pipelines and `pre-commit` checks have passed (tests, security, etc.).
+- Pipelines and `prek` checks have passed (tests, security, etc.).
 
 > [!CAUTION]
 > Create a GitHub tag on a release page; everything else is automated.

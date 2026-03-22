@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -101,7 +101,7 @@ Keep the following in mind:
     testing if possible.
 - __Any changes need 100% test coverage__ - if not possible,
     explain why in the comments or PR description and exclude these lines).
-- __Your changes should pass [pre-commit hooks](https://pre-commit.com/)__.
+- __Your changes should pass [prek hooks](https://prek.j178.dev/)__.
 
 <!-- vale off -->
 
@@ -143,7 +143,7 @@ git commit -s -S -m "feat: add new feature"
 
 > [!NOTE]
 > Signing and commit messages are automatically checked
-> by the pre-commit hooks and CI/CD pipeline.
+> by the prek hooks and CI/CD pipeline.
 
 <!-- vale on -->
 
@@ -187,7 +187,7 @@ Other features:
 ### Merging pull requests
 
 Maintainers will merge your pull request __only after the CI/CD checks pass__.
-In general, if `pre-commit` checks pass, no major changes should be necessary.
+In general, if `prek` checks pass, no major changes should be necessary.
 
 <!-- vale off -->
 
@@ -202,7 +202,7 @@ in the PR.
 
 ## Coding style
 
-`pre-commit` hooks check most of the guidelines, but maintainers
+`prek` hooks check most of the guidelines, but maintainers
 reserve the right to ask for changes in the code style if necessary.
 
 In special cases you might want to ignore a certain style rule,
