@@ -150,7 +150,7 @@ This process can be adjusted by editing:
 - `.github/workflows/release.yml`
 - `.github/workflows/release-upload.yml`
 - `.github/workflows/release-sarifs-reusable.yml`
-- `.github/workflows/release-sbom-attest-reusable.yml`
-- `.github/workflows/release-sbom-run-reusable.yml`
+- `.github/workflows/security-sbom-attest-reusable.yml`
+- `.github/workflows/security-sbom-run-reusable.yml`
 - `.github/workflows/release-sboms-reusable.yml`
 - `.github/workflows/release-slsa-provenance-reusable.yml`

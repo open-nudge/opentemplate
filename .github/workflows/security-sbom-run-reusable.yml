@@ -5,7 +5,7 @@
 
 ---
 # enq: reusable workflows offload concurrency limits to the caller
-name: "Release SBOM Run Reusable"  # zizmor: ignore[concurrency-limits]
+name: "Security SBOM Run Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
@@ -75,11 +75,23 @@ on:
         description: "Timeout in minutes"
         type: "number"
         default: 10
+      upload-artifact:
+        description: "Whether to upload the generated SBOM artifact"
+        type: "boolean"
+        default: false
+      upload-grype-artifact:
+        description: "Whether to upload the generated Grype SARIF artifact"
+        type: "boolean"
+        default: false
+      upload-grype-sarif:
+        description: "Whether to upload the generated Grype SARIF to Security"
+        type: "boolean"
+        default: false
 
     outputs:
       artifact:
         description: "Name of the uploaded artifact"
-        value: "${{ jobs.release-sbom-run-reusable.outputs.artifact }}"
+        value: "${{ jobs.security-sbom-run-reusable.outputs.artifact }}"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -90,9 +102,11 @@ defaults:
 
 # Add checkout
 jobs:
-  release-sbom-run-reusable:
-    name: "Release SBOM Run Reusable"
+  security-sbom-run-reusable:
+    name: "Security SBOM Run Reusable"
     permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
       contents: "read"
     timeout-minutes: "${{ inputs.timeout-minutes }}"
     runs-on: "${{ inputs.os }}"
@@ -131,6 +145,7 @@ jobs:
           allowed-endpoints: >
             api.github.com:443
             github.com:443
+            grype.anchore.io:443
             files.pythonhosted.org:443
             pdm-project.org:443
             pdm.fming.dev:443
@@ -138,6 +153,7 @@ jobs:
             raw.githubusercontent.com:443
             objects.githubusercontent.com:443
             release-assets.githubusercontent.com:443
+            toolbox-data.anchore.io:443
             ${{ inputs.additional-allowed-endpoints }}
       - name: "Full repository checkout"
         if: >
@@ -165,9 +181,11 @@ jobs:
               format(
                 'LICENSES
                 .github/actions/git-setup
+                .github/actions/sbom-grype
                 .github/actions/pdm-setup
                 .github/actions/pdm-compatibility
                 .github/actions/release-sbom-setup
+                .github/actions/sarif-upload
                 dependencies
                 {0}',
                 inputs.sparse-checkout
@@ -178,9 +196,11 @@ jobs:
                 LICENSE.md
                 LICENSES/*
                 .github/actions/git-setup
+                .github/actions/sbom-grype
                 .github/actions/pdm-setup
                 .github/actions/pdm-compatibility
                 .github/actions/release-sbom-setup
+                .github/actions/sarif-upload
                 pyproject.toml
                 pdm.lock
                 dependencies/**
@@ -232,15 +252,17 @@ jobs:
           OUTPUT_FILE: "${{ steps.setup.outputs.sbom }}"
         run: >
           pdm run "sbom-${TYPE}" > "${OUTPUT_FILE}"
-      - name: "Upload artifacts"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
-        # yamllint enable rule:line-length
+      - name: "Postprocess SBOM"
+        uses: "./.github/actions/sbom-grype"
         with:
-          name: "${{ steps.setup.outputs.artifact }}"
-          path: "${{ steps.setup.outputs.sbom-directory }}"
-          retention-days: 1
-          overwrite: true
-          if-no-files-found: "error"
+          sbom: "${{ steps.setup.outputs.sbom }}"
+          sbom-directory: "${{ steps.setup.outputs.sbom-directory }}"
+          sbom-artifact-name: "${{ steps.setup.outputs.artifact }}"
+          upload-sbom-artifact: "${{ inputs.upload-artifact }}"
+          grype-file: "${{ format('grype-{0}.sarif', steps.setup.outputs.artifact) }}"
+          # enq: one line is more readable than wrapped expression here
+          # yamllint disable rule:line-length
+          grype-artifact-name: "${{ inputs.upload-grype-artifact && format('grype-{0}', steps.setup.outputs.artifact) || '' }}"
+          # yamllint enable rule:line-length
+          upload-grype-sarif: "${{ inputs.upload-grype-sarif }}"
 ...

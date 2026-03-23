@@ -11,11 +11,23 @@ on:
     branches:
       - "main"
     paths:
+      - ".github/actions/sbom-grype/action.yml"
       - ".github/actions/pdm-*/action.yml"
       - ".github/actions/git-setup/action.yml"
       - ".github/actions/release-sbom-setup/action.yml"
+      - ".github/workflows/security-sbom-attest-reusable.yml"
+      - ".github/workflows/security-sbom-run-reusable.yml"
       - ".github/workflows/release-sboms-test.yml"
       - ".github/workflows/release-sboms-reusable.yml"
+      - ".github/workflows/security-sbom-github-reusable.yml"
+      - ".github/workflows/security-sbom-github-update.yml"
+      - ".github/workflows/security-sbom-github.yml"
+      - ".github/workflows/security-sbom-legal-reusable.yml"
+      - ".github/workflows/security-sbom-legal-update.yml"
+      - ".github/workflows/security-sbom-legal.yml"
+      - ".github/workflows/security-sbom-python-reusable.yml"
+      - ".github/workflows/security-sbom-python-update.yml"
+      - ".github/workflows/security-sbom-python.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -36,4 +48,7 @@ jobs:
     # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sboms-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
+    with:
+      upload-grype-artifact: false
+      upload-grype-sarif: false
 ...

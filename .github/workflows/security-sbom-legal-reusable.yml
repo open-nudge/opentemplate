@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security SBOM Legal Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    inputs:
+      upload-artifact:
+        description: "Whether to upload the generated SBOM artifact"
+        type: "boolean"
+        default: false
+      upload-grype-artifact:
+        description: "Whether to upload the generated Grype SARIF artifact"
+        type: "boolean"
+        default: false
+      upload-grype-sarif:
+        description: "Whether to upload the generated Grype SARIF to Security"
+        type: "boolean"
+        default: false
+      attest:
+        description: "Whether to attest the generated SBOM artifact"
+        type: "boolean"
+        default: false
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  sbom-legal:
+    name: "Security SBOM Legal"
+    permissions:
+      contents: "read"
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/security-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      type: "legal"
+      files: >-
+        $(pdm run reuse lint --json | jq -r '.files[].path')
+      group: "release"
+      full-checkout: true
+      upload-artifact: "${{ inputs.upload-artifact }}"
+      upload-grype-artifact: "${{ inputs.upload-grype-artifact }}"
+      upload-grype-sarif: "${{ inputs.upload-grype-sarif }}"
+
+  sbom-legal-attest:
+    name: "Security SBOM Legal Attest"
+    if: >
+      inputs.attest
+    needs:
+      - "sbom-legal"
+    permissions:
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/security-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      artifact: "${{ needs.sbom-legal.outputs.artifact }}"
+...
