@@ -11,7 +11,9 @@ on:
   workflow_call:
     inputs:
       upload-artifact:
-        description: "Whether to upload the generated SBOM artifact"
+        description: >
+          Whether to upload the generated SBOM artifact.
+          Always enabled when attestation is requested.
         type: "boolean"
         default: false
       upload-grype-artifact:
@@ -23,7 +25,9 @@ on:
         type: "boolean"
         default: false
       attest:
-        description: "Whether to attest the generated SBOM artifact"
+        description: >
+          Whether to attest the generated SBOM artifact.
+          Implies artifact upload.
         type: "boolean"
         default: false
 
@@ -95,7 +99,7 @@ jobs:
           sbom: "${{ steps.setup.outputs.sbom }}"
           sbom-directory: "${{ steps.setup.outputs.sbom-directory }}"
           sbom-artifact-name: "${{ steps.setup.outputs.artifact }}"
-          upload-sbom-artifact: "${{ inputs.upload-artifact }}"
+          upload-sbom-artifact: "${{ inputs.upload-artifact || inputs.attest }}"
           grype-file: "${{ format('grype-{0}.sarif', steps.setup.outputs.artifact) }}"
           # enq: one line is more readable than wrapped expression here
           # yamllint disable rule:line-length

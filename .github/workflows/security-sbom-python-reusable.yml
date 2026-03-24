@@ -11,7 +11,9 @@ on:
   workflow_call:
     inputs:
       upload-artifact:
-        description: "Whether to upload the generated SBOM artifact"
+        description: >
+          Whether to upload the generated SBOM artifact.
+          Always enabled when attestation is requested.
         type: "boolean"
         default: false
       upload-grype-artifact:
@@ -23,7 +25,9 @@ on:
         type: "boolean"
         default: false
       attest:
-        description: "Whether to attest the generated SBOM artifact"
+        description: >
+          Whether to attest the generated SBOM artifact.
+          Implies artifact upload.
         type: "boolean"
         default: false
 
@@ -118,7 +122,7 @@ jobs:
       all: "${{ matrix.dependencies.all }}"
       os: "${{ matrix.os }}"
       python-version: "${{ matrix.python-version }}"
-      upload-artifact: "${{ inputs.upload-artifact }}"
+      upload-artifact: "${{ inputs.upload-artifact || inputs.attest }}"
       upload-grype-artifact: "${{ inputs.upload-grype-artifact }}"
       upload-grype-sarif: "${{ inputs.upload-grype-sarif }}"
 

@@ -16,6 +16,8 @@ permissions: {} # yamllint disable-line rule:braces
 jobs:
   security-sbom-python-update:
     permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
       contents: "read"
     name: "Security SBOM Python Update"
     # enq: hash with name and version always longer than 80 chars
@@ -23,4 +25,8 @@ jobs:
     # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/security-sbom-python-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
+    with:
+      upload-artifact: true
+      upload-grype-artifact: true
+      upload-grype-sarif: true
 ...
