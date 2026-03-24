@@ -1,0 +1,178 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security SBOM Python Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    inputs:
+      upload-artifact:
+        description: >
+          Whether to upload the generated SBOM artifact.
+          Always enabled when attestation is requested.
+        type: "boolean"
+        default: false
+      upload-grype-artifact:
+        description: "Whether to upload the generated Grype SARIF artifact"
+        type: "boolean"
+        default: false
+      upload-grype-sarif:
+        description: "Whether to upload the generated Grype SARIF to Security"
+        type: "boolean"
+        default: false
+      attest:
+        description: >
+          Whether to attest the generated SBOM artifact.
+          Implies artifact upload.
+        type: "boolean"
+        default: false
+      ref:
+        description: "The ref to checkout"
+        type: "string"
+        default: ""
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  sbom-python-create-matrix:
+    name: "Create Matrix"
+    runs-on: "ubuntu-latest"
+    # enq: the only way to set permissions to none in GH Actions
+    permissions: {} # yamllint disable-line rule:braces
+    outputs:
+      matrix: "${{ steps.matrix.outputs.matrix }}"
+    timeout-minutes: 10
+    steps:
+      - name: "Harden runner"
+        # enq: hash with name and version always longer than 80 chars
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >+
+      - name: "Create Matrix"
+        id: "matrix"
+        # enq: indentation disabled as the generated code needs to be indented
+        # yamllint disable rule:indentation
+        #
+        #           DO NOT EDIT UNTIL end marker
+        #
+        # [[[cog
+        # import json
+        #
+        # import cog
+        # import cogeol
+        #
+        # versions = json.dumps(
+        #     [v["cycle"] for v in reversed(cogeol.scientific())]
+        # )
+        #
+        # cog.outl(f"""        run: |
+        #           echo "matrix=$(echo '{{
+        #             "python-version": {versions},
+        #             "os": ["ubuntu-latest", "macos-latest", "windows-latest"],
+        #             "dependencies": [
+        #               {{"name": "dev", "group": "", "all": true}},
+        #               {{"name": "package", "group": "release", "all": false}}
+        #             ]
+        #           }}' | jq -r 'tojson')" >> "${{GITHUB_OUTPUT}}\""""
+        # )
+        # ]]]
+        run: |
+          echo "matrix=$(echo '{
+            "python-version": ["3.12", "3.13", "3.14"],
+            "os": ["ubuntu-latest", "macos-latest", "windows-latest"],
+            "dependencies": [
+              {"name": "dev", "group": "", "all": true},
+              {"name": "package", "group": "release", "all": false}
+            ]
+          }' | jq -r 'tojson')" >> "${GITHUB_OUTPUT}"
+        # [[[end]]] (sum: /s03rma5wq)
+        # yamllint enable rule:indentation
+
+  sbom-python:
+    needs:
+      - "sbom-python-create-matrix"
+    name: >
+      Security SBOM Python |
+      python-${{ matrix.python-version }} |
+      ${{ matrix.os }} |
+      ${{ matrix.dependencies.name }}
+    strategy:
+      fail-fast: true
+      matrix: "${{ fromJson(needs.sbom-python-create-matrix.outputs.matrix) }}"
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
+      contents: "read"
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/security-sbom-run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      type: "python"
+      files: >-
+        $(find .venv/lib -type f -name 'RECORD' -path '.venv/lib/*.dist-info/RECORD')
+      group: "${{ matrix.dependencies.group }}"
+      core: true
+      all: "${{ matrix.dependencies.all }}"
+      os: "${{ matrix.os }}"
+      python-version: "${{ matrix.python-version }}"
+      ref: "${{ inputs.ref }}"
+      upload-artifact: "${{ inputs.upload-artifact || inputs.attest }}"
+      upload-grype-artifact: "${{ inputs.upload-grype-artifact }}"
+      upload-grype-sarif: "${{ inputs.upload-grype-sarif }}"
+
+  sbom-python-attest:
+    name: >
+      Security SBOM Python Attest |
+      python-${{ matrix.python-version }} |
+      ${{ matrix.os }} |
+      ${{ matrix.dependencies.name }}
+    if: >
+      inputs.attest
+    permissions:
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+    needs:
+      - "sbom-python-create-matrix"
+      - "sbom-python"
+    strategy:
+      fail-fast: true
+      matrix: "${{ fromJson(needs.sbom-python-create-matrix.outputs.matrix) }}"
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/security-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      # Unfortunately could not easily reuse the artifact from the sbom
+      # enq: increased readability
+      # yamllint disable rule:indentation
+      artifact: "sbom-python-${{ matrix.dependencies.all
+                    && format(
+                      'all-{0}-{1}-{2}',
+                      matrix.python-version,
+                      matrix.os,
+                      github.sha
+                    )
+                    || format(
+                      '{0}-{1}-{2}-{3}-{4}',
+                      'core',
+                      matrix.dependencies.group != ''
+                        && matrix.dependencies.group || 'none',
+                      matrix.python-version,
+                      matrix.os,
+                      github.sha
+                    )
+                  }}"
+      # yamllint enable rule:indentation
+...

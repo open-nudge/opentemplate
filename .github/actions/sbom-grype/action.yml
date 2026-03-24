@@ -1,0 +1,70 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "SBOM Grype"
+description: >
+  Run Grype on an SBOM and optionally upload the SBOM and SARIF artifacts
+
+inputs:
+  sbom:
+    description: "Path to the SBOM file to scan"
+    required: true
+  sbom-directory:
+    description: "Path to the directory containing the SBOM artifact"
+    required: true
+  sbom-artifact-name:
+    description: "Name of the uploaded SBOM artifact"
+    required: true
+  upload-sbom-artifact:
+    description: "Whether to upload the SBOM artifact"
+    default: "false"
+  grype-file:
+    description: "Path of the generated SARIF file"
+    required: true
+  grype-artifact-name:
+    description: "Name of the uploaded SARIF artifact"
+    default: ""
+  upload-grype-sarif:
+    description: "Whether to upload the SARIF file to the Security tab"
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Run Grype"
+      # enq: hash with name and version always longer than 80 chars
+      # yamllint disable rule:line-length
+      uses: "anchore/scan-action@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2" # v7.4.0
+      # yamllint enable rule:line-length
+      with:
+        sbom: "${{ inputs.sbom }}"
+        fail-build: false
+        output-format: "sarif"
+        output-file: "${{ inputs.grype-file }}"
+    - name: "Upload SBOM artifact"
+      if: >
+        inputs.upload-sbom-artifact == 'true'
+      # enq: hash with name and version always longer than 80 chars
+      # yamllint disable rule:line-length
+      uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
+      # yamllint enable rule:line-length
+      with:
+        name: "${{ inputs.sbom-artifact-name }}"
+        path: "${{ inputs.sbom-directory }}"
+        retention-days: 1
+        overwrite: true
+        if-no-files-found: "error"
+    - name: "Upload files"
+      # enq: hash with name and version always longer than 80 chars
+      # yamllint disable rule:line-length
+      # enq: unpinned as it allows projects to use the latest
+      uses: "open-nudge/opentemplate/.github/actions/sarif-upload@main" # zizmor: ignore[unpinned-uses]
+      # yamllint enable rule:line-length
+      with:
+        name: "${{ inputs.grype-artifact-name }}"
+        file: "${{ inputs.grype-file }}"
+        sarif: "${{ inputs.upload-grype-sarif }}"
+...

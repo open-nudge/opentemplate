@@ -1,0 +1,126 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security SBOM GitHub Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    inputs:
+      upload-artifact:
+        description: >
+          Whether to upload the generated SBOM artifact.
+          Always enabled when attestation is requested.
+        type: "boolean"
+        default: false
+      upload-grype-artifact:
+        description: "Whether to upload the generated Grype SARIF artifact"
+        type: "boolean"
+        default: false
+      upload-grype-sarif:
+        description: "Whether to upload the generated Grype SARIF to Security"
+        type: "boolean"
+        default: false
+      attest:
+        description: >
+          Whether to attest the generated SBOM artifact.
+          Implies artifact upload.
+        type: "boolean"
+        default: false
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  sbom-github:
+    name: "Security SBOM GitHub"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    outputs:
+      artifact: "${{ steps.setup.outputs.artifact }}"
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
+      contents: "read"
+    steps:
+      - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+            grype.anchore.io:443
+            objects.githubusercontent.com:443
+            raw.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+            toolbox-data.anchore.io:443
+      - name: "Repository checkout"
+        # enq: hash with name and version always longer than 80 chars
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        # yamllint enable rule:line-length
+        with:
+          sparse-checkout: |
+            .github/actions/sbom-grype
+            .github/actions/release-sbom-setup
+            .github/actions/sarif-upload
+            .github/workflows
+          persist-credentials: false
+      - name: "Perform action setup"
+        id: "setup"
+        # enq: hash with name and version always longer than 80 chars
+        # yamllint disable rule:line-length
+        # enq: unpinned as it allows projects to use the latest
+        uses: "open-nudge/opentemplate/.github/actions/release-sbom-setup@main" # zizmor: ignore[unpinned-uses]
+        # yamllint enable rule:line-length
+        with:
+          identifier: "sbom-github-${{ github.sha }}"
+          files: >-
+            $(find .github/workflows -type f -name '*.yml')
+      - name: "Create GitHub SPDX SBOM"
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          SBOM_FILE: "${{ steps.setup.outputs.sbom }}"
+        run: >
+          gh api "/repos/${GITHUB_REPOSITORY}/dependency-graph/sbom"
+          | jq '.sbom'
+          > "${SBOM_FILE}"
+      - name: "Postprocess SBOM"
+        uses: "./.github/actions/sbom-grype"
+        with:
+          sbom: "${{ steps.setup.outputs.sbom }}"
+          sbom-directory: "${{ steps.setup.outputs.sbom-directory }}"
+          sbom-artifact-name: "${{ steps.setup.outputs.artifact }}"
+          upload-sbom-artifact: "${{ inputs.upload-artifact || inputs.attest }}"
+          grype-file: "${{ format('grype-{0}.sarif', steps.setup.outputs.artifact) }}"
+          # enq: one line is more readable than wrapped expression here
+          # yamllint disable rule:line-length
+          grype-artifact-name: "${{ inputs.upload-grype-artifact && format('grype-{0}', steps.setup.outputs.artifact) || '' }}"
+          # yamllint enable rule:line-length
+          upload-grype-sarif: "${{ inputs.upload-grype-sarif }}"
+
+  sbom-github-attest:
+    name: "Security SBOM GitHub Attest"
+    if: >
+      inputs.attest
+    permissions:
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+    needs:
+      - "sbom-github"
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/security-sbom-attest-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      artifact: "${{ needs.sbom-github.outputs.artifact }}"
+...

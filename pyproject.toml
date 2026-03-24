@@ -942,8 +942,8 @@ check-generation = { cmd = [
   ./.github/workflows/cache-reusable.yml
   ./.github/workflows/run-reusable.yml
   ./.github/workflows/tests-reusable.yml
-  ./.github/workflows/release-sbom-attest-reusable.yml
-  ./.github/workflows/release-sbom-run-reusable.yml
+  ./.github/workflows/security-sbom-attest-reusable.yml
+  ./.github/workflows/security-sbom-run-reusable.yml
   ./.github/workflows/release-sboms-reusable.yml
   }
   """,
@@ -958,8 +958,8 @@ fix-generation = { cmd = [
   ./.github/workflows/cache-reusable.yml
   ./.github/workflows/run-reusable.yml
   ./.github/workflows/tests-reusable.yml
-  ./.github/workflows/release-sbom-attest-reusable.yml
-  ./.github/workflows/release-sbom-run-reusable.yml
+  ./.github/workflows/security-sbom-attest-reusable.yml
+  ./.github/workflows/security-sbom-run-reusable.yml
   ./.github/workflows/release-sboms-reusable.yml
   }
   """,

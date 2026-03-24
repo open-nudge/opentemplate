@@ -28,6 +28,8 @@ jobs:
   sboms:
     name: "SBOMs"
     permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to security tab
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       contents: "read"
@@ -36,6 +38,9 @@ jobs:
     # enq: unpinned as it allows projects to use the latest
     uses: "open-nudge/opentemplate/.github/workflows/release-sboms-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
+    with:
+      upload-grype-artifact: true
+      upload-grype-sarif: true
 
   sarifs:
     name: "SARIFs"
