@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release Ref"
+description: "Resolve the latest release tag to the commit SHA to checkout."
+
+inputs:
+  token:
+    description: "GitHub token used to query the repository API."
+    required: true
+
+outputs:
+  ref:
+    description: "The latest release commit SHA."
+    value: "${{ steps.release-ref.outputs.ref }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get release ref"
+      id: "release-ref"
+      shell: "bash"
+      env:
+        GH_TOKEN: "${{ inputs.token }}"
+      run: |
+        tag="$(gh api "/repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
+        ref="$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${tag}" --jq '.sha')"
+        echo "ref=${ref}" >> "${GITHUB_OUTPUT}"
+...

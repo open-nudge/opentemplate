@@ -45,6 +45,10 @@ on:
         description: "Whether to use cone mode for sparse checkout"
         type: "boolean"
         default: false
+      ref:
+        description: "The ref to checkout"
+        type: "string"
+        default: ""
       # SYSTEM
       os:
         description: "Operating system to run on"
@@ -163,6 +167,7 @@ jobs:
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         # yamllint enable rule:line-length
         with:
+          ref: "${{ inputs.ref }}"
           persist-credentials: false
       - name: "Sparse repository checkout"
         if: >
@@ -174,6 +179,7 @@ jobs:
         # enq: lack of indentation makes code below more readable
         # yamllint disable rule:indentation
         with:
+          ref: "${{ inputs.ref }}"
           sparse-checkout: |
             ${{
               inputs.cone

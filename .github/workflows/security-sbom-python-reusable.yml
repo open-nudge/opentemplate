@@ -30,6 +30,10 @@ on:
           Implies artifact upload.
         type: "boolean"
         default: false
+      ref:
+        description: "The ref to checkout"
+        type: "string"
+        default: ""
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -122,6 +126,7 @@ jobs:
       all: "${{ matrix.dependencies.all }}"
       os: "${{ matrix.os }}"
       python-version: "${{ matrix.python-version }}"
+      ref: "${{ inputs.ref }}"
       upload-artifact: "${{ inputs.upload-artifact || inputs.attest }}"
       upload-grype-artifact: "${{ inputs.upload-grype-artifact }}"
       upload-grype-sarif: "${{ inputs.upload-grype-sarif }}"

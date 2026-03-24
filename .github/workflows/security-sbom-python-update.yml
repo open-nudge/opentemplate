@@ -14,7 +14,18 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
+  latest-release:
+    permissions:
+      contents: "read"
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/latest-release-sha-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+
   security-sbom-python-update:
+    needs:
+      - "latest-release"
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
@@ -26,6 +37,7 @@ jobs:
     uses: "open-nudge/opentemplate/.github/workflows/security-sbom-python-reusable.yml@main" # zizmor: ignore[unpinned-uses]
     # yamllint enable rule:line-length
     with:
+      ref: "${{ needs.latest-release.outputs.ref }}"
       upload-artifact: true
       upload-grype-artifact: true
       upload-grype-sarif: true
