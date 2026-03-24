@@ -90,7 +90,7 @@ on:
 
     outputs:
       artifact:
-        description: "Name of the uploaded artifact"
+        description: "Artifact name; upload only happens when upload-artifact is true"
         value: "${{ jobs.security-sbom-run-reusable.outputs.artifact }}"
 
 # enq: the only way to set permissions to none in GH Actions
@@ -246,7 +246,7 @@ jobs:
           identifier: "${{ env.IDENTIFIER }}"
           files: >-
             ${{ inputs.files }}
-      - name: "Create Python SBOM"
+      - name: "Create SBOM (${{ inputs.type }})"
         env:
           TYPE: "${{ inputs.type }}"
           OUTPUT_FILE: "${{ steps.setup.outputs.sbom }}"

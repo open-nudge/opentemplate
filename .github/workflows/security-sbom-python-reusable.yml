@@ -101,6 +101,8 @@ jobs:
       fail-fast: true
       matrix: "${{ fromJson(needs.sbom-python-create-matrix.outputs.matrix) }}"
     permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length

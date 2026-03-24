@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - ".github/actions/sbom-grype/action.yml"
+      - ".github/actions/sarif-upload/action.yml"
       - ".github/actions/pdm-*/action.yml"
       - ".github/actions/git-setup/action.yml"
       - ".github/actions/release-sbom-setup/action.yml"
