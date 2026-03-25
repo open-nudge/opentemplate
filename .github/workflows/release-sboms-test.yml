@@ -11,6 +11,7 @@ on:
     branches:
       - "main"
     paths:
+      - ".grype.yaml"
       - ".github/actions/sbom-grype/action.yml"
       - ".github/actions/sarif-upload/action.yml"
       - ".github/actions/pdm-*/action.yml"

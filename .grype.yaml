@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# Conservative Grype defaults for template-based libraries.
+# Keep scan behavior close to upstream defaults and leave policy
+# decisions to downstream projects.
+
+check-for-app-update: false
+add-cpes-if-none: false
+only-fixed: false
+by-cve: false
+fail-on-severity: ""
+
+external-sources:
+  enable: false
+
+db:
+  auto-update: true
+  validate-by-hash-on-start: true
+  validate-age: true
+  require-update-check: false
+
+# Add ignore rules only after triage in the downstream project, for example:
+# ignore:
+#   - vulnerability: "CVE-2026-12345"
+#     fix-state: "not-fixed"
+#     package:
+#       name: "example-package"
+#       type: "python"
+...
