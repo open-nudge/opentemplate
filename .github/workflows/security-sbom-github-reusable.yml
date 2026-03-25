@@ -69,6 +69,7 @@ jobs:
         # yamllint enable rule:line-length
         with:
           sparse-checkout: |
+            .grype.yaml
             .github/actions/sbom-grype
             .github/actions/release-sbom-setup
             .github/actions/sarif-upload

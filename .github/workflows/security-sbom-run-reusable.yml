@@ -186,6 +186,7 @@ jobs:
               &&
               format(
                 'LICENSES
+                .grype.yaml
                 .github/actions/git-setup
                 .github/actions/sbom-grype
                 .github/actions/pdm-setup
@@ -200,6 +201,7 @@ jobs:
               format(
                 'README.md
                 LICENSE.md
+                .grype.yaml
                 LICENSES/*
                 .github/actions/git-setup
                 .github/actions/sbom-grype
