@@ -42,6 +42,8 @@ jobs:
   release-sboms-test:
     name: "Release SBOMs Test"
     permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       contents: "read"
