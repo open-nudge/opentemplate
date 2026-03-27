@@ -36,7 +36,8 @@ jobs:
         ! -path './.venv/*'
         ! -path './__pypackages__/*'
         ! -path './template-setup/settings-issue/*'
-        ! -path './template-setup/overwrite/*')
+        ! -path './template-setup/overwrite/*'
+        ! -path './.agents/*')
       group: "markdown"
       sparse-checkout: |
         **.md

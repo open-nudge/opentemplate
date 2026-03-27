@@ -16,7 +16,8 @@ SPDX-License-Identifier: Apache-2.0
 
 1. Create an issue for the task.
 1. Create a new branch (`<issue-number>` or similar).
-1. (Optional) Add dependencies to `pyproject.toml`.
+1. (Optional) Add core dependencies to `dependencies/dependencies.txt`
+    or optional dependencies to `dependencies/<optional>.txt`.
 1. Write code in `/src/<project_name>` and tests in `/tests`.
 1. Use `git add`, `git commit` (following [semver](https://semver.org/)),
     and `git push`.
@@ -58,6 +59,13 @@ Some exceptions apply (e.g., `Dockerfile`, `Makefile`).
 > [!NOTE]
 > Before every commit and push `prek` will run checks
 > ensuring code quality and style.
+
+### Dependencies
+
+- Add core runtime dependencies to `dependencies/dependencies.txt`.
+- Add optional dependency groups as `dependencies/<optional>.txt`.
+- Use versions available on `PyPI` and record them with `>=`
+    (for libraries, `==` for applications).
 
 ### Tests
 
@@ -105,6 +113,7 @@ may be required (as defined during [installation](installation.md)).
 ## Code sources
 
 - `pyproject.toml`
+- `dependencies/dependencies.txt`
 - `prek.toml`
 - `.github/pr-labeler.yml`
 - `/.github/workflows/template_setup.yml`
