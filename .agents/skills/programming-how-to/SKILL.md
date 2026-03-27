@@ -6,7 +6,7 @@
 
 name: "programming-how-to"
 description: >
-    How to code features, tests, or specify dependencies  in this project.
+    How to code features, tests, or specify dependencies in this project.
     It defines where and how to do it.
 license: "Apache-2.0"
 metadata:

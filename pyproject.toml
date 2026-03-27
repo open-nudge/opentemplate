@@ -1157,7 +1157,10 @@ git commit -S --signoff -m "$opt: $title"
 ###############################################################################
 
 [tool.pdm.scripts.harness]
-shell = "prek run --show-diff-on-failure --no-progress --quiet --files $(git diff --name-only --cached && git ls-files --others --exclude-standard)"
+shell = """\
+  prek run --show-diff-on-failure --no-progress --quiet --files \
+  $(git diff --name-only --cached; git diff --name-only; git ls-files --others --exclude-standard)
+"""
 
 [tool.pdm.scripts.harness.env]
 PREK_HOME = "${PDM_PROJECT_ROOT}/.cache/prek"
@@ -1165,4 +1168,10 @@ GOCACHE = "${PDM_PROJECT_ROOT}/.cache/go-build"
 GOPATH = "${PDM_PROJECT_ROOT}/.cache/go"
 GOMODCACHE = "${PDM_PROJECT_ROOT}/.cache/go/pkg/mod"
 GOBIN = "${PDM_PROJECT_ROOT}/.cache/go/bin"
+XDG_CACHE_HOME = "${PDM_PROJECT_ROOT}/.cache"
+XDG_CONFIG_HOME = "${PDM_PROJECT_ROOT}/.cache/config"
+XDG_DATA_HOME = "${PDM_PROJECT_ROOT}/.cache/share"
+TMPDIR = "${PDM_PROJECT_ROOT}/.cache/tmp"
+TMP = "${PDM_PROJECT_ROOT}/.cache/tmp"
+TEMP = "${PDM_PROJECT_ROOT}/.cache/tmp"
 PATH = "${PDM_PROJECT_ROOT}/.cache/go/bin:${PATH}"

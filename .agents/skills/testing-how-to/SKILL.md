@@ -27,16 +27,15 @@ pdm run harness
 
 It will:
 
+- validate **ALL** changed files
 - return nothing if the validation succeeds
 - return `git diff` if the validation fails
 
 ## Fixing
 
-When your changes fails validation:
+When your changes fail validation:
 
 1. Read the error output from the `harness` command and
-    `git diff` reminder of the current state
+    the `git diff` reminder of the current state
 1. Adjust the code to satisfy the failing checks
 1. Rerun the same `pdm run harness` command
-
-If the
