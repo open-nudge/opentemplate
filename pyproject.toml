@@ -965,7 +965,7 @@ fix-generation = { cmd = [
   """,
 ] }
 
-fix-all = "prek run {args:''} --all-files"
+fix-all = "prek run --all-files"
 
 ###############################################################################
 #
@@ -1149,3 +1149,20 @@ read -p "Would you like to make this commit? (Y/N): " \
 
 git commit -S --signoff -m "$opt: $title"
 """ }
+
+###############################################################################
+#
+#                             AGENTIC WORKFLOWS
+#
+###############################################################################
+
+[tool.pdm.scripts.harness]
+shell = "prek run --show-diff-on-failure --no-progress --quiet --files $(git diff --name-only --cached && git ls-files --others --exclude-standard)"
+
+[tool.pdm.scripts.harness.env]
+PREK_HOME = "${PDM_PROJECT_ROOT}/.cache/prek"
+GOCACHE = "${PDM_PROJECT_ROOT}/.cache/go-build"
+GOPATH = "${PDM_PROJECT_ROOT}/.cache/go"
+GOMODCACHE = "${PDM_PROJECT_ROOT}/.cache/go/pkg/mod"
+GOBIN = "${PDM_PROJECT_ROOT}/.cache/go/bin"
+PATH = "${PDM_PROJECT_ROOT}/.cache/go/bin:${PATH}"

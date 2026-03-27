@@ -253,7 +253,8 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 ### Usage
 
 1. Create a new branch
-1. Optionally add dependencies to `dependencies/dependencies.txt`
+1. Optionally add core dependencies to `dependencies/dependencies.txt`
+    or optional dependencies to `dependencies/<optional>.txt`
     (__no need to update `pyproject.toml` manually!__)
 1. Write code in `/src/<project_name>` and tests in `/tests`
 1. Use `git add`, `git commit` and `git push` your changes

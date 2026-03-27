@@ -409,7 +409,7 @@ repo = "local"
   language = "system"
   require_serial = true
   types = ["markdown"]
-  exclude = "^(DCO.md|template-setup/.*|LICENSE.md|LICENSES/.*)$"
+  exclude = "^(DCO.md|template-setup/.*|LICENSE.md|LICENSES/.*|.agents/.*)$"
   priority = 70
 
   [[repos.hooks]]
