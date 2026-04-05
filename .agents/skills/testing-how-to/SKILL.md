@@ -22,7 +22,7 @@ Use this skill to test changes in this project.
 You should only ever run one command to test your changes:
 
 ```bash
-pdm run harness
+pdm harness
 ```
 
 It will:
@@ -38,4 +38,4 @@ When your changes fail validation:
 1. Read the error output from the `harness` command and
     the `git diff` reminder of the current state
 1. Adjust the code to satisfy the failing checks
-1. Rerun the same `pdm run harness` command
+1. Rerun the same `pdm harness` command
