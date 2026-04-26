@@ -74,7 +74,6 @@ jobs:
             --format=sarif
             --output=${{ inputs.file }}
             --recursive
-            --licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0
             ./
       - name: "Upload files"
         # enq: hash with name and version always longer than 80 chars
