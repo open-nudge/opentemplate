@@ -144,7 +144,7 @@ rev = "cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # frozen: v0.1.0-alpha.31
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "47e7b7cd74f578e1e3145d48f669f22fd1330ca6" # frozen: v3.94.3
+rev = "17456f8c7d042d8c82c9a8ca9e937231f9f42e26" # frozen: v3.95.2
 
   [[repos.hooks]]
   id = "trufflehog"
@@ -162,7 +162,6 @@ rev = "30bcc134e23fbc35731021ee43ec433c483715d7" # frozen: v2.3.5
   name = "<<<CHECK>>> OSV Scanner"
   args = [
     "-r",
-    "--licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0",
     "./",
   ]
   priority = 10

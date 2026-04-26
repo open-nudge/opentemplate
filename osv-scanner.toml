@@ -63,12 +63,6 @@ reason = "dev dependency"
 
 [[PackageOverrides]]
 ecosystem = "PyPI"
-name = "fawltydeps"
-license.ignore = true
-reason = "dev dependency"
-
-[[PackageOverrides]]
-ecosystem = "PyPI"
 name = "more-itertools"
 license.ignore = true
 reason = "dev dependency"

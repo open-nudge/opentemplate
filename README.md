@@ -103,8 +103,7 @@ __opentemplate__ is a Python template which is:
 - __Code formatting and linting:__ [`ruff`](https://github.com/astral-sh/ruff)
     (checks hand-picked for best quality and ease of use; most are enabled),
     [`basedpyright`](https://github.com/DetachHead/basedpyright)
-    for type checking, [`FawltyDeps`](https://github.com/tweag/FawltyDeps)
-    for static dependency analysis
+    for type checking
 - __Each file is copyrighted with your git information__ -
     copyrights added automatically by `prek`,
     see [REUSE](https://reuse.readthedocs.io/en/stable/) and

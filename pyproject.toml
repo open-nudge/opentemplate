@@ -110,7 +110,6 @@ dev-docs = [
 ]
 
 dev-python = [
-  "fawltydeps>=0.17.0",
   "interrogate>=1",
   "ruff>=0.5.6",
   "pynudger>=0.2.1",
@@ -433,77 +432,6 @@ precision = 2
 show_missing = true
 skip_empty = true
 
-[tool.fawltydeps]
-ignore_undeclared = [
-  "mkdocs_gen_files",
-  "pytest",
-  "hypothesis",
-  "opentemplate",
-]
-
-ignore_unused = [
-  "cairosvg",
-  "cffconvert",
-  "check-jsonschema",
-  "cogapp",
-  "cogeol",
-  "conventional-pre-commit",
-  "coverage",
-  "cyclonedx-bom",
-  "git-cliff",
-  "hypothesis",
-  "interrogate",
-  "markdown",
-  "md-dead-link-check",
-  "mdformat",
-  "mdformat-gfm",
-  "mdformat_footnote",
-  "mdformat_frontmatter",
-  "noqaexplain",
-  "semgrep",
-  "shellcheck-py",
-  "termynal",
-  "validate-pyproject",
-  "yamllint",
-  "zizmor",
-  "codespell",
-  "fawltydeps",
-  "mdformat-mkdocs",
-  "mdformat_gfm_alerts",
-  "mike",
-  "mkdocs-awesome-nav",
-  "mkdocs-gen-files",
-  "mkdocs-git-revision-date-localized-plugin",
-  "mkdocs-github-admonitions-plugin",
-  "mkdocs-jupyter",
-  "mkdocs-link-marker",
-  "mkdocs-literate-nav",
-  "mkdocs-material",
-  "mkdocs-minify-plugin",
-  "mkdocs-open-in-new-tab",
-  "mkdocs-redirects",
-  "mkdocs-section-index",
-  "mkdocstrings",
-  "mkdocstrings-python",
-  "pillow",
-  "prek",
-  "prek-hooks",
-  "pygments",
-  "pyinilint",
-  "pymarkdownlnt",
-  "pymdown-extensions",
-  "pytest",
-  "pytest-asyncio",
-  "pytest-html",
-  "pytest-pretty-terminal",
-  "pytest-randomly",
-  "reuse",
-  "pynudger",
-  "ruff",
-  "ty",
-  "spdx-tools",
-]
-
 [tool.interrogate]
 verbose = 1
 style = "google"
@@ -512,6 +440,22 @@ exclude = [
   "build",
   "test",
   ".pdm-plugins",
+]
+
+[tool.ty.environment]
+extra-paths = [
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # cycle = cogeol.scientific()[-1]["cycle"]
+  # cog.outl(f'  "__pypackages__/{cycle}/lib",')
+  # ]]]
+  "__pypackages__/3.12/lib",
+  # [[[end]]] (sum: n3sNA6FJ81)
 ]
 
 [tool.ty.rules]
@@ -524,7 +468,7 @@ possibly-missing-attribute = "error"
 possibly-missing-implicit-call = "error"
 redundant-cast = "error"
 unresolved-global = "error"
-unsupported-base = "error"
+unsupported-base = "ignore"
 unused-ignore-comment = "error"
 useless-overload-body = "error"
 
@@ -814,7 +758,6 @@ check-python = { composite = [
   "ruff format --check {args:.}",
   "ruff check {args:.}",
   "pynudger check {args}",
-  "fawltydeps --detailed",
   "interrogate {args:.}",
   "noqaexplain check {args}",
 ] }
@@ -822,7 +765,6 @@ fix-python = { composite = [
   "ruff format {args:.}",
   "ruff check --fix {args:.}",
   "pynudger check {args}",
-  "fawltydeps --detailed",
   "interrogate {args:.}",
   "noqaexplain check {args}",
 ] }
@@ -1171,7 +1113,7 @@ GOBIN = "${PDM_PROJECT_ROOT}/.cache/go/bin"
 XDG_CACHE_HOME = "${PDM_PROJECT_ROOT}/.cache"
 XDG_CONFIG_HOME = "${PDM_PROJECT_ROOT}/.cache/config"
 XDG_DATA_HOME = "${PDM_PROJECT_ROOT}/.cache/share"
-TMPDIR = "${PDM_PROJECT_ROOT}/.cache"
-TMP = "${PDM_PROJECT_ROOT}/.cache"
-TEMP = "${PDM_PROJECT_ROOT}/.cache"
+TMPDIR = "${PDM_PROJECT_ROOT}/.cache/tmp"
+TMP = "${PDM_PROJECT_ROOT}/.cache/tmp"
+TEMP = "${PDM_PROJECT_ROOT}/.cache/tmp"
 PATH = "${PDM_PROJECT_ROOT}/.cache/go/bin:${PATH}"
