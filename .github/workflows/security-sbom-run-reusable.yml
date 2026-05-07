@@ -261,7 +261,8 @@ jobs:
         run: >
           pdm run "sbom-${TYPE}" > "${OUTPUT_FILE}"
       - name: "Postprocess SBOM"
-        uses: "./.github/actions/sbom-grype"
+        # enq: unpinned as it allows projects to use the latest
+        uses: "open-nudge/opentemplate/.github/actions/sbom-grype@main" # zizmor: ignore[unpinned-uses]
         with:
           sbom: "${{ steps.setup.outputs.sbom }}"
           sbom-directory: "${{ steps.setup.outputs.sbom-directory }}"

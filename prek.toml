@@ -155,7 +155,7 @@ rev = "17456f8c7d042d8c82c9a8ca9e937231f9f42e26" # frozen: v3.95.2
 
 [[repos]]
 repo = "https://github.com/google/osv-scanner/"
-rev = "30bcc134e23fbc35731021ee43ec433c483715d7" # frozen: v2.3.5
+rev = "77456acda0f5bde6d28291d7b7f9b77c333a06bc" # frozen: v2.3.7
 
   [[repos.hooks]]
   id = "osv-scanner"
@@ -441,6 +441,7 @@ repo = "local"
   language = "system"
   require_serial = true
   priority = 70
+  pass_filenames = false
 
   [[repos.hooks]]
   id = "fix-shell"
