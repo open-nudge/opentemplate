@@ -82,7 +82,7 @@ Releases include the following artifacts:
 
     1. REUSE SBOM ([docs](https://reuse.readthedocs.io/en/stable/man/reuse-spdx.html))
 
-- SBOM attestations ([actions/attest-sbom](https://github.com/actions/attest-sbom))
+- SBOM attestations ([actions/attest](https://github.com/actions/attest))
 
 - __Python package attestations__ ([PyPI guide](https://blog.pypi.org/posts/2024-11-14-pypi-now-supports-digital-attestations/))
 
