@@ -66,7 +66,7 @@ jobs:
       - name: "Run scanner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "google/osv-scanner/actions/scanner@30bcc134e23fbc35731021ee43ec433c483715d7" # v2.3.5
+        uses: "google/osv-scanner/actions/scanner@408fcd6f8707999a29e7ba45e15809764cf24f67" # v2.3.8
         # yamllint enable rule:line-length
         continue-on-error: "${{ inputs.continue-on-error }}"
         with:
