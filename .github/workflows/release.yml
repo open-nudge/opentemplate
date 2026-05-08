@@ -132,6 +132,7 @@ jobs:
     # yamllint enable rule:line-length
     with:
       download: true
+      full-checkout: true
       download-name: "dist-${{ github.sha }}"
       # enq: long command, splitting is unreadable
       # yamllint disable rule:line-length
