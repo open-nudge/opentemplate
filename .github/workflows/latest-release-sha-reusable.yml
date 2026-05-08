@@ -30,7 +30,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
+        uses: "step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450" # v2.19.1
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true

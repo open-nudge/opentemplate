@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -107,7 +107,7 @@ runs:
     - name: "Setup PDM"
       # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
-      uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0"  # v4.4
+      uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0"
       # yamllint enable rule:line-length
     - name: "Create pdm.lock"
       shell: "bash"

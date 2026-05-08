@@ -155,7 +155,7 @@ rev = "17456f8c7d042d8c82c9a8ca9e937231f9f42e26" # frozen: v3.95.2
 
 [[repos]]
 repo = "https://github.com/google/osv-scanner/"
-rev = "77456acda0f5bde6d28291d7b7f9b77c333a06bc" # frozen: v2.3.7
+rev = "408fcd6f8707999a29e7ba45e15809764cf24f67" # frozen: v2.3.8
 
   [[repos.hooks]]
   id = "osv-scanner"
