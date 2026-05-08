@@ -121,7 +121,8 @@ runs:
       id: "setup-pdm"
       # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
-      uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0"
+      # enq: pdm has no more official releases yet the latest SHA is necessary
+      uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0" # zizmor: ignore[ref-version-mismatch]
       # yamllint enable rule:line-length
       with:
         python-version: "${{ inputs.python-version }}"

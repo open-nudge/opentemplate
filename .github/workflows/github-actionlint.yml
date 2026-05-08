@@ -58,7 +58,7 @@ jobs:
       - name: "Check workflow files"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "docker://rhysd/actionlint:1.7.12@sha256:914e7df21a07ef503a81201c76d2b11c789d3fca" # v1.7.12
+        uses: "docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667" # v1.7.12
         # yamllint enable rule:line-length
         with:
           args: "-color"
