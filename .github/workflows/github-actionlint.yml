@@ -36,7 +36,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594" # v2.16.0
+        uses: "step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450" # v2.19.1
         # yamllint enable rule:line-length
         with:
           # Uses docker container,
@@ -48,7 +48,7 @@ jobs:
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
+        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         # yamllint enable rule:line-length
         with:
           sparse-checkout: |
@@ -58,7 +58,7 @@ jobs:
       - name: "Check workflow files"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "docker://rhysd/actionlint:1.7.1@sha256:435ecdb63b1169e80ca3e136290072548c07fc4d76a044cf5541021712f8f344" # v1.7.1
+        uses: "docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667" # v1.7.12
         # yamllint enable rule:line-length
         with:
           args: "-color"
