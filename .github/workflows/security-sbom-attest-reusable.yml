@@ -32,6 +32,7 @@ jobs:
     permissions:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
     timeout-minutes: 30
     runs-on: "ubuntu-latest"
     continue-on-error: "${{ inputs.continue-on-error }}"
@@ -60,7 +61,7 @@ jobs:
       - name: "Attest SBOM"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34" # v3.0.0
+        uses: "actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26" # v4.1.0
         # yamllint enable rule:line-length
         id: "attestation"
         with:

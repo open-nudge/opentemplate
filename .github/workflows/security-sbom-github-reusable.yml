@@ -115,6 +115,7 @@ jobs:
     permissions:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
     needs:
       - "sbom-github"
     # enq: hash with name and version always longer than 80 chars

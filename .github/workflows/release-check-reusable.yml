@@ -24,4 +24,5 @@ jobs:
     # yamllint enable rule:line-length
     with:
       check: "release"
+      full-checkout: true
 ...

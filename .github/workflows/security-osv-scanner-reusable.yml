@@ -55,7 +55,9 @@ jobs:
             api.deps.dev:443
             api.github.com:443
             api.osv.dev:443
+            ghcr.io:443
             github.com:443
+            pkg-containers.githubusercontent.com:443
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
@@ -66,7 +68,7 @@ jobs:
       - name: "Run scanner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "google/osv-scanner/actions/scanner@30bcc134e23fbc35731021ee43ec433c483715d7" # v2.3.5
+        uses: "google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8
         # yamllint enable rule:line-length
         continue-on-error: "${{ inputs.continue-on-error }}"
         with:
@@ -74,6 +76,7 @@ jobs:
             --format=sarif
             --output=${{ inputs.file }}
             --recursive
+            --licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0
             ./
       - name: "Upload files"
         # enq: hash with name and version always longer than 80 chars
