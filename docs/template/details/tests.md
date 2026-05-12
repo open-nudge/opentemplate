@@ -57,7 +57,7 @@ regular source code.
 > All changes apply to the CI as well.
 
 - To change coverage requirements, update the `fail_under`
-    flag in `[tool.coverage.reports]` section in `pyproject.toml`
+    flag in `[tool.coverage.report]` section in `pyproject.toml`
 - To change mutation testing, update the `[tool.mutmut]` section
     in `pyproject.toml`.
 - To change the test runner, update the `tests-coverage` script in
