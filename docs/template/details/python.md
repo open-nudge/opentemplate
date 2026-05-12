@@ -18,7 +18,7 @@ The following tools are used, in order:
 
 - __Code formatting and linting:__ [`ruff`](https://github.com/astral-sh/ruff)
     (all checks enabled by default)
-- __Type checking:__ [`basedpyright`](https://github.com/DetachHead/basedpyright)
+- __Type checking:__ [`pyrefly`](https://github.com/facebook/pyrefly)
     (run as a separate `typing` step)
 - __Docstring coverage:__ [`interrogate`](https://github.com/econchick/interrogate)
     (checks all functions, classes, and modules, including private ones)

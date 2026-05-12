@@ -76,6 +76,8 @@ dev-tests = [
   # Fuzz/property testing for Python
   "coverage>=7",
   "hypothesis>=6",
+  "mutmut>=3",
+  "pyrefly>=0.64.1",
   "pytest>=8",
   "pytest-asyncio>=1",
   "pytest-html>=4",
@@ -119,7 +121,6 @@ dev-python = [
 dev-typing = [
   # Needed to type check testing as well
   { include-group = "dev-tests" },
-  "ty>=0.0.7",
 ]
 
 dev-shell = [
@@ -442,8 +443,16 @@ exclude = [
   ".pdm-plugins",
 ]
 
-[tool.ty.environment]
-extra-paths = [
+[tool.pyrefly]
+project-includes = [
+  "src",
+  "tests",
+  "docs/scripts",
+]
+search-path = [
+  "src",
+]
+site-package-path = [
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -457,20 +466,26 @@ extra-paths = [
   "__pypackages__/3.12/lib",
   # [[[end]]] (sum: n3sNA6FJ81)
 ]
+skip-interpreter-query = false
 
-[tool.ty.rules]
-# https://docs.astral.sh/ty/reference/rules
-ambiguous-protocol-member = "error"
-deprecated = "error"
-ignore-comment-unknown-rule = "error"
-invalid-ignore-comment = "error"
-possibly-missing-attribute = "error"
-possibly-missing-implicit-call = "error"
-redundant-cast = "error"
-unresolved-global = "error"
-unsupported-base = "ignore"
-unused-ignore-comment = "error"
-useless-overload-body = "error"
+[tool.mutmut]
+use_setproctitle = false
+do_not_mutate_patterns = [
+    'logger\.\w+',
+    'raise \w+',
+]
+source_paths = [
+  "src/",
+]
+pytest_add_cli_args_test_selection = [
+  "tests/",
+  "src/",
+]
+type_check_command = [
+  "pyrefly",
+  "check",
+  "--output-format=json",
+]
 
 [tool.pymarkdown]
 # Disabled as it does not play well with GitHub admonitions
@@ -716,10 +731,15 @@ sort_commits = "oldest"
 #
 ###############################################################################
 
-tests = { composite = [
+tests-coverage = { composite = [
   "pdm run refresh",
-  "pdm run coverage run -m pytest -x --pretty {args:tests}",
+  "pdm run coverage run -m pytest -x --pretty --doctest-modules {args:tests src}",
   "pdm run coverage report",
+] }
+tests-mutation = "mutmut run {args}"
+tests = { composite = [
+  "pdm run tests-coverage {args:tests src}",
+  "pdm run tests-mutation",
 ] }
 tests-all = { composite = [
   #
@@ -736,16 +756,17 @@ tests-all = { composite = [
   #     cycle = version["cycle"]
   #     cog.outl(f'  "pdm use {cycle}",')
   #     cog.outl(
-  #         '  "pdm run tests {args:tests}",'
+  #         '  "pdm run tests-coverage {args:tests src}",'
   #     )
   # ]]]
   "pdm use 3.14",
-  "pdm run tests {args:tests}",
+  "pdm run tests-coverage {args:tests src}",
   "pdm use 3.13",
-  "pdm run tests {args:tests}",
+  "pdm run tests-coverage {args:tests src}",
   "pdm use 3.12",
-  "pdm run tests {args:tests}",
-  # [[[end]]] (sum: l+CVH9xxZS)
+  "pdm run tests-coverage {args:tests src}",
+  # [[[end]]] (sum: 9CsYgI5Jdh)
+  "pdm run tests-mutation",
 ] }
 
 ###############################################################################
@@ -769,7 +790,7 @@ fix-python = { composite = [
   "noqaexplain check {args}",
 ] }
 
-check-typing = "ty check {args}"
+check-typing = "pyrefly check {args}"
 
 check-shell = { composite = [
   "shellcheck -x -S style -o all",
@@ -975,11 +996,9 @@ setup = { composite = [
 ] }
 
 
-# Check here for syntax:
 sbom-python = { shell = """
   bash -c \
-  'pdm run cyclonedx-py environment $(pdm info --python) \
-    --mc-type library'
+  ' pdm run cyclonedx-py environment "$(pdm info --python)" --mc-type library'
 """ }
 
 sbom-legal = { shell = """

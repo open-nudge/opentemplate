@@ -28,17 +28,14 @@ SPDX-License-Identifier: Apache-2.0
 > `dependabot` may be reconsidered once key issues are
 > resolved and `uv` is used.
 
-## Why is [`basedpyright`](https://docs.basedpyright.com/latest/) used?
+## Why is [`pyrefly`](https://github.com/facebook/pyrefly) used?
 
-`basedpyright` is a fork of [`pyright`](https://github.com/microsoft/pyright)\`
-which:
+`pyrefly` is used for template type checking because it:
 
 - makes the package `pip` installable
-    (unlike [`pyright`](https://github.com/microsoft/pyright))
-- provides [LSP](https://microsoft.github.io/language-server-protocol/)
-    implementation for Python (unlike [`mypy`](https://github.com/python/mypy))
-- supports latest Python versions and features
-    (unlike [`pytype`](https://github.com/google/pytype))
+- supports local configuration from `pyproject.toml`
+- emits JSON output consumed by [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
+    for type-aware mutation filtering
 
 ## Why use the rejected [`pep582`](https://peps.python.org/pep-0582/) standard?
 

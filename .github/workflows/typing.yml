@@ -12,6 +12,8 @@ on:
       - "main"
     paths:
       - "**.py"
+      - "pyproject.toml"
+      - "pdm.lock"
       - ".github/actions/pdm-*.yml"
       - ".github/workflows/typing.yml"
       - ".github/workflows/typing-reusable.yml"

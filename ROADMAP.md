@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -7,5 +7,4 @@ SPDX-License-Identifier: Apache-2.0
 
 # Roadmap
 
-- Add support for [ty](https://github.com/astral-sh/ty) for type checking
-    instead of `basepyright` once it becomes a little bit more mature.
+- Continue evaluating Python type checkers as their ecosystem support matures.
