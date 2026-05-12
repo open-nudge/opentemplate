@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import pathlib
 
-import mkdocs_gen_files  # ty: ignore[unresolved-import]
+import mkdocs_gen_files  # pyrefly: ignore[missing-import]
 
 
 def main() -> None:

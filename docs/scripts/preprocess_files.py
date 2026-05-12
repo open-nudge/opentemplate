@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -23,7 +23,7 @@ import os
 import pathlib
 import re
 
-import mkdocs_gen_files  # ty: ignore[unresolved-import]
+import mkdocs_gen_files  # pyrefly: ignore[missing-import]
 
 
 @dataclasses.dataclass
@@ -73,8 +73,7 @@ class _LinkReplacer:
 
         self.path = pathlib.Path(
             "/",
-            # enq: ad-hoc script, full type checking wasn't performed here
-            *subpath,  # pyright: ignore[reportUnknownArgumentType]
+            *subpath,
         )
 
 

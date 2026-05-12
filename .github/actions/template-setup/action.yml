@@ -91,10 +91,11 @@ runs:
       shell: "bash"
       # REUSE-IgnoreStart
       run: |
-        echo '# SPDX-FileCopyrightText: © 2025 GitHub <https://github.com>
+        echo '# SPDX-FileCopyrightText: © 2026 GitHub <https://github.com>
         #
         # SPDX-License-Identifier: CC0-1.0
 
+        mutants
         .python-version
         ' > .gitignore
       # REUSE-IgnoreEnd

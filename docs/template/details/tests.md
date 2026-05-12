@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -12,12 +12,17 @@ This document outlines the testing process of `opentemplate`-based projects.
 ## Features
 
 - Uses [`pytest`](https://github.com/pytest-dev/pytest) for testing.
-- Measures test coverage with [`pytest-cov`](https://github.com/pytest-dev/pytest-cov)
+- Collects doctests from source modules.
+- Measures test coverage with [`coverage`](https://github.com/nedbat/coveragepy)
     (default threshold: `100%`).
+- Runs mutation testing with [`mutmut`](https://mutmut.readthedocs.io/en/latest/).
 - __Local testing:__ Runs on the latest three Python versions,
-    following [SPEC 0](https://scientific-python.org/specs/spec-0000/).
+    following [SPEC 0](https://scientific-python.org/specs/spec-0000/),
+    then runs mutation testing once.
 - __CI testing:__ Runs across multiple Python versions and
     OSs (Linux, macOS, Windows) via GitHub Actions.
+- __CI mutation testing:__ Runs once on Ubuntu, as `mutmut`
+    requires fork support.
 - __Randomized test execution__ ensures independence.
 - Includes [`Hypothesis`](https://github.com/HypothesisWorks/hypothesis)
     for property-based testing.
@@ -53,7 +58,9 @@ regular source code.
 
 - To change coverage requirements, update the `fail_under`
     flag in `[tool.coverage.reports]` section in `pyproject.toml`
-- To change the test runner, update the `tests` script in
+- To change mutation testing, update the `[tool.mutmut]` section
+    in `pyproject.toml`.
+- To change the test runner, update the `tests-coverage` script in
     the `pyproject.toml` file.
 
 ## Code sources

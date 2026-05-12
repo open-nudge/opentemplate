@@ -107,6 +107,7 @@ jobs:
       ${{ matrix.dependencies.name }}
     strategy:
       fail-fast: true
+      max-parallel: 9
       matrix: "${{ fromJson(needs.sbom-python-create-matrix.outputs.matrix) }}"
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
@@ -148,6 +149,7 @@ jobs:
       - "sbom-python"
     strategy:
       fail-fast: true
+      max-parallel: 9
       matrix: "${{ fromJson(needs.sbom-python-create-matrix.outputs.matrix) }}"
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length

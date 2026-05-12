@@ -117,7 +117,7 @@ reason = "dev dependency"
 
 [[PackageOverrides]]
 ecosystem = "PyPI"
-name = "basedpyright"
+name = "pyrefly"
 license.ignore = true
 reason = "dev dependency"
 

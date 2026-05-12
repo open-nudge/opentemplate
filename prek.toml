@@ -144,7 +144,7 @@ rev = "cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # frozen: v0.1.0-alpha.31
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "17456f8c7d042d8c82c9a8ca9e937231f9f42e26" # frozen: v3.95.2
+rev = "37b77001d0174ebec2fcca2bd83ff83a6d45a3ab" # frozen: v3.95.3
 
   [[repos.hooks]]
   id = "trufflehog"
@@ -486,6 +486,7 @@ repo = "local"
 
   [[repos.hooks]]
   id = "tests-all"
+  alias = "tests"
   verbose = true
   name = "<<<CHECK>>> Tests all"
   entry = "pdm run -v tests-all"
@@ -503,4 +504,4 @@ repo = "local"
   language = "system"
   require_serial = true
   always_run = true
-  priority = 90
+  priority = 100

@@ -87,7 +87,8 @@ __opentemplate__ is a Python template which is:
 - __Testing:__ [`pytest`](https://docs.pytest.org/en/stable/)
     (with [`coverage`](https://coverage.readthedocs.io/en/7.9.1/),
     and [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/) for
-    fuzzing); __testing across all Python versions
+    fuzzing, doctests, and [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
+    for mutation testing); __testing across all Python versions
     done WITHOUT [`tox`](https://tox.wiki/en/4.27.0/)
     or [`nox`](https://nox.thea.codes/en/stable/)__(managed directly by `pdm`!)
 - __Documentation:__ [`mkdocs`](https://www.mkdocs.org/) -
@@ -102,7 +103,7 @@ __opentemplate__ is a Python template which is:
     [material design look](https://github.com/squidfunk/mkdocs-material)
 - __Code formatting and linting:__ [`ruff`](https://github.com/astral-sh/ruff)
     (checks hand-picked for best quality and ease of use; most are enabled),
-    [`basedpyright`](https://github.com/DetachHead/basedpyright)
+    [`pyrefly`](https://github.com/facebook/pyrefly)
     for type checking
 - __Each file is copyrighted with your git information__ -
     copyrights added automatically by `prek`,

@@ -58,7 +58,7 @@ jobs:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
       command: |
-        pdm run tests
+        pdm run tests-coverage
         mv .coverage coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       # yamllint enable rule:line-length
       sparse-checkout: |
@@ -72,6 +72,28 @@ jobs:
         coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       python-version: "${{ matrix.python }}"
       os: "${{ matrix.os }}"
+      additional-allowed-endpoints: >
+        ${{ inputs.additional-allowed-endpoints }}
+      timeout-minutes: "${{ inputs.timeout-minutes }}"
+
+  tests-mutation:
+    name: "Tests Mutation"
+    permissions:
+      contents: "read"
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      command: |
+        pdm run tests-mutation
+      sparse-checkout: |
+        **.py
+        tests/**
+      group: "tests"
+      core: true
+      os: "ubuntu-latest"
       additional-allowed-endpoints: >
         ${{ inputs.additional-allowed-endpoints }}
       timeout-minutes: "${{ inputs.timeout-minutes }}"
@@ -101,4 +123,5 @@ jobs:
       download-pattern: "coverage-*-${{ github.sha }}"
       upload-name: "coverage-combined-${{ github.sha }}"
       upload-path: "htmlcov"
+      timeout-minutes: "${{ inputs.timeout-minutes }}"
 ...

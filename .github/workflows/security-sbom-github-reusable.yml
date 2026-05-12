@@ -70,9 +70,6 @@ jobs:
         with:
           sparse-checkout: |
             .grype.yaml
-            .github/actions/sbom-grype
-            .github/actions/release-sbom-setup
-            .github/actions/sarif-upload
             .github/workflows
           persist-credentials: false
       - name: "Perform action setup"
@@ -95,7 +92,8 @@ jobs:
           | jq '.sbom'
           > "${SBOM_FILE}"
       - name: "Postprocess SBOM"
-        uses: "./.github/actions/sbom-grype"
+        # enq: unpinned as it allows projects to use the latest
+        uses: "open-nudge/opentemplate/.github/actions/sbom-grype@main" # zizmor: ignore[unpinned-uses]
         with:
           sbom: "${{ steps.setup.outputs.sbom }}"
           sbom-directory: "${{ steps.setup.outputs.sbom-directory }}"
