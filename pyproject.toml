@@ -282,6 +282,9 @@ unsafe-fixes = false
 show-fixes = true
 
 format.docstring-code-format = true
+lint.external = [
+  "PYNUDGER"
+]
 lint.select = [
   "ALL",
 ]

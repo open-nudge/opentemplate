@@ -170,7 +170,7 @@ rev = "408fcd6f8707999a29e7ba45e15809764cf24f67" # frozen: v2.3.8
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "41f3b223e8cc669d1309a2104e5b70df2ae6a5a8" # frozen: v3.14.1
+rev = "810868b21c6c88cf78dfb8960b1afc78d1b7f6a8" # frozen: v3.14.2
 
   [[repos.hooks]]
   id = "vale"
