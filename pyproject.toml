@@ -283,7 +283,7 @@ show-fixes = true
 
 format.docstring-code-format = true
 lint.external = [
-  "PYNUDGER"
+  "PYNUDGER",
 ]
 lint.select = [
   "ALL",
