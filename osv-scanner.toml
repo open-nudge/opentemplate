@@ -19,6 +19,22 @@ reason = "Affects dev dependency"
 id = "GHSA-gc5v-m9x4-r6x2"
 reason = "Affects dev dependency"
 
+[[IgnoredVulns]]
+id = "PYSEC-2026-175"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-177"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-178"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-179"
+reason = "Affects dev dependency"
+
 [[PackageOverrides]]
 ecosystem = "PyPI"
 name = "griffelib"

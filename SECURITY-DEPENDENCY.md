@@ -60,8 +60,9 @@ contributors must follow these steps:
 1. Research the package. Is it well-maintained? Does it have a good reputation?
 1. Choose a compatible version of the package.
     Use the latest version whenever possible.
-1. Update the `pyproject.toml` (or `dependencies/dependencies.txt`)
-    and lock the dependencies.
+1. Update `project/requirements.txt` for runtime dependencies
+    and `pyproject.toml` for dependency tooling/configuration,
+    then lock the dependencies.
 
 ## Archived or deprecated packages
 
