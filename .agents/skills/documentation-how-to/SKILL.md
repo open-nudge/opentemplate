@@ -5,36 +5,41 @@
 # SPDX-License-Identifier: Apache-2.0
 
 name: "documentation-how-to"
-description: >
-    How to write and update documentation in this project.
-    It defines where authored docs live, how reference docs are produced,
-    and what release-related documentation updates to make.
+description: "When and where to write and update documentation."
 license: "Apache-2.0"
 metadata:
     author: "Szymon Maszke"
 ---
 
-# Documentation
+## When
 
-Use this skill to create documentation of this project.
+Do it AFTER creating implementation in `/src` and testing in `/tests`
 
-## Documentation locations
+## Where
 
-Create authored documentation **only** in these locations:
+Create documentation **ONLY** in the following paths in the following order:
 
-- `docs/explanations`
-- `docs/tutorials`
-- `docs/how-to`
+1. Documentation FOR DEVELOPERS:
 
-## Reference documentation
+    1. `src/README.md` - source description
+    2. `tests/README.md` - tests description
+    3. `SECURITY-SELF-ASSESSMENT.md` - description of project's security
+        posture (**ONLY** TBD sections)
 
-Reference documentation will be automatically created from code docstrings
-in `src` and `tests`.
+2. Documentation FOR USERS:
 
-## Release-related documentation
+    1. `README.md` - project description (**ONLY** sections
+        "Features" and "Quick Start/Usage")
+    2. `docs/tutorials` - tutorials FOR USERS, see `docs/tutorials/README.md`
+    3. `docs/how-to` - how-to guides FOR USERS, see `docs/how-to/README.md`
+    4. `docs/explanations` - explanatory guides FOR USERS, see `docs/explanations/README.md`
 
-Before validating your work adjust:
+## Notes
 
-- `README.md` (sections "Features", "Quick Start/Usage",
-    and "Quick Start/Examples")
-- complete **ALL** `TBD` sections in `SECURITY-SELF-ASSESSMENT.md`
+- Public interface/API/Reference documentation will be CREATED
+    AUTOMATICALLY FROM `/src` DOCSTRINGS
+
+## Resources
+
+- https://diataxis.fr/ - for `docs/tutorials`, `docs/how-to` and
+    `docs/explanations`

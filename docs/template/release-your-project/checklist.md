@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -36,8 +36,10 @@ SPDX-License-Identifier: Apache-2.0
 
 - `[project.classifiers]` – Add relevant
     [PyPI classifiers](https://pypi.org/classifiers/).
-- `[project.dependencies]` and `[project.optional-dependencies]` – Double-check
-    correctness.
+- `project/requirements.txt` – Double-check runtime dependencies
+    and version constraints.
+- `[tool.hatch.metadata.hooks.requirements_txt]` – Confirm the
+    `pyproject.toml` requirements hook points to `project/requirements.txt`.
 
 > [!TIP]
 > For public projects after the first release, remove `exclude_links`
