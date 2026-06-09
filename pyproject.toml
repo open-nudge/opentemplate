@@ -257,7 +257,7 @@ dev-all = [
 ###############################################################################
 
 [tool.hatch.metadata.hooks.requirements_txt]
-files = ["project/requirements.txt"]
+files = ["project/dependencies.txt"]
 
 [tool.hatch.version]
 source = "comver"
