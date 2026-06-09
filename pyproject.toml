@@ -257,7 +257,7 @@ dev-all = [
 ###############################################################################
 
 [tool.hatch.metadata.hooks.requirements_txt]
-files = ["project/requirements.txt"]
+files = ["project/dependencies.txt"]
 
 [tool.hatch.version]
 source = "comver"
@@ -741,7 +741,7 @@ tests-coverage = { composite = [
 ] }
 tests-mutation = "mutmut run {args}"
 tests = { composite = [
-  "pdm run tests-coverage {args:tests src}",
+  "pdm run tests-coverage {args:tests}",
   "pdm run tests-mutation",
 ] }
 tests-all = { composite = [
@@ -759,16 +759,16 @@ tests-all = { composite = [
   #     cycle = version["cycle"]
   #     cog.outl(f'  "pdm use {cycle}",')
   #     cog.outl(
-  #         '  "pdm run tests-coverage {args:tests src}",'
+  #         '  "pdm run tests-coverage {args:tests}",'
   #     )
   # ]]]
   "pdm use 3.14",
-  "pdm run tests-coverage {args:tests src}",
+  "pdm run tests-coverage {args:tests}",
   "pdm use 3.13",
-  "pdm run tests-coverage {args:tests src}",
+  "pdm run tests-coverage {args:tests}",
   "pdm use 3.12",
-  "pdm run tests-coverage {args:tests src}",
-  # [[[end]]] (sum: 9CsYgI5Jdh)
+  "pdm run tests-coverage {args:tests}",
+  # [[[end]]] (sum: sxbOo7AKAv)
   "pdm run tests-mutation",
 ] }
 
