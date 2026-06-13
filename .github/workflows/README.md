@@ -101,14 +101,14 @@ after PR merge, the cache is updated (if needed) and stored.
 
 ### Changing workflows reusability
 
-Scripts provided in `.github/workflows/reusability`:
+Scripts provided in `.github/reusability`:
 
 - `localize.sh` - changes the reusable workflows
     (pointing to `opennudge/opentemplate`) to local workflows
 - `globalize.sh` - changes the local workflows to reusable workflows
     (pointing to `opennudge/opentemplate`)
 
-Run `./reusability/localize.sh` or `./reusability/globalize.sh` to
+Run `.github/reusability/localize.sh` or `.github/reusability/globalize.sh` to
 apply the changes. The script also allows you to specify the directory
 where the changes should be applied as an argument.
 

@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -7,8 +7,10 @@ SPDX-License-Identifier: Apache-2.0
 
 # Configuration
 
-Most settings for `opentemplate` are managed in `pyproject.toml`,
-with full flexibility for customization if needed.
+Routine project metadata for `opentemplate` is managed from `/project`.
+The generated `[project]` table in `pyproject.toml` should usually be
+treated as template boilerplate, while `pyproject.toml`, `prek.toml`,
+and workflows remain the places for tool and development configuration.
 
 Start here:
 

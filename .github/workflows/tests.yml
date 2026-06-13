@@ -15,7 +15,7 @@ on:
       - "tests/**"
       - "pyproject.toml"
       - "pdm.lock"
-      - ".github/actions/pdm-*.yml"
+      - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/tests.yml"
       - ".github/workflows/tests-reusable.yml"
       - ".github/workflows/run-reusable.yml"

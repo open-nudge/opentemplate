@@ -11,8 +11,8 @@ on:
     branches:
       - "main"
     paths:
-      - ".github/workflows/*"
-      - ".github/actions/*"
+      - ".github/workflows/*.yml"
+      - ".github/actions/*/action.yml"
   merge_group:
     types:
       - "checks_requested"

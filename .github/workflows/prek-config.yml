@@ -11,8 +11,8 @@ on:
     branches:
       - "main"
     paths:
-      - ".github/actions/pdm-*.yml"
-      - ".prek.toml"
+      - ".github/actions/pdm-*/action.yml"
+      - "prek.toml"
       - ".github/workflows/prek-config.yml"
       - ".github/workflows/run-*reusable.yml"
   merge_group:

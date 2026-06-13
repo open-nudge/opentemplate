@@ -61,8 +61,8 @@ __opentemplate__ is a Python template which is:
     [secured egress](https://github.com/step-security/harden-runner),
     [OSSF Best Practices](https://github.com/ossf/scorecard)
 - [__Consistent__](https://open-nudge.github.io/opentemplate/template/configuration/basic):
-    all pipelines (`GitHub Actions`, `prek`)
-    share the same `pyproject.toml` config
+    common project metadata lives in `/project`, while tool configuration
+    stays shared by `GitHub Actions`, `prek`, and `pyproject.toml`
 - [__Performant__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
     parallel checks, builds, minimally-sized caches and checkouts
 
@@ -79,7 +79,8 @@ __opentemplate__ is a Python template which is:
 ### Code quality (Python focused)
 
 > [!IMPORTANT]
-> __You can adjust everything from `pyproject.toml` level!__
+> __Adjust common project metadata from `/project`; use `pyproject.toml`
+> for advanced tooling configuration.__
 
 - __Package manager:__ [`pdm`](https://pdm-project.org/en/latest/)
     with a single `pdm setup` manages everything!
@@ -253,8 +254,9 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 ### Usage
 
 1. Create a new branch
-1. Optionally add runtime dependencies to `project/requirements.txt`
-    (__no need to update `pyproject.toml` manually!__)
+1. Optionally adjust project metadata in `/project`
+    (for example runtime dependencies in `project/dependencies.txt`;
+    no need to update `[project]` in `pyproject.toml` manually)
 1. Write code in `/src/<project_name>` and tests in `/tests`
 1. Use `git add`, `git commit` and `git push` your changes
 1. `prek` will guide you through the process
@@ -300,9 +302,16 @@ Note that all `check` and `fix` commands are grouped for your convenience:
   <summary><b><big>Adjust template</big></b> (click me)</summary>
 &nbsp;
 
-> Most of the adjustments can be done by __only__ editing `pyproject.toml`
+> Common package metadata changes should go through `/project`;
+> routine `[project]` edits in `pyproject.toml` are template boilerplate.
 
-Common changes to `pyproject.toml`:
+Common changes in `/project`:
+
+- Add runtime dependencies in `project/dependencies.txt`
+- Add package keywords in `project/keywords.txt`
+- Add package classifiers in `project/classifiers.txt`
+
+Advanced tool and development changes still belong in `pyproject.toml`:
 
 - Add dev dependencies under `[dependency-groups]`
     (everything is named `dev-<group>`)

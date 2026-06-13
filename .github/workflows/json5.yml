@@ -12,7 +12,7 @@ on:
       - "main"
     paths:
       - "**.json5"
-      - ".github/actions/pdm-*.yml"
+      - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/json5.yml"
       - ".github/workflows/json5-reusable.yml"
       - ".github/workflows/run-*reusable.yml"
