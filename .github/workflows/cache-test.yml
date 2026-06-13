@@ -11,11 +11,11 @@ on:
     branches:
       - "main"
     paths:
-      - ".github/actions/pdm-*.yml"
+      - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/cache-test.yml"
       - ".github/workflows/cache-reusable.yml"
       - ".github/workflows/cache-item-reusable.yml"
-      - "dependencies/**"
+      - "project/**"
   merge_group:
     types:
       - "checks_requested"

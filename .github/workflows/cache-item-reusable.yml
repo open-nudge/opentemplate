@@ -88,6 +88,8 @@ jobs:
             LICENSES
             .github/actions
             .github/actions/pdm-setup
+            pyproject.toml
+            pdm.lock
             project
           sparse-checkout-cone-mode: true
           persist-credentials: false

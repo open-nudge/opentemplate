@@ -14,7 +14,7 @@ on:
       - "**.py"
       - "pyproject.toml"
       - "pdm.lock"
-      - ".github/actions/pdm-*.yml"
+      - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/typing.yml"
       - ".github/workflows/typing-reusable.yml"
       - ".github/workflows/run-*reusable.yml"
