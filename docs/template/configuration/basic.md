@@ -14,9 +14,26 @@ This guide covers essential adjustments to the template.
 > If your changes relate to a specific section, you may want to
 > consult [details documentation](../details/index.md).
 
-## `pyproject.toml`
+## Project metadata
 
-Most adjustments are made in `pyproject.toml`, which controls:
+Common package metadata is managed from `/project` instead of by editing
+`[project]` directly in `pyproject.toml`.
+
+- __Runtime Dependencies__ – Add one dependency per line in
+    `project/dependencies.txt`.
+- __Keywords__ – Add one keyword per line in `project/keywords.txt`.
+- __Classifiers__ – Add one classifier per line in `project/classifiers.txt`.
+- __Nested Metadata__ – Use matching folders such as
+    `optional-dependencies/`, `scripts/`, `gui-scripts/`,
+    and `entry-points/`.
+
+This metadata layout is reserved for the managed `noproject` workflow.
+For normal template use, edit the `/project` files and treat the generated
+`[project]` metadata in `pyproject.toml` as boilerplate.
+
+## Tool configuration
+
+Development and tool adjustments are made in `pyproject.toml`, which controls:
 
 - __Developer Dependencies__ – Managed in `[dependency-groups]`
     (each dependency prefixed by `dev`).
@@ -27,7 +44,7 @@ Most adjustments are made in `pyproject.toml`, which controls:
     (usually `check-<type>` or `fix-<type>`).
 
 > [!NOTE]
-> Sections are ordered by importance and assumed frequency of change.
+> Tool sections are ordered by importance and assumed frequency of change.
 
 ## `prek`
 
@@ -64,6 +81,7 @@ For other modifications, check:
 
 ## Code sources
 
+- `project/`
 - `pyproject.toml`
 - `prek.toml`
 - `.github/workflows/`

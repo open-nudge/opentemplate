@@ -16,7 +16,7 @@ SPDX-License-Identifier: Apache-2.0
 
 1. Create an issue for the task.
 1. Create a new branch (`<issue-number>` or similar).
-1. (Optional) Add runtime dependencies to `project/requirements.txt`.
+1. (Optional) Adjust project metadata in `/project`.
 1. Write code in `/src/<project_name>` and tests in `/tests`.
 1. Use `git add`, `git commit` (following [semver](https://semver.org/)),
     and `git push`.
@@ -59,13 +59,22 @@ Some exceptions apply (e.g., `Dockerfile`, `Makefile`).
 > Before every commit and push `prek` will run checks
 > ensuring code quality and style.
 
-### Dependencies
+### Project metadata
 
-- Add runtime dependencies to `project/requirements.txt`.
-- The template reads this file through `pyproject.toml`, so normal runtime
-    dependency changes do not require manual `pyproject.toml` edits.
-- Use versions available on `PyPI` and record them with `>=`
-    (for libraries, `==` for applications).
+Common package metadata is managed from `/project`, not by editing
+`[project]` directly in `pyproject.toml`.
+
+- Add runtime dependencies to `project/dependencies.txt`.
+- Add package keywords to `project/keywords.txt`.
+- Add package classifiers to `project/classifiers.txt`.
+- Put nested metadata in matching folders such as
+    `optional-dependencies/`, `scripts/`, `gui-scripts/`,
+    and `entry-points/`.
+
+The template reads these files through `pyproject.toml`, so routine package
+metadata changes do not require manual `[project]` edits. For dependencies,
+use versions available on `PyPI` and record them with `>=`
+(for libraries, `==` for applications).
 
 ### Tests
 
@@ -113,7 +122,7 @@ may be required (as defined during [installation](installation.md)).
 ## Code sources
 
 - `pyproject.toml`
-- `project/requirements.txt`
+- `project/`
 - `prek.toml`
 - `.github/pr-labeler.yml`
 - `/.github/workflows/template_setup.yml`

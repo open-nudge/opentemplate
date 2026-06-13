@@ -28,18 +28,21 @@ SPDX-License-Identifier: Apache-2.0
 > [!CAUTION]
 > Review [README](../../index.md) after changes to ensure coherence.
 
-## pyproject.toml
+## Project metadata
 
 > [!CAUTION]
-> Do not edit sections starting with `DO NOT EDIT UNTIL end marker`
-> and ending with `[[[end]]]`.
+> For routine package metadata, update `/project` instead of editing
+> `[project]` directly in `pyproject.toml`.
 
-- `[project.classifiers]` – Add relevant
+- `project/classifiers.txt` – Add relevant
     [PyPI classifiers](https://pypi.org/classifiers/).
-- `project/requirements.txt` – Double-check runtime dependencies
+- `project/keywords.txt` – Confirm package keywords.
+- `project/dependencies.txt` – Double-check runtime dependencies
     and version constraints.
-- `[tool.hatch.metadata.hooks.requirements_txt]` – Confirm the
-    `pyproject.toml` requirements hook points to `project/requirements.txt`.
+- `project/optional-dependencies/` – Confirm optional dependency groups,
+    if any.
+- `project/scripts/`, `project/gui-scripts/`, and `project/entry-points/` –
+    Confirm command and entry-point metadata, if any.
 
 > [!TIP]
 > For public projects after the first release, remove `exclude_links`

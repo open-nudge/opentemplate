@@ -46,7 +46,9 @@ Allowed licenses (subject to change):
 - Run `pdm run reuse download <LICENSE-SPDX>`
     __and link the [`/LICENSE.md`](../../LICENSE.md) file__
     to appropriate file in `licenses/`.
-- Change `license` in `pyproject.toml` to the new SPDX identifier.
+- Change the package license metadata to the new SPDX identifier.
+    If no dedicated `/project` source exists for it, this is one of the
+    remaining direct `[project]` edits in `pyproject.toml`.
 
 ### Modifying license compliance
 
