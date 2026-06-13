@@ -3,4 +3,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Place dependency requirements below.
+# Place project keywords below.
