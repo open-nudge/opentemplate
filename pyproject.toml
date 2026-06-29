@@ -157,19 +157,7 @@ dev-citation = [
 ]
 
 dev-security = [
-  # Semgrep may be a little rough for some releases, specify it ONLY for one version
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # cycle = cogeol.scientific()[-1]["cycle"]
-  # cog.out(f'''  "semgrep>=1; platform_system!='Windows' and python_version=='{cycle}'"''')
-  # ]]]
-  "semgrep>=1; platform_system!='Windows' and python_version=='3.12'"
-  # [[[end]]] (sum: xEbnmglzzV)
+  "semgrep>=1",
 ]
 
 dev-github = [

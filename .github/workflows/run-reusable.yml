@@ -235,12 +235,9 @@ jobs:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           GITHUB_REPO: "${{ github.repository }}"
+        shell: "bash"
         run: |
           ${{ inputs.command }}
-
-      - name: "Check repository content"
-        run: >
-          ls -la
       - name: "Upload artifacts"
         if: >
           inputs.upload-path != ''

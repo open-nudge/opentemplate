@@ -17,36 +17,50 @@ id = "GHSA-jg22-mg44-37j8"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
-id = "GHSA-w596-4wvx-j9j6"
-reason = "Affects SVN or pytest<7.2.0, which are not used in this project."
-
-[[IgnoredVulns]]
-id = "GHSA-5239-wwwm-4pmq"
+id = "PYSEC-2026-237"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
-id = "GHSA-gc5v-m9x4-r6x2"
+id = "GHSA-2fqr-mr3j-6wp8"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
-id = "PYSEC-2026-175"
+id = "GHSA-4fvr-rgm6-gqmc"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
-id = "PYSEC-2026-177"
+id = "GHSA-63hw-fmq6-xxg2"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
-id = "PYSEC-2026-178"
+id = "GHSA-9x8q-7h8h-wcw9"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
-id = "PYSEC-2026-179"
+id = "GHSA-g3cq-j2xw-wf74"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "GHSA-hpj7-wq8m-9hgp"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "GHSA-m6qw-4cw2-hm4m"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "GHSA-xcgm-r5h9-7989"
 reason = "Affects dev dependency"
 
 [[PackageOverrides]]
 ecosystem = "PyPI"
 name = "griffelib"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nest-asyncio2"
 license.ignore = true
 reason = "dev dependency"
 

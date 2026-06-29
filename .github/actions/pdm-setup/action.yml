@@ -174,9 +174,4 @@ runs:
       # yamllint enable rule:line-length
       with:
         restore: true
-
-    - name: "List repository content"
-      shell: "bash"
-      run: >
-        ls -la
 ...
