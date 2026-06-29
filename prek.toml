@@ -144,7 +144,7 @@ rev = "cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # frozen: v0.1.0-alpha.31
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "d411fff7b8879a62509f3fa98c07f247ac089a51" # frozen: v3.95.5
+rev = "f446421baf832d6356c42c1743d99abff52ff334" # frozen: v3.95.7
 
   [[repos.hooks]]
   id = "trufflehog"
@@ -155,7 +155,7 @@ rev = "d411fff7b8879a62509f3fa98c07f247ac089a51" # frozen: v3.95.5
 
 [[repos]]
 repo = "https://github.com/google/osv-scanner/"
-rev = "408fcd6f8707999a29e7ba45e15809764cf24f67" # frozen: v2.3.8
+rev = "b56b5191101d5f27d4787d5583d8d01e9518a7af" # frozen: v2.4.0
 
   [[repos.hooks]]
   id = "osv-scanner"
