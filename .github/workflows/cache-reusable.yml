@@ -24,7 +24,7 @@ jobs:
       Core | ${{ matrix.os }}
       | python-${{ matrix.python-version }}
       ${{ matrix.install.all && '| all ' || '| core ' }}
-      ${{ matrix.install.all && '' || matrix.install.group != '' &&
+      ${{ matrix.install.group != '' &&
       format('| {0}', matrix.install.group) || '' }}
     strategy:
       fail-fast: true
