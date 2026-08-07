@@ -21,6 +21,30 @@ id = "PYSEC-2026-237"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
+id = "PYSEC-2026-3545"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-3546"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-3547"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-3481"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-3482"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-3483"
+reason = "Affects dev dependency"
+
+[[IgnoredVulns]]
 id = "GHSA-2fqr-mr3j-6wp8"
 reason = "Affects dev dependency"
 
@@ -470,6 +494,12 @@ reason = "dev dependency"
 [[PackageOverrides]]
 ecosystem = "PyPI"
 name = "cairocffi"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cffi"
 license.ignore = true
 reason = "dev dependency"
 
