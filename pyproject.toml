@@ -724,7 +724,7 @@ sort_commits = "oldest"
 
 tests-coverage = { composite = [
   "pdm run refresh",
-  "pdm run coverage run -m pytest -x --pretty --doctest-modules {args:tests src}",
+  "pdm run coverage run -m pytest -vv -x --pretty --doctest-modules {args:tests src}",
   "pdm run coverage report",
 ] }
 tests-mutation = "mutmut run {args}"

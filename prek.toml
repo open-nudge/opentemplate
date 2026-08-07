@@ -144,7 +144,7 @@ rev = "cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # frozen: v0.1.0-alpha.31
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "f446421baf832d6356c42c1743d99abff52ff334" # frozen: v3.95.7
+rev = "6f3c981e7b77f235fd2702dd74af25fc4b72bf11" # frozen: v3.96.0
 
   [[repos.hooks]]
   id = "trufflehog"
@@ -155,7 +155,7 @@ rev = "f446421baf832d6356c42c1743d99abff52ff334" # frozen: v3.95.7
 
 [[repos]]
 repo = "https://github.com/google/osv-scanner/"
-rev = "b56b5191101d5f27d4787d5583d8d01e9518a7af" # frozen: v2.4.0
+rev = "a258868211a57052da6bd323f758b8388dee02bb" # frozen: v2.5.0
 
   [[repos.hooks]]
   id = "osv-scanner"
@@ -170,7 +170,7 @@ rev = "b56b5191101d5f27d4787d5583d8d01e9518a7af" # frozen: v2.4.0
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "8c4ed0df90e45f93818ffed5ba587ff1e220a142" # frozen: v3.15.1
+rev = "bc78bf3a639f29eef5c6bc3f0680105a82ef46f7" # frozen: v3.17.1
 
   [[repos.hooks]]
   id = "vale"
