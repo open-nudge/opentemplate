@@ -1112,6 +1112,6 @@ git commit -S --signoff -m "$opt: $title"
 
 [tool.pdm.scripts.harness]
 shell = """\
-  prek run --show-diff-on-failure --no-progress --quiet --files \
+  prek run --color never --show-diff-on-failure --no-progress --quiet --files \
   $(git diff --name-only --cached; git diff --name-only; git ls-files --others --exclude-standard)
 """
