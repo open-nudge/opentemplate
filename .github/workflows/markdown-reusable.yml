@@ -31,7 +31,8 @@ jobs:
         pdm run check-markdown
         $(find . -name '*.md'
         ! -name 'DCO.md'
-        ! -name 'LICENSE.md'
+        ! -name 'LICENSE'
+        ! -path './docs/LICENSE.md'
         ! -path './LICENSES/*'
         ! -path './.venv/*'
         ! -path './__pypackages__/*'

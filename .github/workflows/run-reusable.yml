@@ -175,7 +175,7 @@ jobs:
               ||
               format(
                 'README.md
-                LICENSE.md
+                LICENSE
                 LICENSES/*
                 .github/actions/git-setup
                 .github/actions/pdm-setup

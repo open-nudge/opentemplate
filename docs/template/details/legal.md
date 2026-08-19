@@ -44,7 +44,7 @@ Allowed licenses (subject to change):
 ### Changing license
 
 - Run `pdm run reuse download <LICENSE-SPDX>`
-    __and link the [`/LICENSE.md`](../../LICENSE.md) file__
+    __and link the [`/LICENSE`](../../LICENSE.md) file__
     to appropriate file in `licenses/`.
 - Change the package license metadata to the new SPDX identifier.
     If no dedicated `/project` source exists for it, this is one of the
@@ -62,7 +62,7 @@ To update allowed licenses for `osv-scanner`:
 
 ## Documents
 
-- __[`/LICENSE.md`](../../LICENSE.md)__ (Apache-2.0 by default)
+- __[`/LICENSE`](../../LICENSE.md)__ (Apache-2.0 by default)
     should be a symbolic link to the actual license file in `licenses/`.
 - __`LICENSES/`__ folder contains all project licenses
     (e.g., `pdm.lock` is [`CC0-1.0`](https://creativecommons.org/publicdomain/zero/1.0/deed.en)).

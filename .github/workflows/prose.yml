@@ -14,7 +14,7 @@ on:
       - "**.md"
       - "**.py"
       - "**.sh"
-      - "!LICENSE.md"
+      - "!LICENSE"
       - "!docs/LICENSE.md"
       - "!LICENSES/*"
       - ".github/workflows/prose.yml"

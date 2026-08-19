@@ -200,7 +200,7 @@ jobs:
               ||
               format(
                 'README.md
-                LICENSE.md
+                LICENSE
                 .grype.yaml
                 LICENSES/*
                 .github/actions/git-setup

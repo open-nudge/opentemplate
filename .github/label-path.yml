@@ -44,7 +44,7 @@ docs:
 legal:
   - changed-files:
       - any-glob-to-any-file:
-          - "LICENSE.md"
+          - "LICENSE"
           - "CODEOWNERS"
           - "CODE_OF_CONDUCT.md"
           - "COPYRIGHT.txt"

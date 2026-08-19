@@ -492,7 +492,7 @@ plugins.md042.enabled = false
 exclude_links = [
   "https://github.com/open-nudge/opentemplate*",
   "https://open-nudge.github.io/opentemplate*",
-  "/LICENSE.md",
+  "/LICENSE",
   "https://open-nudge.github.io*",
   "templateskip",
 ]
@@ -878,7 +878,7 @@ check-legal = "reuse lint"
 fix-legal = { shell = """
   bash -c \
   "pdm run reuse annotate \
-    --license='$(basename $(readlink -f LICENSE.md) .txt)' \
+    --license='$(basename $(readlink -f LICENSE) .txt)' \
     --copyright='open-nudge <https://github.com/open-nudge>' \
     --contributor='$(git config get user.name) <$(git config get user.email)>' \
     --copyright-prefix=spdx-symbol \

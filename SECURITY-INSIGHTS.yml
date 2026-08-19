@@ -13,7 +13,7 @@ header:
   changelog: >
     https://github.com/open-nudge/opentemplate/blob/main/CHANGELOG.md
   license: >
-    https://github.com/open-nudge/opentemplate/blob/main/LICENSE.md
+    https://github.com/open-nudge/opentemplate/blob/main/LICENSE
 project-lifecycle:
   status: "wip"
   bug-fixes-only: false

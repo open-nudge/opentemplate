@@ -48,7 +48,7 @@ ideas, or want to report a bug, follow these steps:
 1. Read [ROADMAP](ROADMAP.md) to understand the project's goals.
 1. Read Developer's Certificate of Origin (DCO) in [DCO.md](DCO.md)
     (you must sign-off your PRs).
-1. Read [LICENSE](LICENSE.md).
+1. Read [LICENSE](LICENSE).
 1. Follow the steps in [Non-code contributions](#non-code-contributions)
     and report a bug or request a feature.
 1. Fork the repository

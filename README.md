@@ -386,7 +386,7 @@ We welcome your contributions! Start here:
 ## Legal
 
 - This project is licensed under the _Apache 2.0 License_ - see
-    the [LICENSE](/LICENSE.md) file for details.
+    the [LICENSE](/LICENSE) file for details.
 - This project is copyrighted by _open-nudge_ - the
     appropriate copyright notice is included in each file.
 
