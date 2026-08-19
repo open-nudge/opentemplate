@@ -144,7 +144,7 @@ rev = "cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # frozen: v0.1.0-alpha.31
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "6f3c981e7b77f235fd2702dd74af25fc4b72bf11" # frozen: v3.96.0
+rev = "bcfcf73aaf4759d4dadc2783177c245a02792318" # frozen: v3.97.0
 
   [[repos.hooks]]
   id = "trufflehog"
@@ -155,7 +155,7 @@ rev = "6f3c981e7b77f235fd2702dd74af25fc4b72bf11" # frozen: v3.96.0
 
 [[repos]]
 repo = "https://github.com/google/osv-scanner/"
-rev = "a258868211a57052da6bd323f758b8388dee02bb" # frozen: v2.5.0
+rev = "c84fa4568f2526d0333e9a914ea8a0a5f74ad68b" # frozen: v2.5.1
 
   [[repos.hooks]]
   id = "osv-scanner"
@@ -289,7 +289,7 @@ repo = "local"
   entry = "pdm run -v fix-legal"
   language = "system"
   require_serial = true
-  exclude = "^(pdm.lock.*|DCO.md|.gitignore|LICENSE.md|LICENSES/.*)$"
+  exclude = "^(pdm.lock.*|DCO.md|.gitignore|LICENSE|LICENSES/.*)$"
   priority = 50
 
   [[repos.hooks]]
@@ -409,7 +409,7 @@ repo = "local"
   language = "system"
   require_serial = true
   types = ["markdown"]
-  exclude = "^(DCO.md|template-setup/.*|LICENSE.md|LICENSES/.*|\\.agents/.*)$"
+  exclude = "^(DCO.md|template-setup/.*|LICENSE|LICENSES/.*|\\.agents/.*)$"
   priority = 70
 
   [[repos.hooks]]

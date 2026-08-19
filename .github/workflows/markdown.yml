@@ -12,7 +12,7 @@ on:
       - "main"
     paths:
       - "**.md"
-      - "!LICENSE.md"
+      - "!LICENSE"
       - "!docs/LICENSE.md"
       - "!LICENSES/*"
       - ".github/workflows/markdown.yml"

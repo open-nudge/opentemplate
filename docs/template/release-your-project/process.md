@@ -66,7 +66,7 @@ Releases include the following artifacts:
 
 - `CHANGELOG.md` (full changelog)
 
-- `LICENSE.md` (project license)
+- `LICENSE` (project license)
 
 - Documentation (uploaded to `gh-pages`)
 
