@@ -170,7 +170,7 @@ rev = "c84fa4568f2526d0333e9a914ea8a0a5f74ad68b" # frozen: v2.5.1
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "bc78bf3a639f29eef5c6bc3f0680105a82ef46f7" # frozen: v3.17.1
+rev = "6c382ecd9f7147f84af5bf1708311bdd10735c5e" # frozen: v3.18.0
 
   [[repos.hooks]]
   id = "vale"
@@ -199,6 +199,39 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
   alias = "github-actions-actionlint"
   name = "<<<CHECK>>> GitHub Actions actionlint"
   verbose = true
+  priority = 70
+
+[[repos]]
+repo = "https://github.com/semgrep/pre-commit"
+rev = "551b42e877ed49468045b099c9394952befd4f6e" # frozen: v1.174.0
+
+  # Keep these arguments aligned with the Docker scan in
+  # .github/workflows/security-semgrep-reusable.yml.
+  [[repos.hooks]]
+  id = "semgrep"
+  alias = "security"
+  name = "<<<CHECK>>> Security"
+  args = [
+    "scan",
+    "--experimental",
+    "--exclude=*pdm.lock",
+    "--config=p/python",
+    "--config=p/secrets",
+    "--config=p/security-audit",
+    "--config=p/ci",
+    "--config=p/github-actions",
+    "--config=p/bandit",
+    "--config=p/gitleaks",
+    "--config=p/trailofbits",
+    "--error",
+    "--metrics=off",
+    "--severity=INFO",
+    "--strict",
+    ".",
+  ]
+  verbose = true
+  pass_filenames = false
+  require_serial = true
   priority = 70
 
 ##############################################################################
@@ -433,16 +466,6 @@ repo = "local"
   types = ["file"]
   files = "^(docs/.*|pyproject.toml|mkdocs.yml|src/.*.py|.*.md)$"
   priority = 70
-
-  [[repos.hooks]]
-  id = "security"
-  verbose = true
-  name = "<<<CHECK>>> Security"
-  entry = "pdm run -v check-security"
-  language = "system"
-  require_serial = true
-  priority = 70
-  pass_filenames = false
 
   [[repos.hooks]]
   id = "fix-shell"
