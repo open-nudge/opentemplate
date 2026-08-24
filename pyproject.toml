@@ -156,10 +156,6 @@ dev-citation = [
   "check-jsonschema>=0.31.2",
 ]
 
-dev-security = [
-  "semgrep>=1",
-]
-
 dev-github = [
   "zizmor>=1",
   "check-jsonschema>=0.31.2",
@@ -225,7 +221,6 @@ dev-all = [
   { include-group = "dev-pyproject" },
   { include-group = "dev-text" },
   { include-group = "dev-citation" },
-  { include-group = "dev-security" },
   { include-group = "dev-github" },
   { include-group = "dev-legal" },
   { include-group = "dev-release" },
@@ -843,26 +838,6 @@ check-json5 = "prek run check-json5 --files {args}"
 check-toml = "prek run check-toml --files {args}"
 
 check-xml = "prek run check-xml --files {args}"
-
-check-security = { cmd = [
-  "semgrep",
-  "scan",
-  "--experimental",
-  "--exclude=*pdm.lock",
-  "--config=p/python",
-  "--config=p/secrets",
-  "--config=p/security-audit",
-  "--config=p/ci",
-  "--config=p/github-actions",
-  "--config=p/bandit",
-  "--config=p/gitleaks",
-  "--error",
-  "--metrics=off",
-  "--severity=INFO",
-  "--strict",
-  "{args:.}",
-] }
-
 
 check-github-actions = "check-jsonschema --verbose --builtin-schema vendor.github-actions"
 

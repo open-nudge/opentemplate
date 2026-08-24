@@ -47,4 +47,5 @@ jobs:
     with:
       name: "semgrep-${{ github.sha }}"
       file: "semgrep-${{ github.sha }}.sarif"
+      sarif: true
 ...
