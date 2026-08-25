@@ -413,6 +413,9 @@ exclude_also = [
   "class .*\\bProtocol\\):",
   "@(abc\\.)?abstractmethod",
 ]
+partial_branches = [
+  "#\\s*(pragma|PRAGMA)[:\\s]?\\s*(no|NO)\\s*(branch|BRANCH)",
+]
 
 fail_under = 100
 precision = 2
