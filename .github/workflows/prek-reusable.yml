@@ -39,6 +39,8 @@ jobs:
             pdm-project.org:443
             pdm.fming.dev:443
             proxy.golang.org:443
+            go.dev:443
+            dl.google.com:443
             pypi.org:443
             raw.githubusercontent.com:443
             registry.npmjs.org:443

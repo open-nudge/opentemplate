@@ -170,7 +170,7 @@ rev = "c84fa4568f2526d0333e9a914ea8a0a5f74ad68b" # frozen: v2.5.1
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "6c382ecd9f7147f84af5bf1708311bdd10735c5e" # frozen: v3.18.0
+rev = "405a7dabd73651d8ba24c72767a70c065aa6716a" # frozen: v3.19.0
 
   [[repos.hooks]]
   id = "vale"
@@ -203,7 +203,7 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
 
 [[repos]]
 repo = "https://github.com/semgrep/pre-commit"
-rev = "551b42e877ed49468045b099c9394952befd4f6e" # frozen: v1.174.0
+rev = "261e339f3e41e8c36b90e05920bd2793212210e2" # frozen: v1.175.0
 
   # Keep these arguments aligned with the Docker scan in
   # .github/workflows/security-semgrep-reusable.yml.
