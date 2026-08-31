@@ -138,7 +138,14 @@ jobs:
       # yamllint disable rule:line-length
       command: |
         mkdir -p CHANGELOGS-${{ github.sha }}
-        export PYTHON_PACKAGE_VERSION=$(basename dist-${{ github.sha }}/dist/*.tar.gz | cut -d '-' -f 2)
+        shopt -s nullglob
+        sdists=(*.tar.gz)
+        if (( ${#sdists[@]} != 1 )); then
+        echo "::error title=Invalid source distribution artifacts::Expected exactly one *.tar.gz file, found ${#sdists[@]}."
+        exit 1
+        fi
+        sdist_name=${sdists[0]%.tar.gz}
+        export PYTHON_PACKAGE_VERSION=${sdist_name#*-}
         pdm run changelog > CHANGELOGS-${{ github.sha }}/CHANGELOG-${{ github.sha }}.md
         pdm run changelog-latest > CHANGELOGS-${{ github.sha }}/LATEST.md
       # yamllint enable rule:line-length
