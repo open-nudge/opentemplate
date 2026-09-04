@@ -567,13 +567,20 @@ Security | Tests | Legal | Docs | Actions | Config | Dependencies |
   :---:  | :---: | :---: | :---:|  :---:  |  :---: |    :---:     |
 {{ security }} | {{ tests }} | {{ legal }} | {{ docs }} | {{ actions }} | {{ config }} | {{ deps }}
 
-{% set python_data = [python, "Python", true, get_env(name="PYTHON_PACKAGE_VERSION", default="")] -%}
+{% set package_repositories = get_env(name="PACKAGE_REPOSITORIES", default="") | trim -%}
+{%- set python_data = [python, "Python", true, get_env(name="PYTHON_PACKAGE_VERSION", default="")] -%}
 {%- set other_data = [other, "Other", false, ""] -%}
 {%- set data = [python_data, other_data] -%}
 
 {%- for item in data%}
   {%- if item[0] != "0" -%}
     ## {{ item[1] }} ({% if item[3] %}v{{ item[3] }}, {% endif %}{{ item[0] }} commits)
+    {%- if item[2] and package_repositories %}
+
+### Repositories
+
+{{ package_repositories }}
+    {%- endif %}
     {{- self::display(
       commits=commits | filter(attribute="breaking", value=true),
       header="Breaking changes",

@@ -116,45 +116,6 @@ jobs:
       sparse-checkout: |
         src/**
 
-  changelog:
-    name: "Changelog"
-    if: >
-      always()
-    needs:
-      - "package-create"
-    permissions:
-      contents: "read"
-      pull-requests: "read" # Needed to read PR metadata during changelog gen
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
-    # yamllint enable rule:line-length
-    with:
-      download: true
-      full-checkout: true
-      download-name: "dist-${{ github.sha }}"
-      # enq: long command, splitting is unreadable
-      # yamllint disable rule:line-length
-      command: |
-        mkdir -p CHANGELOGS-${{ github.sha }}
-        shopt -s nullglob
-        sdists=(*.tar.gz)
-        if (( ${#sdists[@]} != 1 )); then
-        echo "::error title=Invalid source distribution artifacts::Expected exactly one *.tar.gz file, found ${#sdists[@]}."
-        exit 1
-        fi
-        sdist_name=${sdists[0]%.tar.gz}
-        export PYTHON_PACKAGE_VERSION=${sdist_name#*-}
-        pdm run changelog > CHANGELOGS-${{ github.sha }}/CHANGELOG-${{ github.sha }}.md
-        pdm run changelog-latest > CHANGELOGS-${{ github.sha }}/LATEST.md
-      # yamllint enable rule:line-length
-      group: "release"
-      # Full history to generate full changelog
-      fetch-depth: 0
-      upload-name: "CHANGELOGS-${{ github.sha }}"
-      upload-path: "CHANGELOGS-${{ github.sha }}"
-
   package-upload:
     name: "Package Upload (${{ matrix.repository.name }})"
     needs:
@@ -163,7 +124,6 @@ jobs:
       - "tests"
       - "docs"
       - "package-create"
-      - "changelog"
     permissions:
       id-token: "write" # Needed to sign the provenance
     runs-on: "ubuntu-latest"
@@ -172,7 +132,10 @@ jobs:
       fail-fast: true
       matrix:
         repository:
-          - url: "https://upload.pypi.org/legacy/"
+          - id: "pypi"
+            name: "PyPI"
+            url: "https://upload.pypi.org/legacy/"
+            release-url: "https://pypi.org/project/{name}/{version}/"
             endpoints: >
               fulcio.sigstore.dev:443
               ghcr.io:443
@@ -183,15 +146,21 @@ jobs:
               tuf-repo-cdn.sigstore.dev:443
               upload.pypi.org:443
             attestations: true
-            name: "PyPI"
             skip: "${{ github.event.repository.private }}"
             # Example for a test repository
-            # - url: "https://test.pypi.org/simple/"
-            #   endpoints: |
+            # - id: "test-pypi"
+            #   name: "TestPyPI"
+            #   url: "https://test.pypi.org/legacy/"
+            #   release-url: >
+            #     https://test.pypi.org/project/{name}/{version}/
+            #   endpoints: >
+            #     fulcio.sigstore.dev:443
+            #     ghcr.io:443
+            #     pkg-containers.githubusercontent.com:443
+            #     rekor.sigstore.dev:443
             #     test.pypi.org:443
-            #     files.pythonhosted.org:443
+            #     tuf-repo-cdn.sigstore.dev:443
             #   attestations: true
-            #   name: "PyPI Test"
             #   skip: >
             #     ${{ github.event.repository.visibility != 'public' }}
 
@@ -216,6 +185,46 @@ jobs:
         with:
           name: "dist-${{ github.sha }}"
           path: "dist"
+      - name: "Prepare repository descriptor"
+        if: >
+          ! matrix.repository.skip
+          && matrix.repository['release-url'] != ''
+        env:
+          RELEASE_URL_TEMPLATE: "${{ matrix.repository['release-url'] }}"
+          REPOSITORY_NAME: "${{ matrix.repository.name }}"
+        shell: "bash"
+        # enq: complex script, indentation rules would make it unreadable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          shopt -s nullglob
+          sdists=(dist/*.tar.gz)
+
+          if (( ${#sdists[@]} != 1 )); then
+            echo "::error title=Invalid source distribution artifacts::Expected exactly one dist/*.tar.gz file, found ${#sdists[@]}."
+            exit 1
+          fi
+
+          sdist_name=${sdists[0]##*/}
+          sdist_stem=${sdist_name%.tar.gz}
+
+          if [[ ! "${sdist_stem}" =~ ^([^-]+)-([^-]+)$ ]]; then
+            echo "::error title=Invalid source distribution filename::Expected {name}-{version}.tar.gz, got ${sdist_name}."
+            exit 1
+          fi
+
+          package_name=${BASH_REMATCH[1]}
+          package_version=${BASH_REMATCH[2]}
+
+          release_url="${RELEASE_URL_TEMPLATE//\{name\}/${package_name}}"
+          release_url="${release_url//\{version\}/${package_version}}"
+
+          mkdir -p "package-repository"
+          jq --null-input \
+            --arg name "${REPOSITORY_NAME}" \
+            --arg url "${release_url}" \
+            '{name: $name, url: $url}' \
+            > "package-repository/repository.json"
+        # yamllint enable rule:indentation rule:line-length
       - name: "Upload python package"
         if: >
           ! matrix.repository.skip
@@ -229,37 +238,52 @@ jobs:
           attestations: "${{ matrix.repository.attestations }}"
           print-hash: true
           skip-existing: true
-      - name: "Rename artifacts"
-        # enq: complex script, indentation rules would make it unreadable
-        # yamllint disable rule:indentation
-        run: |
-          # Add GITHUB_SHA to artifacts before the first dot
-          for f in dist/*; do
-            base=$(basename "${f}")
-            dir=$(dirname "${f}")
-
-            prefix="${base%%-*}"
-            suffix="${base#"${prefix}"}"
-
-            mv "${f}" "${dir}/${prefix}-${GITHUB_SHA}${suffix}"
-          done
-        # yamllint enable rule:indentation
-      - name: "Upload artifacts"
+      - name: "Upload repository descriptor"
+        if: >
+          ! matrix.repository.skip
+          && matrix.repository['release-url'] != ''
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
         # yamllint enable rule:line-length
         with:
-          name: "dist-${{ github.sha }}"
-          path: "dist"
+          name: >-
+            dist-${{ github.sha }}-repository-${{ matrix.repository.id }}
+          path: "package-repository"
           retention-days: 1
-          overwrite: true
           if-no-files-found: "error"
+
+  package-finalize:
+    name: "Package Finalize"
+    needs:
+      - "package-upload"
+    permissions:
+      contents: "read"
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/release-package-upload-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+
+  changelog:
+    name: "Changelog"
+    needs:
+      - "package-finalize"
+    permissions:
+      contents: "read"
+      pull-requests: "read" # Needed to read PR metadata during changelog gen
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/release-changelog-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      package-version: "${{ needs.package-finalize.outputs.package-version }}"
 
   slsa-provenance:
     name: "SLSA Provenance"
     needs:
-      - "package-upload"
+      - "changelog"
     if: >
       github.event.repository.visibility == 'public'
     permissions:
