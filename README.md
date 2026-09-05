@@ -9,7 +9,11 @@ SPDX-License-Identifier: Apache-2.0
 
 <!-- mkdocs remove start -->
 
+<!-- enq: concise banner copy and link labels intentionally bypass prose rules -->
+
 <!-- vale off -->
+
+<!-- enq: badge markup contains generated URLs that cannot fit the line limit -->
 
 <!-- pyml disable-num-lines 30 line-length-->
 
@@ -73,6 +77,8 @@ __opentemplate__ is a Python template which is:
 > [!CAUTION]
 > __All files in this repo will be copied to your project,
 > using the title and description you provide.__
+
+<!-- enq: prose checking resumes after the intentionally concise banner -->
 
 <!-- vale on -->
 
@@ -216,11 +222,10 @@ __opentemplate__ is a Python template which is:
     Check [here](https://github.com/fpgmaas/cookiecutter-uv)
     or [here](https://github.com/audreyfeldroy/cookiecutter-pypackage)
     to compare yourself.
-- Truly FOSS (no freemium, no paid plans, no tokens) when compared to commercial
-    offerings like [`snyk`](https://snyk.io/) or
-    [`jit.io`](https://www.jit.io/). Additionally Python-centric and sticks
-    with tools widely known by developers (their own environment and
-    GitHub interface).
+- Truly FOSS (no freemium, no paid plans, no tokens) when compared to
+    commercial offerings like [`snyk`](https://snyk.io/).
+    Additionally Python-centric and sticks with tools widely known
+    by developers (their own environment and GitHub interface).
 
 > [!TIP]
 > See detailed comparison in the
@@ -391,5 +396,7 @@ We welcome your contributions! Start here:
     appropriate copyright notice is included in each file.
 
 <!-- mkdocs remove end -->
+
+<!-- enq: link checking resumes after repository-only contribution links -->
 
 <!-- md-dead-link-check: on -->

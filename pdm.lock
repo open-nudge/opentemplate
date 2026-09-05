@@ -5,7 +5,7 @@
 groups = ["default", "dev-all", "dev-citation", "dev-commit", "dev-docs", "dev-generation", "dev-github", "dev-ini", "dev-json", "dev-json5", "dev-legal", "dev-markdown", "dev-prek", "dev-pyproject", "dev-python", "dev-release", "dev-shell", "dev-tests", "dev-text", "dev-toml", "dev-typing", "dev-xml", "dev-yaml"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:6fe6b6fa71e85795562a1b84cf6c585c67007158cd671d4f33c1e68a593e5de1"
+content_hash = "sha256:995de53adf25e9d7c85336cbb75a3ca1926ac520c9b036eadb476a277b9e623d"
 
 [[metadata.targets]]
 requires_python = ">=3.12"

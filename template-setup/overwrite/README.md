@@ -9,7 +9,11 @@ SPDX-License-Identifier: Apache-2.0
 
 <!-- mkdocs remove start -->
 
+<!-- enq: concise banner copy and link labels intentionally bypass prose rules -->
+
 <!-- vale off -->
+
+<!-- enq: badge markup contains generated URLs that cannot fit the line limit -->
 
 <!-- pyml disable-num-lines 30 line-length-->
 
@@ -40,6 +44,7 @@ SPDX-License-Identifier: Apache-2.0
 👍 <a href="https://github.com/open-nudge/opentemplate/blob/main/ADOPTERS.md">Adopters</a>
 📜 <a href="#legal">Legal</a>
 </p>
+<!-- enq: prose checking resumes after the intentionally concise banner -->
 <!-- vale on -->
 
 ______________________________________________________________________
@@ -117,6 +122,8 @@ Description of the example
 
 </details>
 
+<!-- enq: repository links resolve only after this nested template is copied -->
+
 <!-- md-dead-link-check: off -->
 
 <!-- mkdocs remove start -->
@@ -140,5 +147,7 @@ We welcome your contributions! Start here:
     appropriate copyright notice is included in each file.
 
 <!-- mkdocs remove end -->
+
+<!-- enq: link checking resumes after repository-only contribution links -->
 
 <!-- md-dead-link-check: on -->
