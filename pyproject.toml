@@ -114,8 +114,8 @@ dev-docs = [
 dev-python = [
   "interrogate>=1",
   "ruff>=0.5.6",
-  "pynudger>=0.2.1",
-  "noqaexplain>=0.1.0",
+  "pynudger>=3",
+  "noqaexplain>=2",
 ]
 
 dev-typing = [
@@ -125,12 +125,12 @@ dev-typing = [
 
 dev-shell = [
   "shellcheck-py>=0.10.0",
-  "noqaexplain>=0.1.0",
+  "noqaexplain>=2",
 ]
 
 dev-yaml = [
   "yamllint>=1",
-  "noqaexplain>=0.1.0",
+  "noqaexplain>=2",
 ]
 
 dev-markdown = [
@@ -567,13 +567,20 @@ Security | Tests | Legal | Docs | Actions | Config | Dependencies |
   :---:  | :---: | :---: | :---:|  :---:  |  :---: |    :---:     |
 {{ security }} | {{ tests }} | {{ legal }} | {{ docs }} | {{ actions }} | {{ config }} | {{ deps }}
 
-{% set python_data = [python, "Python", true, get_env(name="PYTHON_PACKAGE_VERSION", default="")] -%}
+{% set package_repositories = get_env(name="PACKAGE_REPOSITORIES", default="") | trim -%}
+{%- set python_data = [python, "Python", true, get_env(name="PYTHON_PACKAGE_VERSION", default="")] -%}
 {%- set other_data = [other, "Other", false, ""] -%}
 {%- set data = [python_data, other_data] -%}
 
 {%- for item in data%}
   {%- if item[0] != "0" -%}
     ## {{ item[1] }} ({% if item[3] %}v{{ item[3] }}, {% endif %}{{ item[0] }} commits)
+    {%- if item[2] and package_repositories %}
+
+### Repositories
+
+{{ package_repositories }}
+    {%- endif %}
     {{- self::display(
       commits=commits | filter(attribute="breaking", value=true),
       header="Breaking changes",
@@ -961,7 +968,7 @@ setup = { composite = [
   "pdm use 3.12",
   # [[[end]]] (sum: VskYZaUrei)
   "pdm install -G:all --no-editable",
-  "pdm run prek install --install-hooks",
+  "pdm run env -u PYTHONPATH -u PEP582_PACKAGES -u NO_SITE_PACKAGES prek install --install-hooks",
 ] }
 
 

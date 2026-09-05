@@ -33,18 +33,6 @@ id = "PYSEC-2026-3547"
 reason = "Affects dev dependency"
 
 [[IgnoredVulns]]
-id = "PYSEC-2026-3481"
-reason = "Affects dev dependency"
-
-[[IgnoredVulns]]
-id = "PYSEC-2026-3482"
-reason = "Affects dev dependency"
-
-[[IgnoredVulns]]
-id = "PYSEC-2026-3483"
-reason = "Affects dev dependency"
-
-[[IgnoredVulns]]
 id = "GHSA-2fqr-mr3j-6wp8"
 reason = "Affects dev dependency"
 
@@ -75,6 +63,12 @@ reason = "Affects dev dependency"
 [[IgnoredVulns]]
 id = "GHSA-xcgm-r5h9-7989"
 reason = "Affects dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "noqaexplain"
+license.ignore = true
+reason = "dev dependency"
 
 [[PackageOverrides]]
 ecosystem = "PyPI"

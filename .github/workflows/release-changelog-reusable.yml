@@ -1,0 +1,84 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Release Changelog"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    inputs:
+      package-version:
+        description: "The normalized package version."
+        required: true
+        type: "string"
+      python-version:
+        description: "Python version used to generate the changelog."
+        type: "string"
+        #
+        #           DO NOT EDIT UNTIL end marker
+        #
+        # [[[cog
+        # import cog
+        # import cogeol
+        #
+        # cycle = cogeol.scientific()[-1]["cycle"]
+        # cog.out(f'        default: "{cycle}"')
+        # ]]]
+        default: "3.12"
+        # [[[end]]] (sum: lAlMRZbmJy)
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-changelog:
+    name: "Release Changelog"
+    permissions:
+      contents: "read"
+      pull-requests: "read" # Needed to read PR metadata during changelog gen
+    # enq: hash with name and version always longer than 80 chars
+    # yamllint disable rule:line-length
+    # enq: unpinned as it allows projects to use the latest
+    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    # yamllint enable rule:line-length
+    with:
+      download: true
+      download-pattern: "dist-${{ github.sha }}*"
+      full-checkout: true
+      group: "release"
+      fetch-depth: 0
+      python-version: "${{ inputs.python-version }}"
+      # enq: long command, splitting is unreadable
+      # yamllint disable rule:indentation rule:line-length
+      command: |
+        export PYTHON_PACKAGE_VERSION="${{ inputs.package-version }}"
+        mkdir -p "CHANGELOGS-${GITHUB_SHA}"
+        shopt -s nullglob
+        unset PACKAGE_REPOSITORIES
+
+        repository_descriptors=(
+          dist-"${GITHUB_SHA}"-repository-*/repository.json
+        )
+
+        if (( ${#repository_descriptors[@]} > 0 )); then
+          PACKAGE_REPOSITORIES=$(
+            jq --exit-status --raw-output --slurp '
+              sort_by([.name, .url])
+              | map("- [\(.name)](\(.url))")
+              | join("\n")
+            ' "${repository_descriptors[@]}"
+          )
+          export PACKAGE_REPOSITORIES
+        fi
+
+        pdm run changelog \
+          > "CHANGELOGS-${GITHUB_SHA}/CHANGELOG-${GITHUB_SHA}.md"
+        pdm run changelog-latest \
+          > "CHANGELOGS-${GITHUB_SHA}/LATEST.md"
+      # yamllint enable rule:indentation rule:line-length
+      upload-name: "CHANGELOGS-${{ github.sha }}"
+      upload-path: "CHANGELOGS-${{ github.sha }}"
+...
