@@ -282,6 +282,8 @@ lint.extend-ignore = [
   # While correct, semgrep does not support this yet
   "UP046",
   "UP047",
+  # Incorrectly flags proper licenses
+  "CPY001",
 ]
 
 lint.extend-per-file-ignores."tests/**.py" = [
