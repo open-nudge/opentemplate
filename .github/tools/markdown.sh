@@ -18,7 +18,8 @@ if (( ${#files[@]} == 0 )); then
         files+=("${file}")
     done < <(
         git ls-files -z -- "*.md" ":!DCO.md" ":!docs/LICENSE.md" \
-            ":!template-setup/**" ":!LICENSE" ":!LICENSES/**" ":!.agents/**"
+            ":!template-setup/**" ":!LICENSE" ":!LICENSES/**" ":!.agents/**" \
+            ":!./__pypackages__/**"
     )
 fi
 
