@@ -86,6 +86,7 @@ jobs:
         creativecommons.org:443
         wiki.linuxfoundation.org:443
         vale.sh:443
+        docs.vale.sh:443
         endoflife.date:443
         www.threatmodelingmanifesto.org:443
 ...
