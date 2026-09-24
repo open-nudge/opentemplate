@@ -45,20 +45,8 @@ jobs:
         # yamllint enable rule:line-length
         with:
           disable-sudo: true
+          # enq: cannot reliably prevent and inspect docker steps egress
           egress-policy: "audit"
-          allowed-endpoints: |
-            *.actions.githubusercontent.com:443
-            codeload.github.com:443
-            results-receiver.actions.githubusercontent.com:443
-            *.blob.core.windows.net:443
-            api.github.com:443
-            auth.docker.io:443
-            github.com:443
-            objects.githubusercontent.com:443
-            production.cloudflare.docker.com:443
-            raw.githubusercontent.com:443
-            registry-1.docker.io:443
-            release-assets.githubusercontent.com:443
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
@@ -79,7 +67,7 @@ jobs:
         uses: "docker://docker.io/jdkato/vale:v3.20.0@sha256:5a2852baf6332a2beb2aa187aa4828ce600b0368720e338f8ea8521cdb826a1d"
         # yamllint enable rule:line-length
         with:
-          args: "."
+          args: "--glob=!LICENSE --glob=!LICENSES/** ."
       - name: "Check for generated changes"
         run: "git diff --exit-code"
 ...

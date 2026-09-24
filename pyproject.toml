@@ -515,7 +515,7 @@ exclude_links = [
 
 exclude_files = [
   "template-setup/overwrite/*",
-  "pypackages/*",
+  "__pypackages__/README.md",
 ]
 
 [tool.comver]
