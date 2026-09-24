@@ -127,7 +127,6 @@ jobs:
           egress-policy: "block"
           allowed-endpoints: >
             *.actions.githubusercontent.com:443
-            codeload.github.com:443
             results-receiver.actions.githubusercontent.com:443
             *.blob.core.windows.net:443
             api.github.com:443

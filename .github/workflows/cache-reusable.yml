@@ -21,7 +21,7 @@ jobs:
   # This cache is any OS + multiple Python versions
   core:
     name: >
-      Core | ${{ matrix.os }}
+      Core | ${{ matrix.os.name }}
       | python-${{ matrix.python-version }}
       ${{ matrix.install.all && '| all ' || '| core ' }}
       ${{ matrix.install.group != '' &&
@@ -56,9 +56,24 @@ jobs:
           - "3.14"
           # [[[end]]] (sum: wgdYaRbI0v)
         os:
-          - "ubuntu-latest"
-          - "macos-latest"
-          - "windows-latest"
+          - name: "ubuntu-latest"
+            endpoints: ""
+          - name: "macos-latest"
+            endpoints: |
+              bag.itunes.apple.com:443
+              cf.iadsdk.apple.com:443
+              configuration.apple.com:443
+              device-config.pcms.apple.com:443
+              iadsdk.apple.com:443
+              sas.pcms.apple.com:443
+          - name: "windows-latest"
+            endpoints: |
+              client.wns.windows.com:443
+              crl.sectigo.com:443
+              ipv6.msftconnecttest.com:443
+              mobile.events.data.microsoft.com:443
+              ocsp.sectigo.com:443
+              www.msftconnecttest.com:443
     permissions:
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
@@ -71,7 +86,8 @@ jobs:
       core: true
       all: "${{ matrix.install.all }}"
       python-version: "${{ matrix.python-version }}"
-      os: "${{ matrix.os }}"
+      os: "${{ matrix.os.name }}"
+      additional-allowed-endpoints: "${{ matrix.os.endpoints }}"
       ref: "${{ github.event.inputs.ref }}"
 
   dev:

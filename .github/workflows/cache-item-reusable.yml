@@ -48,6 +48,10 @@ on:
         description: "The ref to checkout"
         type: "string"
         default: ""
+      additional-allowed-endpoints:
+        description: "Additional endpoints to allow"
+        type: "string"
+        default: ""
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -70,7 +74,6 @@ jobs:
           egress-policy: "block"
           allowed-endpoints: >
             *.actions.githubusercontent.com:443
-            codeload.github.com:443
             results-receiver.actions.githubusercontent.com:443
             *.blob.core.windows.net:443
             api.github.com:443
@@ -82,6 +85,7 @@ jobs:
             raw.githubusercontent.com:443
             objects.githubusercontent.com:443
             release-assets.githubusercontent.com:443
+            ${{ inputs.additional-allowed-endpoints }}
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
