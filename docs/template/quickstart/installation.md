@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -52,8 +52,12 @@ outlining security hardening steps.
 > These steps will be further detailed in the aforementioned issue.
 
 - Enable third-party bots (if applicable).
-- Create a short-lived, minimally scoped `TEMPLATE_GITHUB_TOKEN`.
-- Run the hardening workflow.
+- Create a short-lived, repository-scoped fine-grained PAT and save it as
+    `TEMPLATE_GITHUB_TOKEN`. Grant **Contents: read and write**, **Workflows: read
+    and write**, **Administration: read and write**, and **Pages: read and write**.
+- Prefer a repository secret. An organization-level secret exposes the token to
+    more repositories; if you use one, restrict it to the target repository.
+- Manually run the hardening workflow using its existing workflow dispatch.
 - Set up [trusted PyPI publishing](https://docs.pypi.org/trusted-publishers/).
 
 > [!NOTE]
@@ -78,12 +82,12 @@ outlining security hardening steps.
 > [!CAUTION]
 > This feature is not yet implemented.
 
-Your repository will be automatically updated with the latest `opentemplate`
-version every weekend.
+The template update workflow is a placeholder and does not currently update
+repositories.
 
 ## Code sources
 
-- `/.github/workflows/template_setup.yml`
-- `/.github/workflows/template_update.yml`
+- `/.github/workflows/template-setup.yml`
+- `/.github/workflows/template-update.yml`
 - `/.github/workflows/harden.yml`
 - `/.github/rulesets`

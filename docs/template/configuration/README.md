@@ -7,10 +7,9 @@ SPDX-License-Identifier: Apache-2.0
 
 # Configuration
 
-Routine project metadata for `opentemplate` is managed from `/project`.
-The generated `[project]` table in `pyproject.toml` should usually be
-treated as template boilerplate, while `pyproject.toml`, `prek.toml`,
-and workflows remain the places for tool and development configuration.
+Routine package metadata is declared directly in the `[project]` table of
+`pyproject.toml`. PDM resolves dependency declarations into `pdm.lock`;
+`prek.toml` and workflows configure development tools and CI.
 
 Start here:
 

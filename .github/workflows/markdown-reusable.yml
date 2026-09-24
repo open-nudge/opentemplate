@@ -20,26 +20,9 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/run-check-reusable.yml"
     # yamllint enable rule:line-length
     with:
-      # Workaround for __pypackages__/README.md
-      # It is collected automatically by md-dead-link-check
-      command: >
-        rm -rf .git &&
-        git init --initial-branch main &&
-        pdm run check-markdown
-        $(find . -name '*.md'
-        ! -name 'DCO.md'
-        ! -name 'LICENSE'
-        ! -path './docs/LICENSE.md'
-        ! -path './LICENSES/*'
-        ! -path './.venv/*'
-        ! -path './__pypackages__/*'
-        ! -path './template-setup/settings-issue/*'
-        ! -path './template-setup/overwrite/*'
-        ! -path './.agents/*')
-      group: "markdown"
-      sparse-checkout: |
-        **.md
+      check: "markdown"
+      full-checkout: true
 ...

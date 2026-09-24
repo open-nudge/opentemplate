@@ -12,11 +12,9 @@ actions:
 deps:
   - changed-files:
       - any-glob-to-any-file:
-          - ".github/renovate.json"
           - "pyproject.toml"
           - "pdm.lock"
           - "prek.toml"
-          - ".github/workflows/renovate-*.yml"
 
 config:
   - changed-files:
@@ -28,7 +26,6 @@ config:
           - "pyproject.toml"
           - "commitlint.config.js"
           - "prek.toml"
-          - ".github/renovate.json"
           - "mkdocs.yml"
 
 docs:

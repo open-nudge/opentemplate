@@ -1,33 +1,40 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
 
 # Change local references to global references in GitHub Actions workflows
 # skip_files should be a comma-separated list of files to skip
-# Usage: ./reusability/globalize.sh [directory] [skip_files] [ref] [comment]
+# Usage: ./reusability/globalize.sh [directory] [skip_files] [repository] [commit_sha]
 
-directory="${1:-./workflows}"
+directory="${1:-.github}"
 skip_files="${2:-}" # Comma-separated list of files to skip
 repo="${3:-open-nudge/opentemplate}" # Customizable repository reference
-ref="${4:-main}"
-comment="${5:-"# zizmor: ignore[unpinned-uses]"}" # Optional comment
+ref="${4:-}"
+comment=""
 
-# enq: we assume bash here as it's a much simpler solution
-# shellcheck disable=SC3045,SC3011
+if [[ -z "${ref}" ]]; then
+    remote_ref="$(git ls-remote "https://github.com/${repo}.git" refs/heads/main)"
+    ref="${remote_ref%%$'\t'*}"
+    if [[ -z "${ref}" ]]; then
+        printf 'Unable to resolve the latest commit on %s main\n' "${repo}" >&2
+        exit 1
+    fi
+else
+    comment="# zizmor: ignore[unpinned-uses]"
+fi
+
 IFS=',' read -r -a skip_array <<< "${skip_files}"
 
-# enq: we assume bash here as it's a much simpler solution
-# shellcheck disable=SC3045
+# enq: every matching file is processed independently by the loop
+# shellcheck disable=SC2312
 find "${directory}" -type f -name '*.yml' -print0 | while IFS= read -r -d '' file; do
-    [ -f "${file}" ] || continue  # Skip if no files match
+    [[ -f "${file}" ]] || continue  # Skip if no files match
 
-    # enq: we assume bash here as it's a much simpler solution
-    # shellcheck disable=SC3054
     for skip in "${skip_array[@]}"; do
-        if [ "$(basename "${file}")" = "${skip}" ]; then
+        if [[ "$(basename "${file}")" = "${skip}" ]]; then
             printf 'Skipped: %s\n' "${file}"
             continue 2
         fi
@@ -35,8 +42,8 @@ find "${directory}" -type f -name '*.yml' -print0 | while IFS= read -r -d '' fil
 
     awk -v repo="${repo}" -v ref="${ref}" -v comment="${comment}" '
     {
-        if ($0 ~ /uses: "\.\/\.github\//) {
-            gsub(/uses: "\.\/\.github\//, "uses: \"" repo "/.github/");
+        if ($0 ~ /uses: "\$\/\.github\//) {
+            gsub(/uses: "\$\/\.github\//, "uses: \"" repo "/.github/");
             sub(/"$/, "@" ref "\"");  # Add @ref before the closing quote
             if (comment != "") {
                 $0 = $0 " " comment;

@@ -34,8 +34,77 @@ concurrency:
     ${{ github.workflow_ref }}
 
 jobs:
+  globalize:
+    name: "Globalize workflows"
+    if: >
+      github.ref == 'refs/heads/main'
+      || github.ref == 'refs/heads/master'
+    permissions:
+      contents: "write" # Needed to commit globalized workflow references.
+    timeout-minutes: 30
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Harden Runner"
+        # enq: hash with name and version always longer than 80 chars
+        # yamllint disable rule:line-length
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        # yamllint enable rule:line-length
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            github.com:443
+      - name: "Wait for template setup to finish (guard)"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+        # enq: indentation disabled to aid bash script readability
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          printf "Waiting for branch 'gh-pages' to exist on GitHub...\n"
+
+          while true; do
+            if gh api "repos/${GITHUB_REPOSITORY}/branches/gh-pages" &>/dev/null; then
+              printf "Branch 'gh-pages' exists!\n"
+              break
+            fi
+
+            sleep 1
+          done
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Checkout latest target branch"
+        # enq: Checkout credentials are required by the following globalization push.
+        # zizmor: ignore[artipacked]
+        # enq: hash with name and version always longer than 80 chars
+        # yamllint disable rule:line-length
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        # yamllint enable rule:line-length
+        with:
+          # enq: Bootstrap PAT authorizes the commit that globalizes workflow references.
+          token: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+          ref: "${{ github.ref_name }}"
+          persist-credentials: true
+      - name: "Setup git"
+        uses: "$/.github/actions/git-setup"
+      - name: "Globalize workflows"
+        run: "bash .github/reusability/globalize.sh"
+      - name: "Commit and push changes"
+        # enq: indentation disabled to aid bash script readability
+        # yamllint disable rule:indentation
+        run: |
+          git add --all .github
+          if ! git diff --cached --quiet; then
+            git commit -s -m "Globalize GitHub Actions workflows"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+        # yamllint enable rule:indentation
   harden:
     name: "Harden"
+    needs: "globalize"
     # Run only on main/master branches
     if: >
       github.ref == 'refs/heads/main'
@@ -49,12 +118,16 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450" # v2.19.1
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
           allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
             api.github.com:443
             github.com:443
       - name: "Normalize type of account/organization"
@@ -115,7 +188,7 @@ jobs:
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         # yamllint enable rule:line-length
         with:
           sparse-checkout: |
@@ -361,7 +434,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/security-scorecard-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/security-scorecard-reusable.yml"
     # yamllint enable rule:line-length
     with:
       sarif: true

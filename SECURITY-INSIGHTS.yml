@@ -6,8 +6,8 @@
 ---
 header:
   schema-version: "1.0.0"
-  last-updated: "2025-06-15"
-  expiration-date: "2026-05-15T10:30:31Z"
+  last-updated: "2026-09-16"
+  expiration-date: "2027-09-16T00:00:00Z"
   project-url: >
     https://github.com/open-nudge/opentemplate
   changelog: >
@@ -41,19 +41,9 @@ security-artifacts:
   self-assessment:
     self-assessment-created: true
     evidence-url:
-      - "https://github.com/open-nudge/opentemplate/blob/master/SECURITY-SELF-ASSESSMENT.md"
+      - "https://github.com/open-nudge/opentemplate/blob/main/SECURITY-SELF-ASSESSMENT.md"
 security-testing:
   # SCA
-  - tool-type: "sca"
-    tool-name: "Renovate"
-    tool-url: "https://docs.renovatebot.com/"
-    tool-version: "latest"
-    integration:
-      ad-hoc: false
-      ci: true
-      before-release: false
-    comment: |
-      - "Renovatebot is enabled for this repo and ran periodically."
   - tool-type: "sca"
     tool-name: "GitHub Actions dependency review"
     tool-url: "https://github.com/actions/dependency-review-action"
@@ -101,26 +91,12 @@ security-testing:
     tool-version: "latest"
     integration:
       ad-hoc: true
-      ci: false
+      ci: true
       before-release: false
     comment: |
       - "Prek hooks are used for static analysis and code formatting."
       - "Check the URL for the list of prek hooks."
-      - "WARNING: These hooks are not ran during CI, only locally."
       - "WARNING: These hooks might be skipped by the developer"
-      - INFO: Similar/the same hooks are also ran during CI
-  # Fuzzing
-  - tool-type: "fuzz"
-    tool-name: "Hypothesis"
-    tool-url: "https://hypothesis.readthedocs.io/en/latest/"
-    tool-version: "latest"
-    integration:
-      ad-hoc: false
-      ci: true
-      before-release: true
-    comment: |
-      - "Hypothesis is used for property-based testing."
-      - "It is ran as a prek hook and during CI."
 security-contacts:
   - type: "website"
     value: >

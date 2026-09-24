@@ -76,8 +76,6 @@ developer workflows, security posture and best practices.
     as defined [here](https://github.com/ossf/security-insights-spec)
 - [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
 - [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
-- [Renovate Bot](https://github.com/open-nudge/opentemplate/blob/main/.github/renovate.json)
-    for automated dependency updates
 - [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
 - [Sigstore signing](https://github.com/open-nudge/opentemplate/releases)
     as seen [here](https://github.com/sigstore/sigstore-python)
@@ -151,14 +149,14 @@ This project is a part of the Python ecosystem.
 
 The [`open-nudge/opentemplate`](https://github.com/open-nudge/opentemplate)
 security policy is maintained in the
-[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/master/SECURITY.md)
+[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/main/SECURITY.md)
 file.
 
 ### Responsible disclosure practice
 
 The [`open-nudge/opentemplate`](https://github.com/open-nudge/opentemplate)
 accepts vulnerability reports as outlined in the security policy defined in
-[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/master/SECURITY.md#reporting-a-vulnerability.)
+[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/main/SECURITY.md#reporting-a-vulnerability)
 file.
 
 ### Incident response

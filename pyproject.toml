@@ -8,7 +8,6 @@ build-backend = "hatchling.build"
 
 requires = [
   "hatchling>=1",
-  "hatch-requirements-txt>=0.4.1",
   "comver[hatchling]>=1",
 ]
 
@@ -63,9 +62,10 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
 ]
-dynamic = [ "version", "dependencies"]
+dependencies = []
+dynamic = [ "version" ]
 
-urls.Changelog = "https://github.com/open-nudge/opentemplate/blob/master/CHANGELOG.md"
+urls.Changelog = "https://github.com/open-nudge/opentemplate/blob/main/CHANGELOG.md"
 urls.Documentation = "https://open-nudge.github.io/opentemplate"
 urls.Homepage = "https://open-nudge.github.io/opentemplate"
 urls.Issues = "https://github.com/open-nudge/opentemplate/issues"
@@ -239,9 +239,6 @@ dev-all = [
 #
 ###############################################################################
 
-[tool.hatch.metadata.hooks.requirements_txt]
-files = ["project/dependencies.txt"]
-
 [tool.hatch.version]
 source = "comver"
 
@@ -255,10 +252,15 @@ distribution = true
 line-length = 110
 src = [
   "src",
-  "test",
+  "tests",
 ]
 extend-exclude = [
   ".pdm-plugins",
+  ".pytest_cache",
+  ".venv",
+  "__pypackages__",
+  "build",
+  "site",
 ]
 unsafe-fixes = false
 
@@ -391,10 +393,6 @@ source = [
 source_pkgs = [
   "opentemplate",
 ]
-omit = [
-  "src/opentemplate/**"
-]
-
 [tool.coverage.paths]
 source = [
   "src/opentemplate",
@@ -430,8 +428,26 @@ style = "google"
 fail-under = 100
 exclude = [
   "build",
-  "test",
+  "tests",
   ".pdm-plugins",
+  ".pytest_cache",
+  ".venv",
+  "__pypackages__",
+  "site",
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests",
+  "src",
+]
+norecursedirs = [
+  ".git",
+  ".pytest_cache",
+  ".venv",
+  "__pypackages__",
+  "build",
+  "site",
 ]
 
 [tool.pyrefly]
@@ -778,14 +794,14 @@ check-python = { composite = [
   "ruff check {args:.}",
   "pynudger check {args}",
   "interrogate {args:.}",
-  "noqaexplain check {args}",
+  "noqaexplain check {args:src tests docs/scripts}",
 ] }
 fix-python = { composite = [
   "ruff format {args:.}",
   "ruff check --fix {args:.}",
   "pynudger check {args}",
   "interrogate {args:.}",
-  "noqaexplain check {args}",
+  "noqaexplain check {args:src tests docs/scripts}",
 ] }
 
 check-typing = "pyrefly check {args}"
@@ -805,17 +821,8 @@ check-yaml = { composite = [
 
 # @ is ignored for version pinning in pyproject.toml (as seen in cffconvert)
 # issues and blob are ignored as the repo might be private and unreachable
-check-markdown = { composite = [
-  "mdformat --check {args:.}",
-  "pymarkdownlnt scan -r {args:.}",
-  "md-dead-link-check {args:.}",
-] }
-fix-markdown = { composite = [
-  "mdformat {args:.}",
-  "pymarkdownlnt fix -r {args:.}",
-  "pymarkdownlnt scan -r {args:.}",
-  "md-dead-link-check {args:.}",
-] }
+check-markdown = "bash .github/tools/markdown.sh check {args}"
+fix-markdown = "bash .github/tools/markdown.sh fix {args}"
 
 check-ini = "pyinilint"
 
@@ -835,13 +842,8 @@ check-prek-hooks = "prek validate-manifest {args:.pre-commit-hooks.yaml}"
 # See definitions and specification here:
 # https://github.com/prek/prek-hooks/blob/main/.prek-hooks.yaml
 
-check-text = { composite = [
-  "codespell",
-] }
-
-fix-text = { composite = [
-  "codespell --write-changes",
-] }
+check-text = "bash .github/tools/text.sh check {args}"
+fix-text = "bash .github/tools/text.sh fix {args}"
 
 check-json = "prek run check-json --files {args}"
 
@@ -875,38 +877,8 @@ fix-legal = { shell = """
   {args:.}"
 """ }
 
-check-generation = { cmd = [
-  "cog",
-  "-c",
-  "--check",
-  """{args:
-  pyproject.toml
-  ./.github/workflows/cache-item-reusable.yml
-  ./.github/workflows/cache-reusable.yml
-  ./.github/workflows/run-reusable.yml
-  ./.github/workflows/tests-reusable.yml
-  ./.github/workflows/security-sbom-attest-reusable.yml
-  ./.github/workflows/security-sbom-run-reusable.yml
-  ./.github/workflows/release-sboms-reusable.yml
-  }
-  """,
-] }
-fix-generation = { cmd = [
-  "cog",
-  "-c",
-  "-r",
-  """{args:
-  pyproject.toml
-  ./.github/workflows/cache-item-reusable.yml
-  ./.github/workflows/cache-reusable.yml
-  ./.github/workflows/run-reusable.yml
-  ./.github/workflows/tests-reusable.yml
-  ./.github/workflows/security-sbom-attest-reusable.yml
-  ./.github/workflows/security-sbom-run-reusable.yml
-  ./.github/workflows/release-sboms-reusable.yml
-  }
-  """,
-] }
+check-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c --check" }
+fix-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c -r" }
 
 fix-all = "prek run --all-files"
 

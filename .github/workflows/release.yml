@@ -22,8 +22,6 @@ concurrency:
     ${{ github.workflow_ref }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Do not run the release for Renovate Bot updates.
-# For it, run changelog generation and that should be it.
 jobs:
   sboms:
     name: "SBOMs"
@@ -37,7 +35,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sboms-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/release-sboms-reusable.yml"
     # yamllint enable rule:line-length
     with:
       upload-grype-artifact: true
@@ -52,7 +50,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-sarifs-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/release-sarifs-reusable.yml"
     # yamllint enable rule:line-length
 
   tests:
@@ -62,7 +60,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/tests-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/tests-reusable.yml"
     # yamllint enable rule:line-length
 
   docs:
@@ -72,7 +70,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       # Double checkout used to refresh the content of generated docs, which
@@ -105,7 +103,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       command: "pdm build -v"
@@ -124,6 +122,19 @@ jobs:
       - "tests"
       - "docs"
       - "package-create"
+      - "slsa-provenance"
+    if: >-
+      always() &&
+      !cancelled() &&
+      needs.sboms.result == 'success' &&
+      needs.sarifs.result == 'success' &&
+      needs.tests.result == 'success' &&
+      needs.docs.result == 'success' &&
+      needs.package-create.result == 'success' &&
+      (
+      github.event.repository.private ||
+      needs.slsa-provenance.result == 'success'
+      )
     permissions:
       id-token: "write" # Needed to sign the provenance
     runs-on: "ubuntu-latest"
@@ -171,12 +182,19 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450" # v2.19.1
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
         # yamllint enable rule:line-length
         with:
-          disable-sudo: true
+          disable-sudo-and-containers: true
           egress-policy: "block"
-          allowed-endpoints: "${{ matrix.repository.endpoints }}"
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            ${{ matrix.repository.endpoints }}
       - name: "Download artifacts"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
@@ -230,7 +248,7 @@ jobs:
           ! matrix.repository.skip
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e" # v1.13.0
+        uses: "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33" # v1.14.2
         # yamllint enable rule:line-length
         with:
           repository-url: "${{ matrix.repository.url }}"
@@ -262,7 +280,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-package-upload-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/release-package-upload-reusable.yml"
     # yamllint enable rule:line-length
 
   changelog:
@@ -275,7 +293,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-changelog-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/release-changelog-reusable.yml"
     # yamllint enable rule:line-length
     with:
       package-version: "${{ needs.package-finalize.outputs.package-version }}"
@@ -283,7 +301,11 @@ jobs:
   slsa-provenance:
     name: "SLSA Provenance"
     needs:
-      - "changelog"
+      - "sboms"
+      - "sarifs"
+      - "tests"
+      - "docs"
+      - "package-create"
     if: >
       github.event.repository.visibility == 'public'
     permissions:
@@ -293,7 +315,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-slsa-provenance-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/release-slsa-provenance-reusable.yml"
     # yamllint enable rule:line-length
     with:
       upload-assets: true
@@ -301,14 +323,65 @@ jobs:
   github-upload:
     name: "GitHub Upload"
     needs:
+      - "changelog"
       - "slsa-provenance"
+    if: >-
+      always() &&
+      !cancelled() &&
+      needs.changelog.result == 'success' &&
+      (
+      github.event.repository.private ||
+      needs.slsa-provenance.result == 'success'
+      )
     permissions:
       contents: "write" # Needed to push to the release
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/release-upload.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/release-upload.yml"
     # yamllint enable rule:line-length
     with:
       tag: "${{ github.event.release.tag_name }}"
+
+  mark-release-untrustworthy:
+    name: "Mark Release Untrustworthy"
+    needs:
+      - "slsa-provenance"
+    if: >-
+      always() &&
+      !cancelled() &&
+      github.event.repository.visibility == 'public' &&
+      needs.slsa-provenance.result != 'success'
+    permissions:
+      contents: "write" # Needed to mark the release untrustworthy when provenance fails.
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: "${{ github.token }}"
+      GH_REPO: "${{ github.repository }}"
+      TAG: "${{ github.event.release.tag_name }}"
+      SLSA_RESULT: "${{ needs.slsa-provenance.result }}"
+      RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+    steps:
+      - name: "Mark release as untrustworthy"
+        # enq: multiline warning script has readable indentation
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          title="!!! UNTRUSTED !!!"
+          notes_file="${RUNNER_TEMP}/release-notes.md"
+
+          cat > "${notes_file}" <<EOF
+          > [!CAUTION]
+          > **Trust warning:** This release is not publicly trustworthy because SLSA provenance did not complete successfully (\`${SLSA_RESULT}\`).
+          > See [the SLSA workflow run](${RUN_URL}) for details.
+
+          > [!IMPORTANT]
+          > No packages were uploaded because provenance verification failed.
+
+          > [!CAUTION]
+          > **If you see this release please open a new issue titled "Remove untrusted release", thank you!**
+          EOF
+
+          gh release edit "${TAG}" --title "${title}" --notes-file "${notes_file}"
+        # yamllint enable rule:indentation rule:line-length
 ...

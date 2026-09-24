@@ -23,7 +23,11 @@ import os
 import pathlib
 import re
 
+# enq: MkDocs supplies this package only in the documentation environment
 import mkdocs_gen_files  # pyrefly: ignore[missing-import]
+
+# enq: this documentation preprocessor is intentionally a small script module
+# noqa-file: PYNUDGER46
 
 
 @dataclasses.dataclass

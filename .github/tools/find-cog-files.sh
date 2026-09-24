@@ -1,6 +1,6 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -10,4 +10,4 @@
 # in pyproject.toml fix-generation and check-generation
 DIRECTORY="${1:-.}"
 
-find "${DIRECTORY}" -type f -exec grep -l '\[\[\[cog' {} +
+git -C "${DIRECTORY}" grep -lz '\[\[\[cog' -- ':!pdm.lock'

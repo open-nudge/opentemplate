@@ -65,8 +65,8 @@ __opentemplate__ is a Python template which is:
     [secured egress](https://github.com/step-security/harden-runner),
     [OSSF Best Practices](https://github.com/ossf/scorecard)
 - [__Consistent__](https://open-nudge.github.io/opentemplate/template/configuration/basic):
-    common project metadata lives in `/project`, while tool configuration
-    stays shared by `GitHub Actions`, `prek`, and `pyproject.toml`
+    package metadata is static in `pyproject.toml`, while PDM resolves
+    dependencies into `pdm.lock`
 - [__Performant__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
     parallel checks, builds, minimally-sized caches and checkouts
 
@@ -85,8 +85,7 @@ __opentemplate__ is a Python template which is:
 ### Code quality (Python focused)
 
 > [!IMPORTANT]
-> __Adjust common project metadata from `/project`; use `pyproject.toml`
-> for advanced tooling configuration.__
+> __Adjust package metadata and tool configuration in `pyproject.toml`.__
 
 - __Package manager:__ [`pdm`](https://pdm-project.org/en/latest/)
     with a single `pdm setup` manages everything!
@@ -160,11 +159,11 @@ __opentemplate__ is a Python template which is:
     [`zizmor`](https://github.com/zizmorcore/zizmor) verifies workflows,
     while [`trufflehog`](https://github.com/trufflesecurity/trufflehog)
     looks for leaked secrets
-- __Reusable workflows__: most of the workflows are [reusable](https://docs.github.com/en/actions/sharing-automations/reusing-workflows)
-    (pointing to `opentemplate` workflows) to improve security and
-    __get automated pipeline updates__ - you can make them local by
-    running `.github/reusability/localize.sh` script. __No need
-    to manage/update your own workflows!__
+- __Reusable workflows__: OpenTemplate tests its own workflow changes through
+    local references. The `harden.yml` workflow converts those references to
+    `open-nudge/opentemplate/.github/workflows/<workflow>.yml@<commit-SHA>`
+    calls using the latest OpenTemplate
+    `main` commit, so generated repositories receive pinned pipeline updates.
 - __Pinned dependencies__: all dependencies are pinned to specific versions
     (GitHub Actions, `prek` and `pdm.lock`)
 - __Monitored egress in GitHub Actions__: [`harden-runner`](https://github.com/step-security/harden-runner)
@@ -259,9 +258,9 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 ### Usage
 
 1. Create a new branch
-1. Optionally adjust project metadata in `/project`
-    (for example runtime dependencies in `project/dependencies.txt`;
-    no need to update `[project]` in `pyproject.toml` manually)
+1. Optionally adjust package metadata in `[project]` in `pyproject.toml`
+    (including `dependencies`, `keywords`, or `classifiers`), then run
+    `pdm lock` to resolve dependency declarations into `pdm.lock`
 1. Write code in `/src/<project_name>` and tests in `/tests`
 1. Use `git add`, `git commit` and `git push` your changes
 1. `prek` will guide you through the process
@@ -307,14 +306,14 @@ Note that all `check` and `fix` commands are grouped for your convenience:
   <summary><b><big>Adjust template</big></b> (click me)</summary>
 &nbsp;
 
-> Common package metadata changes should go through `/project`;
-> routine `[project]` edits in `pyproject.toml` are template boilerplate.
+> Package metadata is configured directly in the static `[project]` fields
+> in `pyproject.toml`.
 
-Common changes in `/project`:
+Common package metadata changes in `pyproject.toml`:
 
-- Add runtime dependencies in `project/dependencies.txt`
-- Add package keywords in `project/keywords.txt`
-- Add package classifiers in `project/classifiers.txt`
+- Add runtime dependencies in `[project].dependencies`
+- Add package keywords in `[project].keywords`
+- Add package classifiers in `[project].classifiers`
 
 Advanced tool and development changes still belong in `pyproject.toml`:
 
@@ -391,7 +390,8 @@ We welcome your contributions! Start here:
 ## Legal
 
 - This project is licensed under the _Apache 2.0 License_ - see
-    the [LICENSE](/LICENSE) file for details.
+    the [LICENSE](https://github.com/open-nudge/opentemplate/blob/main/LICENSE)
+    file for details.
 - This project is copyrighted by _open-nudge_ - the
     appropriate copyright notice is included in each file.
 

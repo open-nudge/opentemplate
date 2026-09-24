@@ -44,7 +44,7 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450" # v2.19.1
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
         # yamllint enable rule:line-length
         with:
           # Uses docker container,
@@ -52,6 +52,10 @@ jobs:
           disable-sudo: true
           egress-policy: "block"
           allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
             api.deps.dev:443
             api.github.com:443
             api.osv.dev:443
@@ -61,7 +65,7 @@ jobs:
       - name: "Checkout repository"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         # yamllint enable rule:line-length
         with:
           persist-credentials: false
@@ -82,7 +86,7 @@ jobs:
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
         # enq: unpinned as it allows projects to use the latest
-        uses: "open-nudge/opentemplate/.github/actions/sarif-upload@main" # zizmor: ignore[unpinned-uses]
+        uses: "$/.github/actions/sarif-upload"
         # yamllint enable rule:line-length
         with:
           name: "${{ inputs.name }}"

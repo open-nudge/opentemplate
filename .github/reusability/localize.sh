@@ -1,32 +1,28 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 # SPDX-FileContributor: szymonmaszke <github@maszke.co>
 #
 # SPDX-License-Identifier: Apache-2.0
 
 # Change global references to local references in GitHub Actions workflows
 # skip_files should be a comma-separated list of files to skip
-# Usage: ./reusability/localize.sh [directory] [skip_files]
+# Usage: ./reusability/localize.sh [directory] [skip_files] [repository]
 
-directory="${1:-./workflows}"
+directory="${1:-.github}"
 skip_files="${2:-}" # Comma-separated list of files to skip
 repo="${3:-open-nudge/opentemplate}" # Customizable repository reference
 
-# enq: we assume bash here as it's a much simpler solution
-# shellcheck disable=SC3045,SC3011
 IFS=',' read -r -a skip_array <<< "${skip_files}"
 
-# enq: we assume bash here as it's a much simpler solution
-# shellcheck disable=SC3045
+# enq: every matching file is processed independently by the loop
+# shellcheck disable=SC2312
 find "${directory}" -type f -name '*.yml' -print0 | while IFS= read -r -d '' file; do
-    [ -f "${file}" ] || continue  # Skip if no files match
+    [[ -f "${file}" ]] || continue  # Skip if no files match
 
     # Check if file should be skipped
-    # enq: we assume bash here as it's a much simpler solution
-    # shellcheck disable=SC3054
     for skip in "${skip_array[@]}"; do
-        if [ "$(basename "${file}")" = "${skip}" ]; then
+        if [[ "$(basename "${file}")" = "${skip}" ]]; then
             printf 'Skipped: %s\n' "${file}"
             continue 2
         fi
@@ -36,7 +32,7 @@ find "${directory}" -type f -name '*.yml' -print0 | while IFS= read -r -d '' fil
     {
         if ($0 ~ "uses: \"" repo "/.github/") {
             # Replace repo with local path
-            gsub("uses: \"" repo "/.github/", "uses: \"./.github/");
+            gsub("uses: \"" repo "/.github/", "uses: \"$/.github/");
 
             # Remove @ref from quoted uses (e.g., @main)
             gsub(/@[^"]+/, "");

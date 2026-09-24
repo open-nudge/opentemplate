@@ -64,7 +64,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/cache-item-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/cache-item-reusable.yml"
     # yamllint enable rule:line-length
     with:
       group: "${{ matrix.install.group }}"
@@ -86,6 +86,7 @@ jobs:
           - "tests"
           - "docs"
           - "python"
+          - "typing"
           - "shell"
           - "yaml"
           - "markdown"
@@ -93,7 +94,6 @@ jobs:
           - "pyproject"
           - "citation"
           - "release"
-          - "security"
           - "github"
           - "legal"
           - "generation"
@@ -101,12 +101,13 @@ jobs:
           - "prek"
           - "text"
           - "json"
+          - "json5"
           - "toml"
-          - "pytest"
+          - "xml"
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/cache-item-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/cache-item-reusable.yml"
     # yamllint enable rule:line-length
     with:
       group: "${{ matrix.group }}"

@@ -32,7 +32,7 @@ latest `main` branch state to ensure updates are correct.
 [`cog`](https://github.com/nedbat/cog) automates content generation based on
 source code comments (`DO NOT EDIT UNTIL end marker` in `pyproject.toml`).
 
-Additionally, [`opennudge/cogeol`](https://github.com/nedbat/cog)
+Additionally, [`open-nudge/cogeol`](https://github.com/open-nudge/cogeol)
 integrates [Python's end-of-life](https://endoflife.date/) data to simplify management.
 
 Together with GitHub Actions, these ensure:
@@ -49,8 +49,7 @@ Together with GitHub Actions, these ensure:
 
 ## Code sources
 
-- `.github/renovate.json`
-- `.github/workflows/prek-update*.yml`
+- `.github/workflows/prek*.yml`
 - `.github/workflows/security-osv-scanner-update*.yml`
 - `.github/workflows/security-semgrep*.yml`
 - `.github/workflows/generation*.yml`
