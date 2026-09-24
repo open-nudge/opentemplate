@@ -28,7 +28,7 @@ jobs:
       format('| {0}', matrix.install.group) || '' }}
     strategy:
       fail-fast: true
-      max-parallel: 9
+      max-parallel: 5
       matrix:
         install:
           # Main + optional dependencies + release
@@ -97,7 +97,7 @@ jobs:
       contents: "read"
     strategy:
       fail-fast: true
-      max-parallel: 9
+      max-parallel: 5
       matrix:
         # --no-editable not needed for dev dependencies
         group:
