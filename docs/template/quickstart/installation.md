@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -33,7 +33,7 @@ to install dependencies and set up the project.
 The following features (and more) will be enabled:
 
 - Ready-to-use state of the art project structure
-- Set of `20+` labels (see [here](https://github.com/open-nudge/opentemplate/labels)),
+- Set of `20+` labels (see the [OpenTemplate issue labels](https://github.com/open-nudge/opentemplate/labels)),
     many of which are automatically applied to pull requests
 - Predefined templates for issues, pull requests and discussions
 - Initial dependency-specific caching enabled in GitHub Actions
@@ -52,8 +52,12 @@ outlining security hardening steps.
 > These steps will be further detailed in the aforementioned issue.
 
 - Enable third-party bots (if applicable).
-- Create a short-lived, minimally scoped `TEMPLATE_GITHUB_TOKEN`.
-- Run the hardening workflow.
+- Create a short-lived, repository-scoped fine-grained PAT and save it as
+    `TEMPLATE_GITHUB_TOKEN`. Grant __Contents: read and write__, __Workflows: read
+    and write__, __Administration: read and write__, and __Pages: read and write__.
+- Prefer a repository secret. An organization-level secret exposes the token to
+    more repositories; if you use one, restrict it to the target repository.
+- Manually run the hardening workflow using its existing workflow dispatch.
 - Set up [trusted PyPI publishing](https://docs.pypi.org/trusted-publishers/).
 
 > [!NOTE]
@@ -78,12 +82,12 @@ outlining security hardening steps.
 > [!CAUTION]
 > This feature is not yet implemented.
 
-Your repository will be automatically updated with the latest `opentemplate`
-version every weekend.
+The template update workflow is a placeholder and does not currently update
+repositories.
 
 ## Code sources
 
-- `/.github/workflows/template_setup.yml`
-- `/.github/workflows/template_update.yml`
+- `/.github/workflows/template-setup.yml`
+- `/.github/workflows/template-update.yml`
 - `/.github/workflows/harden.yml`
 - `/.github/rulesets`

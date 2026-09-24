@@ -20,26 +20,73 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/run-check-reusable.yml"
     # yamllint enable rule:line-length
     with:
-      # Workaround for __pypackages__/README.md
-      # It is collected automatically by md-dead-link-check
-      command: >
-        rm -rf .git &&
-        git init --initial-branch main &&
-        pdm run check-markdown
-        $(find . -name '*.md'
-        ! -name 'DCO.md'
-        ! -name 'LICENSE'
-        ! -path './docs/LICENSE.md'
-        ! -path './LICENSES/*'
-        ! -path './.venv/*'
-        ! -path './__pypackages__/*'
-        ! -path './template-setup/settings-issue/*'
-        ! -path './template-setup/overwrite/*'
-        ! -path './.agents/*')
-      group: "markdown"
-      sparse-checkout: |
-        **.md
+      check: "markdown"
+      full-checkout: true
+      additional-allowed-endpoints: >
+        www.reddit.com:443
+        www.contributor-covenant.org:443
+        peps.python.org:443
+        prek.j178.dev:443
+        www.conventionalcommits.org:443
+        semver.org:443
+        img.shields.io:443
+        opensource.org:443
+        scorecard.dev:443
+        slsa.dev:443
+        www.cisa.gov:443
+        docs.pytest.org:443
+        coverage.readthedocs.io:443
+        hypothesis.readthedocs.io:443
+        mutmut.readthedocs.io:443
+        tox.wiki:443
+        nox.thea.codes:443
+        www.mkdocs.org:443
+        reuse.readthedocs.io:443
+        spdx.dev:443
+        scientific-python.org:443
+        osv.dev:443
+        semgrep.dev:443
+        github.blog:443
+        git-cliff.org:443
+        editorconfig.org:443
+        snyk.io:443
+        tag-security.cncf.io:443
+        opennudge.com:443
+        www.bestpractices.dev:443
+        openssf.org:443
+        diataxis.fr:443
+        www.python.org:443
+        docs.pypi.org:443
+        securityscorecards.dev:443
+        developercertificate.org:443
+        packaging.python.org:443
+        google.github.io:443
+        blog.pypi.org:443
+        grafana.com:443
+        github.io:443
+        *.github.io:443
+        docs.github.com:443
+        pages.github.com:443
+        gist.github.com:443
+        readthedocs.io:443
+        *.readthedocs.io:443
+        docs.python.org:443
+        docs.rs:443
+        developer.mozilla.org:443
+        gitlab.com:443
+        gitlab.io:443
+        *.gitlab.io:443
+        bitbucket.org:443
+        en.wikipedia.org:443
+        docs.astral.sh:443
+        reuse.software:443
+        creativecommons.org:443
+        wiki.linuxfoundation.org:443
+        vale.sh:443
+        docs.vale.sh:443
+        endoflife.date:443
+        www.threatmodelingmanifesto.org:443
 ...

@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -43,8 +43,7 @@ The following table compares `opentemplate` to similar tools:
 
 ## How `opentemplate` stands out
 
-Compared to tools like [snyk](https://snyk.io/) or
-[jit.io](https://www.jit.io/), `opentemplate` is:
+Compared to tools like [snyk](https://snyk.io/) `opentemplate` is:
 
 - **DevSecOps-Inspired** – Security-aware but not solely focused on security.
 - **Python-Centric** – Designed specifically for Python projects.

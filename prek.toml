@@ -144,7 +144,7 @@ rev = "cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # frozen: v0.1.0-alpha.31
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "363923b901c911a9164f50b6c423f47c15372b1c" # frozen: v3.97.4
+rev = "4dd8831c5f12599465d4d45c3c447b4018a34c85" # frozen: v3.97.9
 
   [[repos.hooks]]
   id = "trufflehog"
@@ -170,7 +170,7 @@ rev = "e840a6e8adb14b7777c78e26cfbf6e2abc1d1fc6" # frozen: v2.6.0
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "ed7117697bd9e8e0f8cd6b6217125878321ef17b" # frozen: v3.21.0
+rev = "e109c06297dc58a513f10691a275f3a9465584a1" # frozen: v3.22.0
 
   [[repos.hooks]]
   id = "vale"
@@ -203,7 +203,7 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
 
 [[repos]]
 repo = "https://github.com/semgrep/pre-commit"
-rev = "1a59b2f7ec60a5cfe427d014a1c355f9cba61b08" # frozen: v1.177.0
+rev = "c10f2d55ee931fe01984e21c0182aa36e27ff986" # frozen: v1.178.0
 
   # Keep these arguments aligned with the Docker scan in
   # .github/workflows/security-semgrep-reusable.yml.
@@ -412,16 +412,6 @@ repo = "local"
   entry = "pdm run -v check-citation"
   files = "^CITATION.cff$"
   language = "system"
-  priority = 70
-
-  [[repos.hooks]]
-  id = "executable"
-  verbose = true
-  name = "<<<CHECK>>> Executable"
-  entry = "pdm run -v check-executable"
-  language = "system"
-  require_serial = true
-  types = ["executable"]
   priority = 70
 
   [[repos.hooks]]

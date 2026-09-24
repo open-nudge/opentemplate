@@ -44,7 +44,7 @@ runs:
       continue-on-error: true
       # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
-      uses: "github/codeql-action/upload-sarif@68bde559dea0fdcac2102bfdf6230c5f70eb485e" # v4.35.4
+      uses: "github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
       # yamllint enable rule:line-length
       with:
         sarif_file: "${{ inputs.file }}"

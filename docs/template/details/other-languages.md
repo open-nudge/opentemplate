@@ -25,8 +25,8 @@ are verified by both `prek` and CI pipelines, namely:
     [adrienverge/yamllint](https://github.com/adrienverge/yamllint)
 - `pyproject.toml` - responsible for Python project configuration,
     validated by [abravalheri/validate-pyproject](https://github.com/abravalheri/validate-pyproject)
-- `json` - responsible mainly for `renovate.json`, performed by
-    [`prek` built-in hooks](https://prek.j178.dev/builtin/)
+- `json` - checks JSON configuration files, performed by
+    [`prek` built-in hooks](https://prek.j178.dev/built-in-hooks/)
 - `toml` - basic syntax correctness checks
 - `ini` responsible for `.editorconfig` and `.vale.ini`,
     performed by [danieljrmay/pyinilint](https://gitlab.com/danieljrmay/pyinilint)

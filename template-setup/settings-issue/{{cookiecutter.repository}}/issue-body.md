@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -41,8 +41,13 @@ Follow these steps for best practices (available in your plan).
 
 - __Permissions__: Repository permissions:
 
+  - __Contents__: Read & write (globalize local workflow references and commit the result)
+  - __Workflows__: Read & write (update workflow files)
   - __Administration__: Read & write (multiple operations: [`rulesets`](https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28#create-a-repository-ruleset), [`gh-pages`](https://docs.github.com/en/rest/pages/pages?apiVersion=2022-11-28#create-a-github-pages-site), [general](https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository), [private vulnerability reporting](https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-private-vulnerability-reporting-for-a-repository), [vulnerability alerts](https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-vulnerability-alerts), enabling discussions)
   - __Pages__: Read & write (setup `gh-pages`; [permission source](https://docs.github.com/en/rest/pages/pages?apiVersion=2022-11-28#create-a-github-pages-site))
+
+> [!WARNING]
+> Prefer a repository secret. An organization-level secret exposes this token to more repositories; if you use one, restrict its access to this repository.
 
 > Click __Generate token__ and copy it.
 

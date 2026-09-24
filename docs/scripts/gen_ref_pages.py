@@ -22,14 +22,23 @@ from __future__ import annotations
 
 import pathlib
 
+# enq: MkDocs supplies this package only in the documentation environment
 import mkdocs_gen_files  # pyrefly: ignore[missing-import]
+
+# enq: this documentation generator is intentionally a small script module
+# noqa-file: PYNUDGER46
 
 
 def main() -> None:
     """Generate the code reference pages and navigation."""
     nav = mkdocs_gen_files.Nav()
 
-    for path in sorted(pathlib.Path("src").rglob("*.py")):
+    paths = (
+        path
+        for path in pathlib.Path("src").rglob("*.py")
+        if not path.stem.startswith("_") or path.stem == "__init__"
+    )
+    for path in sorted(paths):
         module_path = path.relative_to("src").with_suffix("")
         doc_path = path.relative_to("src").with_suffix(".md")
         full_doc_path = pathlib.Path("reference", doc_path)
@@ -40,9 +49,6 @@ def main() -> None:
             parts = parts[:-1]
             doc_path = doc_path.with_name("index.md")
             full_doc_path = full_doc_path.with_name("index.md")
-        elif parts[-1].startswith("_"):
-            continue
-
         nav[parts] = doc_path.as_posix()
 
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:

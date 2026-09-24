@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+paths:
+  .github/workflows/*.yml:
+    ignore:
+      # enq: uses is double quoted, so single quote is used
+      # yamllint disable rule:quoted-strings
+      - 'reusable workflow call "\$/.+" at "uses" is not following the format'
+      - 'specifying action "\$/.+" in invalid format because ref is missing'
+      # yamllint enable rule:quoted-strings
+...

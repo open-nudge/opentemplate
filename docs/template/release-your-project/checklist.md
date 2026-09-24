@@ -30,19 +30,14 @@ SPDX-License-Identifier: Apache-2.0
 
 ## Project metadata
 
-> [!CAUTION]
-> For routine package metadata, update `/project` instead of editing
-> `[project]` directly in `pyproject.toml`.
-
-- `project/classifiers.txt` – Add relevant
+- `[project].classifiers` – Add relevant
     [PyPI classifiers](https://pypi.org/classifiers/).
-- `project/keywords.txt` – Confirm package keywords.
-- `project/dependencies.txt` – Double-check runtime dependencies
-    and version constraints.
-- `project/optional-dependencies/` – Confirm optional dependency groups,
-    if any.
-- `project/scripts/`, `project/gui-scripts/`, and `project/entry-points/` –
-    Confirm command and entry-point metadata, if any.
+- `[project].keywords` – Confirm package keywords.
+- `[project].dependencies` and `[project].optional-dependencies` –
+    Double-check runtime dependencies and version constraints.
+- `[project].scripts`, `[project].gui-scripts`, and
+    `[project].entry-points` – Confirm command and entry-point metadata.
+- For dependencies, run `pdm lock` and review the resulting `pdm.lock`.
 
 > [!TIP]
 > For public projects after the first release, remove `exclude_links`

@@ -38,8 +38,8 @@ inputs:
     # cycle = cogeol.scientific()[-1]["cycle"]
     # cog.out(f'    default: "{cycle}"')
     # ]]]
-    default: "3.11"
-    # [[[end]]] (checksum: 33dfa76bc2c8ade8410d8ef5a13bf62e)
+    default: "3.12"
+    # [[[end]]] (sum: SoRk4taE1i)
 
 runs:
   using: "composite"
@@ -49,31 +49,6 @@ runs:
       shell: "bash"
       env:
         GROUP: "${{ inputs.group }}"
-        VALID_GROUPS: >
-          all
-          tests
-          docs
-          python
-          typing
-          shell
-          yaml
-          markdown
-          ini
-          pyproject
-          citation
-          security
-          github
-          legal
-          release
-          generation
-          commit
-          prek
-          text
-          pytest
-          json
-          json5
-          toml
-          xml
       # enq: multiline bash more readable without indentation
       # yamllint disable rule:indentation
       run: |
@@ -81,14 +56,19 @@ runs:
           exit 0
         fi
 
-        for valid_group in ${VALID_GROUPS}; do
-          if [ "${GROUP}" = "${valid_group}" ]; then
-            exit 0
-          fi
-        done
+        if ! python - "${GROUP}" <<'PY'
+        import sys
+        import tomllib
 
-        echo "::error title=Invalid group::The group '${GROUP}' is forbidden."
-        exit 1
+        with open("pyproject.toml", "rb") as file:
+            groups = tomllib.load(file).get("dependency-groups", {})
+
+        raise SystemExit(f"dev-{sys.argv[1]}" not in groups)
+        PY
+        then
+          echo "::error title=Invalid group::Dependency group 'dev-${GROUP}' does not exist."
+          exit 1
+        fi
       # yamllint enable rule:indentation
     - name: "Save original pdm.lock"
       shell: "bash"
@@ -121,8 +101,7 @@ runs:
       id: "setup-pdm"
       # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
-      # enq: pdm has no more official releases yet the latest SHA is necessary
-      uses: "pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0" # zizmor: ignore[ref-version-mismatch]
+      uses: "pdm-project/setup-pdm@544d7237314ee09c256785bd360f6b30add38b37" # v4.6
       # yamllint enable rule:line-length
       with:
         python-version: "${{ inputs.python-version }}"
@@ -138,7 +117,7 @@ runs:
       # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
       # enq: unpinned as it allows projects to use the latest
-      uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
+      uses: "$/.github/actions/pdm-compatibility"
       # yamllint enable rule:line-length
 
     - name: "Install group dependencies"
@@ -149,7 +128,7 @@ runs:
       env:
         GROUP: "${{ inputs.group }}"
       run: >
-        pdm install --no-self --no-default -G dev-${GROUP} --no-editable
+        pdm install --no-self --no-default -G "dev-${GROUP}" --no-editable
     - name: "Install core dependencies"
       if: >
         inputs.all == 'false'
@@ -170,7 +149,7 @@ runs:
       # enq: hash with name and version always longer than 80 chars
       # yamllint disable rule:line-length
       # enq: unpinned as it allows projects to use the latest
-      uses: "open-nudge/opentemplate/.github/actions/pdm-compatibility@main" # zizmor: ignore[unpinned-uses]
+      uses: "$/.github/actions/pdm-compatibility"
       # yamllint enable rule:line-length
       with:
         restore: true

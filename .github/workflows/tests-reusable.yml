@@ -42,24 +42,39 @@ jobs:
           - "3.14"
           # [[[end]]] (sum: wgdYaRbI0v)
         os:
-          - "ubuntu-latest"
-          - "macos-latest"
-          - "windows-latest"
+          - name: "ubuntu-latest"
+            endpoints: ""
+          - name: "macos-latest"
+            endpoints: |
+              bag.itunes.apple.com:443
+              cf.iadsdk.apple.com:443
+              configuration.apple.com:443
+              device-config.pcms.apple.com:443
+              iadsdk.apple.com:443
+              sas.pcms.apple.com:443
+          - name: "windows-latest"
+            endpoints: |
+              client.wns.windows.com:443
+              crl.sectigo.com:443
+              ipv6.msftconnecttest.com:443
+              mobile.events.data.microsoft.com:443
+              ocsp.sectigo.com:443
+              www.msftconnecttest.com:443
     name: >
-      Tests | ${{ matrix.os }} | python-${{ matrix.python }}
+      Tests | ${{ matrix.os.name }} | python-${{ matrix.python }}
     permissions:
       contents: "read"
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
       command: |
         pdm run tests-coverage
-        mv .coverage coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
+        mv .coverage coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       # yamllint enable rule:line-length
       sparse-checkout: |
         **.py
@@ -67,13 +82,14 @@ jobs:
       group: "tests"
       core: true
       upload-name: >
-        coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}
+        coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}
       upload-path: >
-        coverage-${{ matrix.os }}-${{ matrix.python }}-${{ github.sha }}.sqlite
+        coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       python-version: "${{ matrix.python }}"
-      os: "${{ matrix.os }}"
+      os: "${{ matrix.os.name }}"
       additional-allowed-endpoints: >
         ${{ inputs.additional-allowed-endpoints }}
+        ${{ matrix.os.endpoints }}
       timeout-minutes: "${{ inputs.timeout-minutes }}"
 
   tests-mutation:
@@ -83,7 +99,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       command: |
@@ -106,7 +122,7 @@ jobs:
     # enq: hash with name and version always longer than 80 chars
     # yamllint disable rule:line-length
     # enq: unpinned as it allows projects to use the latest
-    uses: "open-nudge/opentemplate/.github/workflows/run-reusable.yml@main" # zizmor: ignore[unpinned-uses]
+    uses: "$/.github/workflows/run-reusable.yml"
     # yamllint enable rule:line-length
     with:
       # enq: long line more readable than splitting within command

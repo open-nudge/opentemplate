@@ -52,7 +52,7 @@ ideas, or want to report a bug, follow these steps:
 1. Follow the steps in [Non-code contributions](#non-code-contributions)
     and report a bug or request a feature.
 1. Fork the repository
-    (see [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo)
+    (see [GitHub's guide to forking a repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo)
     for more information).
 
 ### Environment setup
@@ -71,12 +71,11 @@ pdm setup
 
 > [!CAUTION]
 > This project uses [PEP582](https://peps.python.org/pep-0582/) to manage dependencies.
-> Check `__pypackages__/README.md` for more information.
 
 <!-- vale off -->
 
 > [!TIP]
-> Check [here](https://pdm-project.org/latest/usage/pep582/#configure-ide-to-support-pep-582)
+> Check [PDM's IDE configuration instructions](https://pdm-project.org/latest/usage/pep582/#configure-ide-to-support-pep-582)
 > for more information on IDE configuration with PEP582.
 
 <!-- vale on -->

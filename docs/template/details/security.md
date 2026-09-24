@@ -21,7 +21,7 @@ Key security checks include:
     ([`siderolabs/conform`](https://github.com/siderolabs/conform))
 
 - __Branch protection:__ No direct commits to `main` enforced locally by
-    [`prek` built-in `no-commit-to-branch` hook](https://prek.j178.dev/builtin/)
+    [`prek` built-in `no-commit-to-branch` hook](https://prek.j178.dev/built-in-hooks/)
 
 - __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
 
@@ -48,7 +48,6 @@ Key security checks include:
 
 Security measures:
 
-- __Automated dependency updates:__ [`renovatebot/renovate`](https://github.com/renovatebot/renovate)
 - __Minimal permissions__ for GitHub Actions
 - __Software Bill of Materials (SBOMs):__ Generated, stored, and attested in releases
 - __Reusable workflows__ for key tasks (e.g., `release`, `test`) to minimize
@@ -103,4 +102,3 @@ DCO sign-off and GPG signatures. Modify `.conform.yml` to adjust checks.
 
 - [Threat Modeling Manifesto](https://www.threatmodelingmanifesto.org/)
 - [CNCF Tag Security](https://tag-security.cncf.io/)
-- [AppSec Tools](https://www.jit.io/resources/appsec-tools)

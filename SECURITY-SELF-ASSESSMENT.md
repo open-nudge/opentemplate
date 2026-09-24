@@ -73,14 +73,12 @@ developer workflows, security posture and best practices.
 - [OSSF Scorecard](https://github.com/ossf/scorecard)
 - [Security file](./SECURITY.md)
 - [Security Insights Specification](https://github.com/open-nudge/opentemplate/blob/main/SECURITY-INSIGHTS.yml)
-    as defined [here](https://github.com/ossf/security-insights-spec)
+    as defined in the [Security Insights specification](https://github.com/ossf/security-insights-spec)
 - [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
 - [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
-- [Renovate Bot](https://github.com/open-nudge/opentemplate/blob/main/.github/renovate.json)
-    for automated dependency updates
 - [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
 - [Sigstore signing](https://github.com/open-nudge/opentemplate/releases)
-    as seen [here](https://github.com/sigstore/sigstore-python)
+    as seen in the [Sigstore Python project](https://github.com/sigstore/sigstore-python)
 - GitHub Actions CI/CD pipelines with minimal permissions
 - GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
 - [Prek hooks](https://prek.j178.dev/) for local code quality
@@ -140,7 +138,7 @@ You can reach out to us by
 [Private Security Reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability)
 or by:
 
-- means of communication provided at the account level [here](https://github.com/open-nudge)
+- means of communication provided by the [open-nudge GitHub organization](https://github.com/open-nudge)
 - opening an issue in the repository (somebody will get back to you)
 
 ### Ecosystem
@@ -151,14 +149,14 @@ This project is a part of the Python ecosystem.
 
 The [`open-nudge/opentemplate`](https://github.com/open-nudge/opentemplate)
 security policy is maintained in the
-[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/master/SECURITY.md)
+[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/main/SECURITY.md)
 file.
 
 ### Responsible disclosure practice
 
 The [`open-nudge/opentemplate`](https://github.com/open-nudge/opentemplate)
 accepts vulnerability reports as outlined in the security policy defined in
-[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/master/SECURITY.md#reporting-a-vulnerability.)
+[`SECURITY.md`](https://github.com/open-nudge/opentemplate/blob/main/SECURITY.md#reporting-a-vulnerability)
 file.
 
 ### Incident response

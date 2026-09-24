@@ -59,18 +59,14 @@ algorithm-like steps:
     1. Create appropriate entry in `prek.toml`
         under the `- repo: "local"` section, `id: <category>`
 
-    1. Create an entry in `.github/renovate.json` with appropriate
-        [`matchPackageNames`](https://docs.renovatebot.com/configuration-options/#matchpackagenames)
-
     1. Create three workflows in `.github/workflows`
         (see `GitHub Actions` guide for more details):
 
         1. `<category>.yml` - checker run on human PRs
 
-        1. `<category>-renovate.yml` - checker run on Renovate PRs
-
-        1. `<category>-reusable.yml` - checker run used by the other two
-            and which (probably) uses `.github/workflows/check-reusable.yml`
+        1. `<category>-reusable.yml` - checker run used by the caller
+            and which probably uses
+            `.github/workflows/run-check-reusable.yml`
 
     1. Go to testing steps below
 
@@ -80,16 +76,12 @@ algorithm-like steps:
         __if the tool is available as a `prek` hook__
         (or try to create one if not)
 
-    1. Add support for the tool in `.github/renovate.json/`
-        (if applicable and available)
-
     1. Create three workflows in `.github/workflows`
         (see `GitHub Actions` guide for more details):
 
         1. `<category>.yml` - checker run on human PRs
 
-        1. `<category>-update.yml` - if the tool requires updates,
-            __but not supported by [`renovate`](https://docs.renovatebot.com/)__
+        1. `<category>-update.yml` - if the tool requires scheduled updates
 
 > [!TIP]
 > Order of the `prek.toml` entries is important.

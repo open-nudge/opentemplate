@@ -42,12 +42,17 @@ jobs:
       - name: "Harden Runner"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450" # v2.19.1
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
         # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
           allowed-endpoints: >
+            github.com:443
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
             api.github.com:443
             fulcio.sigstore.dev:443
             rekor.sigstore.dev:443
@@ -61,7 +66,7 @@ jobs:
       - name: "Attest SBOM"
         # enq: hash with name and version always longer than 80 chars
         # yamllint disable rule:line-length
-        uses: "actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26" # v4.1.0
+        uses: "actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d" # v4.2.1
         # yamllint enable rule:line-length
         id: "attestation"
         with:

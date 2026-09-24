@@ -31,18 +31,13 @@ Features of note include:
 - each workflow starts with a semantic prefix defining its purpose
     (e.g. `tests`, `security`, `docs`)
 
-- most of the workflows from each semantic group comes in three flavors:
+- most of the workflows from each semantic group comes in two flavors:
 
     - `<type>.yml` - analogous to check/linter of `type`, done for every push to
         the pull request (usually ran __only if files of interest where changed__
         in the pull request, e.g. `**.md` files for `markdown.yml`
-    - `<type>-renovate.yml` - checks run, when `renovate[bot]` makes an update
-        to the checkers (e.g. `dev-markdown` in `pyproject.toml`'s `[dependency-groups]`
-        gets updated, the markdown checks run on all `markdown` files in the repository).
-        This allows verification of updates against currently accepted
-        standards (e.g. no new checks were introduced without feedback)
     - `<type>-reusable.yml` - de facto implementation of the linter,
-        will be called `<type>.yml` and `<type>-renovate.yml`
+        called by `<type>.yml`
 
 - `*-update.yml` workflows are ran periodically, see
     [scheduled jobs documentation](/docs/template/details/scheduled-jobs.md)
@@ -50,7 +45,7 @@ Features of note include:
 
 > [!NOTE]
 > This structure may not be present in all workflows, as some checks
-> should not be ran on every push or renovate update, in these cases only
+> should not be run on every push, in these cases only
 > `<type>.yml` might be present.
 
 ## Reusable workflows
@@ -59,8 +54,9 @@ Features of note include:
 
 - Improve security (as the source code is not modifiable
     by the repository owner)
-- Streamline updates from the main template (as the reusable
-    workflows are updated from the `opennudge/opentemplate` repository)
+- Keep workflow implementations centralized in the OpenTemplate repository.
+    In generated repositories, reusable workflow references are pinned to the
+    latest OpenTemplate commit SHA when `harden.yml` runs.
 
 You might want to change the reusable workflows to local workflows
 if you:
@@ -103,25 +99,20 @@ after PR merge, the cache is updated (if needed) and stored.
 
 Scripts provided in `.github/reusability`:
 
-- `localize.sh` - changes the reusable workflows
-    (pointing to `opennudge/opentemplate`) to local workflows
-- `globalize.sh` - changes the local workflows to reusable workflows
-    (pointing to `opennudge/opentemplate`)
+- `localize.sh` - changes pinned reusable workflow references
+    (pointing to `open-nudge/opentemplate`) to local workflows
+- `globalize.sh` - changes local workflows to reusable workflow references
+    pinned to a commit SHA (by default, the latest `main` commit)
 
-Run `.github/reusability/localize.sh` or `.github/reusability/globalize.sh` to
-apply the changes. The script also allows you to specify the directory
-where the changes should be applied as an argument.
+Run `.github/reusability/localize.sh` or
+`.github/reusability/globalize.sh [directory] [skip_files] [repository] [commit_sha]`
+to apply the changes. The globalize script resolves the latest `main` commit
+when no SHA is supplied.
 
 > [!CAUTION]
 > While `localize.sh` is safe to run, `globalize.sh` should be used with
 > caution, as it may incorrectly `globalize` local workflows/actions you have
 > added on top of the template provided functionality.
-
-> [!WARNING]
-> `release-package-reusable.yml` and `release-package-upload-reusable.yml`
-> used by `release.yml` __should not be globalized__ as they are
-> attested uploads to PyPI do not yet support reusable workflows
-> (see [this GitHub issue](https://github.com/pypi/warehouse/issues/11096)).
 
 ## Code sources
 

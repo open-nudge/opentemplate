@@ -94,7 +94,7 @@ Releases include the following artifacts:
 
 > [!NOTE]
 > Attestations of Python package SBOMs use hashes of `RECORD` files as inputs, see
-> [here](https://packaging.python.org/en/latest/specifications/recording-installed-packages/#the-record-file)
+> [Python packaging guide to the RECORD file](https://packaging.python.org/en/latest/specifications/recording-installed-packages/#the-record-file)
 > for more information about them.
 
 ## Repository visibility and compliance

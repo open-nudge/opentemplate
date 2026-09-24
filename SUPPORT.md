@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -22,7 +22,7 @@ in this repository, report it directly to the project maintainers:
 > [!NOTE]
 > Additionally, especially for severe violations, report it
 > directly to the GitHub team by following the instructions
-> [here](https://docs.github.com/en/github/building-a-strong-community/reporting-abuse-or-spam)
+> [GitHub's instructions for reporting abuse](https://docs.github.com/en/github/building-a-strong-community/reporting-abuse-or-spam)
 
 <!-- vale on -->
 

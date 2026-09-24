@@ -16,20 +16,15 @@ This guide covers essential adjustments to the template.
 
 ## Project metadata
 
-Common package metadata is managed from `/project` instead of by editing
-`[project]` directly in `pyproject.toml`.
+Declare package metadata directly in the `[project]` table of
+`pyproject.toml`.
 
-- __Runtime Dependencies__ – Add one dependency per line in
-    `project/dependencies.txt`.
-- __Keywords__ – Add one keyword per line in `project/keywords.txt`.
-- __Classifiers__ – Add one classifier per line in `project/classifiers.txt`.
-- __Nested Metadata__ – Use matching folders such as
-    `optional-dependencies/`, `scripts/`, `gui-scripts/`,
-    and `entry-points/`.
-
-This metadata layout is reserved for the managed `noproject` workflow.
-For normal template use, edit the `/project` files and treat the generated
-`[project]` metadata in `pyproject.toml` as boilerplate.
+- __Runtime Dependencies__ – Add dependencies to `[project].dependencies`;
+    PDM resolves them into `pdm.lock`.
+- __Keywords__ – Edit `[project].keywords`.
+- __Classifiers__ – Edit `[project].classifiers`.
+- __Nested Metadata__ – Configure optional dependencies, scripts,
+    GUI scripts, and entry points in the corresponding `[project]` fields.
 
 ## Tool configuration
 
@@ -81,7 +76,6 @@ For other modifications, check:
 
 ## Code sources
 
-- `project/`
 - `pyproject.toml`
 - `prek.toml`
 - `.github/workflows/`
