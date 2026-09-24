@@ -80,4 +80,12 @@ jobs:
         gitlab.io:443
         *.gitlab.io:443
         bitbucket.org:443
+        en.wikipedia.org:443
+        docs.astral.sh:443
+        reuse.software:443
+        creativecommons.org:443
+        wiki.linuxfoundation.org:443
+        vale.sh:443
+        endoflife.date:443
+        www.threatmodelingmanifesto.org:443
 ...
