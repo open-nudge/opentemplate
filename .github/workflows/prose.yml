@@ -67,7 +67,7 @@ jobs:
         uses: "docker://docker.io/jdkato/vale:v3.20.0@sha256:5a2852baf6332a2beb2aa187aa4828ce600b0368720e338f8ea8521cdb826a1d"
         # yamllint enable rule:line-length
         with:
-          args: "--glob=!LICENSE --glob=!LICENSES/** ."
+          args: "--glob=!{LICENSE,LICENSES/**} ."
       - name: "Check for generated changes"
         run: "git diff --exit-code"
 ...
