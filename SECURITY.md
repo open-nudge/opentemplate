@@ -36,12 +36,12 @@ Some of the security measures undertaken in this project include:
 - [OSSF Scorecard](https://github.com/ossf/scorecard)
 - [Security file](./SECURITY.md)
 - [Security Insights Specification](https://github.com/open-nudge/opentemplate/blob/main/SECURITY-INSIGHTS.yml)
-    as defined [here](https://github.com/ossf/security-insights-spec)
+    as defined in the [Security Insights specification](https://github.com/ossf/security-insights-spec)
 - [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
 - [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
 - [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
 - [Sigstore signing](https://github.com/open-nudge/opentemplate/releases)
-    as seen [here](https://github.com/sigstore/sigstore-python)
+    as seen in the [Sigstore Python project](https://github.com/sigstore/sigstore-python)
 - GitHub Actions CI/CD pipelines with minimal permissions
 - GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
 - [Prek hooks](https://prek.j178.dev/) for local code quality

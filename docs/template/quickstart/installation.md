@@ -33,7 +33,7 @@ to install dependencies and set up the project.
 The following features (and more) will be enabled:
 
 - Ready-to-use state of the art project structure
-- Set of `20+` labels (see [here](https://github.com/open-nudge/opentemplate/labels)),
+- Set of `20+` labels (see the [OpenTemplate issue labels](https://github.com/open-nudge/opentemplate/labels)),
     many of which are automatically applied to pull requests
 - Predefined templates for issues, pull requests and discussions
 - Initial dependency-specific caching enabled in GitHub Actions
@@ -53,8 +53,8 @@ outlining security hardening steps.
 
 - Enable third-party bots (if applicable).
 - Create a short-lived, repository-scoped fine-grained PAT and save it as
-    `TEMPLATE_GITHUB_TOKEN`. Grant **Contents: read and write**, **Workflows: read
-    and write**, **Administration: read and write**, and **Pages: read and write**.
+    `TEMPLATE_GITHUB_TOKEN`. Grant __Contents: read and write__, __Workflows: read
+    and write__, __Administration: read and write__, and __Pages: read and write__.
 - Prefer a repository secret. An organization-level secret exposes the token to
     more repositories; if you use one, restrict it to the target repository.
 - Manually run the hardening workflow using its existing workflow dispatch.

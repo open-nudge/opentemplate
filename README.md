@@ -71,8 +71,7 @@ __opentemplate__ is a Python template which is:
     parallel checks, builds, minimally-sized caches and checkouts
 
 > [!IMPORTANT]
-> __An example repository using `opentemplate`
-> [here](https://github.com/open-nudge/cogeol)__
+> __An [example repository using `opentemplate`](https://github.com/open-nudge/cogeol)__
 
 > [!CAUTION]
 > __All files in this repo will be copied to your project,
@@ -218,8 +217,8 @@ __opentemplate__ is a Python template which is:
     templates (e.g. one-click and one-command setup, security,
     GitHub Actions, comprehensive docs, rulesets. deprecation policies,
     automated copyrights and more).
-    Check [here](https://github.com/fpgmaas/cookiecutter-uv)
-    or [here](https://github.com/audreyfeldroy/cookiecutter-pypackage)
+    Check the [cookiecutter-uv template](https://github.com/fpgmaas/cookiecutter-uv)
+    or the [cookiecutter-pypackage template](https://github.com/audreyfeldroy/cookiecutter-pypackage)
     to compare yourself.
 - Truly FOSS (no freemium, no paid plans, no tokens) when compared to
     commercial offerings like [`snyk`](https://snyk.io/).
