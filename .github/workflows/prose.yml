@@ -45,8 +45,7 @@ jobs:
         # yamllint enable rule:line-length
         with:
           disable-sudo: true
-          egress-policy: "block"
-          # enq: the pinned Vale container pulls from Docker Hub and syncs styles from GitHub.
+          egress-policy: "audit"
           allowed-endpoints: |
             *.actions.githubusercontent.com:443
             codeload.github.com:443

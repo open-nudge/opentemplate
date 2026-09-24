@@ -71,7 +71,6 @@ pdm setup
 
 > [!CAUTION]
 > This project uses [PEP582](https://peps.python.org/pep-0582/) to manage dependencies.
-> Check `__pypackages__/README.md` for more information.
 
 <!-- vale off -->
 
