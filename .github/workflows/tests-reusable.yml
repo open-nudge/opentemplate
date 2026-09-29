@@ -64,11 +64,7 @@ jobs:
       Tests | ${{ matrix.os.name }} | python-${{ matrix.python }}
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/run-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
@@ -81,8 +77,9 @@ jobs:
         tests/**
       group: "tests"
       core: true
+      # Not a release asset, hence commit SHA is not the suffix
       upload-name: >
-        coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}
+        coverage-${{ github.sha }}-${{ matrix.os.name }}-${{ matrix.python }}
       upload-path: >
         coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       python-version: "${{ matrix.python }}"
@@ -96,11 +93,7 @@ jobs:
     name: "Tests Mutation"
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/run-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       command: |
         pdm run tests-mutation
@@ -119,16 +112,12 @@ jobs:
     needs: "tests-reusable"
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/run-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
       command: |
-        pdm run coverage combine --debug=pathmap --keep $(find coverage-*-${{ github.sha }}/ -name "coverage-*-${{ github.sha }}.sqlite")
+        pdm run coverage combine --debug=pathmap --keep $(find coverage-${{ github.sha }}-*/ -name "coverage-*-${{ github.sha }}.sqlite")
         pdm run coverage html --skip-empty
         pdm run coverage report
       # yamllint enable rule:line-length
@@ -136,8 +125,8 @@ jobs:
       sparse-checkout: |
         **.py
       group: "tests"
-      download-pattern: "coverage-*-${{ github.sha }}"
-      upload-name: "coverage-combined-${{ github.sha }}"
+      download-pattern: "coverage-${{ github.sha }}-*"
+      upload-name: "coverage-${{ github.sha }}-combined"
       upload-path: "htmlcov"
       timeout-minutes: "${{ inputs.timeout-minutes }}"
 ...

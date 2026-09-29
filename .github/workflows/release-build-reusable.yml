@@ -1,0 +1,205 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Release Build Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    outputs:
+      package-name:
+        description: "Name of the built package"
+        value: "${{ jobs.release-build.outputs.package-name }}"
+      package-version:
+        description: "Version of the built package"
+        value: "${{ jobs.release-build.outputs.package-version }}"
+      digests:
+        description: >
+          sha256sum of the distributions, verify downloads against it
+          (job outputs cannot be altered by other jobs, unlike artifacts)
+        value: "${{ jobs.release-build.outputs.digests }}"
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-build:
+    name: "Release Build"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 30
+    permissions:
+      contents: "read"
+    outputs:
+      package-name: "${{ steps.metadata.outputs.package-name }}"
+      package-version: "${{ steps.metadata.outputs.package-version }}"
+      digests: "${{ steps.digests.outputs.digests }}"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            codeload.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            objects.githubusercontent.com:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+            results-receiver.actions.githubusercontent.com:443
+      # Unpinned `$/` references resolve to the project's own (editable)
+      # copies, so the project would control its builder (SLSA Build L2).
+      # Template repositories build with their own workflows by design.
+      - name: "Reject unpinned template"
+        if: >
+          github.event_name == 'release'
+        env:
+          TEMPLATE_REPOSITORY: "${{ job.workflow_repository }}"
+          IS_TEMPLATE: "${{ github.event.repository.is_template }}"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          if [[ "${TEMPLATE_REPOSITORY}" == "${GITHUB_REPOSITORY}" && "${IS_TEMPLATE}" != "true" ]]; then
+            echo "::error title=Unpinned template::Run harden.yml to pin the reusable workflows"
+            exit 1
+          fi
+        # yamllint enable rule:indentation
+      - name: "Checkout source"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          path: "source"
+          fetch-depth: 0
+          persist-credentials: false
+      # The default branch accepts reviewed (pull request) commits only,
+      # tags can point to any pushed commit (e.g. of an unreviewed branch)
+      - name: "Reject commits outside of the default branch"
+        if: >
+          github.event_name == 'release'
+        env:
+          DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          if ! git -C source merge-base --is-ancestor "${GITHUB_SHA}" "origin/${DEFAULT_BRANCH}"; then
+            echo "::error title=Unreviewed commit::${GITHUB_SHA} is not on the ${DEFAULT_BRANCH} branch"
+            exit 1
+          fi
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Setup template build tools"
+        uses: "$/.github/actions/setup-release"
+        with:
+          group: "dev-build"
+      - name: "Reject source code execution during build"
+        # enq: inline Python is more readable with its own indentation
+        # yamllint disable rule:indentation
+        run: |
+          python - <<'PY'
+          import pathlib
+          import tomllib
+
+          def load(project):
+              return tomllib.loads(pathlib.Path(project, "pyproject.toml").read_text())
+
+          def hooks(table):
+              return isinstance(table, dict) and (
+                  "hooks" in table or any(map(hooks, table.values()))
+              )
+
+          source, template = load("source"), load("template")
+          hatch = source.get("tool", {}).get("hatch", {})
+          version = template["tool"]["hatch"]["version"]["source"]
+          errors = {
+              "[build-system] differs from the template": (
+                  source.get("build-system") != template["build-system"]
+              ),
+              "hatch hooks are not supported": hooks(hatch),
+              f"[tool.hatch.version] source must be '{version}'": (
+                  "version" in hatch
+                  and hatch["version"].get("source", "regex") not in {"regex", version}
+              ),
+              "hatch.toml is not supported": pathlib.Path("source/hatch.toml").exists(),
+          }
+          for error, failed in errors.items():
+              if failed:
+                  print(f"::error title=Unsupported build::{error}")
+          if any(errors.values()):
+              raise SystemExit("Release builds use the template build system only")
+          PY
+        # yamllint enable rule:indentation
+      # Backend is called directly: an isolated build would install
+      # [build-system] requires unpinned, while PDM would load project config
+      # and plugins. The template's hash-locked dev-build group provides the
+      # backend and the guard above ensures [build-system] matches it.
+      # -P: source directory must not shadow hatchling (or stdlib) modules
+      - name: "Build distributions"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          python="$(pdm info --project template --python)"
+          cd source
+          "${python}" -P -m hatchling build --no-hooks --directory ../dist
+        # yamllint enable rule:indentation
+      - name: "Get package metadata"
+        id: "metadata"
+        run: |
+          sdist="$(basename dist/*.tar.gz .tar.gz)"
+          echo "package-name=${sdist%-*}" >> "${GITHUB_OUTPUT}"
+          echo "package-version=${sdist##*-}" >> "${GITHUB_OUTPUT}"
+      - name: "Get distribution digests"
+        id: "digests"
+        uses: "$/.github/actions/digests"
+        with:
+          paths: "dist/*"
+      - name: "Upload distributions"
+        uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
+        with:
+          name: "dist-${{ github.sha }}"
+          path: "dist"
+          retention-days: 1
+          if-no-files-found: "error"
+          overwrite: true
+
+  release-build-attest:
+    name: "Release Build Attest"
+    needs:
+      - "release-build"
+    if: >
+      github.event_name == 'release'
+      && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+    permissions:
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            fulcio.githubapp.com:443
+            fulcio.sigstore.dev:443
+            github.com:443
+            rekor.sigstore.dev:443
+            results-receiver.actions.githubusercontent.com:443
+            timestamp.githubapp.com:443
+            tuf-repo-cdn.sigstore.dev:443
+            tuf-repo.github.com:443
+      # Digests come from the build job, the artifact might have been replaced
+      - name: "Attest build provenance"
+        uses: "actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d" # v4.2.1
+        with:
+          subject-checksums: "${{ needs.release-build.outputs.digests }}"
+...

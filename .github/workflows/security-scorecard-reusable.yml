@@ -38,10 +38,7 @@ jobs:
       contents: "read"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           disable-sudo: true
           egress-policy: "block"
@@ -64,10 +61,7 @@ jobs:
             tuf-repo-cdn.sigstore.dev:443
             www.bestpractices.dev:443
       - name: "Checkout repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           persist-credentials: false
       - name: "Run analysis"
@@ -99,10 +93,7 @@ jobs:
           # but had to be copy-pasted as custom actions are not allowed by
           # ossf/scorecard-action
       - name: "Upload artifact"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
-        # yamllint enable rule:line-length
         if: >
           inputs.name != ''
         with:
@@ -115,10 +106,7 @@ jobs:
           inputs.sarif
         # SARIF upload may fail if there is no integration enabled
         continue-on-error: true
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
-        # yamllint enable rule:line-length
         with:
           sarif_file: "${{ inputs.file }}"
 ...

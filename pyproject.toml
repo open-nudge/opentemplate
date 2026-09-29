@@ -165,6 +165,16 @@ dev-legal = [
   "reuse>=4",
 ]
 
+# Exported (hashed) to .github/requirements.txt, installs PDM in release jobs
+dev-bootstrap = [
+  "pdm>=2.29.2",
+]
+
+dev-build = [
+  "hatchling>=1",
+  "comver[hatchling]>=1",
+]
+
 dev-release = [
   "spdx-tools>=0.8.3",
   "cyclonedx-bom>=7",
@@ -223,6 +233,7 @@ dev-all = [
   { include-group = "dev-citation" },
   { include-group = "dev-github" },
   { include-group = "dev-legal" },
+  { include-group = "dev-build" },
   { include-group = "dev-release" },
   { include-group = "dev-generation" },
   { include-group = "dev-commit" },
@@ -946,27 +957,60 @@ setup = { composite = [
 ] }
 
 
+# SBOM scripts assess the project in the current directory with tools
+# from the invoking environment, e.g. in CI (template tools, source project):
+# pdm run --project template --working-dir source sbom-legal
 sbom-python = { shell = """
   bash -c \
-  ' pdm run cyclonedx-py environment "$(pdm info --python)" --mc-type library'
+  ' cyclonedx-py environment --mc-type library "$(PDM_IGNORE_ACTIVE_VENV=1 pdm info --python)"'
 """ }
 
 sbom-legal = { shell = """
   bash -c \
-  " pdm run reuse spdx \
+  " reuse spdx \
       --add-license-concluded \
       --creator-organization='open-nudge <https://github.com/open-nudge>' \
       --creator-person='$(git config get user.name) <$(git config get user.email)>' \
     > .sbom-legal.spdx \
-    && pdm run pyspdxtools \
+    && pyspdxtools \
       --version "SPDX-2.2" --novalidation \
       -i .sbom-legal.spdx -o .sbom-legal.json \
     && ( cat .sbom-legal.json && rm .sbom-legal.spdx .sbom-legal.json )"
 """ }
 
+# Pinned GitHub Actions used by .github (and ${SBOM_ACTIONS_EXTRA} directories)
+sbom-actions = { shell = '''
+grep -rhoE 'uses:[[:space:]]*"?[[:alnum:]_-][^"[:space:]#]*@[^"[:space:]#]+' \
+  .github ${SBOM_ACTIONS_EXTRA} \
+  | sed -E 's/^uses:[[:space:]]*"?//' \
+  | sort -u \
+  | jq -Rn '{
+      bomFormat: "CycloneDX",
+      specVersion: "1.6",
+      version: 1,
+      metadata: {timestamp: (now | todate)},
+      components: [
+        inputs
+        | if startswith("docker://") then
+            ltrimstr("docker://")
+            | capture("^(?<name>[^:@]+)(:[^@]+)?@(?<version>.+)$")
+            | .purl = "pkg:docker/\(.name)@\(.version | sub(":"; "%3A"))"
+            | .type = "container"
+          else
+            capture("^(?<name>[^@]+)@(?<version>.+)$")
+            | (.name | split("/")) as $path
+            | .purl = "pkg:github/\($path[:2] | join("/"))@\(.version)"
+              + if $path[2:] == [] then "" else "#\($path[2:] | join("/"))" end
+            | .type = "application"
+          end
+      ]
+    }'
+''' }
+
 sbom-all = { composite = [
   "sbom-python",
   "sbom-legal",
+  "sbom-actions",
 ] }
 
 changelog = { cmd = "pdm run git-cliff" }

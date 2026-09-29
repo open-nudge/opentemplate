@@ -29,10 +29,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -63,16 +60,9 @@ jobs:
         # yamllint enable rule:indentation
         # enq: credentials needed for push to the main branch
       - name: "Checkout repository" # zizmor: ignore[artipacked]
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
       - name: "Setup template"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/template-setup"
-        # yamllint enable rule:line-length
         with:
           template-repository: "opentemplate"
           repository: "${{ github.event.repository.name }}"
@@ -88,11 +78,7 @@ jobs:
           .github/workflows/template-setup.yml
           .github/workflows/template-test.yml
       - name: "Setup git credentials"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/git-setup"
-        # yamllint enable rule:line-length
       - name: "Push changes"
         # __pypackages__ is ignored, but automatic PDM setup needs it for now
         run: |
@@ -147,10 +133,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -164,10 +147,7 @@ jobs:
             github.com:443
             pypi.org:443
       - name: "Checkout repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           sparse-checkout: |
             template-setup
@@ -281,10 +261,7 @@ jobs:
           fi
         # yamllint enable rule:line-length rule:indentation
       - name: "Setup Python"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97" # v7.0.0
-        # yamllint enable rule:line-length
         with:
           python-version: "3.x"
       - name: "Install cookiecutter"
@@ -337,11 +314,7 @@ jobs:
     name: "Cache Setup"
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/cache-reusable.yml"
-    # yamllint enable rule:line-length
     # Checkout main as otherwise the files will not be available
     with:
       ref: "main"
@@ -355,11 +328,7 @@ jobs:
       security-events: "write" # Needed to to upload SARIF file to tab
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/security-scorecard-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       sarif: true
 ...

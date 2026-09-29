@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Digests Verify"
+description: >
+  Verify files against digests output by the job which produced them
+  (job outputs cannot be altered by other jobs, unlike artifacts)
+
+inputs:
+  digests:
+    description: "sha256sum of the files (output of the digests action)"
+    required: true
+  names:
+    description: >
+      Names (newline separated) to select from the digests, each must be
+      listed exactly once (default: all), unlisted ones are never output
+    default: ""
+  directory:
+    description: "Directory containing the files"
+    default: "."
+  exact:
+    description: >
+      Whether the directory must contain only the selected files
+    default: "false"
+
+outputs:
+  digests:
+    description: "sha256sum of the selected files"
+    value: "${{ steps.select.outputs.digests }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Select digests"
+      id: "select"
+      shell: "bash"
+      env:
+        DIGESTS: "${{ inputs.digests }}"
+        NAMES: "${{ inputs.names }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation rule:line-length
+      run: |
+        selected="$(awk NF <<< "${DIGESTS}")"
+        if [[ -n "${NAMES}" ]] && ! selected="$(awk '
+          BEGIN { for (i = split(ENVIRON["NAMES"], list, "\n"); i > 0; i--) if (list[i] != "") wanted[list[i]] = 0 }
+          NF == 2 && ($2 in wanted) { print; wanted[$2]++ }
+          END { for (name in wanted) if (wanted[name] != 1) exit 1 }
+        ' <<< "${DIGESTS}")"; then
+          echo "::error title=Unexpected digests::${DIGESTS}"
+          exit 1
+        fi
+        {
+          echo "digests<<EOF"
+          echo "${selected}"
+          echo "EOF"
+        } >> "${GITHUB_OUTPUT}"
+      # yamllint enable rule:indentation rule:line-length
+    - name: "Get digests of the files"
+      id: "actual"
+      uses: "$/.github/actions/digests"
+      with:
+        directory: "${{ inputs.directory }}"
+        paths: "*"
+    - name: "Compare digests"
+      shell: "bash"
+      env:
+        EXPECTED: "${{ steps.select.outputs.digests }}"
+        ACTUAL: "${{ steps.actual.outputs.digests }}"
+        EXACT: "${{ inputs.exact }}"
+        LC_ALL: "C"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation
+      # Exact: same files, otherwise every expected file (others allowed)
+      run: |
+        if [[ "${EXACT}" == "true" ]]; then
+          diff <(awk NF <<< "${EXPECTED}" | sort) <(awk NF <<< "${ACTUAL}" | sort)
+        else
+          missing="$(comm -23 <(awk NF <<< "${EXPECTED}" | sort -u) <(awk NF <<< "${ACTUAL}" | sort -u))"
+          if [[ -n "${missing}" ]]; then
+            echo "::error title=Digest mismatch::${missing}"
+            exit 1
+          fi
+        fi
+      # yamllint enable rule:indentation
+...

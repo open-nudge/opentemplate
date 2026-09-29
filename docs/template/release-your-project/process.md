@@ -60,52 +60,140 @@ Managed automatically based on commit messages:
 
 ## Artifacts
 
-Releases include the following artifacts:
+Releases include only attested artifacts:
 
 - __Python package__ ([packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/))
 
-- `CHANGELOG.md` (full changelog)
+- [OSV-Scanner](https://google.github.io/osv-scanner/output/#sarif)
+    and [Semgrep](https://semgrep.dev/docs/cli-reference) SARIFs
 
-- `LICENSE` (project license)
+- __Software Bills of Materials (SBOMs)__ ([CISA guide](https://www.cisa.gov/sbom))
+    and their [Grype](https://github.com/anchore/grype) scans (SARIF):
 
-- Documentation (uploaded to `gh-pages`)
+    1. Python package with its `core`, `extras` and `dev` dependencies
+        per Python version and per OS
+        (via [CycloneDX](https://github.com/CycloneDX/cyclonedx-python))
 
-- [OSV-Scanner SARIF](https://google.github.io/osv-scanner/output/#sarif)
-
-- __Software Bills of Materials (SBOMs)__ ([CISA guide](https://www.cisa.gov/sbom)):
-
-    1. Python package (via [CycloneDX](https://github.com/CycloneDX/cyclonedx-python))
-
-    1. Python dependencies (via [CycloneDX](https://github.com/CycloneDX/cyclonedx-python))
-
-    1. GitHub SBOM ([docs](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/exporting-a-software-bill-of-materials-for-your-repository))
+    1. GitHub Actions of the project and of the reusable workflows
+        (extracted from `uses:` references, see `sbom-actions` in `pyproject.toml`)
 
     1. REUSE SBOM ([docs](https://reuse.readthedocs.io/en/stable/man/reuse-spdx.html))
 
-- SBOM attestations ([actions/attest](https://github.com/actions/attest))
-
 - __Python package attestations__ ([PyPI guide](https://blog.pypi.org/posts/2024-11-14-pypi-now-supports-digital-attestations/))
 
-- __SLSA Build Provenance__ ([SLSA spec](https://slsa.dev/spec/v1.0/provenance))
+- `<asset>.sigstore.jsonl` for every asset above: attestation bundles
+    ([actions/attest](https://github.com/actions/attest)) for offline verification
+
+## Attestations
 
 > [!IMPORTANT]
-> Some artifacts depend on repository visibility, the more public the repository,
-> the more artifacts are produced.
+> Public/internal repositories created from `open-nudge/opentemplate`
+> satisfy SLSA L3 Build.
 
-> [!NOTE]
-> Attestations of Python package SBOMs use hashes of `RECORD` files as inputs, see
-> [Python packaging guide to the RECORD file](https://packaging.python.org/en/latest/specifications/recording-installed-packages/#the-record-file)
-> for more information about them.
+> [!WARNING]
+> Private repositories do not have any SLSA attestations, therefore are L0.
 
-## Repository visibility and compliance
+Every signed release asset is produced by an `open-nudge/opentemplate`
+reusable workflow and __attested within the same workflow__ by a separate job.
+Before attaching to the release each artifact is verified against the
+attestation of __its__ producing workflow:
 
 <!-- pyml disable-num-lines 7 line-length-->
 
-| Visibility     | Artifacts produced                  | Compliance level                                  |
-| -------------- | ----------------------------------- | ------------------------------------------------- |
-| __Public__     | All artifacts                       | [SLSA Level 3](https://slsa.dev/spec/v1.0/levels) |
-| __Enterprise__ | No provenance, private attestations | [SLSA Level 3](https://slsa.dev/spec/v1.0/levels) |
-| __Private__    | No attestations, limited artifacts  | [SLSA Level 2](https://slsa.dev/spec/v1.0/levels) |
+| Asset                          | Signer workflow               |
+| ------------------------------ | ----------------------------- |
+| Wheel and source distribution  | `release-build-reusable.yml`  |
+| SBOMs and their Grype SARIFs   | `sbom-reusable.yml`           |
+| OSV-Scanner and Semgrep SARIFs | `release-sarifs-reusable.yml` |
+
+> [!NOTE]
+> Release notes (changelog) and documentation are not attested (their build
+> runs project __not open-nudge/opentemplate__ code), therefore not attached.
+
+The release fails __if it contains any unexpected asset__
+(e.g. attached manually when creating the release).
+
+> [!IMPORTANT]
+> The package is uploaded to PyPI only when all previous steps succeed,
+> otherwise the release is marked untrustworthy and pushed back to draft.
+
+The distributions carry
+[SLSA Build Provenance](https://slsa.dev/spec/v1.0/provenance)
+([SLSA Build L3](https://slsa.dev/spec/v1.0/levels#build-l3)
+for attested releases, see [below](#attestations)).
+
+> [!WARNING]
+> You need to run `harden.yml` before releasing, otherwise it will fail!
+
+> [!NOTE]
+> `open-nudge/opentemplate` is SLSA L2 itself as it relies on its own build.
+
+> [!WARNING]
+> Only commits of the default branch (merged via reviewed pull requests)
+> are built. Follow default release approach of `open-nudge/opentemplate`
+
+> [!WARNING]
+> Private repositories without GitHub Enterprise Cloud must opt out by
+> setting the `ATTESTATIONS` configuration variable to `false` (at the
+> [organization or repository level](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-variables#defining-configuration-variables-for-multiple-workflows)),
+> otherwise their release fails. No attestations are created and attached then.
+> __This escape hatch is ignored for public and internal repositories!__
+
+## Verifications
+
+To verify an artifact run the following:
+
+```sh
+gh attestation verify <asset> \
+  --bundle <asset>.sigstore.jsonl \
+  --repo <owner>/<repo> \
+  --signer-workflow open-nudge/opentemplate/.github/workflows/<signer> \
+  --signer-digest <sha> \
+  --source-ref refs/tags/<tag> \
+  --deny-self-hosted-runners
+```
+
+where `<signer>` comes from the table in previous section and
+`<sha>` is the template commit the project pins (`@<sha>` in its `.github/workflows`).
+
+> [!NOTE]
+> Drop `--bundle` to fetch the attestations from GitHub instead.
+
+The same command verifies files downloaded from PyPI (the provenance is bound
+to the digest). PyPI itself only shows its publish attestations, signed by the
+project's `release.yml`, as trusted publishing does not support reusable
+workflows ([pypi/warehouse#11096](https://github.com/pypi/warehouse/issues/11096)).
+
+Ensure the commit belongs to the template (and not to a fork of it),
+the command below should output `ahead` or `identical`:
+
+```sh
+gh api repos/open-nudge/opentemplate/compare/<sha>...main --jq .status
+```
+
+Every SBOM is additionally attested __against the wheel and source
+distribution__ (subject: distribution digest, predicate: the SBOM),
+__only after their provenance is verified__.
+
+While the attestation of the SBOM file proves where the file came from,
+this one binds its content to the artifact you actually have:
+starting from the wheel's digest, verifiers (or policy engines) can verify:
+
+- its SBOMs without relying on file names
+- that the wheel was installed in the environment the SBOM describes.
+
+The bundles of the distributions include these attestations.
+
+> [!WARNING]
+> SBOMs are created in an environment where dependencies' code may run
+> (e.g. source distribution builds), therefore their __content__ is only as
+> trustworthy as the dependencies. The attestation proves which workflow
+> produced them, not that their content is correct.
+
+Verify them with
+`--signer-workflow` pointing to `sbom-reusable.yml` and
+`--predicate-type https://cyclonedx.org/bom`
+(or `https://spdx.dev/Document/v2.2` for the REUSE SBOM).
 
 ## Changelog
 
@@ -113,7 +201,6 @@ Generated via [git-cliff](https://github.com/orhun/git-cliff)
 (configured in `pyproject.toml`) and:
 
 - The latest version's changelog becomes the release description.
-- Full `CHANGELOG.md` attached to the release
 - `CHANGELOG.md` inside the repository links to GitHub releases
 
 The changelog includes:
@@ -138,11 +225,13 @@ This process can be adjusted by editing:
 
     1. `[tool.git-cliff]` – Changelog settings
 
-    1. `[dependency-groups]` → `dev-security` – changing SBOM dependencies
+    1. `[dependency-groups]` → `dev-release` – changing SBOM dependencies
 
 > [!IMPORTANT]
-> Due to pipeline complexity, fine-tuning is more challenging,
-> consult the source files if necessary.
+> Reusable workflows run from the template commit pinned in
+> `.github/workflows` (`@<sha>`), editing their local copies has no effect.
+> To change them, fork the template and point `uses:` to the fork
+> (attestations are then signed by the fork's workflows).
 
 ## Code sources
 
@@ -150,7 +239,10 @@ This process can be adjusted by editing:
 - `.github/workflows/release.yml`
 - `.github/workflows/release-upload.yml`
 - `.github/workflows/release-sarifs-reusable.yml`
-- `.github/workflows/security-sbom-attest-reusable.yml`
-- `.github/workflows/security-sbom-run-reusable.yml`
+- `.github/workflows/release-changelog-reusable.yml`
+- `.github/workflows/release-docs-reusable.yml`
+- `.github/workflows/release-build-reusable.yml`
 - `.github/workflows/release-sboms-reusable.yml`
-- `.github/workflows/release-slsa-provenance-reusable.yml`
+- `.github/workflows/sbom-reusable.yml`
+- `.github/actions/attestation-verify/action.yml`
+- `.github/actions/digests-verify/action.yml`

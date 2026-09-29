@@ -22,11 +22,7 @@ jobs:
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
     name: "Security Scorecard Update"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/security-scorecard-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       sarif: true
 ...

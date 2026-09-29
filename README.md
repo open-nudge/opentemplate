@@ -144,10 +144,13 @@ __opentemplate__ is a Python template which is:
     ([see here for an example](https://github.com/open-nudge/opentemplate/issues/1)).
     Best part? __`harden.yml` workflow, which does that
     automatically__ (if you follow the instructions in the issue)!
-- [__SLSA compliance__](https://slsa.dev/spec/v1.0-rc1/levels):
-    Level 3+ for public/enterprise repositories
-    and L2 for private repositories
-    via [slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator)
+- [__SLSA Build L3 provenance__](https://slsa.dev/spec/v1.0/levels#build-l3):
+    wheel and source distributions are built in a reusable workflow
+    which runs no project code, their digests are
+    [attested](https://github.com/actions/attest) in a separate job
+    and the signed bundle is attached to each release
+    (public repositories or GitHub Enterprise Cloud,
+    once `harden.yml` pins the reusable workflows)
 - __[Software Bills of Materials](https://www.cisa.gov/sbom) (SBOMs)__:
     generated per-Python, per-OS, per-dependency group -
     __each [attested](https://github.com/actions/attest)__,

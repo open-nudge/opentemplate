@@ -9,23 +9,21 @@ name: "Security Semgrep Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
+    outputs:
+      digests:
+        description: "sha256sum of the SARIF file (named as in the artifact)"
+        value: "${{ jobs.security-semgrep-reusable.outputs.digests }}"
     inputs:
       name:
-        description: "Name of the artifact (default: '' - no artifact upload)"
+        description: >
+          Name of the artifact and its SARIF file (<name>.sarif),
+          default: '' - no artifact upload
         type: "string"
         default: ""
       sarif:
         description: "Upload SARIF file to CodeQL"
         type: "boolean"
         default: false
-      continue-on-error:
-        description: "Whether to continue on error"
-        type: "boolean"
-        default: false
-      file:
-        description: "Name/path of the created SARIF file"
-        type: "string"
-        default: "semgrep.sarif"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -39,12 +37,13 @@ jobs:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
+    outputs:
+      digests: "${{ steps.digests.outputs.digests }}"
+    env:
+      FILE: "${{ inputs.name || 'semgrep' }}.sarif"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           # Container support is required for the Semgrep action.
           disable-sudo: true
@@ -62,15 +61,12 @@ jobs:
             registry-1.docker.io:443
             semgrep.dev:443
       - name: "Checkout repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           persist-credentials: false
 
       - name: "Run Semgrep"
-        # enq: hash with name and version always longer than 80 chars
+        # enq: the image reference is digest-pinned.
         # yamllint disable rule:line-length
         uses: "docker://semgrep/semgrep:1.177.0@sha256:d1825c2c72110b5bfbf0602ff68f7f117322597a7c33037a79dba9f897f5f1f0"
         # yamllint enable rule:line-length
@@ -93,16 +89,19 @@ jobs:
             --metrics=off
             --severity=INFO
             --strict
-            --sarif-output="${{ inputs.file }}"
+            --sarif-output="${{ env.FILE }}"
             .
+      - name: "Get digests"
+        id: "digests"
+        if: >
+          inputs.name != ''
+        uses: "$/.github/actions/digests"
+        with:
+          paths: "${{ env.FILE }}"
       - name: "Upload files"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/sarif-upload"
-        # yamllint enable rule:line-length
         with:
           name: "${{ inputs.name }}"
-          file: "${{ inputs.file }}"
+          file: "${{ env.FILE }}"
           sarif: "${{ inputs.sarif }}"
 ...

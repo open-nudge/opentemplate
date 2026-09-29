@@ -11,5 +11,7 @@ paths:
       # yamllint disable rule:quoted-strings
       - 'reusable workflow call "\$/.+" at "uses" is not following the format'
       - 'specifying action "\$/.+" in invalid format because ref is missing'
+      # enq: job.workflow_* context is newer than actionlint v1.7.12
+      - 'property "workflow_(repository|sha)" is not defined in object type'
       # yamllint enable rule:quoted-strings
 ...

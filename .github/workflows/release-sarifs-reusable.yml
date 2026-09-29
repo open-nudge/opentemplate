@@ -24,14 +24,10 @@ jobs:
       security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
     name: "Sarif OSV-Scanner"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/security-osv-scanner-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       name: "osv-scanner-${{ github.sha }}"
-      file: "osv-scanner-${{ github.sha }}.sarif"
+      sarif: true
 
   sarif-semgrep:
     permissions:
@@ -39,13 +35,49 @@ jobs:
       security-events: "write" # Needed to upload SARIF to security tab
       contents: "read"
     name: "Sarif Semgrep"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/security-semgrep-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       name: "semgrep-${{ github.sha }}"
-      file: "semgrep-${{ github.sha }}.sarif"
       sarif: true
+
+  sarif-attest:
+    name: "Sarif Attest"
+    if: >
+      github.event_name == 'release'
+      && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
+    needs:
+      - "sarif-osv-scanner"
+      - "sarif-semgrep"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+    permissions:
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            fulcio.githubapp.com:443
+            fulcio.sigstore.dev:443
+            github.com:443
+            rekor.sigstore.dev:443
+            results-receiver.actions.githubusercontent.com:443
+            timestamp.githubapp.com:443
+            tuf-repo-cdn.sigstore.dev:443
+            tuf-repo.github.com:443
+      # Digests come from the scan jobs, the artifacts might be replaced
+      - name: "Attest SARIFs provenance"
+        uses: "actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d" # v4.2.1
+        with:
+          # Literal block: each digest must stay on its own line
+          subject-checksums: |
+            ${{ needs.sarif-osv-scanner.outputs.digests }}
+            ${{ needs.sarif-semgrep.outputs.digests }}
 ...

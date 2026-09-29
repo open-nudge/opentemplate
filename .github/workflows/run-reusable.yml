@@ -118,10 +118,7 @@ jobs:
     runs-on: "${{ inputs.os }}"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -143,10 +140,7 @@ jobs:
       - name: "Full repository checkout"
         if: >
           inputs.full-checkout
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           ref: "${{ inputs.ref }}"
           fetch-depth: "${{ inputs.fetch-depth }}"
@@ -154,10 +148,7 @@ jobs:
       - name: "Sparse repository checkout"
         if: >
           ! inputs.full-checkout
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         # enq: more readable without indentation rule
         # yamllint disable rule:indentation
         with:
@@ -196,37 +187,22 @@ jobs:
           persist-credentials: false
 
       - name: "Setup git credentials"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/git-setup"
-        # yamllint enable rule:line-length
       - name: "Setup PDM"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/pdm-setup"
-        # yamllint enable rule:line-length
         with:
           group: "${{ inputs.group }}"
           core: "${{ inputs.core }}"
           python-version: "${{ inputs.python-version }}"
       - name: "PDM Compatibility"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/pdm-compatibility"
-        # yamllint enable rule:line-length
 
       - name: "Download artifacts"
         if: >
           inputs.download
           || inputs.download-name != ''
           || inputs.download-pattern != ''
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
-        # yamllint enable rule:line-length
         with:
           name: "${{ inputs.download-name }}"
           pattern: "${{ inputs.download-pattern }}"
@@ -246,10 +222,7 @@ jobs:
         if: >
           inputs.upload-path != ''
           && inputs.upload-name != ''
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           name: "${{ inputs.upload-name }}"
           path: "${{ inputs.upload-path }}"

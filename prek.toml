@@ -162,6 +162,7 @@ rev = "e840a6e8adb14b7777c78e26cfbf6e2abc1d1fc6" # frozen: v2.6.0
   name = "<<<CHECK>>> OSV Scanner"
   args = [
     "--recursive",
+    "--config=osv-scanner.toml",
     "--licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0",
     "./",
   ]
@@ -170,7 +171,7 @@ rev = "e840a6e8adb14b7777c78e26cfbf6e2abc1d1fc6" # frozen: v2.6.0
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "e109c06297dc58a513f10691a275f3a9465584a1" # frozen: v3.22.0
+rev = "2753160f8e5835976340183ddc4a91ed10b7d3ed" # frozen: v3.23.0
 
   [[repos.hooks]]
   id = "vale"
@@ -290,6 +291,17 @@ repo = "local"
   pass_filenames = false
   language = "system"
   files = "^pyproject.toml$"
+  priority = 30
+
+  # Hash-locked PDM installed by release jobs (setup-release action)
+  [[repos.hooks]]
+  id = "pdm-bootstrap"
+  verbose = true
+  name = "<<<FIX>>> PDM bootstrap requirements"
+  entry = "pdm export --no-default -G dev-bootstrap -o .github/requirements.txt"
+  pass_filenames = false
+  language = "system"
+  files = "^(pyproject.toml|pdm.lock)$"
   priority = 30
 
   [[repos.hooks]]

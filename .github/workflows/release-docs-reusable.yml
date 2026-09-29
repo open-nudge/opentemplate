@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Release Docs Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-docs:
+    name: "Release Docs"
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/run-reusable.yml"
+    with:
+      # Double checkout used to refresh the content of generated docs, which
+      # happens on some linux distributions at least.
+      # enq: long command, splitting is unreadable
+      # yamllint disable rule:line-length
+      command: |
+        TAG="$(cut -d. -f1,2 <<< "${GITHUB_REF_NAME}")"
+        pdm run mike deploy "${TAG}" --branch "site-${GITHUB_SHA}" --ignore-remote-status
+        git checkout "site-${GITHUB_SHA}" -- .
+        mv "${TAG}" "site-${GITHUB_SHA}"
+        tar -cf "site-${GITHUB_SHA}.tar" "site-${GITHUB_SHA}"
+      # yamllint enable rule:line-length
+      group: "docs"
+      core: true
+      fetch-depth: 0
+      full-checkout: true
+      additional-allowed-endpoints: >
+        fonts.google.com:443
+        fonts.gstatic.com:443
+      # Documentation, not a release asset, hence no commit SHA suffix
+      upload-name: "release-docs"
+      upload-path: "site-${{ github.sha }}.tar"
+...

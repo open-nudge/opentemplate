@@ -9,9 +9,15 @@ name: "Security OSV-Scanner Reusable"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
+    outputs:
+      digests:
+        description: "sha256sum of the SARIF file (named as in the artifact)"
+        value: "${{ jobs.security-osv-scanner-reusable.outputs.digests }}"
     inputs:
       name:
-        description: "Name of the artifact (default: '' - no artifact upload)"
+        description: >
+          Name of the artifact and its SARIF file (<name>.sarif),
+          default: '' - no artifact upload
         type: "string"
         default: ""
       sarif:
@@ -22,10 +28,6 @@ on:
         description: "Whether to continue on error"
         type: "boolean"
         default: false
-      file:
-        description: "Name/path of the created SARIF file"
-        type: "string"
-        default: "osv-scanner.sarif"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -39,13 +41,14 @@ jobs:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
+    outputs:
+      digests: "${{ steps.digests.outputs.digests }}"
+    env:
+      FILE: "${{ inputs.name || 'osv-scanner' }}.sarif"
     steps:
 
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           # Uses docker container,
           # disable-sudo-and-containers impossible
@@ -63,33 +66,31 @@ jobs:
             github.com:443
             pkg-containers.githubusercontent.com:443
       - name: "Checkout repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           persist-credentials: false
       - name: "Run scanner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8
-        # yamllint enable rule:line-length
         continue-on-error: "${{ inputs.continue-on-error }}"
         with:
           scan-args: |-
             --format=sarif
-            --output=${{ inputs.file }}
+            --output=${{ env.FILE }}
             --recursive
+            --config=osv-scanner.toml
             --licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0
             ./
+      - name: "Get digests"
+        id: "digests"
+        if: >
+          inputs.name != ''
+        uses: "$/.github/actions/digests"
+        with:
+          paths: "${{ env.FILE }}"
       - name: "Upload files"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/sarif-upload"
-        # yamllint enable rule:line-length
         with:
           name: "${{ inputs.name }}"
-          file: "${{ inputs.file }}"
+          file: "${{ env.FILE }}"
           sarif: "${{ inputs.sarif }}"
 ...

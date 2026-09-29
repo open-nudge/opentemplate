@@ -34,10 +34,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           # Uses docker container,
           # disable-sudo-and-containers impossible
@@ -51,10 +48,7 @@ jobs:
             *.blob.core.windows.net:443
             github.com:443
       - name: "Checkout repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           sparse-checkout: |
             .github/actionlint.yaml
@@ -62,7 +56,7 @@ jobs:
             .github/actions
           persist-credentials: false
       - name: "Check workflow files"
-        # enq: hash with name and version always longer than 80 chars
+        # enq: the image reference is digest-pinned.
         # yamllint disable rule:line-length
         uses: "docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667" # v1.7.12
         # yamllint enable rule:line-length

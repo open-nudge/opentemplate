@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Digests"
+description: >
+  Output sha256sum of files named by their basenames (as stored in flat
+  artifacts), to be signed by an attestation job of the calling workflow
+
+inputs:
+  paths:
+    description: >
+      Files or globs (newline separated) chosen by the template, relative
+      to the directory, globs match hidden files, unmatched ones fail the step
+    required: true
+  directory:
+    description: "Directory the paths are relative to"
+    default: "."
+
+outputs:
+  digests:
+    description: "sha256sum of the files (basenames)"
+    value: "${{ steps.digests.outputs.digests }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get digests"
+      id: "digests"
+      shell: "bash"
+      working-directory: "${{ inputs.directory }}"
+      env:
+        PATHS: "${{ inputs.paths }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation
+      # macOS lacks sha256sum, Windows needs -t (text mode output format),
+      # otherwise names are prefixed with * (binary mode marker)
+      run: |
+        if [[ "${RUNNER_OS}" == "macOS" ]]; then
+          sha256=(shasum -a 256)
+        else
+          sha256=(sha256sum -t)
+        fi
+        shopt -s dotglob
+        {
+          echo "digests<<EOF"
+          while read -r pattern; do
+            # enq: glob expansion of the pattern is intentional
+            # shellcheck disable=SC2086
+            for file in ${pattern}; do
+              (cd "$(dirname "${file}")" && "${sha256[@]}" -- "$(basename "${file}")")
+            done
+          done <<< "${PATHS}"
+          echo "EOF"
+        } >> "${GITHUB_OUTPUT}"
+      # yamllint enable rule:indentation
+...
