@@ -58,6 +58,11 @@ on:
         description: "Additional endpoints to allow"
         required: false
         type: "string"
+      egress-policy:
+        description: "Harden runner egress policy (`block` or `audit`)"
+        required: false
+        type: "string"
+        default: "block"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -79,4 +84,5 @@ jobs:
       ref: "${{ inputs.ref }}"
       timeout-minutes: "${{ inputs.timeout-minutes }}"
       additional-allowed-endpoints: "${{ inputs.additional-allowed-endpoints }}"
+      egress-policy: "${{ inputs.egress-policy }}"
 ...
