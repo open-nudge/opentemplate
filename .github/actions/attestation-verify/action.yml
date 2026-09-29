@@ -1,0 +1,78 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Attestation Verify"
+description: >
+  Verify that every file is attested under its exact name for the released
+  commit and tag by a template workflow at the template commit in use.
+
+inputs:
+  files:
+    description: >
+      Files or globs (newline separated) in the directory (flat, names are
+      matched against the attested subject names), unmatched globs fail
+    required: true
+  signer:
+    description: "Template workflow (file name without .yml) signing the files"
+    required: true
+  directory:
+    description: "Directory containing the files"
+    default: "."
+  bundles:
+    description: >
+      Whether to keep all attestations of each file as <file>.sigstore.jsonl
+      next to it (offline verification by users)
+    default: "false"
+  token:
+    description: "Token with attestations read permission"
+    default: "${{ github.token }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get digests"
+      id: "digests"
+      uses: "$/.github/actions/digests"
+      with:
+        directory: "${{ inputs.directory }}"
+        paths: "${{ inputs.files }}"
+    - name: "Verify attestations"
+      shell: "bash"
+      working-directory: "${{ inputs.directory }}"
+      env:
+        GH_TOKEN: "${{ inputs.token }}"
+        DIGESTS: "${{ steps.digests.outputs.digests }}"
+        SIGNER: "${{ inputs.signer }}"
+        BUNDLES: "${{ inputs.bundles }}"
+        TEMPLATE_REPOSITORY: "${{ job.workflow_repository }}"
+        TEMPLATE_SHA: "${{ job.workflow_sha }}"
+      # enq: complex script, indentation rules would make it unreadable
+      # yamllint disable rule:indentation rule:line-length
+      # Bundle is named sha256:<digest>.jsonl (sha256-<digest>.jsonl on
+      # Windows), hence downloaded alone into its own directory
+      run: |
+        while read -r digest file; do
+          download="$(mktemp -d)"
+          (cd "${download}" && gh attestation download "${OLDPWD}/${file}" --repo "${GITHUB_REPOSITORY}" --limit 1000)
+          bundle=("${download}"/*.jsonl)
+          gh attestation verify "${file}" \
+            --bundle "${bundle[0]}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --signer-workflow "${TEMPLATE_REPOSITORY}/.github/workflows/${SIGNER}.yml" \
+            --signer-digest "${TEMPLATE_SHA}" \
+            --source-digest "${GITHUB_SHA}" \
+            --source-ref "${GITHUB_REF}" \
+            --deny-self-hosted-runners \
+            --format json \
+            | jq --exit-status --arg name "${file}" --arg digest "${digest}" \
+              'any(.[].verificationResult.statement.subject[]; .name == $name and .digest.sha256 == $digest)' \
+            > /dev/null
+          if [[ "${BUNDLES}" == "true" ]]; then
+            cp -- "${bundle[0]}" "${file}.sigstore.jsonl"
+          fi
+        done < <(awk NF <<< "${DIGESTS}")
+      # yamllint enable rule:indentation rule:line-length
+...

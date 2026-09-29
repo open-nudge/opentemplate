@@ -77,11 +77,7 @@ jobs:
               www.msftconnecttest.com:443
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/cache-item-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       group: "${{ matrix.install.group }}"
       core: true
@@ -122,11 +118,7 @@ jobs:
           - "json5"
           - "toml"
           - "xml"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/cache-item-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       group: "${{ matrix.group }}"
       ref: "${{ github.event.inputs.ref }}"

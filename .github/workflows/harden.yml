@@ -45,10 +45,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -79,10 +76,7 @@ jobs:
       - name: "Checkout latest target branch"
         # enq: Checkout credentials are required by the following globalization push.
         # zizmor: ignore[artipacked]
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           # enq: Bootstrap PAT authorizes the commit that globalizes workflow references.
           token: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
@@ -116,10 +110,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -168,62 +159,23 @@ jobs:
               ;;
           esac
         # yamllint enable rule:indentation
-      - name: "Calculate settings for the repository"
-        id: "settings"
-        env:
-          REPOSITORY_VISIBILITY: "${{ github.event.repository.visibility }}"
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation
-        run: |
-          case "${REPOSITORY_VISIBILITY}" in
-            "public" | "internal" )
-              echo "advanced_security=true" >> "${GITHUB_OUTPUT}"
-              echo "secret_scanning=true" >> "${GITHUB_OUTPUT}"
-              ;;
-            *)
-              echo "visibility=private" >> "${GITHUB_OUTPUT}"
-              ;;
-          esac
-        # yamllint enable rule:indentation
       - name: "Checkout repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           sparse-checkout: |
             .github/rulesets
           sparse-checkout-cone-mode: false
           persist-credentials: false
-      - name: "Wait for template setup to finish (guard)"
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation rule:line-length
-        run: |
-          printf "Waiting for branch 'gh-pages' to exist on GitHub...\n"
-
-          while true; do
-            # Check if the branch exists on the remote repository
-            if git ls-remote --exit-code --heads origin gh-pages &>/dev/null; then
-              printf "Branch 'gh-pages' exists!\n"
-              break
-            fi
-
-            sleep 1
-          done
       - name: "Adjust reviewers in rulesets"
         env:
           REVIEWERS: "${{ steps.reviewers.outputs.count }}"
           LAST_PUSH_APPROVAL: >-
             ${{ steps.reviewers.outputs.count != '0' && 'true' || 'false' }}
         run: >
-          sed -i \
-            -e "s/\"PLACEHOLDER_REVIEWERS\"/${REVIEWERS}/g" \
-            -e "s/\"PLACEHOLDER_LAST_PUSH_APPROVAL\"/${LAST_PUSH_APPROVAL}/g" \
-            .github/rulesets/branch-default-human.json
-      - name: "Check reviewers changed correctly"
-        run: >
-          cat .github/rulesets/branch-default-human.json
-        # yamllint enable rule:indentation rule:line-length
+          sed -i
+          -e "s/\"PLACEHOLDER_REVIEWERS\"/${REVIEWERS}/g"
+          -e "s/\"PLACEHOLDER_LAST_PUSH_APPROVAL\"/${LAST_PUSH_APPROVAL}/g"
+          .github/rulesets/branch-default.json
       - name: "Apply rulesets (public/enterprise/pro/team only)"
         # Administration write
         # https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28#create-a-repository-ruleset
@@ -235,21 +187,10 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          # enq: one line is more readable in this case
-          # yamllint disable rule:line-length
-          RULES_ENDPOINT: >-
-            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/rulesets
-          # yamllint enable rule:line-length
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation rule:line-length
         run: >
-          find .github/rulesets -name "*.json" -print0 | parallel -0 -j0 --halt now,fail=1 \
-            "gh api --method POST \
-              -H 'Accept: application/vnd.github+json' \
-              -H 'X-GitHub-Api-Version: 2022-11-28' \
-              '${RULES_ENDPOINT}' \
-              --input {}"
-        # yamllint enable rule:indentation rule:line-length
+          find .github/rulesets -name "*.json" -print0
+          | parallel -0 -j0 --halt now,fail=1
+          "gh api --method POST repos/${GITHUB_REPOSITORY}/rulesets --input {}"
       - name: "Enable GitHub Pages (public/enterprise only)"
         # Administration AND Pages write
         # https://docs.github.com/en/rest/pages/pages?apiVersion=2022-11-28#create-a-github-pages-site
@@ -260,17 +201,8 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          # enq: one line is more readable in this case
-          # yamllint disable rule:line-length
-          PAGES_ENDPOINT: >-
-            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/pages
-          # yamllint enable rule:line-length
         run: >
-          gh api
-          --method POST
-          -H "Accept: application/vnd.github+json"
-          -H "X-GitHub-Api-Version: 2022-11-28"
-          "${PAGES_ENDPOINT}"
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/pages"
           -f "source[branch]=gh-pages" -f "source[path]=/"
           -f "build_type=legacy"
       - name: "Apply general settings for the repository"
@@ -282,20 +214,13 @@ jobs:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           # enq: one line is more readable in this case
           # yamllint disable rule:line-length
-          ENDPOINT: >-
-            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}
           HOMEPAGE: >-
             https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
           # yamllint enable rule:line-length
         # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: >
-          cat <<EOF | gh api
-          --method PATCH
-          -H "Accept: application/vnd.github+json"
-          -H "X-GitHub-Api-Version: 2022-11-28"
-          "${ENDPOINT}"
-          --input -
+          cat <<EOF | gh api --method PATCH "repos/${GITHUB_REPOSITORY}" --input -
             {
               "allow_auto_merge": true,
               "allow_merge_commit": false,
@@ -322,20 +247,10 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          # enq: one line is more readable in this case
-          # yamllint disable rule:line-length
-          ENDPOINT: >-
-            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}
-          # yamllint enable rule:line-length
         # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: >
-          cat <<EOF | gh api
-          --method PATCH
-          -H "Accept: application/vnd.github+json"
-          -H "X-GitHub-Api-Version: 2022-11-28"
-          "${ENDPOINT}"
-          --input -
+          cat <<EOF | gh api --method PATCH "repos/${GITHUB_REPOSITORY}" --input -
             {
               "security_and_analysis": {
                 "advanced_security": {
@@ -378,17 +293,9 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          # enq: one line is more readable in this case
-          # yamllint disable rule:line-length
-          PRIVATE_VULNERABILITY_REPORTING_ENDPOINT: >-
-            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/private-vulnerability-reporting
-          # yamllint enable rule:line-length
         run: >
-          gh api
-          --method PUT
-          -H "Accept: application/vnd.github+json"
-          -H "X-GitHub-Api-Version: 2022-11-28"
-          "${PRIVATE_VULNERABILITY_REPORTING_ENDPOINT}"
+          gh api --method PUT
+          "repos/${GITHUB_REPOSITORY}/private-vulnerability-reporting"
       - name: "Enable vulnerability alerts (public only)"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-vulnerability-alerts
@@ -400,24 +307,11 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          # enq: one line is more readable in this case
-          # yamllint disable rule:line-length
-          VULNERABILITY_ALERTS_ENDPOINT: >-
-            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/vulnerability-alerts
-          # yamllint enable rule:line-length
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation
         run: >
-          gh api
-          --method PUT
-          -H "Accept: application/vnd.github+json"
-          -H "X-GitHub-Api-Version: 2022-11-28"
-          "${VULNERABILITY_ALERTS_ENDPOINT}"
-        # yamllint enable rule:indentation
+          gh api --method PUT "repos/${GITHUB_REPOSITORY}/vulnerability-alerts"
       - name: "Close the issue"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          REPOSITORY: "${{ github.event.repository.name }}"
         run: >
           gh issue close 1 --reason "completed"
 
@@ -431,11 +325,7 @@ jobs:
       security-events: "write" # Writing security events to upload SARIF file
       contents: "read"
       id-token: "write" # Needed for GitHub OIDC token if publish_results
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/security-scorecard-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       sarif: true
 ...

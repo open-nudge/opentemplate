@@ -1120,3 +1120,33 @@ ecosystem = "PyPI"
 name = "conventional-pre-commit"
 license.ignore = true
 reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "argcomplete"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "hishel"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "resolvelib"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "shellingham"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "trove-classifiers"
+license.ignore = true
+reason = "dev dependency"

@@ -31,10 +31,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           # Uses docker container,
           # disable-sudo-and-containers impossible
@@ -48,10 +45,7 @@ jobs:
             api.github.com:443
             github.com:443
       - name: "Checkout Repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           sparse-checkout: |
             .conform.yaml
@@ -61,10 +55,7 @@ jobs:
           # See here: https://github.com/siderolabs/conform/issues/231
           fetch-depth: 2
       - name: "Check policy compliance"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "siderolabs/conform@cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # v0.1.0-alpha.31
-        # yamllint enable rule:line-length
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
 ...

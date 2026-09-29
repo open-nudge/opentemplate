@@ -4,32 +4,34 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "SBOM Upload"
+name: "SARIF Upload"
 description: >
-  Predefined SBOM upload including GitHub SHAs and proper identifiers
+  Upload a SARIF file as an artifact and/or to GitHub code scanning
 
 inputs:
   file:
     description: >
-      Name of the artifact in the GitHub Actions UI
+      Path to the SARIF file
     default: ""
   name:
     description: >
-      A path to the file to upload (and artifact name)
+      Name of the artifact (default: '' - no artifact upload)
     default: ""
   sarif:
     description: >
-      Whether the artifact is a SARIF file
+      Whether to upload the file to GitHub code scanning
     default: "false"
+  category:
+    description: >
+      Code scanning category, distinguishes uploads of the same tool
+      (default: '' - derived from the workflow and job)
+    default: ""
 
 runs:
   using: "composite"
   steps:
     - name: "Upload artifact"
-      # enq: hash with name and version always longer than 80 chars
-      # yamllint disable rule:line-length
       uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
-      # yamllint enable rule:line-length
       if: >
         inputs.name != ''
       with:
@@ -42,10 +44,8 @@ runs:
         inputs.sarif == 'true'
       # SARIF upload may fail if there is no integration enabled
       continue-on-error: true
-      # enq: hash with name and version always longer than 80 chars
-      # yamllint disable rule:line-length
       uses: "github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
-      # yamllint enable rule:line-length
       with:
         sarif_file: "${{ inputs.file }}"
+        category: "${{ inputs.category }}"
 ...

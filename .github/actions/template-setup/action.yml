@@ -106,10 +106,7 @@ runs:
         https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
         >> .gitignore
     - name: "Setup PDM"
-      # enq: hash with name and version always longer than 80 chars
-      # yamllint disable rule:line-length
       uses: "pdm-project/setup-pdm@544d7237314ee09c256785bd360f6b30add38b37" # v4.6
-      # yamllint enable rule:line-length
     - name: "Create pdm.lock"
       shell: "bash"
       run: >

@@ -17,11 +17,7 @@ jobs:
   latest-release:
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/latest-release-sha-reusable.yml"
-    # yamllint enable rule:line-length
 
   security-sbom-python-update:
     needs:
@@ -34,14 +30,8 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
     name: "Security SBOM Python Update"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/security-sbom-python-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       ref: "${{ needs.latest-release.outputs.ref }}"
-      upload-artifact: true
-      upload-grype-artifact: true
-      upload-grype-sarif: true
+      upload-grype: true
 ...

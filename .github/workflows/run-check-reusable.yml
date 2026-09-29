@@ -58,6 +58,11 @@ on:
         description: "Additional endpoints to allow"
         required: false
         type: "string"
+      egress-policy:
+        description: "Harden runner egress policy (`block` or `audit`)"
+        required: false
+        type: "string"
+        default: "block"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -67,11 +72,7 @@ jobs:
     name: "Check"
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/run-reusable.yml"
-    # yamllint enable rule:line-length
     with:
       command: |
         pdm run check-${{ inputs.check }} ${{ inputs.arguments }}
@@ -83,4 +84,5 @@ jobs:
       ref: "${{ inputs.ref }}"
       timeout-minutes: "${{ inputs.timeout-minutes }}"
       additional-allowed-endpoints: "${{ inputs.additional-allowed-endpoints }}"
+      egress-policy: "${{ inputs.egress-policy }}"
 ...

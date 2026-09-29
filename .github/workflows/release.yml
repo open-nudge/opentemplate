@@ -14,17 +14,18 @@ on:
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
-# post runs on release changelog action
-# Only keep one release running at a time
-# The latest release will be the one that is kept
+# One run per release (workflow_ref contains the tag), never cancelled
+# as cancellation could interrupt publishing
 concurrency:
   group: >
-    ${{ github.workflow_ref }}-${{ github.ref }}
-  cancel-in-progress: true
+    ${{ github.workflow_ref }}
+  cancel-in-progress: false
 
 jobs:
   sboms:
     name: "SBOMs"
+    needs:
+      - "package-create"
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to security tab
@@ -32,14 +33,9 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/release-sboms-reusable.yml"
-    # yamllint enable rule:line-length
     with:
-      upload-grype-artifact: true
-      upload-grype-sarif: true
+      digests: "${{ needs.package-create.outputs.digests }}"
 
   sarifs:
     name: "SARIFs"
@@ -47,320 +43,124 @@ jobs:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to security tab
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
     uses: "$/.github/workflows/release-sarifs-reusable.yml"
-    # yamllint enable rule:line-length
 
   tests:
     name: "Tests"
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
     uses: "$/.github/workflows/tests-reusable.yml"
-    # yamllint enable rule:line-length
 
   docs:
     name: "Docs"
     permissions:
-      contents: "write" # Needed to write documentation to gh-pages directly
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
-    uses: "$/.github/workflows/run-reusable.yml"
-    # yamllint enable rule:line-length
-    with:
-      # Double checkout used to refresh the content of generated docs, which
-      # happens on some linux distributions at least.
-      # enq: long command, splitting is unreadable
-      # yamllint disable rule:line-length
-      command: |
-        export TAG="$(echo ${{ github.event.release.tag_name }} | cut -d. -f1,2)"
-        pdm run mike deploy "${TAG}" --branch "site-${{ github.sha }}" --ignore-remote-status
-        git checkout "site-${{ github.sha }}" -- .
-        mv "${TAG}" "site-${{ github.sha }}"
-      # yamllint enable rule:line-length
-      group: "docs"
-      core: true
-      fetch-depth: 0
-      full-checkout: true
-      additional-allowed-endpoints: >
-        fonts.google.com:443
-        fonts.gstatic.com:443
-      upload-name: >-
-        ${{ format('site-{0}', github.sha) }}
-      upload-path: >-
-        ${{ format('site-{0}', github.sha) }}
+      contents: "read"
+    uses: "$/.github/workflows/release-docs-reusable.yml"
 
   # Works regardless of repo type
   package-create:
     name: "Package Create"
     permissions:
       contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
-    uses: "$/.github/workflows/run-reusable.yml"
-    # yamllint enable rule:line-length
-    with:
-      command: "pdm build -v"
-      core: true
-      upload-name: "dist-${{ github.sha }}"
-      upload-path: "dist"
-      fetch-depth: 0
-      sparse-checkout: |
-        src/**
-
-  package-upload:
-    name: "Package Upload (${{ matrix.repository.name }})"
-    needs:
-      - "sboms"
-      - "sarifs"
-      - "tests"
-      - "docs"
-      - "package-create"
-      - "slsa-provenance"
-    if: >-
-      always() &&
-      !cancelled() &&
-      needs.sboms.result == 'success' &&
-      needs.sarifs.result == 'success' &&
-      needs.tests.result == 'success' &&
-      needs.docs.result == 'success' &&
-      needs.package-create.result == 'success' &&
-      (
-      github.event.repository.private ||
-      needs.slsa-provenance.result == 'success'
-      )
-    permissions:
-      id-token: "write" # Needed to sign the provenance
-    runs-on: "ubuntu-latest"
-    timeout-minutes: 30
-    strategy:
-      fail-fast: true
-      matrix:
-        repository:
-          - id: "pypi"
-            name: "PyPI"
-            url: "https://upload.pypi.org/legacy/"
-            release-url: "https://pypi.org/project/{name}/{version}/"
-            endpoints: >
-              fulcio.sigstore.dev:443
-              ghcr.io:443
-              pkg-containers.githubusercontent.com:443
-              pypi.org:443
-              pypi.python.org:443
-              rekor.sigstore.dev:443
-              tuf-repo-cdn.sigstore.dev:443
-              upload.pypi.org:443
-            attestations: true
-            skip: "${{ github.event.repository.private }}"
-            # Example for a test repository
-            # - id: "test-pypi"
-            #   name: "TestPyPI"
-            #   url: "https://test.pypi.org/legacy/"
-            #   release-url: >
-            #     https://test.pypi.org/project/{name}/{version}/
-            #   endpoints: >
-            #     fulcio.sigstore.dev:443
-            #     ghcr.io:443
-            #     pkg-containers.githubusercontent.com:443
-            #     rekor.sigstore.dev:443
-            #     test.pypi.org:443
-            #     tuf-repo-cdn.sigstore.dev:443
-            #   attestations: true
-            #   skip: >
-            #     ${{ github.event.repository.visibility != 'public' }}
-
-    # Change to the opentemplate reusable workflow
-    # once the issue below is resolved for SLSA3 compatibility
-    # https://github.com/pypi/warehouse/issues/11096
-    steps:
-      - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
-        with:
-          disable-sudo-and-containers: true
-          egress-policy: "block"
-          allowed-endpoints: >
-            api.github.com:443
-            github.com:443
-            *.actions.githubusercontent.com:443
-            codeload.github.com:443
-            results-receiver.actions.githubusercontent.com:443
-            *.blob.core.windows.net:443
-            ${{ matrix.repository.endpoints }}
-      - name: "Download artifacts"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
-        # yamllint enable rule:line-length
-        with:
-          name: "dist-${{ github.sha }}"
-          path: "dist"
-      - name: "Prepare repository descriptor"
-        if: >
-          ! matrix.repository.skip
-          && matrix.repository['release-url'] != ''
-        env:
-          RELEASE_URL_TEMPLATE: "${{ matrix.repository['release-url'] }}"
-          REPOSITORY_NAME: "${{ matrix.repository.name }}"
-        shell: "bash"
-        # enq: complex script, indentation rules would make it unreadable
-        # yamllint disable rule:indentation rule:line-length
-        run: |
-          shopt -s nullglob
-          sdists=(dist/*.tar.gz)
-
-          if (( ${#sdists[@]} != 1 )); then
-            echo "::error title=Invalid source distribution artifacts::Expected exactly one dist/*.tar.gz file, found ${#sdists[@]}."
-            exit 1
-          fi
-
-          sdist_name=${sdists[0]##*/}
-          sdist_stem=${sdist_name%.tar.gz}
-
-          if [[ ! "${sdist_stem}" =~ ^([^-]+)-([^-]+)$ ]]; then
-            echo "::error title=Invalid source distribution filename::Expected {name}-{version}.tar.gz, got ${sdist_name}."
-            exit 1
-          fi
-
-          package_name=${BASH_REMATCH[1]}
-          package_version=${BASH_REMATCH[2]}
-
-          release_url="${RELEASE_URL_TEMPLATE//\{name\}/${package_name}}"
-          release_url="${release_url//\{version\}/${package_version}}"
-
-          mkdir -p "package-repository"
-          jq --null-input \
-            --arg name "${REPOSITORY_NAME}" \
-            --arg url "${release_url}" \
-            '{name: $name, url: $url}' \
-            > "package-repository/repository.json"
-        # yamllint enable rule:indentation rule:line-length
-      - name: "Upload python package"
-        if: >
-          ! matrix.repository.skip
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        uses: "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33" # v1.14.2
-        # yamllint enable rule:line-length
-        with:
-          repository-url: "${{ matrix.repository.url }}"
-          packages-dir: "dist"
-          attestations: "${{ matrix.repository.attestations }}"
-          print-hash: true
-          skip-existing: true
-      - name: "Upload repository descriptor"
-        if: >
-          ! matrix.repository.skip
-          && matrix.repository['release-url'] != ''
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
-        # yamllint enable rule:line-length
-        with:
-          name: >-
-            dist-${{ github.sha }}-repository-${{ matrix.repository.id }}
-          path: "package-repository"
-          retention-days: 1
-          if-no-files-found: "error"
-
-  package-finalize:
-    name: "Package Finalize"
-    needs:
-      - "package-upload"
-    permissions:
-      contents: "read"
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
-    uses: "$/.github/workflows/release-package-upload-reusable.yml"
-    # yamllint enable rule:line-length
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
+    uses: "$/.github/workflows/release-build-reusable.yml"
 
   changelog:
     name: "Changelog"
     needs:
-      - "package-finalize"
-    permissions:
-      contents: "read"
-      pull-requests: "read" # Needed to read PR metadata during changelog gen
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
-    uses: "$/.github/workflows/release-changelog-reusable.yml"
-    # yamllint enable rule:line-length
-    with:
-      package-version: "${{ needs.package-finalize.outputs.package-version }}"
-
-  slsa-provenance:
-    name: "SLSA Provenance"
-    needs:
       - "sboms"
       - "sarifs"
       - "tests"
       - "docs"
       - "package-create"
-    if: >
-      github.event.repository.visibility == 'public'
     permissions:
-      actions: "read" # https://github.com/github/codeql-action/issues/2117
-      contents: "write" # Needed to upload SARIF file to CodeQL
-      id-token: "write" # Needed to sign the provenance
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
-    uses: "$/.github/workflows/release-slsa-provenance-reusable.yml"
-    # yamllint enable rule:line-length
+      contents: "read"
+      pull-requests: "read" # Needed to read PR metadata during changelog gen
+    uses: "$/.github/workflows/release-changelog-reusable.yml"
     with:
-      upload-assets: true
+      package-name: "${{ needs.package-create.outputs.package-name }}"
+      package-version: "${{ needs.package-create.outputs.package-version }}"
 
   github-upload:
     name: "GitHub Upload"
     needs:
       - "changelog"
-      - "slsa-provenance"
-    if: >-
-      always() &&
-      !cancelled() &&
-      needs.changelog.result == 'success' &&
-      (
-      github.event.repository.private ||
-      needs.slsa-provenance.result == 'success'
-      )
+      - "package-create"
     permissions:
       contents: "write" # Needed to push to the release
-    # enq: hash with name and version always longer than 80 chars
-    # yamllint disable rule:line-length
-    # enq: unpinned as it allows projects to use the latest
+      attestations: "read" # Needed to verify release assets
     uses: "$/.github/workflows/release-upload.yml"
-    # yamllint enable rule:line-length
     with:
-      tag: "${{ github.event.release.tag_name }}"
+      digests: "${{ needs.package-create.outputs.digests }}"
+
+  package-upload:
+    name: "Package Upload"
+    # Last, as the only irreversible step: runs once every asset is verified
+    needs:
+      - "github-upload"
+      - "package-create"
+    permissions:
+      id-token: "write" # Needed for trusted publishing and PyPI attestations
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 30
+    # Change to the opentemplate reusable workflow
+    # once the issue below is resolved for SLSA3 compatibility
+    # https://github.com/pypi/warehouse/issues/11096
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            codeload.github.com:443
+            fulcio.sigstore.dev:443
+            ghcr.io:443
+            github.com:443
+            pkg-containers.githubusercontent.com:443
+            pypi.org:443
+            pypi.python.org:443
+            rekor.sigstore.dev:443
+            results-receiver.actions.githubusercontent.com:443
+            tuf-repo-cdn.sigstore.dev:443
+            tuf-repo.github.com:443
+            upload.pypi.org:443
+      # Other jobs of the run can replace the artifact, but not job outputs
+      - name: "Get distributions"
+        uses: "$/.github/actions/dist-download"
+        with:
+          digests: "${{ needs.package-create.outputs.digests }}"
+      - name: "Upload python package"
+        if: >
+          ! github.event.repository.private
+        uses: "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33" # v1.14.2
+        with:
+          print-hash: true
 
   mark-release-untrustworthy:
     name: "Mark Release Untrustworthy"
+    # package-upload succeeds only if every other job did (transitively),
+    # always(): cancelled runs must be marked too
     needs:
-      - "slsa-provenance"
+      - "package-upload"
     if: >-
-      always() &&
-      !cancelled() &&
-      github.event.repository.visibility == 'public' &&
-      needs.slsa-provenance.result != 'success'
+      always() && needs.package-upload.result != 'success'
     permissions:
-      contents: "write" # Needed to mark the release untrustworthy when provenance fails.
+      contents: "write" # Needed to mark the release untrustworthy
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
     env:
       GH_TOKEN: "${{ github.token }}"
       GH_REPO: "${{ github.repository }}"
       TAG: "${{ github.event.release.tag_name }}"
-      SLSA_RESULT: "${{ needs.slsa-provenance.result }}"
       RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
     steps:
       - name: "Mark release as untrustworthy"
@@ -372,16 +172,16 @@ jobs:
 
           cat > "${notes_file}" <<EOF
           > [!CAUTION]
-          > **Trust warning:** This release is not publicly trustworthy because SLSA provenance did not complete successfully (\`${SLSA_RESULT}\`).
-          > See [the SLSA workflow run](${RUN_URL}) for details.
+          > **Trust warning:** This release is not trustworthy because its release workflow did not complete successfully.
+          > See [the release workflow run](${RUN_URL}) for details.
 
           > [!IMPORTANT]
-          > No packages were uploaded because provenance verification failed.
+          > Do not use any assets of this release.
 
           > [!CAUTION]
           > **If you see this release please open a new issue titled "Remove untrusted release", thank you!**
           EOF
 
-          gh release edit "${TAG}" --title "${title}" --notes-file "${notes_file}"
+          gh release edit "${TAG}" --title "${title}" --notes-file "${notes_file}" --latest=false --prerelease
         # yamllint enable rule:indentation rule:line-length
 ...

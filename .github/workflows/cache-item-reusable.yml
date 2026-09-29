@@ -65,10 +65,7 @@ jobs:
       contents: "read"
     steps:
       - name: "Harden Runner"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
-        # yamllint enable rule:line-length
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -87,10 +84,7 @@ jobs:
             release-assets.githubusercontent.com:443
             ${{ inputs.additional-allowed-endpoints }}
       - name: "Checkout repository"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        # yamllint enable rule:line-length
         with:
           sparse-checkout: |
             LICENSES
@@ -105,11 +99,7 @@ jobs:
           # after initial template usage
           ref: "${{ inputs.ref }}"
       - name: "Setup PDM and cache"
-        # enq: hash with name and version always longer than 80 chars
-        # yamllint disable rule:line-length
-        # enq: unpinned as it allows projects to use the latest
         uses: "$/.github/actions/pdm-setup"
-        # yamllint enable rule:line-length
         with:
           group: "${{ inputs.group }}"
           core: "${{ inputs.core }}"

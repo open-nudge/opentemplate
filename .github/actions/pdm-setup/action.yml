@@ -99,10 +99,7 @@ runs:
         echo "::info:: Cache type '${CACHE_CONTENT}'"
     - name: "Setup Caching PDM"
       id: "setup-pdm"
-      # enq: hash with name and version always longer than 80 chars
-      # yamllint disable rule:line-length
       uses: "pdm-project/setup-pdm@544d7237314ee09c256785bd360f6b30add38b37" # v4.6
-      # yamllint enable rule:line-length
       with:
         python-version: "${{ inputs.python-version }}"
         cache: true
@@ -114,11 +111,7 @@ runs:
       run: >
         mv "${TEMPORARY}/pdm.lock" ./
     - name: "PDM Compatibility"
-      # enq: hash with name and version always longer than 80 chars
-      # yamllint disable rule:line-length
-      # enq: unpinned as it allows projects to use the latest
       uses: "$/.github/actions/pdm-compatibility"
-      # yamllint enable rule:line-length
 
     - name: "Install group dependencies"
       if: >
@@ -138,19 +131,13 @@ runs:
         pdm install --prod -G:all --no-editable
     - name: "Install everything"
       shell: "bash"
-      env:
-        group: "${{ inputs.group }}"
       if: >
         inputs.all == 'true'
       run: >
         pdm install -G:all --no-editable
 
     - name: "PDM Compatibility"
-      # enq: hash with name and version always longer than 80 chars
-      # yamllint disable rule:line-length
-      # enq: unpinned as it allows projects to use the latest
       uses: "$/.github/actions/pdm-compatibility"
-      # yamllint enable rule:line-length
       with:
         restore: true
 ...
