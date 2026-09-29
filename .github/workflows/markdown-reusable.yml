@@ -45,6 +45,7 @@ jobs:
         scientific-python.org:443
         osv.dev:443
         semgrep.dev:443
+        docs.semgrep.dev:443
         github.blog:443
         git-cliff.org:443
         editorconfig.org:443
