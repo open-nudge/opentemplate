@@ -1,24 +1,21 @@
 {
-  "name": "tags-all",
+  "name": "tags-reserved",
   "target": "tag",
   "enforcement": "active",
   "conditions": {
     "ref_name": {
       "exclude": [],
       "include": [
-        "~ALL"
+        "refs/tags/main",
+        "refs/tags/master",
+        "refs/tags/gh-pages",
+        "refs/tags/HEAD"
       ]
     }
   },
   "rules": [
     {
-      "type": "deletion"
-    },
-    {
-      "type": "required_signatures"
-    },
-    {
-      "type": "update"
+      "type": "creation"
     }
   ],
   "bypass_actors": []
