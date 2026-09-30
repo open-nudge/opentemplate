@@ -15,6 +15,63 @@
         ]
       },
       "type": "pull_request"
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": false,
+        "do_not_enforce_on_create": false,
+        "required_status_checks": [
+          {
+            "context": "Commit / Commit Reusable / Check / Run",
+            "integration_id": 15368
+          },
+          {
+            "context": "Generation / Generation Reusable / Check / Run",
+            "integration_id": 15368
+          },
+          {
+            "context": "Legal / Legal Reusable / Check / Run",
+            "integration_id": 15368
+          },
+          {
+            "context": "Policy",
+            "integration_id": 15368
+          },
+          {
+            "context": "prek / prek Reusable",
+            "integration_id": 15368
+          },
+          {
+            "context": "Pull Request",
+            "integration_id": 15368
+          },
+          {
+            "context": "Release Check / Release Check Reusable / Check / Run",
+            "integration_id": 15368
+          },
+          {
+            "context": "Security OSV-Scanner / Security OSV-Scanner Reusable",
+            "integration_id": 15368
+          },
+          {
+            "context": "Security SBOM GitHub / SBOM Create",
+            "integration_id": 15368
+          },
+          {
+            "context": "Security SBOM Legal / SBOM Create",
+            "integration_id": 15368
+          },
+          {
+            "context": "Security Secrets",
+            "integration_id": 15368
+          },
+          {
+            "context": "Security Semgrep / Security Semgrep Reusable",
+            "integration_id": 15368
+          }
+        ]
+      }
     }
   ],
   "bypass_actors": [],

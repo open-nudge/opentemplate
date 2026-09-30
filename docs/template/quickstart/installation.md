@@ -74,6 +74,9 @@ outlining security hardening steps.
 - Enabled GitHub Pages for documentation hosting.
 - Applied [GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)
     (including [branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule)).
+- Required status checks (from GitHub Actions only) before merging to
+    the default branch.
+- Blocked tags shadowing long-running branches (e.g., a `main` tag).
 - Configured pull request defaults and other repository settings.
 - Activated GitHub security features (e.g., [private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability)).
 
