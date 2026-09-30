@@ -503,6 +503,8 @@ type_check_command = [
   "pyrefly",
   "check",
   "--output-format=json",
+  # mutants/ is gitignored, so pyrefly would otherwise skip all files
+  "--use-ignore-files=false",
 ]
 
 [tool.pymarkdown]
@@ -761,7 +763,7 @@ tests-coverage = { composite = [
   "pdm run coverage run -m pytest -vv -x --pretty --doctest-modules {args:tests src}",
   "pdm run coverage report",
 ] }
-tests-mutation = "mutmut run {args}"
+tests-mutation = { shell = ".github/tools/tests-mutation.sh {args}" }
 tests = { composite = [
   "pdm run tests-coverage {args:tests}",
   "pdm run tests-mutation",

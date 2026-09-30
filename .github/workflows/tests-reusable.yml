@@ -100,6 +100,7 @@ jobs:
       sparse-checkout: |
         **.py
         tests/**
+        .github/tools/tests-mutation.sh
       group: "tests"
       core: true
       os: "ubuntu-latest"
