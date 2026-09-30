@@ -15,7 +15,8 @@ This document outlines the testing process of `opentemplate`-based projects.
 - Collects doctests from source modules.
 - Measures test coverage with [`coverage`](https://github.com/nedbat/coveragepy)
     (default threshold: `100%`).
-- Runs mutation testing with [`mutmut`](https://mutmut.readthedocs.io/en/latest/).
+- Runs mutation testing with [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
+    (skipped without failing if there is nothing to mutate).
 - __Local testing:__ Runs on the latest three Python versions,
     following [SPEC 0](https://scientific-python.org/specs/spec-0000/),
     then runs mutation testing once.
