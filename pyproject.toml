@@ -253,6 +253,12 @@ dev-all = [
 [tool.hatch.version]
 source = "comver"
 
+[tool.hatch.build.targets.sdist]
+only-include = [
+  "src/opentemplate",
+  "LICENSES",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/opentemplate"]
 
