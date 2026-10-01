@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Reproducibility Setup"
+description: >
+  Set environment variables making builds and tests reproducible
+  for the rest of the job.
+inputs:
+  path:
+    description: "Git repository whose HEAD commit time is used as the epoch"
+    required: false
+    default: "."
+outputs:
+  source-date-epoch:
+    description: "SOURCE_DATE_EPOCH, HEAD commit time of the repository"
+    value: "${{ steps.setup.outputs.source-date-epoch }}"
+  seed:
+    description: "SEED of all test randomness (random unless already set)"
+    value: "${{ steps.setup.outputs.seed }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup reproducibility"
+      id: "setup"
+      shell: "bash"
+      env:
+        REPOSITORY: "${{ inputs.path }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation
+      run: |
+        epoch="$(git -C "${REPOSITORY}" log -1 --format=%ct)"
+        # Fits PYTHONHASHSEED range, consumed by tests pdm scripts
+        seed="${SEED:-$(( (RANDOM << 15) | RANDOM ))}"
+        {
+          echo "SOURCE_DATE_EPOCH=${epoch}"
+          echo "SEED=${seed}"
+          echo "TZ=UTC"
+          # Locale independent sorting, collation and messages
+          # (macOS has no C.UTF-8, release jobs run on Linux)
+          if [[ "${RUNNER_OS}" == "Linux" ]]; then
+            echo "LC_ALL=C.UTF-8"
+          fi
+        } >> "${GITHUB_ENV}"
+        {
+          echo "source-date-epoch=${epoch}"
+          echo "seed=${seed}"
+        } >> "${GITHUB_OUTPUT}"
+        echo "::notice title=Reproducibility::SOURCE_DATE_EPOCH=${epoch} SEED=${seed}"
+        echo "Reproducibility: \`SOURCE_DATE_EPOCH=${epoch}\`, \`SEED=${seed}\`" >> "${GITHUB_STEP_SUMMARY}"
+      # yamllint enable rule:indentation
+...
