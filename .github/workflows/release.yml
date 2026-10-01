@@ -106,6 +106,8 @@ jobs:
     needs:
       - "github-upload"
       - "package-create"
+    # Must match the environment registered as PyPI trusted publisher
+    environment: "pypi"
     permissions:
       id-token: "write" # Needed for trusted publishing and PyPI attestations
     runs-on: "ubuntu-latest"
