@@ -670,12 +670,14 @@ sort_commits = "oldest"
 #
 ###############################################################################
 
+# SEED (random in CI, see reproducibility-setup action) seeds all randomness
 tests-coverage = { composite = [
   "pdm run refresh",
   "pdm run coverage run -m pytest -vv -x --pretty --doctest-modules {args:tests src}",
   "pdm run coverage report",
-] }
-tests-mutation = { shell = ".github/tools/tests-mutation.sh {args}" }
+], env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--randomly-seed=${SEED:-0} --hypothesis-seed=${SEED:-0}" } }
+# mutmut disables pytest-randomly (unknown --randomly-seed)
+tests-mutation = { shell = ".github/tools/tests-mutation.sh {args}", env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--hypothesis-seed=${SEED:-0}" } }
 tests = { composite = [
   "pdm run tests-coverage {args:tests}",
   "pdm run tests-mutation",
@@ -876,7 +878,7 @@ setup = { composite = [
 # pdm run --project template --working-dir source sbom-legal
 sbom-python = { shell = """
   bash -c \
-  ' cyclonedx-py environment --mc-type library "$(PDM_IGNORE_ACTIVE_VENV=1 pdm info --python)"'
+  ' cyclonedx-py environment --mc-type library --output-reproducible "$(PDM_IGNORE_ACTIVE_VENV=1 pdm info --python)"'
 """ }
 
 sbom-legal = { shell = """
@@ -898,11 +900,13 @@ grep -rhoE 'uses:[[:space:]]*"?[[:alnum:]_-][^"[:space:]#]*@[^"[:space:]#]+' \
   .github ${SBOM_ACTIONS_EXTRA} \
   | sed -E 's/^uses:[[:space:]]*"?//' \
   | sort -u \
-  | jq -Rn '{
+  | jq -Rn --arg epoch "${SOURCE_DATE_EPOCH:-}" '{
       bomFormat: "CycloneDX",
       specVersion: "1.6",
       version: 1,
-      metadata: {timestamp: (now | todate)},
+      metadata: {
+        timestamp: (if $epoch == "" then now else ($epoch | tonumber) end | todate)
+      },
       components: [
         inputs
         | if startswith("docker://") then
@@ -934,8 +938,10 @@ check-release = { composite = [
   "sbom-all",
   "changelog",
   "changelog-latest",
-  "pdm build",
+  "build-dist",
 ] }
+
+build-dist = { shell = 'SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git log -1 --format=%ct)}" pdm build {args}' }
 
 ###############################################################################
 #

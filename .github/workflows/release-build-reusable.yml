@@ -77,6 +77,10 @@ jobs:
           path: "source"
           fetch-depth: 0
           persist-credentials: false
+      - name: "Setup reproducibility"
+        uses: "$/.github/actions/reproducibility-setup"
+        with:
+          path: "source"
       # The default branch accepts reviewed (pull request) commits only,
       # tags can point to any pushed commit (e.g. of an unreviewed branch)
       - name: "Reject commits outside of the default branch"

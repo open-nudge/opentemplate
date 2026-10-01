@@ -165,6 +165,7 @@ jobs:
               format(
                 'LICENSES
                 .github/actions/git-setup
+                .github/actions/reproducibility-setup
                 .github/actions/pdm-setup
                 .github/actions/pdm-compatibility
                 project
@@ -177,6 +178,7 @@ jobs:
                 LICENSE
                 LICENSES/*
                 .github/actions/git-setup
+                .github/actions/reproducibility-setup
                 .github/actions/pdm-setup
                 .github/actions/pdm-compatibility
                 pyproject.toml
@@ -190,6 +192,8 @@ jobs:
           sparse-checkout-cone-mode: "${{ inputs.cone }}"
           persist-credentials: false
 
+      - name: "Setup reproducibility"
+        uses: "$/.github/actions/reproducibility-setup"
       - name: "Setup git credentials"
         uses: "$/.github/actions/git-setup"
       - name: "Setup PDM"

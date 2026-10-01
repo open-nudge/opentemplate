@@ -109,6 +109,11 @@ jobs:
           ref: "${{ inputs.ref }}"
           path: "source"
           persist-credentials: false
+      # SBOM timestamps are derived from the source commit time
+      - name: "Setup reproducibility"
+        uses: "$/.github/actions/reproducibility-setup"
+        with:
+          path: "source"
       - name: "Setup template release tools"
         uses: "$/.github/actions/setup-release"
         with:

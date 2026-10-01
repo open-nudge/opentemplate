@@ -29,7 +29,7 @@ jobs:
         pdm run mike deploy "${TAG}" --branch "site-${GITHUB_SHA}" --ignore-remote-status
         git checkout "site-${GITHUB_SHA}" -- .
         mv "${TAG}" "site-${GITHUB_SHA}"
-        tar -cf "site-${GITHUB_SHA}.tar" "site-${GITHUB_SHA}"
+        tar -cf "site-${GITHUB_SHA}.tar" --sort=name --mtime="@${SOURCE_DATE_EPOCH}" --owner=0 --group=0 --numeric-owner "site-${GITHUB_SHA}"
       # yamllint enable rule:line-length
       group: "docs"
       core: true
