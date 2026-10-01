@@ -13,5 +13,7 @@ paths:
       - 'specifying action "\$/.+" in invalid format because ref is missing'
       # enq: job.workflow_* context is newer than actionlint v1.7.12
       - 'property "workflow_(repository|sha)" is not defined in object type'
+      # enq: cache-mode is newer than actionlint v1.7.12
+      - 'unexpected key "cache-mode" for "workflow" section'
       # yamllint enable rule:quoted-strings
 ...

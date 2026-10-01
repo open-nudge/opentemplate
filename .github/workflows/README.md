@@ -82,6 +82,11 @@ These workflows might be of special interest:
 Centralized caching (create from `main` branch) is used for all workflows,
 after PR merge, the cache is updated (if needed) and stored.
 
+Only `cache.yml` (and `template-setup.yml` for the initial commit)
+can write to the cache, `release.yml` does not use it at all
+(`cache-mode: "none"`), all other workflows use
+[`cache-mode: "read"`](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#controlling-cache-access-with-cache-mode).
+
 > [!NOTE]
 > Cache is optimized on a per-workflow basis, each
 > having a minimal set of necessary dependencies.
