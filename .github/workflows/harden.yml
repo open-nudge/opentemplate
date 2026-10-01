@@ -16,15 +16,30 @@ on:
           - "Free"
           - "Pro/Team"
           - "Enterprise"
-      reviewers:
-        description: "Number of reviewers available to review pull requests"
+      contributors:
+        description: "Number of contributors (including you)"
         type: "choice"
-        default: "0 (single contributor)"
+        default: "1 (solo)"
         options:
-          - "0 (single contributor)"
-          - "1"
-          - "2 (or more)"
+          - "1 (solo)"
+          - "2"
+          - "3 (or more)"
         required: true
+      release-reviewers:
+        description: >-
+          PyPI release approvers: GitHub usernames (e.g. "alice, bob").
+          Together with release-teams: at most 6 entries covering at least
+          2 distinct people (if 2 or more contributors)
+        type: "string"
+        default: ""
+        required: false
+      release-teams:
+        description: >-
+          PyPI release approver teams: organization team slugs (e.g. "core").
+          Counts toward the 6-entry limit shared with release-reviewers
+        type: "string"
+        default: ""
+        required: false
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -142,24 +157,157 @@ jobs:
               ;;
           esac
         # yamllint enable rule:indentation
-      - name: "Normalize reviewers values"
-        id: "reviewers"
+      - name: "Normalize contributors"
+        id: "contributors"
         env:
-          REVIEWERS: "${{ inputs.reviewers }}"
+          CONTRIBUTORS: "${{ inputs.contributors }}"
+        # Required pull request approvals (author excluded)
         # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: |
-          case "${REVIEWERS}" in
-            "0 (single contributor)")
-              echo "count=0" >> "${GITHUB_OUTPUT}"
+          case "${CONTRIBUTORS}" in
+            "1 (solo)")
+              echo "approvals=0" >> "${GITHUB_OUTPUT}"
               ;;
-            "1")
-              echo "count=1" >> "${GITHUB_OUTPUT}"
+            "2")
+              echo "approvals=1" >> "${GITHUB_OUTPUT}"
               ;;
             *)
-              echo "count=2" >> "${GITHUB_OUTPUT}"
+              echo "approvals=2" >> "${GITHUB_OUTPUT}"
               ;;
           esac
+        # yamllint enable rule:indentation
+      - name: "Parse PyPI release approvers"
+        # Runs before any change, so invalid approvers fail the setup early.
+        # Self-review prevention needs at least 2 distinct approvers (users and team
+        # members), otherwise a sole approver publishing a release could
+        # never approve its deployment (deadlock).
+        # Required reviewers in private repositories need Enterprise plan
+        id: "release-input"
+        env:
+          RELEASE_REVIEWERS: "${{ inputs.release-reviewers }}"
+          RELEASE_TEAMS: "${{ inputs.release-teams }}"
+          # GitHub limit on environment reviewers (users and teams combined)
+          MAX_REVIEWERS: "6"
+          REQUIRE_REVIEWERS: >-
+            ${{ steps.contributors.outputs.approvals != '0'
+            && (github.event.repository.visibility == 'public'
+            || steps.organization.outputs.type == 'enterprise')
+            && 'true' || 'false' }}
+        # enq: indentation disabled to aid bash script readability
+        # yamllint disable rule:indentation
+        run: |
+          fail() { echo "::error::$*"; exit 1; }
+          if [ "${REQUIRE_REVIEWERS}" != "true" ]; then
+            if [ -n "${RELEASE_REVIEWERS}${RELEASE_TEAMS}" ]; then
+              echo "::warning::release reviewers/teams ignored (solo or plan without environment reviewers)"
+            fi
+            echo "required=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          read -r -a users <<< "${RELEASE_REVIEWERS//,/ }"
+          read -r -a teams <<< "${RELEASE_TEAMS//,/ }"
+          if (( ${#users[@]} + ${#teams[@]} > MAX_REVIEWERS )); then
+            fail "At most ${MAX_REVIEWERS} release reviewers and teams combined are allowed"
+          fi
+          for entry in "${users[@]}" "${teams[@]}"; do
+            [[ "${entry}" =~ ^[A-Za-z0-9._-]+$ ]] \
+              || fail "Invalid release reviewer or team: ${entry}"
+          done
+          {
+            echo "required=true"
+            echo "users=${users[*]}"
+            echo "teams=${teams[*]}"
+          } >> "${GITHUB_OUTPUT}"
+        # yamllint enable rule:indentation
+      - name: "Resolve PyPI release reviewer users"
+        id: "release-users"
+        if: >
+          steps.release-input.outputs.required == 'true'
+        env:
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+          USERS: "${{ steps.release-input.outputs.users }}"
+        # enq: indentation disabled to aid bash script readability
+        # yamllint disable rule:indentation
+        run: |
+          fail() { echo "::error::$*"; exit 1; }
+          user_id() { gh api "users/$1" --jq 'select(.type == "User") | .id'; }
+          add() {
+            jq -c --argjson id "$1" --arg login "$2" \
+              '.reviewers += [{type: "User", id: $id}] | .people += [$login]'
+          }
+          resolved='{"reviewers":[],"people":[]}'
+          read -r -a users <<< "${USERS}"
+          for user in "${users[@]}"; do
+            if ! id=$(user_id "${user}") || [ -z "${id}" ]; then
+              fail "Release reviewer '${user}' is not an existing GitHub user"
+            fi
+            resolved=$(add "${id}" "${user}" <<< "${resolved}")
+          done
+          echo "resolved=${resolved}" >> "${GITHUB_OUTPUT}"
+        # yamllint enable rule:indentation
+      - name: "Resolve PyPI release reviewer teams"
+        id: "release-teams"
+        if: >
+          steps.release-input.outputs.required == 'true'
+        env:
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+          OWNER: "${{ github.repository_owner }}"
+          TEAMS: "${{ steps.release-input.outputs.teams }}"
+        # enq: indentation disabled to aid bash script readability
+        # yamllint disable rule:indentation
+        run: |
+          fail() { echo "::error::$*"; exit 1; }
+          team_id() { gh api "orgs/${OWNER}/teams/$1" --jq '.id'; }
+          team_members() {
+            gh api --paginate "orgs/${OWNER}/teams/$1/members" --jq '.[].login'
+          }
+          add() {
+            jq -c --argjson id "$1" --arg members "$2" \
+              '.reviewers += [{type: "Team", id: $id}]
+              | .people += ($members | split("\n") | map(select(. != "")))'
+          }
+          resolved='{"reviewers":[],"people":[]}'
+          read -r -a teams <<< "${TEAMS}"
+          for slug in "${teams[@]}"; do
+            id=$(team_id "${slug}") \
+              || fail "Release team '${slug}' not found in ${OWNER} (or token lacks members:read)"
+            members=$(team_members "${slug}") \
+              || fail "Could not list members of release team '${slug}'"
+            resolved=$(add "${id}" "${members}" <<< "${resolved}")
+          done
+          echo "resolved=${resolved}" >> "${GITHUB_OUTPUT}"
+        # yamllint enable rule:indentation
+      - name: "Validate PyPI release approvers"
+        id: "release-approvers"
+        if: >
+          steps.release-input.outputs.required == 'true'
+        env:
+          USERS: "${{ steps.release-users.outputs.resolved }}"
+          TEAMS: "${{ steps.release-teams.outputs.resolved }}"
+        # enq: indentation disabled to aid bash script readability
+        # yamllint disable rule:indentation
+        run: |
+          fail() { echo "::error::$*"; exit 1; }
+          merged() {
+            jq -c -n --argjson users "${USERS}" --argjson teams "${TEAMS}" \
+              "{users: \$users, teams: \$teams} | $1"
+          }
+          count=$(merged '.users.people + .teams.people
+            | map(ascii_downcase) | unique | length')
+          users=$(merged '.users.reviewers | length')
+          teams=$(merged '.teams.reviewers | length')
+          echo "::notice::Found ${count} distinct reviewer(s) (${users} user(s), ${teams} team(s))"
+          if [ "${count}" -lt 2 ]; then
+            fail "Release reviewers/teams must cover at least 2 distinct people (got ${count})"
+          fi
+          body=$(merged '{prevent_self_review: true,
+            reviewers: (.users.reviewers + .teams.reviewers | unique)}')
+          echo "body=${body}" >> "${GITHUB_OUTPUT}"
         # yamllint enable rule:indentation
       - name: "Checkout repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
@@ -170,9 +318,9 @@ jobs:
           persist-credentials: false
       - name: "Adjust reviewers in rulesets"
         env:
-          REVIEWERS: "${{ steps.reviewers.outputs.count }}"
+          REVIEWERS: "${{ steps.contributors.outputs.approvals }}"
           LAST_PUSH_APPROVAL: >-
-            ${{ steps.reviewers.outputs.count != '0' && 'true' || 'false' }}
+            ${{ steps.contributors.outputs.approvals != '0' && 'true' || 'false' }}
         run: >
           sed -i
           -e "s/\"PLACEHOLDER_REVIEWERS\"/${REVIEWERS}/g"
@@ -311,6 +459,20 @@ jobs:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
         run: >
           gh api --method PUT "repos/${GITHUB_REPOSITORY}/vulnerability-alerts"
+      - name: "Create PyPI release environment (public/enterprise/pro/team only)"
+        # Administration write
+        # https://docs.github.com/en/rest/deployments/environments?apiVersion=2022-11-28#create-or-update-an-environment
+        if: >
+          github.event.repository.visibility == 'public'
+          || steps.organization.outputs.type == 'enterprise'
+          || steps.organization.outputs.type == 'pro'
+        env:
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+          BODY: "${{ steps.release-approvers.outputs.body || '{}' }}"
+        run: >
+          printf '%s' "${BODY}" | gh api --method PUT
+          "repos/${GITHUB_REPOSITORY}/environments/pypi" --input -
       - name: "Close the issue"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
