@@ -553,181 +553,92 @@ header = """
 # template for the changelog body
 # https://keats.github.io/tera/docs/#introduction
 body = """
-{%- macro remote_url() -%}
-  https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
+{#- "true" if commit has PR labels (with/without label) and matching author -#}
+{%- macro matches(commit, label="", contains=true, bot="ignore") -%}
+  {%- set labels = commit.remote.pr_labels | default(value=[]) -%}
+  {%- set is_bot = "[bot]" in commit.author.name -%}
+  {{- (not label or (labels and contains and label in labels) or (labels and not contains and label not in labels))
+    and (bot == "ignore" or (bot and is_bot) or (not bot and not is_bot)) -}}
 {%- endmacro -%}
 
-{%- if version -%}
-  {% if previous.version %}
-    # [{{ version | trim_start_matches(pat="v") }}]({{ self::remote_url() }}/compare/{{ previous.version }}..{{ version }}) \
-    - {{ timestamp | date(format="%Y-%m-%d") }} \
-    ([vs HEAD]({{ self::remote_url() }}/compare/{{ version }}..HEAD))
-  {%- else -%}
-    # {{ version | trim_start_matches(pat="v") }} - {{ timestamp | date(format="%Y-%m-%d") }} \
-    ([vs HEAD]({{ self::remote_url() }}/compare/{{ version }}..HEAD))
-  {%- endif %}
-{%- else -%}
-# Untagged ([vs HEAD]({{ self::remote_url() }}/compare/..HEAD))
+{%- macro count(commits, label="", contains=true, bot="ignore") -%}
+  {%- set_global n = 0 -%}
+  {%- for commit in commits -%}
+    {%- set match = self::matches(commit=commit, label=label, contains=contains, bot=bot) -%}
+    {%- if match == "true" -%}{%- set_global n = n + 1 -%}{%- endif -%}
+  {%- endfor -%}
+  {{- n -}}
+{%- endmacro -%}
+
+{%- macro display(commits, header, python, labels, url, bot=false, display_group=false) -%}
+  {%- set n = self::count(commits=commits, label="python", contains=python, bot=bot) -%}
+  {%- if n != "0" %}
+
+### {{ header }} ({{ n }} commits)
+{% endif -%}
+  {%- for commit in commits -%}
+    {%- set match = self::matches(commit=commit, label="python", contains=python, bot=bot) -%}
+    {%- if match == "true" %}
+- {% if display_group %}[{% if commit.group == "feat" %}FEATURE{% else %}FIX{% endif %}] {% endif -%}
+  {{ commit.message | split(pat="\n") | first | upper_first | trim }}
+  {%- if commit.remote.username %} (by [__@{{ commit.remote.username }}__](https://github.com/{{ commit.remote.username }}))
+  {%- elif "[bot]" in commit.author.name %} (by __@{{ commit.author.name }}__ [BOT])
+  {%- elif commit.author.name %} (by __@{{ commit.author.name }}__)
+  {%- endif -%}
+  {%- if commit.remote.pr_number %} ([#{{ commit.remote.pr_number }}]({{ url }}/pull/{{ commit.remote.pr_number }})){% endif -%}
+  {%- for label in commit.remote.pr_labels | default(value=[]) -%}
+    {%- if label in labels %} [{{ label | upper }}]{% endif -%}
+  {%- endfor -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endmacro -%}
+
+{%- set url = "https://github.com/" ~ remote.github.owner ~ "/" ~ remote.github.repo %}
+{% if version -%}
+  {%- set name = version | trim_start_matches(pat="v") -%}
+  {%- if previous.version %}{% set name = "[" ~ name ~ "](" ~ url ~ "/compare/" ~ previous.version ~ ".." ~ version ~ ")" %}{% endif %}
+# {{ name }} - {{ timestamp | date(format="%Y-%m-%d") }} ([vs HEAD]({{ url }}/compare/{{ version }}..HEAD))
+{%- else %}
+# Untagged ([vs HEAD]({{ url }}/compare/..HEAD))
 {%- endif %}
 
 __Commits by type__
 
-{% set total = commits | length -%}
-
-{%- set human = self::count_commits(commits=commits, bot=false) -%}
-{%- set bot = self::count_commits(commits=commits, bot=true) -%}
-
-{%- set python = self::count_commits(commits=commits, label="python") -%}
-{%- set other = self::count_commits(commits=commits, label="python", contains=false) -%}
-
+{% set human = self::count(commits=commits, bot=false) -%}
+{%- set bots = self::count(commits=commits, bot=true) -%}
+{%- set py = self::count(commits=commits, label="python") -%}
+{%- set other = self::count(commits=commits, label="python", contains=false) -%}
 Total | Human | Bots | Python | Other
-:---: | :---: | :---:|  :---: | :---:
-{{ total }} | {{ human }} | {{ bot }} | {{ python }} | {{ other }}
+:---: | :---: | :---: | :---: | :---:
+{{ commits | length }} | {{ human }} | {{ bots }} | {{ py }} | {{ other }}
 
 __Commits by labels__
 
-{% set security = self::count_commits(commits=commits, label="security") -%}
-{%- set tests = self::count_commits(commits=commits, label="tests") -%}
-{%- set legal = self::count_commits(commits=commits, label="legal") -%}
-{%- set docs = self::count_commits(commits=commits, label="docs") -%}
-{%- set actions = self::count_commits(commits=commits, label="actions") -%}
-{%- set deps = self::count_commits(commits=commits, label="deps") -%}
-{%- set config = self::count_commits(commits=commits, label="config") -%}
+{% set labels = ["security", "tests", "legal", "docs", "actions", "config", "deps"] -%}
+Security | Tests | Legal | Docs | Actions | Config | Dependencies
+:---: | :---: | :---: | :---: | :---: | :---: | :---:
+{% for label in labels %}{{ self::count(commits=commits, label=label) }}{% if not loop.last %} | {% endif %}{% endfor %}
 
-Security | Tests | Legal | Docs | Actions | Config | Dependencies |
-  :---:  | :---: | :---: | :---:|  :---:  |  :---: |    :---:     |
-{{ security }} | {{ tests }} | {{ legal }} | {{ docs }} | {{ actions }} | {{ config }} | {{ deps }}
+{%- set repositories = get_env(name="PACKAGE_REPOSITORIES", default="") | trim -%}
+{%- set package_version = get_env(name="PYTHON_PACKAGE_VERSION", default="") -%}
+{%- for python in [true, false] -%}
+  {%- set n = self::count(commits=commits, label="python", contains=python) -%}
+  {%- if n != "0" %}
 
-{% set package_repositories = get_env(name="PACKAGE_REPOSITORIES", default="") | trim -%}
-{%- set python_data = [python, "Python", true, get_env(name="PYTHON_PACKAGE_VERSION", default="")] -%}
-{%- set other_data = [other, "Other", false, ""] -%}
-{%- set data = [python_data, other_data] -%}
-
-{%- for item in data%}
-  {%- if item[0] != "0" -%}
-    ## {{ item[1] }} ({% if item[3] %}v{{ item[3] }}, {% endif %}{{ item[0] }} commits)
-    {%- if item[2] and package_repositories %}
+## {% if python %}Python ({% if package_version %}v{{ package_version }}, {% endif %}{% else %}Other ({% endif %}{{ n }} commits)
+    {%- if python and repositories %}
 
 ### Repositories
 
-{{ package_repositories }}
-    {%- endif %}
-    {{- self::display(
-      commits=commits | filter(attribute="breaking", value=true),
-      header="Breaking changes",
-      python=item[2],
-      display_group=true,
-    )-}}
-    {{- self::display(
-      commits=commits | filter(attribute="breaking", value=false) | filter(attribute="group", value="feat"),
-      header="Features",
-      python=item[2],
-    )-}}
-    {{- self::display(
-      commits=commits | filter(attribute="breaking", value=false) | filter(attribute="group", value="fix"),
-      header="Fixes",
-      python=item[2],
-    )-}}
-    {{- self::display(
-      commits=commits,
-      header="Bots",
-      python=item[2],
-      display_group=true,
-      bot=true,
-    )-}}
-  {% endif -%}
-{% endfor %}
-
-{%- macro count_commits(commits, label=false, bot="ignore", contains=true) -%}
-  {% set counter = 0 %}
-  {%- for commit in commits %}
-    {%- if
-      (
-        not label or
-        (
-          (contains and commit.remote.pr_labels and label in commit.remote.pr_labels)
-          or
-          (not contains and commit.remote.pr_labels and label not in commit.remote.pr_labels)
-        )
-      )
-      and
-      (
-        bot == "ignore"
-        or
-        (not bot and not "[bot]" in commit.author.name)
-        or
-        (bot and "[bot]" in commit.author.name)
-      )
-    -%}
-      {%- set_global counter = counter + 1 -%}
+{{ repositories }}
     {%- endif -%}
-  {%- endfor -%}
-  {{- counter -}}
-{%- endmacro -%}
-
-{%- macro display(commits, header, python, bot=false, display_group=false) -%}
-  {%- set n_commits = self::count_commits(
-    commits=commits,
-    label="python",
-    bot=bot,
-    contains=python,
-  ) -%}
-  {%- if n_commits != "0" %}
-
-    ### {{ header }} ({{ n_commits }} commits)
-
-  {% endif -%}
-  {%- for commit in commits -%}
-    {%- if
-      (
-        python == "ignore"
-        or
-        (python and commit.remote.pr_labels and "python" in commit.remote.pr_labels)
-        or
-        (not python and commit.remote.pr_labels and "python" not in commit.remote.pr_labels)
-      )
-      and
-      (
-        bot == "ignore"
-        or
-        (bot and "[bot]" in commit.author.name)
-        or
-        (not bot and not "[bot]" in commit.author.name)
-      )
-    -%}
-      - \
-      {% if display_group -%}
-        {% if commit.group == "feat" -%}[FEATURE] \
-        {% elif commit.group == "fix" -%}[FIX] \
-        {% else -%}[?] \
-        {% endif -%}
-      {%- endif -%}
-      {{ commit.message | split(pat="\n") | first | upper_first | trim }} \
-      {% if commit.remote.username -%}
-        (by [__@{{ commit.remote.username }}__](https://github.com/{{ commit.remote.username }})) \
-      {% elif "[bot]" in commit.author.name -%}
-        (by __@{{ commit.author.name }}__ [BOT]) \
-      {% elif commit.author.name -%}
-        (by __@{{ commit.author.name }}__) \
-      {% endif -%}
-      {% if commit.remote.pr_number -%}
-        ([#{{ commit.remote.pr_number }}]({{ self::remote_url() }}/pull/{{ commit.remote.pr_number }}))
-      {%- endif %}
-      {%- if commit.remote.pr_labels and commit.remote.pr_labels | length > 0 %}
-        {%- for label in commit.remote.pr_labels -%}
-          {%- if label == "security" %} [SECURITY]
-          {%- elif label == "tests" %} [TESTS]
-          {%- elif label == "legal" %} [LEGAL]
-          {%- elif label == "docs" %} [DOCS]
-          {%- elif label == "actions" %} [ACTIONS]
-          {%- elif label == "config" %} [CONFIG]
-          {%- elif label == "deps" %} [DEPS]
-          {%- endif -%}
-        {%- endfor %}
-      {%- endif %}
-    {%- endif %}
-  {% endfor -%}
-{%- endmacro -%}
+    {%- set non_breaking = commits | filter(attribute="breaking", value=false) -%}
+    {{- self::display(commits=commits | filter(attribute="breaking", value=true), header="Breaking changes", python=python, labels=labels, url=url, display_group=true) -}}
+    {{- self::display(commits=non_breaking | filter(attribute="group", value="feat"), header="Features", python=python, labels=labels, url=url) -}}
+    {{- self::display(commits=non_breaking | filter(attribute="group", value="fix"), header="Fixes", python=python, labels=labels, url=url) -}}
+    {{- self::display(commits=commits, header="Bots", python=python, labels=labels, url=url, bot=true, display_group=true) -}}
+  {%- endif -%}
+{%- endfor %}
 """
 
 footer = ""
