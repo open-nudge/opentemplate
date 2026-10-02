@@ -21,6 +21,18 @@ and are run periodically as vulnerabilities evolve, namely:
 - __Security posture analysis:__ [`ossf/scorecard`](https://github.com/ossf/scorecard)
 - __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
 - __Bug detection and code quality:__ [`semgrep/semgrep`](https://github.com/semgrep/semgrep)
+- __GitHub Actions analysis:__ [CodeQL](https://codeql.github.com/)
+
+> [!NOTE]
+> These also run after every merge to `main`, so the GitHub Security tab
+> (and the baseline pull request alerts are compared against) stays current.
+> SBOM scans (`security-sbom-*-update.yml`) target the latest release
+> instead, therefore run on schedule only.
+
+## Cache
+
+Dependency caches are rebuilt after every merge to `main` and weekly,
+so they are not evicted by GitHub (unused for 7 days).
 
 ## prek (previously pre-commit)
 
@@ -50,6 +62,9 @@ Together with GitHub Actions, these ensure:
 ## Code sources
 
 - `.github/workflows/prek*.yml`
-- `.github/workflows/security-osv-scanner-update*.yml`
+- `.github/workflows/security-osv-scanner*.yml`
 - `.github/workflows/security-semgrep*.yml`
+- `.github/workflows/security-codeql*.yml`
+- `.github/workflows/security-scorecard-update.yml`
+- `.github/workflows/cache.yml`
 - `.github/workflows/generation*.yml`

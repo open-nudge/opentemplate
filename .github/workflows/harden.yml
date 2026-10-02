@@ -272,6 +272,21 @@ jobs:
             }
           EOF
         # yamllint enable rule:indentation
+        # Default CodeQL conflicts with opentemplate setup
+      - name: "Disable CodeQL default setup (best effort)"
+        # Default setup rejects SARIFs of security-codeql-reusable.yml
+        # (may be enforced by organization security configuration)
+        # Administration write
+        # https://docs.github.com/en/rest/code-scanning/code-scanning?apiVersion=2022-11-28#update-a-code-scanning-default-setup-configuration
+        continue-on-error: true
+        env:
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+        run: >
+          gh api --method PATCH
+          "repos/${GITHUB_REPOSITORY}/code-scanning/default-setup"
+          -f "state=not-configured"
       - name: "Enable discussions"
         # Discussions cannot be managed via API currently
         # See here: https://github.com/orgs/community/discussions/46930

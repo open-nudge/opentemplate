@@ -172,7 +172,7 @@ jobs:
       - "release-build"
     if: >
       github.event_name == 'release'
-      && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
+      && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
     permissions:

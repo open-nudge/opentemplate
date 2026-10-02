@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Security Semgrep"
+name: "Security CodeQL"
 
 on:
   pull_request:
@@ -29,21 +29,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  security-semgrep:
+  security-codeql:
     permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "read" # Needed by CodeQL init and analyze (no upload)
       contents: "read"
-    name: "Security Semgrep"
-    uses: "$/.github/workflows/security-semgrep-reusable.yml"
+    name: "Security CodeQL"
+    uses: "$/.github/workflows/security-codeql-reusable.yml"
     with:
-      name: "semgrep"
+      name: "codeql"
 
   # Separate job, so PRs (which do not upload) run without write permissions
-  security-semgrep-upload:
-    name: "Security Semgrep Upload"
-    needs: "security-semgrep"
-    # Also on failure, so findings reach the Security tab
+  security-codeql-upload:
+    name: "Security CodeQL Upload"
+    needs: "security-codeql"
+    # Also on failure (findings), digests are empty if CodeQL was skipped
+    # (see security-codeql-reusable.yml) or produced no SARIF
     if: >
       !cancelled()
+      && needs.security-codeql.outputs.digests != ''
       && github.event_name != 'pull_request'
       && github.event_name != 'merge_group'
     permissions:
@@ -51,6 +55,6 @@ jobs:
       security-events: "write" # Needed to upload SARIF file to tab
     uses: "$/.github/workflows/security-upload-reusable.yml"
     with:
-      name: "semgrep"
-      category: "/tool:semgrep/scope:repository/language:all"
+      name: "codeql"
+      category: "/tool:codeql/scope:workflows/language:actions"
 ...

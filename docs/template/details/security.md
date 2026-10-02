@@ -30,6 +30,7 @@ Key security checks include:
 - __Language-specific security checks:__
 
     - [`zizmor`](https://github.com/woodruffw/zizmor) for GitHub Actions security
+    - [CodeQL](https://codeql.github.com/) for GitHub Actions security (CI only)
     - [`semgrep/semgrep`](https://github.com/semgrep/semgrep) for Python/general
 
 - __Pinned dependencies:__ [OSSF Scorecard](https://github.com/ossf/scorecard/blob/main/docs/checks.md#pinned-dependencies)
@@ -82,6 +83,29 @@ Following [Open Source Security Foundation best practices](https://www.bestpract
 Most security configurations (e.g., `check-security`, `check-workflow`) are in `pyproject.toml`.
 Additional security workflows are in `.github/workflows` (prefix: `security-`).
 
+### Security tab categories
+
+Scanners do not upload results themselves (pull requests run without write
+permissions). Their SARIF files are uploaded by
+`.github/workflows/security-upload-reusable.yml` on `main` (push and weekly)
+and during releases, one analysis per tool, categorized as
+`/tool:<tool>/scope:<scope>/language:<language>`:
+
+<!-- pyml disable-num-lines 9 line-length-->
+
+| Tool        | Category                                               |
+| ----------- | ------------------------------------------------------ |
+| CodeQL      | `/tool:codeql/scope:workflows/language:actions`        |
+| Semgrep     | `/tool:semgrep/scope:repository/language:all`          |
+| OSV-Scanner | `/tool:osv-scanner/scope:dependencies/language:python` |
+| Grype       | `/tool:grype/scope:sbom-<name>/language:python`        |
+| Scorecard   | `/tool:scorecard/scope:repository/language:all`        |
+
+> [!NOTE]
+> Analyses uploaded under other categories (e.g. by previous template
+> versions) are not replaced. Delete them under
+> __Security → Code scanning → Tool status__ so their alerts get closed.
+
 ### OSV Scanner
 
 To ignore specific vulnerabilities, modify `osv-scanner.toml` ([docs](https://google.github.io/osv-scanner/configuration/)).
@@ -92,6 +116,35 @@ To ignore specific vulnerabilities, modify `osv-scanner.toml` ([docs](https://go
 
 > [!TIP]
 > `osv-scanner.toml` settings are respected by OSSF Scorecard.
+
+### CodeQL
+
+[CodeQL](https://codeql.github.com/) only analyzes GitHub Actions workflows
+(`.github/workflows/security-codeql*.yml`).
+Pull requests fail on any finding, while results are uploaded to the
+Security tab on `main` (push and weekly) and attached to releases.
+
+> [!IMPORTANT]
+> Dismissing an alert in the Security tab does not affect the check,
+> the findings have to be fixed.
+
+> [!WARNING]
+> GitHub's CodeQL _default setup_ rejects uploads of the advanced setup.
+> `harden.yml` disables it (best effort), otherwise go to
+> __Settings → Advanced Security → CodeQL analysis → ⋯__
+> and choose __Disable CodeQL__ (or __Switch to advanced__).
+> If an organization security configuration enforces default setup,
+> an organization owner has to change it.
+
+> [!NOTE]
+> Advanced setup needs no switch, the first upload enables code scanning
+> for public repositories. Private repositories need
+> [GitHub Code Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security)
+> (formerly part of GitHub Advanced Security); without it set the
+> `NO_GITHUB_CODE_SECURITY` configuration variable (repository or
+> organization) to any value, e.g. `true`, to skip CodeQL (the required
+> check passes as skipped).
+> __This escape hatch is ignored for public and internal repositories!__
 
 ### Conform
 

@@ -20,10 +20,6 @@ on:
           default: '' - no artifact upload
         type: "string"
         default: ""
-      sarif:
-        description: "Upload SARIF file to CodeQL"
-        type: "boolean"
-        default: false
       continue-on-error:
         description: "Whether to continue on error"
         type: "boolean"
@@ -38,11 +34,9 @@ jobs:
     runs-on: "ubuntu-latest"
     timeout-minutes: 30
     permissions:
-      actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
     outputs:
-      digests: "${{ steps.digests.outputs.digests }}"
+      digests: "${{ steps.upload.outputs.digests }}"
     env:
       FILE: "${{ inputs.name || 'osv-scanner' }}.sarif"
     steps:
@@ -80,17 +74,12 @@ jobs:
             --config=osv-scanner.toml
             --licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0
             ./
-      - name: "Get digests"
-        id: "digests"
-        if: >
-          inputs.name != ''
-        uses: "$/.github/actions/digests"
-        with:
-          paths: "${{ env.FILE }}"
       - name: "Upload files"
+        id: "upload"
+        if: >
+          !cancelled()
         uses: "$/.github/actions/sarif-upload"
         with:
           name: "${{ inputs.name }}"
           file: "${{ env.FILE }}"
-          sarif: "${{ inputs.sarif }}"
 ...
