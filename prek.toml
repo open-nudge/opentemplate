@@ -214,7 +214,6 @@ rev = "c10f2d55ee931fe01984e21c0182aa36e27ff986" # frozen: v1.178.0
   name = "<<<CHECK>>> Security"
   args = [
     "scan",
-    "--experimental",
     "--exclude=*pdm.lock",
     "--config=p/python",
     "--config=p/secrets",
