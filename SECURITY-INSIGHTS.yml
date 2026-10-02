@@ -56,6 +56,33 @@ security-testing:
       - "Dependency review action is ran during CI and before every release."
       - "It checks for vulnerabilities in the dependencies of the project."
       - "Low severity brings alerts to the PR (although PR might be merged)."
+  - tool-type: "sca"
+    tool-name: "OSV-Scanner"
+    tool-url: "https://github.com/google/osv-scanner"
+    tool-version: "latest"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+    comment: |
+      - "OSV-Scanner is ran during CI, on the main branch and before every release."
+      - "It checks dependencies for known vulnerabilities and licenses."
+      - Sarif files are uploaded to the GitHub Security tab
+      (category /tool:osv-scanner/scope:dependencies/language:python)
+      and attested in releases
+  - tool-type: "sca"
+    tool-name: "Grype"
+    tool-url: "https://github.com/anchore/grype"
+    tool-version: "latest"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+    comment: |
+      - "Grype scans every SBOM during CI and before every release."
+      - Sarif files are uploaded to the GitHub Security tab
+      (category /tool:grype/scope:sbom-<name>/language:python)
+      and attested in releases together with the SBOMs
   # SAST
   - tool-type: "sast"
     tool-name: "Security Scorecard"
@@ -69,7 +96,8 @@ security-testing:
       - "OpenSSF Scorecard is run periodically on the main branch."
       - "It assess the security posture of the project."
       - Sarif files are uploaded to the GitHub Security tab
-      (only for open source projects)
+      (only for open source projects,
+      category /tool:scorecard/scope:repository/language:all)
   - tool-type: "sast"
     tool-name: "Semgrep"
     tool-url: "https://semgrep.dev/"
@@ -83,7 +111,24 @@ security-testing:
       - "It checks for known Python vulnerabilities."
       - "It is an open-source version instead of Semgrep CI"
       - Sarif files are uploaded to the GitHub Security tab
-      (for open source projects)
+      (for open source projects,
+      category /tool:semgrep/scope:repository/language:all)
+      and attested in releases
+  - tool-type: "sast"
+    tool-name: "CodeQL"
+    tool-url: "https://codeql.github.com/"
+    tool-version: "latest"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+    comment: |
+      - "CodeQL analysis is ran during CI, on the main branch and before every release."
+      - "It checks GitHub Actions workflows only (Python is not analyzed)."
+      - Sarif files are uploaded to the GitHub Security tab
+      (for open source projects,
+      category /tool:codeql/scope:workflows/language:actions)
+      and attested in releases
   - tool-type: "sast"
     tool-name: "Prek hooks"
     tool-url: >

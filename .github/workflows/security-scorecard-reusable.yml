@@ -33,7 +33,7 @@ jobs:
     runs-on: "ubuntu-latest"
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "write" # Needed to to upload SARIF file to tab
+      security-events: "write" # Needed to upload SARIF file to tab
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
     steps:
@@ -90,8 +90,9 @@ jobs:
           publish_results: "${{ inputs.sarif }}"
           # yamllint enable rule:line-length
           # Everything below is the same as ../actions/sarif-upload/action.yml
-          # but had to be copy-pasted as custom actions are not allowed by
-          # ossf/scorecard-action
+          # but had to be copy-pasted, as ossf/scorecard-action verifies
+          # this job when publishing results (only allowlisted actions,
+          # no run steps), which rejects local composite actions
       - name: "Upload artifact"
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
         if: >
@@ -109,4 +110,5 @@ jobs:
         uses: "github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
         with:
           sarif_file: "${{ inputs.file }}"
+          category: "/tool:scorecard/scope:repository/language:all"
 ...

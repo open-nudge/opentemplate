@@ -20,34 +20,74 @@ jobs:
   ###############################################################################
   sarif-osv-scanner:
     permissions:
-      actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
     name: "Sarif OSV-Scanner"
     uses: "$/.github/workflows/security-osv-scanner-reusable.yml"
     with:
       name: "osv-scanner-${{ github.sha }}"
-      sarif: true
 
   sarif-semgrep:
     permissions:
-      actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "write" # Needed to upload SARIF to security tab
       contents: "read"
     name: "Sarif Semgrep"
     uses: "$/.github/workflows/security-semgrep-reusable.yml"
     with:
       name: "semgrep-${{ github.sha }}"
-      sarif: true
 
-  sarif-attest:
-    name: "Sarif Attest"
-    if: >
-      github.ref_type == 'tag'
-      && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
+  sarif-codeql:
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "read" # Needed by CodeQL init and analyze (no upload)
+      contents: "read"
+    name: "Sarif CodeQL"
+    uses: "$/.github/workflows/security-codeql-reusable.yml"
+    with:
+      name: "codeql-${{ github.sha }}"
+
+  sarif-upload:
+    name: "Sarif Upload (${{ matrix.tool.name }})"
     needs:
       - "sarif-osv-scanner"
       - "sarif-semgrep"
+      - "sarif-codeql"
+    if: >
+      !cancelled()
+    strategy:
+      fail-fast: false
+      matrix:
+        tool:
+          - name: "osv-scanner"
+            category: "/tool:osv-scanner/scope:dependencies/language:python"
+            skip: false
+          - name: "semgrep"
+            category: "/tool:semgrep/scope:repository/language:all"
+            skip: false
+          # Digests are empty if CodeQL was skipped (see security-codeql-reusable.yml)
+          - name: "codeql"
+            category: "/tool:codeql/scope:workflows/language:actions"
+            skip: "${{ needs.sarif-codeql.outputs.digests == '' }}"
+        exclude:
+          - tool:
+              skip: true
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
+    uses: "$/.github/workflows/security-upload-reusable.yml"
+    with:
+      name: "${{ matrix.tool.name }}-${{ github.sha }}"
+      category: "${{ matrix.tool.category }}"
+
+  sarif-attest:
+    name: "Sarif Attest"
+    # CodeQL may be skipped (NO_GITHUB_CODE_SECURITY variable), other SARIFs are still attested
+    if: >
+      !cancelled() && !failure()
+      && github.ref_type == 'tag'
+      && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
+    needs:
+      - "sarif-osv-scanner"
+      - "sarif-semgrep"
+      - "sarif-codeql"
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
     permissions:
@@ -72,7 +112,6 @@ jobs:
             timestamp.githubapp.com:443
             tuf-repo-cdn.sigstore.dev:443
             tuf-repo.github.com:443
-      # Digests come from the scan jobs, the artifacts might be replaced
       - name: "Attest SARIFs provenance"
         uses: "actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d" # v4.2.1
         with:
@@ -80,4 +119,5 @@ jobs:
           subject-checksums: |
             ${{ needs.sarif-osv-scanner.outputs.digests }}
             ${{ needs.sarif-semgrep.outputs.digests }}
+            ${{ needs.sarif-codeql.outputs.digests }}
 ...

@@ -7,6 +7,9 @@
 name: "Security Scorecard Update"
 
 on:
+  push:
+    branches:
+      - "main"
   schedule:
     - cron: "0 3 * * 6"
   workflow_dispatch:
@@ -16,11 +19,16 @@ permissions: {} # yamllint disable-line rule:braces
 
 cache-mode: "read"
 
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   security-scorecard-update:
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "write" # Needed to to upload SARIF file to tab
+      security-events: "write" # Needed to upload SARIF file to tab
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
     name: "Security Scorecard Update"
