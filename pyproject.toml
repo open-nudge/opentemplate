@@ -531,6 +531,7 @@ exclude_links = [
   "https://open-nudge.github.io*",
   "https://wiki.linuxfoundation.org/dco",
   "https://www.contributor-covenant.org*",
+  "https://tag-security.cncf.io*",
   "templateskip",
 ]
 
