@@ -59,7 +59,7 @@ jobs:
       # Template repositories build with their own workflows by design.
       - name: "Reject unpinned template"
         if: >
-          github.event_name == 'release'
+          github.ref_type == 'tag'
         env:
           TEMPLATE_REPOSITORY: "${{ job.workflow_repository }}"
           IS_TEMPLATE: "${{ github.event.repository.is_template }}"
@@ -85,7 +85,7 @@ jobs:
       # tags can point to any pushed commit (e.g. of an unreviewed branch)
       - name: "Reject commits outside of the default branch"
         if: >
-          github.event_name == 'release'
+          github.ref_type == 'tag'
         env:
           DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}"
         # enq: shell indentation is more readable
@@ -175,7 +175,7 @@ jobs:
     needs:
       - "release-build"
     if: >
-      github.event_name == 'release'
+      github.ref_type == 'tag'
       && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
     runs-on: "ubuntu-latest"
     timeout-minutes: 10

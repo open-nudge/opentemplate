@@ -241,7 +241,7 @@ jobs:
     if: >
       inputs.digests != ''
       && inputs.ref == ''
-      && github.event_name == 'release'
+      && github.ref_type == 'tag'
       && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
     needs:
       - "sbom-create"

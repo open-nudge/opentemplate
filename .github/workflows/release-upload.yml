@@ -32,7 +32,7 @@ jobs:
       # Condition shared with release-build-reusable.yml (see there)
       ATTESTED: >-
         ${{
-        github.event_name == 'release'
+        github.ref_type == 'tag'
         && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
         }}
     steps:
@@ -111,12 +111,9 @@ jobs:
             osv-scanner-${{ github.sha }}.sarif
             semgrep-${{ github.sha }}.sarif
       # Verified assets have a bundle, unknown ones (e.g. added by any job
-      # of the run) must not be attached. Assets attached to the release by
-      # its creator would stay next to the verified ones, hence rejected too.
+      # of the run) must not be attached.
       - name: "Reject unexpected assets"
         working-directory: "${{ runner.temp }}/assets"
-        env:
-          GH_TOKEN: "${{ github.token }}"
         # enq: shell indentation is more readable
         # yamllint disable rule:indentation rule:line-length
         run: |
@@ -126,26 +123,31 @@ jobs:
               exit 1
             fi
           done
-          gh release view "${GITHUB_REF_NAME}" --json assets --jq '.assets[].name' \
-            | while read -r name; do
-              if [[ ! -f "${name}" ]]; then
-                echo "::error title=Unexpected release asset::${name} was not produced by this run"
-                exit 1
-              fi
-            done
         # yamllint enable rule:indentation rule:line-length
-      - name: "Upload assets to release"
+      - name: "Upload assets to draft release"
         env:
           GH_TOKEN: "${{ github.token }}"
           ASSETS: "${{ runner.temp }}/assets"
           NOTES: "${{ runner.temp }}/unattested/LATEST.md"
         # Should also upload the attestations created by gh-action-pypi-publish
         # enq: multiline without char limit more readable
-        # yamllint disable rule:line-length
+        # yamllint disable rule:indentation rule:line-length
         run: |
-          gh release edit "${GITHUB_REF_NAME}" --verify-tag --latest --notes-file "${NOTES}"
-          gh release upload --clobber "${GITHUB_REF_NAME}" "${ASSETS}"/*
-        # yamllint enable rule:line-length
+          draft="$(gh release view "${GITHUB_REF_NAME}" --json isDraft --jq '.isDraft' 2>/dev/null || echo "none")"
+          case "${draft}" in
+            "none") ;;
+            "true") gh release delete "${GITHUB_REF_NAME}" --yes ;;
+            *)
+              echo "::error title=Release already published::${GITHUB_REF_NAME} is immutable, push a new tag instead"
+              exit 1
+              ;;
+          esac
+          gh release create "${GITHUB_REF_NAME}" "${ASSETS}"/* \
+            --draft \
+            --verify-tag \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file "${NOTES}"
+        # yamllint enable rule:indentation rule:line-length
       # Extracted outside of the checkout, so the archive cannot alter .git
       # Only files and directories, links could point outside of the site
       - name: "Extract documentation"

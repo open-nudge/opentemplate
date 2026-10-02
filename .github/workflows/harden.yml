@@ -432,6 +432,16 @@ jobs:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
         run: >
           gh repo edit --enable-discussions=true
+      - name: "Enable immutable releases"
+        # Administration write
+        # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-immutable-releases
+        # More info:
+        # https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases
+        env:
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+        run: >
+          gh api --method PUT "repos/${GITHUB_REPOSITORY}/immutable-releases"
       - name: "Enable private vulnerability reporting (public only)"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-private-vulnerability-reporting-for-a-repository
