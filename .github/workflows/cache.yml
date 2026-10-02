@@ -10,6 +10,9 @@ on:
   push:
     branches:
       - "main"
+  # Weekly refresh, so unused caches are not evicted (7 days)
+  schedule:
+    - cron: "0 3 * * 6"
   workflow_dispatch:
 
 # enq: the only way to set permissions to none in GH Actions

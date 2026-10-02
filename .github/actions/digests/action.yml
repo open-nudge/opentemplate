@@ -44,15 +44,22 @@ runs:
           sha256=(sha256sum -t)
         fi
         shopt -s dotglob
-        {
-          echo "digests<<EOF"
+        digests="$(
           while read -r pattern; do
             # enq: glob expansion of the pattern is intentional
             # shellcheck disable=SC2086
             for file in ${pattern}; do
+              if [[ ! -f "${file}" ]]; then
+                echo "::error::No file matches '${file}'" >&2
+                exit 1
+              fi
               (cd "$(dirname "${file}")" && "${sha256[@]}" -- "$(basename "${file}")")
             done
           done <<< "${PATHS}"
+        )"
+        {
+          echo "digests<<EOF"
+          echo "${digests}"
           echo "EOF"
         } >> "${GITHUB_OUTPUT}"
       # yamllint enable rule:indentation

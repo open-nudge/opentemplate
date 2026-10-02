@@ -10,13 +10,13 @@ description: >
   commit and tag by a template workflow at the template commit in use.
 
 inputs:
-  files:
+  signers:
     description: >
-      Files or globs (newline separated) in the directory (flat, names are
-      matched against the attested subject names), unmatched globs fail
-    required: true
-  signer:
-    description: "Template workflow (file name without .yml) signing the files"
+      JSON object mapping template workflows (file names without .yml) to
+      arrays of files or globs they sign, e.g. {"signer": ["*.whl"]}.
+      Files are in the directory (flat, names are matched against the
+      attested subject names), unmatched globs fail, empty strings are
+      ignored (so callers can drop files conditionally)
     required: true
   directory:
     description: "Directory containing the files"
@@ -33,19 +33,35 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: "Get files"
+      id: "files"
+      shell: "bash"
+      env:
+        # fromJSON fails the step on invalid input before the shell runs
+        SIGNERS: "${{ toJSON(fromJSON(inputs.signers)) }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation
+      # Every file or glob on its own line (as expected by digests action)
+      run: |
+        {
+          echo "paths<<EOF"
+          jq --raw-output '.[][] | select(. != "")' <<< "${SIGNERS}"
+          echo "EOF"
+        } >> "${GITHUB_OUTPUT}"
+      # yamllint enable rule:indentation
     - name: "Get digests"
       id: "digests"
       uses: "$/.github/actions/digests"
       with:
         directory: "${{ inputs.directory }}"
-        paths: "${{ inputs.files }}"
+        paths: "${{ steps.files.outputs.paths }}"
     - name: "Verify attestations"
       shell: "bash"
       working-directory: "${{ inputs.directory }}"
       env:
         GH_TOKEN: "${{ inputs.token }}"
         DIGESTS: "${{ steps.digests.outputs.digests }}"
-        SIGNER: "${{ inputs.signer }}"
+        SIGNERS: "${{ inputs.signers }}"
         BUNDLES: "${{ inputs.bundles }}"
         TEMPLATE_REPOSITORY: "${{ job.workflow_repository }}"
         TEMPLATE_SHA: "${{ job.workflow_sha }}"
@@ -54,25 +70,35 @@ runs:
       # Bundle is named sha256:<digest>.jsonl (sha256-<digest>.jsonl on
       # Windows), hence downloaded alone into its own directory
       run: |
-        while read -r digest file; do
-          download="$(mktemp -d)"
-          (cd "${download}" && gh attestation download "${OLDPWD}/${file}" --repo "${GITHUB_REPOSITORY}" --limit 1000)
-          bundle=("${download}"/*.jsonl)
-          gh attestation verify "${file}" \
-            --bundle "${bundle[0]}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --signer-workflow "${TEMPLATE_REPOSITORY}/.github/workflows/${SIGNER}.yml" \
-            --signer-digest "${TEMPLATE_SHA}" \
-            --source-digest "${GITHUB_SHA}" \
-            --source-ref "${GITHUB_REF}" \
-            --deny-self-hosted-runners \
-            --format json \
-            | jq --exit-status --arg name "${file}" --arg digest "${digest}" \
-              'any(.[].verificationResult.statement.subject[]; .name == $name and .digest.sha256 == $digest)' \
-            > /dev/null
-          if [[ "${BUNDLES}" == "true" ]]; then
-            cp -- "${bundle[0]}" "${file}.sigstore.jsonl"
-          fi
-        done < <(awk NF <<< "${DIGESTS}")
+        shopt -s dotglob
+        while read -r signer pattern; do
+          # enq: glob expansion of the pattern is intentional
+          # shellcheck disable=SC2086
+          for file in ${pattern}; do
+            digest="$(awk -v name="${file}" '$2 == name { print $1; exit }' <<< "${DIGESTS}")"
+            if [[ -z "${digest}" ]]; then
+              echo "::error title=Missing digest::${file} (signed by ${signer})"
+              exit 1
+            fi
+            download="$(mktemp -d)"
+            (cd "${download}" && gh attestation download "${OLDPWD}/${file}" --repo "${GITHUB_REPOSITORY}" --limit 1000)
+            bundle=("${download}"/*.jsonl)
+            gh attestation verify "${file}" \
+              --bundle "${bundle[0]}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --signer-workflow "${TEMPLATE_REPOSITORY}/.github/workflows/${signer}.yml" \
+              --signer-digest "${TEMPLATE_SHA}" \
+              --source-digest "${GITHUB_SHA}" \
+              --source-ref "${GITHUB_REF}" \
+              --deny-self-hosted-runners \
+              --format json \
+              | jq --exit-status --arg name "${file}" --arg digest "${digest}" \
+                'any(.[].verificationResult.statement.subject[]; .name == $name and .digest.sha256 == $digest)' \
+              > /dev/null
+            if [[ "${BUNDLES}" == "true" ]]; then
+              cp -- "${bundle[0]}" "${file}.sigstore.jsonl"
+            fi
+          done
+        done < <(jq --raw-output 'to_entries[] | .key as $signer | .value[] | select(. != "") | "\($signer) \(.)"' <<< "${SIGNERS}")
       # yamllint enable rule:indentation rule:line-length
 ...

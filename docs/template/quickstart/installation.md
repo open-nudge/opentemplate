@@ -60,9 +60,20 @@ outlining security hardening steps.
 - Manually run the hardening workflow using its existing workflow dispatch.
 - Set up [trusted PyPI publishing](https://docs.pypi.org/trusted-publishers/).
 - For private repositories __without__ GitHub Enterprise Cloud,
-    set the `ATTESTATIONS` configuration variable to `false`
-    (repository or organization), as releases are attested by default
+    set the `NO_GITHUB_ENTERPRISE_CLOUD` configuration variable
+    (repository or organization) to any value (e.g. `true`),
+    as releases are attested by default
     (ignored for public and internal repositories).
+- For private repositories __without__ GitHub Code Security
+    (formerly part of GitHub Advanced Security),
+    set the `NO_GITHUB_CODE_SECURITY` configuration variable
+    (repository or organization) to any value (e.g. `true`),
+    as CodeQL runs by default
+    (switch ignored for public and internal repositories).
+
+> [!WARNING]
+> Any non-empty value disables the feature, including `false`.
+> Delete the variable to enable it again.
 
 > [!NOTE]
 > Full automation is not currently possible due to platform limitations.

@@ -20,10 +20,6 @@ on:
           default: '' - no artifact upload
         type: "string"
         default: ""
-      sarif:
-        description: "Upload SARIF file to CodeQL"
-        type: "boolean"
-        default: false
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -34,11 +30,9 @@ jobs:
     timeout-minutes: 10
     runs-on: "ubuntu-latest"
     permissions:
-      actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "write" # Needed to to upload SARIF file to tab
       contents: "read"
     outputs:
-      digests: "${{ steps.digests.outputs.digests }}"
+      digests: "${{ steps.upload.outputs.digests }}"
     env:
       FILE: "${{ inputs.name || 'semgrep' }}.sarif"
     steps:
@@ -75,7 +69,6 @@ jobs:
           entrypoint: "semgrep"
           args: >-
             scan
-            --experimental
             --exclude=*pdm.lock
             --config=p/python
             --config=p/secrets
@@ -91,17 +84,12 @@ jobs:
             --strict
             --sarif-output="${{ env.FILE }}"
             .
-      - name: "Get digests"
-        id: "digests"
-        if: >
-          inputs.name != ''
-        uses: "$/.github/actions/digests"
-        with:
-          paths: "${{ env.FILE }}"
       - name: "Upload files"
+        id: "upload"
+        if: >
+          !cancelled()
         uses: "$/.github/actions/sarif-upload"
         with:
           name: "${{ inputs.name }}"
           file: "${{ env.FILE }}"
-          sarif: "${{ inputs.sarif }}"
 ...

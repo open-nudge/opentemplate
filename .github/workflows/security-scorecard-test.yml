@@ -28,7 +28,7 @@ jobs:
     name: "Security Scorecard Test"
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "write" # Needed to to upload SARIF file to tab
+      security-events: "write" # Needed to upload SARIF file to tab
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
     uses: "$/.github/workflows/security-scorecard-reusable.yml"

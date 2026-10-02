@@ -1,0 +1,99 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security CodeQL Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    outputs:
+      digests:
+        description: "sha256sum of the SARIF file (named as in the artifact)"
+        value: "${{ jobs.security-codeql-reusable.outputs.digests }}"
+    inputs:
+      name:
+        description: >
+          Name of the artifact and its SARIF file (<name>.sarif),
+          default: '' - no artifact upload
+        type: "string"
+        default: ""
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  security-codeql-reusable:
+    name: "Security CodeQL Reusable"
+    # Private repositories without GitHub Code Security opt out by setting
+    # NO_GITHUB_CODE_SECURITY variable to any value.
+    # Skipped job reports success (required check passes).
+    # Visibility checked positively, as schedule payloads may lack it
+    if: >
+      vars.NO_GITHUB_CODE_SECURITY == ''
+      || github.event.repository.visibility == 'public'
+      || github.event.repository.visibility == 'internal'
+    timeout-minutes: 15
+    runs-on: "ubuntu-latest"
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "read" # Needed by CodeQL init and analyze (no upload)
+      contents: "read"
+    outputs:
+      digests: "${{ steps.upload.outputs.digests }}"
+    env:
+      FILE: "${{ inputs.name || 'codeql' }}.sarif"
+      # PRs analyze the whole tree (not only the diff), akin to releases
+      CODEQL_ACTION_DIFF_INFORMED_QUERIES: "false"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            api.github.com:443
+            github.com:443
+            objects.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+            results-receiver.actions.githubusercontent.com:443
+      - name: "Checkout repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          persist-credentials: false
+      - name: "Initialize CodeQL"
+        uses: "github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
+        with:
+          languages: "actions"
+          build-mode: "none"
+          # CLI tied to the pinned action version instead of server-side
+          # feature flags, so PR, scheduled and release analyses match
+          tools: "linked"
+      # Uploaded to the Security tab by the caller (like other tools)
+      - name: "Perform CodeQL analysis"
+        uses: "github/codeql-action/analyze@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
+        with:
+          # Same as the upload category (see security-upload-reusable.yml)
+          category: "/tool:codeql/scope:workflows/language:actions"
+          upload: "never"
+          output: "${{ runner.temp }}/codeql"
+      - name: "Rename SARIF file"
+        run: >
+          mv "${RUNNER_TEMP}/codeql/actions.sarif" "${FILE}"
+      # Even on findings, so the caller can upload them to the Security tab
+      - name: "Upload files"
+        id: "upload"
+        if: >
+          !cancelled()
+        uses: "$/.github/actions/sarif-upload"
+        with:
+          name: "${{ inputs.name }}"
+          file: "${{ env.FILE }}"
+      # After the artifact upload, so findings still reach the Security tab
+      - name: "Fail on findings"
+        run: >
+          jq --exit-status '[.runs[].results[]] | length == 0' "${FILE}"
+...

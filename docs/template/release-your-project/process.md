@@ -84,8 +84,9 @@ Releases include only attested artifacts:
 
 - __Python package__ ([packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/))
 
-- [OSV-Scanner](https://google.github.io/osv-scanner/output/#sarif)
-    and [Semgrep](https://semgrep.dev/docs/cli-reference) SARIFs
+- [OSV-Scanner](https://google.github.io/osv-scanner/output/#sarif),
+    [Semgrep](https://semgrep.dev/docs/cli-reference)
+    and [CodeQL](https://codeql.github.com/) SARIFs
 
 - __Software Bills of Materials (SBOMs)__ ([CISA guide](https://www.cisa.gov/sbom))
     and their [Grype](https://github.com/anchore/grype) scans (SARIF):
@@ -120,11 +121,11 @@ attestation of __its__ producing workflow:
 
 <!-- pyml disable-num-lines 7 line-length-->
 
-| Asset                          | Signer workflow               |
-| ------------------------------ | ----------------------------- |
-| Wheel and source distribution  | `release-build-reusable.yml`  |
-| SBOMs and their Grype SARIFs   | `sbom-reusable.yml`           |
-| OSV-Scanner and Semgrep SARIFs | `release-sarifs-reusable.yml` |
+| Asset                               | Signer workflow               |
+| ----------------------------------- | ----------------------------- |
+| Wheel and source distribution       | `release-build-reusable.yml`  |
+| SBOMs and their Grype SARIFs        | `sbom-reusable.yml`           |
+| OSV-Scanner, Semgrep, CodeQL SARIFs | `release-sarifs-reusable.yml` |
 
 > [!NOTE]
 > Release notes (changelog) and documentation are not attested (their build
@@ -156,7 +157,8 @@ for attested releases, see [below](#attestations)).
 
 > [!WARNING]
 > Private repositories without GitHub Enterprise Cloud must opt out by
-> setting the `ATTESTATIONS` configuration variable to `false` (at the
+> setting the `NO_GITHUB_ENTERPRISE_CLOUD` configuration variable to any
+> value, e.g. `true` (at the
 > [organization or repository level](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-variables#defining-configuration-variables-for-multiple-workflows)),
 > otherwise their release fails. No attestations are created and attached then.
 > __This escape hatch is ignored for public and internal repositories!__
@@ -267,5 +269,6 @@ This process can be adjusted by editing:
 - `.github/workflows/release-build-reusable.yml`
 - `.github/workflows/release-sboms-reusable.yml`
 - `.github/workflows/sbom-reusable.yml`
+- `.github/workflows/security-upload-reusable.yml`
 - `.github/actions/attestation-verify/action.yml`
 - `.github/actions/digests-verify/action.yml`

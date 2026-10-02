@@ -77,9 +77,19 @@ developer workflows, security posture and best practices.
 - [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
 - [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
 - [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
-- [Sigstore signing](https://github.com/open-nudge/opentemplate/releases)
-    as seen in the [Sigstore Python project](https://github.com/sigstore/sigstore-python)
+    scanned by [Grype](https://github.com/anchore/grype)
+- [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
+    (Sigstore-backed) of distributions, SBOMs and SARIF files, each verified
+    against its producing workflow before being attached to the
+    [release](https://github.com/open-nudge/opentemplate/releases)
+- Static analysis and vulnerability scanning in CI, before every release
+    and weekly, with results uploaded to the GitHub Security tab:
+    - [CodeQL](https://codeql.github.com/) (GitHub Actions workflows)
+    - [Semgrep](https://github.com/semgrep/semgrep)
+    - [OSV-Scanner](https://github.com/google/osv-scanner) (dependencies)
+- Protected `main` branch (rulesets) with required status checks
 - GitHub Actions CI/CD pipelines with minimal permissions
+    (write permissions only in dedicated upload and attestation jobs)
 - GitHub Actions CI/CD pipelines hardened via [Harden Runner](https://github.com/step-security/harden-runner)
 - [Prek hooks](https://prek.j178.dev/) for local code quality
     and security verification
@@ -118,8 +128,9 @@ __It should be extended by adding project-specific security information.__
 
 Project tries to comply with the following security standards:
 
-- [SLSA](https://slsa.dev/) - L3+ if the project is public or coming
-    from a GitHub Enterprise Account with Advanced Security, L2 otherwise
+- [SLSA](https://slsa.dev/) - Build L3 for attested releases (public
+    repositories, or private ones on GitHub Enterprise Cloud),
+    L0 otherwise (no attestations are created)
 - The project is currently not third-party audited or verified
 
 ## Secure development practices

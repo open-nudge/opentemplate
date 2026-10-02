@@ -6,7 +6,8 @@
 ---
 name: "SARIF Upload"
 description: >
-  Upload a SARIF file as an artifact and/or to GitHub code scanning
+  Upload a SARIF file as an artifact (outputting its digests, to be signed
+  by an attestation job of the calling workflow) and/or to GitHub code scanning
 
 inputs:
   file:
@@ -27,6 +28,13 @@ inputs:
       (default: '' - derived from the workflow and job)
     default: ""
 
+outputs:
+  digests:
+    description: >
+      sha256sum of the file (basename, as stored in the artifact),
+      empty if no artifact is uploaded
+    value: "${{ steps.digests.outputs.digests }}"
+
 runs:
   using: "composite"
   steps:
@@ -39,6 +47,13 @@ runs:
         path: "${{ inputs.file }}"
         retention-days: 7
         overwrite: true
+    - name: "Get digests"
+      id: "digests"
+      if: >
+        inputs.name != ''
+      uses: "$/.github/actions/digests"
+      with:
+        paths: "${{ inputs.file }}"
     - name: "Upload SARIF file to GitHub Advanced Security Dashboard"
       if: >
         inputs.sarif == 'true'

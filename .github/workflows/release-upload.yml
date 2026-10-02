@@ -33,7 +33,15 @@ jobs:
       ATTESTED: >-
         ${{
         github.ref_type == 'tag'
-        && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
+        && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
+        }}
+      # CodeQL skipped as in security-codeql-reusable.yml (see there),
+      # tag push payload always carries the visibility
+      CODEQL_SARIF: >-
+        ${{
+        (vars.NO_GITHUB_CODE_SECURITY == '' || github.event.repository.visibility != 'private')
+        && format('codeql-{0}.sarif', github.sha)
+        || ''
         }}
     steps:
       - name: "Harden Runner"
@@ -77,39 +85,27 @@ jobs:
           directory: "${{ runner.temp }}/assets"
       # Each asset kind has one template signer (keep in sync with the signer
       # table in docs/template/release-your-project/process.md)
-      - name: "Verify distributions attestations"
+      - name: "Verify attestations"
         if: >
           env.ATTESTED == 'true'
         uses: "$/.github/actions/attestation-verify"
         with:
           directory: "${{ runner.temp }}/assets"
-          signer: "release-build-reusable"
           bundles: "true"
-          files: |
-            *.whl
-            *.tar.gz
-      - name: "Verify SBOMs and their scans attestations"
-        if: >
-          env.ATTESTED == 'true'
-        uses: "$/.github/actions/attestation-verify"
-        with:
-          directory: "${{ runner.temp }}/assets"
-          signer: "sbom-reusable"
-          bundles: "true"
-          files: |
-            sbom-*.json
-            grype-*.sarif
-      - name: "Verify SARIFs attestations"
-        if: >
-          env.ATTESTED == 'true'
-        uses: "$/.github/actions/attestation-verify"
-        with:
-          directory: "${{ runner.temp }}/assets"
-          signer: "release-sarifs-reusable"
-          bundles: "true"
-          files: |
-            osv-scanner-${{ github.sha }}.sarif
-            semgrep-${{ github.sha }}.sarif
+          # Empty CodeQL SARIF name (skipped CodeQL) is ignored
+          # enq: JSON indentation is more readable
+          # yamllint disable rule:indentation
+          signers: |
+            {
+              "release-build-reusable": ["*.whl", "*.tar.gz"],
+              "sbom-reusable": ["sbom-*.json", "grype-*.sarif"],
+              "release-sarifs-reusable": [
+                "osv-scanner-${{ github.sha }}.sarif",
+                "semgrep-${{ github.sha }}.sarif",
+                "${{ env.CODEQL_SARIF }}"
+              ]
+            }
+          # yamllint enable rule:indentation
       # Verified assets have a bundle, unknown ones (e.g. added by any job
       # of the run) must not be attached.
       - name: "Reject unexpected assets"

@@ -51,6 +51,10 @@
             "integration_id": 15368
           },
           {
+            "context": "Security CodeQL / Security CodeQL Reusable",
+            "integration_id": 15368
+          },
+          {
             "context": "Security OSV-Scanner / Security OSV-Scanner Reusable",
             "integration_id": 15368
           },
