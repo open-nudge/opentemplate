@@ -1,0 +1,111 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release Tag"
+
+on:
+  workflow_dispatch:
+    inputs:
+      major:
+        description: "Major version (X in vX.Y.Z)"
+        type: "number"
+        required: true
+      minor:
+        description: "Minor version (Y in vX.Y.Z)"
+        type: "number"
+        required: true
+      patch:
+        description: "Patch version (Z in vX.Y.Z)"
+        type: "number"
+        required: true
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-tag:
+    name: "Release Tag"
+    permissions:
+      contents: "write" # Needed to create the tag
+      actions: "write" # Needed to dispatch release.yml on the tag
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 5
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+      - name: "Reject non-default branches"
+        env:
+          DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          if [[ "${GITHUB_REF}" != "refs/heads/${DEFAULT_BRANCH}" ]]; then
+            echo "::error title=Not the default branch::Run this workflow from ${DEFAULT_BRANCH}"
+            exit 1
+          fi
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Validate version"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          MAJOR: "${{ inputs.major }}"
+          MINOR: "${{ inputs.minor }}"
+          PATCH: "${{ inputs.patch }}"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          # number inputs still allow -1, 1.5 or 1e3 (and API dispatches strings)
+          number='(0|[1-9][0-9]*)'
+          for component in MAJOR MINOR PATCH; do
+            if [[ ! "${!component}" =~ ^${number}$ ]]; then
+              echo "::error title=Invalid version::${component} (${!component}) is not a non-negative integer"
+              exit 1
+            fi
+          done
+          version="${MAJOR}.${MINOR}.${PATCH}"
+          latest="$(
+            gh api --paginate "repos/${GITHUB_REPOSITORY}/git/matching-refs/tags/v" \
+              --jq '.[].ref | ltrimstr("refs/tags/v")' \
+              | { grep -E "^${number}\.${number}\.${number}$" || true; } \
+              | sort -V \
+              | tail -n 1
+          )"
+          if [[ -n "${latest}" ]] && {
+            [[ "${version}" == "${latest}" ]] \
+              || [[ "$(printf '%s\n' "${latest}" "${version}" | sort -V | tail -n 1)" != "${version}" ]]
+          }; then
+            echo "::error title=Version not increasing::v${version} must be greater than v${latest}"
+            exit 1
+          fi
+          echo "TAG=v${version}" >> "${GITHUB_ENV}"
+        # yamllint enable rule:indentation rule:line-length
+      # Fails if the tag exists or violates the tag rulesets
+      - name: "Create tag"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+        run: >
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs"
+          -f ref="refs/tags/${TAG}"
+          -f sha="${GITHUB_SHA}"
+      # Dispatch, not workflow_call: called workflows run on the caller's ref
+      # (main), breaking tag gates, attestation source ref and PyPI trusted
+      # publisher. GITHUB_TOKEN created tags do not trigger the push event.
+      - name: "Run release"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          GH_REPO: "${{ github.repository }}"
+        run: >
+          gh workflow run release.yml --ref "${TAG}"
+...

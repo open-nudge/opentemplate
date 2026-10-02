@@ -96,7 +96,7 @@ Go to [PyPI Publishing](https://pypi.org/manage/account/publishing/), scroll to 
 > The `Harden` workflow creates the `pypi` environment. With `2` or more contributors, publishing requires approval from one of the __PyPI release reviewers__ other than the release publisher.
 > Approvers are checked only after running `harden` workflow. If they later drop to one person, add approvers or disable __Prevent self-review__ in [environment settings](https://github.com/{{cookiecutter.repository_owner}}/{{cookiecutter.repository}}/settings/environments).
 
-GitHub Actions will now deploy to PyPI on new releases.
+GitHub Actions will now deploy to PyPI on new releases (pushed tags or the `Release Tag` workflow).
 
 > [!TIP]
 > Releasing to PyPI after the setup is advised. Due to the versioning scheme, first release will be `0.0.1` which can be iterated later on (with `0.1.0` marking first usable release).

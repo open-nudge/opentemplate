@@ -43,7 +43,7 @@ jobs:
   sarif-attest:
     name: "Sarif Attest"
     if: >
-      github.event_name == 'release'
+      github.ref_type == 'tag'
       && (vars.ATTESTATIONS != 'false' || github.event.repository.visibility != 'private')
     needs:
       - "sarif-osv-scanner"

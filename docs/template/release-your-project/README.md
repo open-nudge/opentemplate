@@ -15,7 +15,8 @@ Release when:
 - Pipelines and `prek` checks have passed (tests, security, etc.).
 
 > [!CAUTION]
-> Create a GitHub tag on a release page; everything else is automated.
+> Run the `Release Tag` workflow (or push a signed tag);
+> everything else (including GitHub release) is automated.
 
 Start here:
 

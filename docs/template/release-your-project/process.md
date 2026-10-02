@@ -7,22 +7,42 @@ SPDX-License-Identifier: Apache-2.0
 
 # Release process
 
-To release a new version, [create a GitHub release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release).
-This triggers all necessary pipelines.
+To release a new version, either:
+
+- __UI__: go to `Actions` → `Release Tag` → `Run workflow` (on `main`)
+    and enter the `major`, `minor` and `patch` numbers
+    (`vX.Y.Z` must be greater than the latest released one).
+    This tags the latest `main` commit as `vX.Y.Z`.
+
+- __CLI__: push a signed tag of a `main` commit:
+
+    ```sh
+    git tag --sign vX.Y.Z --message vX.Y.Z
+    git push origin vX.Y.Z
+    ```
+
+> [!IMPORTANT]
+> Rulesets reject tags not shaped like `vX.Y.Z`.
+
+Both trigger all necessary pipelines, which create a draft
+[GitHub release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
+with all assets and publish it as the last step.
 
 > [!NOTE]
-> Specify a new tag version and (optionally) release title.
-> Changelog will be automatically updated by the pipelines.
+> Changelog (release description) will be automatically created by the pipelines.
 
 > [!CAUTION]
-> You must create GitHub release manually. Merging to `main` __does not__
-> trigger package or documentation releases.
+> Do not create GitHub releases via `Releases` → `Draft a new release`.
+> Drafts trigger no workflows, therefore the release will be incomplete.
+
+> [!WARNING]
+> Merging to `main` __does not__ trigger package or documentation releases.
 
 ## Versioning
 
 This project uses a __double versioning__ scheme based on [Semantic Versioning](https://semver.org/):
 
-- __Public version__ – The official release version (e.g., `1.2.0`).
+- __Public version__ – The official release version (e.g., `v1.2.0`).
 - __Python version__ – Automatically generated from commits
     and independent of the public version.
 
@@ -110,12 +130,14 @@ attestation of __its__ producing workflow:
 > Release notes (changelog) and documentation are not attested (their build
 > runs project __not open-nudge/opentemplate__ code), therefore not attached.
 
-The release fails __if it contains any unexpected asset__
-(e.g. attached manually when creating the release).
+The release fails __if it contains any unexpected asset__.
 
 > [!IMPORTANT]
 > The package is uploaded to PyPI only when all previous steps succeed,
-> otherwise the release is marked untrustworthy and pushed back to draft.
+> and the release is published only afterwards, otherwise it stays a draft.
+> Published releases are
+> [immutable](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases)
+> (enabled by `harden.yml`): their assets and tag cannot be changed.
 
 The distributions carry
 [SLSA Build Provenance](https://slsa.dev/spec/v1.0/provenance)
@@ -237,6 +259,7 @@ This process can be adjusted by editing:
 
 - `pyproject.toml`
 - `.github/workflows/release.yml`
+- `.github/workflows/release-tag.yml`
 - `.github/workflows/release-upload.yml`
 - `.github/workflows/release-sarifs-reusable.yml`
 - `.github/workflows/release-changelog-reusable.yml`
