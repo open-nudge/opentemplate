@@ -80,9 +80,15 @@ dev-tests = [
   "pyrefly>=0.64.1",
   "pytest>=8",
   "pytest-asyncio>=1",
+  "pytest-env>=1",
+  "pytest-github-actions-annotate-failures>=0.3",
   "pytest-html>=4",
+  "pytest-markdown-docs>=0.9",
+  "pytest-mock>=3",
   "pytest-pretty-terminal>=1",
   "pytest-randomly>=3",
+  "pytest-socket>=0.7",
+  "pytest-timeout>=2",
 ]
 
 dev-docs = [
@@ -454,9 +460,29 @@ exclude = [
 ]
 
 [tool.pytest.ini_options]
+strict = true
+addopts = [
+  # Summary of all non-passed outcomes (failed, skipped, xfailed etc.)
+  "-ra",
+  "--durations=10",
+  "--markdown-docs",
+  # Use @pytest.mark.enable_socket to allow network for specific tests
+  "--disable-socket",
+  # asyncio event loops need local socket pairs
+  "--allow-unix-socket",
+]
+# Per-test timeout in seconds
+timeout = 300
+filterwarnings = [
+  "error",
+]
+env = [
+  "PYTHONDEVMODE=1",
+]
 testpaths = [
   "tests",
   "src",
+  "docs",
 ]
 norecursedirs = [
   ".git",
@@ -465,6 +491,7 @@ norecursedirs = [
   "__pypackages__",
   "build",
   "site",
+  "docs/scripts",
 ]
 
 [tool.pyrefly]
@@ -501,9 +528,14 @@ do_not_mutate_patterns = [
 source_paths = [
   "src/",
 ]
+# Markdown code blocks are tests too (symlinks are copied as files)
+also_copy = [
+  "docs/",
+]
 pytest_add_cli_args_test_selection = [
   "tests/",
   "src/",
+  "docs/",
 ]
 type_check_command = [
   "pyrefly",
@@ -680,13 +712,13 @@ sort_commits = "oldest"
 # SEED (random in CI, see reproducibility-setup action) seeds all randomness
 tests-coverage = { composite = [
   "pdm run refresh",
-  "pdm run coverage run -m pytest -vv -x --pretty --doctest-modules {args:tests src}",
+  "pdm run python -X dev -m coverage run -m pytest -vv -x --pretty --doctest-modules {args:tests src docs}",
   "pdm run coverage report",
 ], env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--randomly-seed=${SEED:-0} --hypothesis-seed=${SEED:-0}" } }
 # mutmut disables pytest-randomly (unknown --randomly-seed)
 tests-mutation = { shell = ".github/tools/tests-mutation.sh {args}", env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--hypothesis-seed=${SEED:-0}" } }
 tests = { composite = [
-  "pdm run tests-coverage {args:tests}",
+  "pdm run tests-coverage {args}",
   "pdm run tests-mutation",
 ] }
 tests-all = { composite = [
@@ -704,16 +736,16 @@ tests-all = { composite = [
   #     cycle = version["cycle"]
   #     cog.outl(f'  "pdm use {cycle}",')
   #     cog.outl(
-  #         '  "pdm run tests-coverage {args:tests}",'
+  #         '  "pdm run tests-coverage {args}",'
   #     )
   # ]]]
   "pdm use 3.14",
-  "pdm run tests-coverage {args:tests}",
+  "pdm run tests-coverage {args}",
   "pdm use 3.13",
-  "pdm run tests-coverage {args:tests}",
+  "pdm run tests-coverage {args}",
   "pdm use 3.12",
-  "pdm run tests-coverage {args:tests}",
-  # [[[end]]] (sum: sxbOo7AKAv)
+  "pdm run tests-coverage {args}",
+  # [[[end]]] (sum: citw/g+FuK)
   "pdm run tests-mutation",
 ] }
 
@@ -875,7 +907,7 @@ setup = { composite = [
   # ]]]
   "pdm use 3.12",
   # [[[end]]] (sum: VskYZaUrei)
-  "pdm install -G:all --no-editable",
+  "pdm install -G:all --without dev-bootstrap --no-editable",
   "pdm run env -u PYTHONPATH -u PEP582_PACKAGES -u NO_SITE_PACKAGES prek install --install-hooks",
 ] }
 

@@ -134,7 +134,7 @@ runs:
       if: >
         inputs.all == 'true'
       run: >
-        pdm install -G:all --no-editable
+        pdm install -G:all --without dev-bootstrap --no-editable
 
     - name: "PDM Compatibility"
       uses: "$/.github/actions/pdm-compatibility"

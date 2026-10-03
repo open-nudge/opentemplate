@@ -66,6 +66,12 @@ reason = "Affects dev dependency"
 
 [[PackageOverrides]]
 ecosystem = "PyPI"
+name = "pytest-env"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
 name = "noqaexplain"
 license.ignore = true
 reason = "dev dependency"
