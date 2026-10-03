@@ -11,15 +11,20 @@ To release a new version, either:
 
 - __UI__: go to `Actions` → `Release Tag` → `Run workflow` (on `main`)
     and enter the `major`, `minor` and `patch` numbers
-    (`vX.Y.Z` must be greater than the latest released one).
+    (`vX.Y.Z` must be greater than the latest released one)
+    and, optionally, a `message` (release notes).
     This tags the latest `main` commit as `vX.Y.Z`.
 
-- __CLI__: push a signed tag of a `main` commit:
+- __CLI__: push a signed tag of a `main` commit,
+    its message being the release notes:
 
     ```sh
-    git tag --sign vX.Y.Z --message vX.Y.Z
+    git tag --sign vX.Y.Z --message "<release notes>"
     git push origin vX.Y.Z
     ```
+
+    Repeat `--message` for more paragraphs, use `--file <notes.md>`
+    or omit both to write the notes in your editor.
 
 > [!IMPORTANT]
 > Rulesets reject tags not shaped like `vX.Y.Z`.
@@ -30,6 +35,7 @@ with all assets and publish it as the last step.
 
 > [!NOTE]
 > Changelog (release description) will be automatically created by the pipelines.
+> The tag message (if any) is placed above it.
 
 > [!CAUTION]
 > Do not create GitHub releases via `Releases` → `Draft a new release`.
