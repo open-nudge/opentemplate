@@ -13,6 +13,20 @@ This document outlines the testing process of `opentemplate`-based projects.
 
 - Uses [`pytest`](https://github.com/pytest-dev/pytest) for testing.
 - Collects doctests from source modules.
+- Runs `python` code blocks from markdown files in `docs`
+    and from docstrings via
+    [`pytest-markdown-docs`](https://github.com/modal-labs/pytest-markdown-docs)
+    (use `python notest` to skip a block).
+- __Network is disabled__ in tests via
+    [`pytest-socket`](https://github.com/miketheman/pytest-socket);
+    mark tests with `@pytest.mark.enable_socket` to allow it.
+- Fails tests running longer than `300` seconds via
+    [`pytest-timeout`](https://github.com/pytest-dev/pytest-timeout).
+- Provides the `mocker` fixture via
+    [`pytest-mock`](https://github.com/pytest-dev/pytest-mock).
+- Annotates failures inline in GitHub pull requests via
+    [`pytest-github-actions-annotate-failures`](https://github.com/pytest-dev/pytest-github-actions-annotate-failures).
+- Reports the `10` slowest tests and a summary of all non-passed outcomes.
 - Measures test coverage with [`coverage`](https://github.com/nedbat/coveragepy)
     (default threshold: `100%`).
 - Runs mutation testing with [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
@@ -60,6 +74,9 @@ regular source code.
 - To change coverage requirements, update the `fail_under`
     flag in `[tool.coverage.report]` section in `pyproject.toml`
 - To change mutation testing, update the `[tool.mutmut]` section
+    in `pyproject.toml`.
+- To change default `pytest` options (network, markdown tests, timeout
+    via `timeout` key), update the `[tool.pytest.ini_options]` section
     in `pyproject.toml`.
 - To change the test runner, update the `tests-coverage` script in
     the `pyproject.toml` file.
