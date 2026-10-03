@@ -21,7 +21,4 @@ jobs:
     with:
       check: "markdown"
       full-checkout: true
-      # enq: link checking reaches arbitrary hosts, some on CDNs with
-      # rotating IPs (e.g. Netlify) which block mode resets mid-handshake
-      egress-policy: "audit"
 ...

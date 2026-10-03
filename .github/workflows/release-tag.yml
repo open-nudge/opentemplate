@@ -21,6 +21,11 @@ on:
         description: "Patch version (Z in vX.Y.Z)"
         type: "number"
         required: true
+      message:
+        description: "Release notes, if any (tag message), prepended to the changelog"
+        type: "string"
+        required: false
+        default: ""
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -95,10 +100,25 @@ jobs:
       - name: "Create tag"
         env:
           GH_TOKEN: "${{ github.token }}"
-        run: >
-          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs"
-          -f ref="refs/tags/${TAG}"
-          -f sha="${GITHUB_SHA}"
+          MESSAGE: "${{ inputs.message }}"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          sha="${GITHUB_SHA}"
+          if [[ -n "${MESSAGE}" ]]; then
+            sha="$(
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/git/tags" \
+                -f tag="${TAG}" \
+                -f message="${MESSAGE}" \
+                -f object="${GITHUB_SHA}" \
+                -f type="commit" \
+                --jq '.sha'
+            )"
+          fi
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
+            -f ref="refs/tags/${TAG}" \
+            -f sha="${sha}"
+        # yamllint enable rule:indentation rule:line-length
       # Dispatch, not workflow_call: called workflows run on the caller's ref
       # (main), breaking tag gates, attestation source ref and PyPI trusted
       # publisher. GITHUB_TOKEN created tags do not trigger the push event.

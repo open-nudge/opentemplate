@@ -125,10 +125,33 @@ jobs:
           GH_TOKEN: "${{ github.token }}"
           ASSETS: "${{ runner.temp }}/assets"
           NOTES: "${{ runner.temp }}/unattested/LATEST.md"
+        # Annotated tag message (author's notes) precedes the generated
+        # changelog. Signed tags end their message with the signature,
+        # which the API also returns as verification.signature
         # Should also upload the attestations created by gh-action-pypi-publish
         # enq: multiline without char limit more readable
         # yamllint disable rule:indentation rule:line-length
         run: |
+          tag_sha="$(
+            gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${GITHUB_REF_NAME}" \
+              --jq 'select(.object.type == "tag") | .object.sha'
+          )"
+          message=""
+          if [[ -n "${tag_sha}" ]]; then
+            # enq: $sig is a jq variable, not a shell one
+            # shellcheck disable=SC2016
+            message="$(
+              gh api "repos/${GITHUB_REPOSITORY}/git/tags/${tag_sha}" \
+                --jq '(.verification.signature // "") as $sig | .message | rtrimstr($sig)'
+            )"
+          fi
+          notes_file="${RUNNER_TEMP}/release-notes.md"
+          {
+            if [[ -n "${message}" ]]; then
+              printf '%s\n\n' "${message}"
+            fi
+            cat "${NOTES}"
+          } > "${notes_file}"
           draft="$(gh release view "${GITHUB_REF_NAME}" --json isDraft --jq '.isDraft' 2>/dev/null || echo "none")"
           case "${draft}" in
             "none") ;;
@@ -142,7 +165,7 @@ jobs:
             --draft \
             --verify-tag \
             --title "${GITHUB_REF_NAME}" \
-            --notes-file "${NOTES}"
+            --notes-file "${notes_file}"
         # yamllint enable rule:indentation rule:line-length
       # Extracted outside of the checkout, so the archive cannot alter .git
       # Only files and directories, links could point outside of the site
