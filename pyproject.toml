@@ -564,6 +564,7 @@ exclude_links = [
   "https://wiki.linuxfoundation.org/dco",
   "https://www.contributor-covenant.org*",
   "https://tag-security.cncf.io*",
+  "https://slsa.dev*",
   "templateskip",
 ]
 
