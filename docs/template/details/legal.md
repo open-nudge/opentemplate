@@ -44,8 +44,8 @@ Allowed licenses (subject to change):
 ### Changing license
 
 - Run `pdm run reuse download <LICENSE-SPDX>`
-    __and link the [`/LICENSE`](../../LICENSE.md) file__
-    to appropriate file in `licenses/`.
+    __and copy it over the [`/LICENSE`](../../LICENSE.md) file__
+    (`prek` checks both files are identical).
 - Change the package license metadata to the new SPDX identifier.
     If no dedicated `/project` source exists for it, this is one of the
     remaining direct `[project]` edits in `pyproject.toml`.
@@ -63,7 +63,8 @@ To update allowed licenses for `osv-scanner`:
 ## Documents
 
 - __[`/LICENSE`](../../LICENSE.md)__ (Apache-2.0 by default)
-    should be a symbolic link to the actual license file in `licenses/`.
+    should be a copy (not a symbolic link, which GitHub cannot detect)
+    of the actual license file in `LICENSES/`.
 - __`LICENSES/`__ folder contains all project licenses
     (e.g., `pdm.lock` is [`CC0-1.0`](https://creativecommons.org/publicdomain/zero/1.0/deed.en)).
 - __[`CODE_OF_CONDUCT.md`](../../CODE_OF_CONDUCT.md)__ follows the
