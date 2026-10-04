@@ -2,10 +2,10 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default", "dev-all", "dev-bootstrap", "dev-build", "dev-citation", "dev-commit", "dev-docs", "dev-generation", "dev-github", "dev-ini", "dev-json", "dev-json5", "dev-legal", "dev-markdown", "dev-prek", "dev-pyproject", "dev-python", "dev-release", "dev-shell", "dev-tests", "dev-text", "dev-toml", "dev-typing", "dev-xml", "dev-yaml"]
+groups = ["default", "dev-all", "dev-bootstrap", "dev-build", "dev-citation", "dev-commit", "dev-docs", "dev-generation", "dev-github", "dev-ini", "dev-json", "dev-json5", "dev-legal", "dev-markdown", "dev-prek", "dev-pyproject", "dev-python", "dev-release", "dev-shell", "dev-template-setup", "dev-tests", "dev-text", "dev-toml", "dev-typing", "dev-xml", "dev-yaml"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:91d020827064d10076565b57f8d4747e7a140f156f1fc4dffd6a420074b30a5e"
+content_hash = "sha256:f5738112c94386da5cc14c5c7850e7b2972a0c683e2fb923d5f8742488783205"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -225,7 +225,7 @@ name = "arrow"
 version = "1.4.0"
 requires_python = ">=3.8"
 summary = "Better dates & times for Python"
-groups = ["dev-all", "dev-release"]
+groups = ["dev-all", "dev-release", "dev-template-setup"]
 dependencies = [
     "backports-zoneinfo==0.2.1; python_version < \"3.9\"",
     "python-dateutil>=2.7.0",
@@ -309,6 +309,17 @@ dependencies = [
 files = [
     {file = "beautifulsoup4-4.15.0-py3-none-any.whl", hash = "sha256:d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9"},
     {file = "beautifulsoup4-4.15.0.tar.gz", hash = "sha256:288e3ca7d54b06f2ac191970bc275c1939cb46d450b255bf6718b04aa37ab4f7"},
+]
+
+[[package]]
+name = "binaryornot"
+version = "0.6.0"
+requires_python = ">=3.10"
+summary = "Ultra-lightweight pure Python package to check if a file is binary or text."
+groups = ["dev-template-setup"]
+files = [
+    {file = "binaryornot-0.6.0-py3-none-any.whl", hash = "sha256:900adfd5e1b821255ba7e63139b0396b14c88b9286e74e03b6f51e0200331337"},
+    {file = "binaryornot-0.6.0.tar.gz", hash = "sha256:cc8d57cfa71d74ff8c28a7726734d53a851d02fad9e3a5581fb807f989f702f0"},
 ]
 
 [[package]]
@@ -410,7 +421,7 @@ name = "certifi"
 version = "2026.7.22"
 requires_python = ">=3.7"
 summary = "Python package for providing Mozilla's CA Bundle."
-groups = ["dev-all", "dev-bootstrap", "dev-citation", "dev-docs", "dev-github"]
+groups = ["dev-all", "dev-bootstrap", "dev-citation", "dev-docs", "dev-github", "dev-template-setup"]
 files = [
     {file = "certifi-2026.7.22-py3-none-any.whl", hash = "sha256:62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775"},
     {file = "certifi-2026.7.22.tar.gz", hash = "sha256:741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55"},
@@ -551,7 +562,7 @@ name = "charset-normalizer"
 version = "3.5.2"
 requires_python = ">=3.7"
 summary = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
-groups = ["dev-all", "dev-citation", "dev-docs", "dev-github"]
+groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-template-setup"]
 files = [
     {file = "charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:ed2a239c0ea213acc1908150a3037257083c7c083128f1a4cec2ec4b97dca491"},
     {file = "charset_normalizer-3.5.2-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:b91363207bd9dc966a691e959bb47f64b30f7ac4b072be9968b366982f7db77c"},
@@ -703,7 +714,7 @@ name = "click"
 version = "8.5.0"
 requires_python = ">=3.10"
 summary = "Composable command line interface toolkit"
-groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-legal", "dev-python", "dev-release", "dev-tests", "dev-typing"]
+groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-legal", "dev-python", "dev-release", "dev-template-setup", "dev-tests", "dev-typing"]
 files = [
     {file = "click-8.5.0-py3-none-any.whl", hash = "sha256:255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360"},
     {file = "click-8.5.0.tar.gz", hash = "sha256:ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34"},
@@ -821,6 +832,27 @@ groups = ["dev-all", "dev-commit"]
 files = [
     {file = "conventional_pre_commit-4.4.0-py3-none-any.whl", hash = "sha256:5d266cb32a857344e1c4d87660c290cca1646d1ae480dcef6388e27bbc7f022f"},
     {file = "conventional_pre_commit-4.4.0.tar.gz", hash = "sha256:5426bef9039a162c3203cc7de3624954dea7120af8dec6f878d8f1c83c58af7b"},
+]
+
+[[package]]
+name = "cookiecutter"
+version = "2.7.1"
+requires_python = ">=3.10"
+summary = "A command-line utility that creates projects from project templates, e.g. creating a Python package project from a Python package project template."
+groups = ["dev-template-setup"]
+dependencies = [
+    "Jinja2<4.0.0,>=2.7",
+    "arrow",
+    "binaryornot>=0.4.4",
+    "click<9.0.0,>=7.0",
+    "python-slugify>=4.0.0",
+    "pyyaml>=5.3.1",
+    "requests>=2.23.0",
+    "rich",
+]
+files = [
+    {file = "cookiecutter-2.7.1-py3-none-any.whl", hash = "sha256:cee50defc1eaa7ad0071ee9b9893b746c1b3201b66bf4d3686d0f127c8ed6cf9"},
+    {file = "cookiecutter-2.7.1.tar.gz", hash = "sha256:ca7bb7bc8c6ff441fbf53921b5537668000e38d56e28d763a1b73975c66c6138"},
 ]
 
 [[package]]
@@ -1089,13 +1121,13 @@ files = [
 
 [[package]]
 name = "filelock"
-version = "4.0.9"
+version = "4.0.10"
 requires_python = ">=3.10"
 summary = "A platform independent file lock."
 groups = ["dev-bootstrap"]
 files = [
-    {file = "filelock-4.0.9-py3-none-any.whl", hash = "sha256:9287fd61b99a806e5202be29a83034c0808a1b9830e820537c2f5773981f7eeb"},
-    {file = "filelock-4.0.9.tar.gz", hash = "sha256:635e7d67fa92654eed444e75e9ca18426d34e77ad9c469bf4373f75a932f7b22"},
+    {file = "filelock-4.0.10-py3-none-any.whl", hash = "sha256:698048d158dc3c9e18cc5e88b3efdd4bd0e77d76686b22adb4511cc4b2c2f0db"},
+    {file = "filelock-4.0.10.tar.gz", hash = "sha256:00d6a81f976a6332551c2c10f39e12b4abb7e01c64d4c497b81a615bc9186f1f"},
 ]
 
 [[package]]
@@ -1511,7 +1543,7 @@ name = "idna"
 version = "3.20"
 requires_python = ">=3.9"
 summary = "Internationalized Domain Names in Applications (IDNA)"
-groups = ["dev-all", "dev-bootstrap", "dev-citation", "dev-docs", "dev-github", "dev-markdown", "dev-release"]
+groups = ["dev-all", "dev-bootstrap", "dev-citation", "dev-docs", "dev-github", "dev-markdown", "dev-release", "dev-template-setup"]
 files = [
     {file = "idna-3.20-py3-none-any.whl", hash = "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"},
     {file = "idna-3.20.tar.gz", hash = "sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44"},
@@ -1654,7 +1686,7 @@ name = "jinja2"
 version = "3.1.6"
 requires_python = ">=3.7"
 summary = "A very fast and expressive template engine."
-groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-tests", "dev-typing"]
+groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-template-setup", "dev-tests", "dev-typing"]
 dependencies = [
     "MarkupSafe>=2.0",
 ]
@@ -2065,7 +2097,7 @@ name = "markdown-it-py"
 version = "3.0.0"
 requires_python = ">=3.8"
 summary = "Python port of markdown-it. Markdown parsing, done right!"
-groups = ["dev-all", "dev-bootstrap", "dev-docs", "dev-markdown", "dev-tests", "dev-typing"]
+groups = ["dev-all", "dev-bootstrap", "dev-docs", "dev-markdown", "dev-template-setup", "dev-tests", "dev-typing"]
 dependencies = [
     "mdurl~=0.1",
 ]
@@ -2095,7 +2127,7 @@ name = "markupsafe"
 version = "3.0.4"
 requires_python = ">=3.9"
 summary = "Safely add untrusted strings to HTML/XML markup."
-groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-tests", "dev-typing"]
+groups = ["dev-all", "dev-docs", "dev-legal", "dev-release", "dev-template-setup", "dev-tests", "dev-typing"]
 files = [
     {file = "markupsafe-3.0.4-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:61631e08084be9e21a8967ec3139c7616ed7c5e9368e05c86d1b39562c8a57b6"},
     {file = "markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f"},
@@ -2349,7 +2381,7 @@ name = "mdurl"
 version = "0.1.2"
 requires_python = ">=3.7"
 summary = "Markdown URL utilities"
-groups = ["dev-all", "dev-bootstrap", "dev-docs", "dev-markdown", "dev-tests", "dev-typing"]
+groups = ["dev-all", "dev-bootstrap", "dev-docs", "dev-markdown", "dev-template-setup", "dev-tests", "dev-typing"]
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
@@ -3274,13 +3306,13 @@ files = [
 
 [[package]]
 name = "platformdirs"
-version = "4.12.2"
+version = "4.12.3"
 requires_python = ">=3.10"
 summary = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
 groups = ["dev-all", "dev-bootstrap", "dev-docs", "dev-tests", "dev-typing"]
 files = [
-    {file = "platformdirs-4.12.2-py3-none-any.whl", hash = "sha256:29dbf06d96c500bc6bdbce75fb0a14d63279c93b1842f97e72a135b33e856983"},
-    {file = "platformdirs-4.12.2.tar.gz", hash = "sha256:eab5f70271a490ef74618bb314fbb86e3c7e82fa3b9c922c2ea0e0a1a155d329"},
+    {file = "platformdirs-4.12.3-py3-none-any.whl", hash = "sha256:080f3b39423b5abfca9a23d84c4e9795f54d395cd8459867a8ded44084fcd5f8"},
+    {file = "platformdirs-4.12.3.tar.gz", hash = "sha256:427fc0bb321ae0c5b037fa03238ca74820437be162e78b4848c4d4055b9b766c"},
 ]
 
 [[package]]
@@ -3673,7 +3705,7 @@ name = "pygments"
 version = "2.21.0"
 requires_python = ">=3.9"
 summary = "Pygments is a syntax highlighting package written in Python."
-groups = ["dev-all", "dev-bootstrap", "dev-docs", "dev-tests", "dev-typing"]
+groups = ["dev-all", "dev-bootstrap", "dev-docs", "dev-template-setup", "dev-tests", "dev-typing"]
 files = [
     {file = "pygments-2.21.0-py3-none-any.whl", hash = "sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9"},
     {file = "pygments-2.21.0.tar.gz", hash = "sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c"},
@@ -4075,7 +4107,7 @@ name = "python-dateutil"
 version = "2.9.0.post0"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 summary = "Extensions to the standard Python datetime module"
-groups = ["dev-all", "dev-docs", "dev-release"]
+groups = ["dev-all", "dev-docs", "dev-release", "dev-template-setup"]
 dependencies = [
     "six>=1.5",
 ]
@@ -4132,11 +4164,25 @@ files = [
 ]
 
 [[package]]
+name = "python-slugify"
+version = "9.1.2"
+requires_python = ">=3.10"
+summary = "A Python slugify application that also handles Unicode"
+groups = ["dev-template-setup"]
+dependencies = [
+    "text-unidecode>=1.3",
+]
+files = [
+    {file = "python_slugify-9.1.2-py3-none-any.whl", hash = "sha256:a470dafd2ad79672606cc0d1a5fcaf7a2ccf8f358073ff29b5b93c2bd7e288d6"},
+    {file = "python_slugify-9.1.2.tar.gz", hash = "sha256:bd36ca98e5ebb1cd2b9dfa2f27b948ce87402fb083b762cbd9d0fa3aed489a92"},
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.3"
 requires_python = ">=3.8"
 summary = "YAML parser and emitter for Python"
-groups = ["dev-all", "dev-docs", "dev-markdown", "dev-release", "dev-tests", "dev-typing", "dev-yaml"]
+groups = ["dev-all", "dev-docs", "dev-markdown", "dev-release", "dev-template-setup", "dev-tests", "dev-typing", "dev-yaml"]
 files = [
     {file = "pyyaml-6.0.3-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:7f047e29dcae44602496db43be01ad42fc6f1cc0d8cd6c83d342306c32270196"},
     {file = "pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0"},
@@ -4404,7 +4450,7 @@ name = "requests"
 version = "2.34.2"
 requires_python = ">=3.10"
 summary = "Python HTTP for Humans."
-groups = ["dev-all", "dev-citation", "dev-docs", "dev-github"]
+groups = ["dev-all", "dev-citation", "dev-docs", "dev-github", "dev-template-setup"]
 dependencies = [
     "certifi>=2023.5.7",
     "charset-normalizer<4,>=2",
@@ -4490,7 +4536,7 @@ name = "rich"
 version = "15.0.0"
 requires_python = ">=3.9.0"
 summary = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
-groups = ["dev-all", "dev-bootstrap", "dev-tests", "dev-typing"]
+groups = ["dev-all", "dev-bootstrap", "dev-template-setup", "dev-tests", "dev-typing"]
 dependencies = [
     "markdown-it-py>=2.2.0",
     "pygments<3.0.0,>=2.13.0",
@@ -4759,7 +4805,7 @@ name = "six"
 version = "1.17.0"
 requires_python = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 summary = "Python 2 and 3 compatibility utilities"
-groups = ["dev-all", "dev-docs", "dev-release"]
+groups = ["dev-all", "dev-docs", "dev-release", "dev-template-setup"]
 files = [
     {file = "six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"},
     {file = "six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"},
@@ -4878,6 +4924,16 @@ dependencies = [
 files = [
     {file = "termynal-0.14.0-py3-none-any.whl", hash = "sha256:b5147545e29256d35148251f5c2d3d23dec1d2fb0b4ba464ff330a7de8b56fc6"},
     {file = "termynal-0.14.0.tar.gz", hash = "sha256:2918a1a6cf468497fbb3a72dc3726743988829eef1136d0c78a81df70ec869f6"},
+]
+
+[[package]]
+name = "text-unidecode"
+version = "1.3"
+summary = "The most basic Text::Unidecode port"
+groups = ["dev-template-setup"]
+files = [
+    {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
+    {file = "text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8"},
 ]
 
 [[package]]
@@ -5063,7 +5119,7 @@ name = "tzdata"
 version = "2026.5"
 requires_python = ">=2"
 summary = "Provider of IANA time zone data"
-groups = ["dev-all", "dev-docs", "dev-release"]
+groups = ["dev-all", "dev-docs", "dev-release", "dev-template-setup"]
 marker = "sys_platform == \"win32\" or python_version >= \"3.9\""
 files = [
     {file = "tzdata-2026.5-py2.py3-none-any.whl", hash = "sha256:b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac"},
@@ -5112,7 +5168,7 @@ name = "urllib3"
 version = "2.8.0"
 requires_python = ">=3.10"
 summary = "HTTP library with thread-safe connection pooling, file post, and more."
-groups = ["dev-all", "dev-bootstrap", "dev-citation", "dev-docs", "dev-github"]
+groups = ["dev-all", "dev-bootstrap", "dev-citation", "dev-docs", "dev-github", "dev-template-setup"]
 files = [
     {file = "urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"},
     {file = "urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63"},

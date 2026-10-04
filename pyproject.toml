@@ -176,6 +176,14 @@ dev-bootstrap = [
   "pdm>=2.29.2",
 ]
 
+# templatedelete-start
+# Exported (hashed) to template-setup/requirements.txt, used by template-setup.yml
+# Block removed during template setup (template-setup/delete-blocks.sh)
+dev-template-setup = [
+  "cookiecutter>=2",
+]
+# templatedelete-end
+
 dev-build = [
   "hatchling>=1",
   "comver[hatchling]>=1",

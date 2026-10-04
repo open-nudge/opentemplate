@@ -303,6 +303,20 @@ repo = "local"
   files = "^(pyproject.toml|pdm.lock)$"
   priority = 30
 
+  # templatedelete-start
+  # Hash-locked cookiecutter installed by template-setup.yml
+  # Block removed during template setup (template-setup/delete-blocks.sh)
+  [[repos.hooks]]
+  id = "pdm-template-setup"
+  verbose = true
+  name = "<<<FIX>>> PDM template setup requirements"
+  entry = "pdm export --no-default -G dev-template-setup -o template-setup/requirements.txt"
+  pass_filenames = false
+  language = "system"
+  files = "^(pyproject.toml|pdm.lock)$"
+  priority = 30
+  # templatedelete-end
+
   [[repos.hooks]]
   id = "prek"
   verbose = true
@@ -333,7 +347,7 @@ repo = "local"
   entry = "pdm run -v fix-legal"
   language = "system"
   require_serial = true
-  exclude = "^(pdm.lock.*|DCO.md|.gitignore|LICENSE|LICENSES/.*)$"
+  exclude = "^(pdm.lock.*|(.github|template-setup)/requirements.txt.*|DCO.md|.gitignore|LICENSE|LICENSES/.*)$"
   priority = 50
 
   [[repos.hooks]]
