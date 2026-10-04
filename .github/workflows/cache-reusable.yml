@@ -28,12 +28,10 @@ jobs:
       format('| {0}', matrix.install.group) || '' }}
     strategy:
       fail-fast: true
-      max-parallel: 5
+      # Low parallelism to avoid GitHub API rate limits/errors
+      max-parallel: 3
       matrix:
         install:
-          # Main + optional dependencies + release
-          - group: "release"
-            all: false
           # Main + optional dependencies + tests
           - group: "tests"
             all: false
@@ -93,7 +91,8 @@ jobs:
       contents: "read"
     strategy:
       fail-fast: true
-      max-parallel: 5
+      # Low parallelism to avoid GitHub API rate limits/errors
+      max-parallel: 3
       matrix:
         # --no-editable not needed for dev dependencies
         group:
@@ -107,7 +106,6 @@ jobs:
           - "ini"
           - "pyproject"
           - "citation"
-          - "release"
           - "github"
           - "legal"
           - "generation"
