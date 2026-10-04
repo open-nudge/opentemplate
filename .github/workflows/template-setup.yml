@@ -266,9 +266,11 @@ jobs:
         uses: "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97" # v7.0.0
         with:
           python-version: "3.x"
+      # Hash-locked, exported from pdm.lock (see pdm-template-setup hook)
       - name: "Install cookiecutter"
         run: >
-          pip install cookiecutter
+          pip install --require-hashes --no-deps
+          --requirement template-setup/requirements.txt
       - name: "Create cookiecutter.json"
         id: "cookiecutter_file"
         # enq: more readable env and run

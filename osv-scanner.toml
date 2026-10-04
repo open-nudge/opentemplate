@@ -1156,3 +1156,15 @@ ecosystem = "PyPI"
 name = "trove-classifiers"
 license.ignore = true
 reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "cookiecutter"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "text-unidecode"
+license.ignore = true
+reason = "dev dependency"

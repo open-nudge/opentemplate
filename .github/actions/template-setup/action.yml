@@ -36,6 +36,10 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: "Remove template-only blocks"
+      shell: "bash"
+      run: >
+        ./template-setup/delete-blocks.sh
     - name: "Remove template specific dependent data (e.g. links)"
       shell: "bash"
       run: >
