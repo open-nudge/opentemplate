@@ -28,6 +28,7 @@ repo = "builtin"
   id = "trailing-whitespace"
   verbose = true
   name = "<<<FIX>>> Trailing whitespace"
+  exclude = "^LICENSE$"
   priority = 60
 
   [[repos.hooks]]
@@ -35,6 +36,7 @@ repo = "builtin"
   alias = "eof-fixer"
   verbose = true
   name = "<<<FIX>>> End of file"
+  exclude = "^LICENSE$"
   priority = 70
 
   [[repos.hooks]]
@@ -42,6 +44,7 @@ repo = "builtin"
   verbose = true
   args = ["--fix=lf"]
   name = "<<<FIX>>> Mixed line endings"
+  exclude = "^LICENSE$"
   priority = 80
 
   [[repos.hooks]]
@@ -188,6 +191,7 @@ rev = "2ee781716f8c177c2a143e18d535ddb11e264f00" # frozen: v3.24.0
   id = "vale"
   alias = "natural-language"
   name = "<<<CHECK>>> Natural language"
+  exclude = "^LICENSE$"
   verbose = true
   priority = 20
 
@@ -358,7 +362,18 @@ repo = "local"
   language = "system"
   require_serial = true
   types = ["text"]
+  exclude = "^LICENSE$"
   priority = 60
+
+  [[repos.hooks]]
+  id = "license"
+  verbose = true
+  name = "<<<CHECK>>> License"
+  entry = ".github/tools/license.sh"
+  pass_filenames = false
+  language = "system"
+  files = "^(LICENSE|LICENSES/.*)$"
+  priority = 10
 
   [[repos.hooks]]
   id = "check-legal"
