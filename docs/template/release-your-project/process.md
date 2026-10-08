@@ -65,7 +65,9 @@ This approach also enhances security by preventing automated
 Public releases follow [Semantic Versioning](https://semver.org/) and trigger:
 
 - Package release to `PyPI` (__for public repositories__, versioned by Python version).
-- Documentation updates.
+- Documentation updates (versioned by `mike` on the `gh-pages` branch,
+    deployed to GitHub Pages via
+    [`actions/deploy-pages`](https://github.com/actions/deploy-pages)).
 - Artifact generation (e.g., [Software Bill of Materials](https://www.cisa.gov/sbom)).
 
 ### Python version

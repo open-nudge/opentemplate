@@ -351,10 +351,31 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+        # Deployed by actions/deploy-pages (release.yml), gh-pages branch
+        # only stores the versioned (mike) documentation
         run: >
           gh api --method POST "repos/${GITHUB_REPOSITORY}/pages"
-          -f "source[branch]=gh-pages" -f "source[path]=/"
-          -f "build_type=legacy"
+          -f "build_type=workflow"
+      - name: "Allow GitHub Pages deployments from tags (public/enterprise only)"
+        # Administration write, releases (tags) deploy the documentation,
+        # github-pages environment allows the default branch only otherwise
+        # https://docs.github.com/en/rest/deployments/environments?apiVersion=2022-11-28#create-or-update-an-environment
+        if: >
+          github.event.repository.visibility == 'public'
+          || steps.organization.outputs.type == 'enterprise'
+        env:
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
+        # enq: indentation disabled to aid bash script readability
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          gh api --method PUT "repos/${GITHUB_REPOSITORY}/environments/github-pages" \
+            -F "deployment_branch_policy[protected_branches]=false" \
+            -F "deployment_branch_policy[custom_branch_policies]=true"
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/environments/github-pages/deployment-branch-policies" \
+            -f "name=*" -f "type=tag"
+        # yamllint enable rule:indentation rule:line-length
       - name: "Apply general settings for the repository"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
