@@ -158,6 +158,8 @@ __opentemplate__ is a Python template which is:
 - __Static security analysis tooling__: [`osv-scanner`](https://github.com/google/osv-scanner)
     checks against [OSV database](https://osv.dev/),
     [`semgrep`](https://semgrep.dev/) monitors code quality and security,
+    [`guarddog`](https://github.com/DataDog/guarddog) detects malicious runtime
+    dependencies and actions,
     [`zizmor`](https://github.com/zizmorcore/zizmor) and
     [CodeQL](https://codeql.github.com/) verify workflows,
     while [`trufflehog`](https://github.com/trufflesecurity/trufflehog)

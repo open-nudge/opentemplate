@@ -92,7 +92,8 @@ Releases include only attested artifacts:
 
 - [OSV-Scanner](https://google.github.io/osv-scanner/output/#sarif),
     [Semgrep](https://semgrep.dev/docs/cli-reference),
-    [zizmor](https://github.com/zizmorcore/zizmor)
+    [zizmor](https://github.com/zizmorcore/zizmor),
+    [GuardDog](https://github.com/DataDog/guarddog) (core, extras and actions)
     and [CodeQL](https://codeql.github.com/) SARIFs, named
     `security-<tool>-<commit SHA>.sarif`
     (CodeQL not available [without GitHub Code Security](../details/security.md#without-github-code-security))
@@ -132,11 +133,11 @@ attestation of __its__ producing workflow:
 
 <!-- pyml disable-num-lines 7 line-length-->
 
-| Asset                                       | Signer workflow               |
-| ------------------------------------------- | ----------------------------- |
-| Wheel and source distribution               | `release-build-reusable.yml`  |
-| SBOMs and their Grype SARIFs                | `sbom-reusable.yml`           |
-| OSV-Scanner, Semgrep, zizmor, CodeQL SARIFs | `release-sarifs-reusable.yml` |
+| Asset                                                 | Signer workflow               |
+| ----------------------------------------------------- | ----------------------------- |
+| Wheel and source distribution                         | `release-build-reusable.yml`  |
+| SBOMs and their Grype SARIFs                          | `sbom-reusable.yml`           |
+| OSV-Scanner, Semgrep, zizmor, GuardDog, CodeQL SARIFs | `release-sarifs-reusable.yml` |
 
 > [!NOTE]
 > Release notes (changelog) and documentation are not attested (their build

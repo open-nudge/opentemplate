@@ -173,6 +173,7 @@ dev-legal = [
 
 # Installed from the template by the security workflows (see setup-release)
 dev-security = [
+  "guarddog>=3.2.0",
   "zizmor>=1",
 ]
 

@@ -67,8 +67,27 @@ security-testing:
     comment: |
       - "OSV-Scanner is ran during CI, on the main branch and before every release."
       - "It checks dependencies for known vulnerabilities and licenses."
+      - "Pull requests list findings in the job summary only."
       - Sarif files are uploaded to the GitHub Security tab
+      from the main branch (push and weekly) and from release tags
       (category /tool:osv-scanner/scope:dependencies/language:python)
+      and attested in releases
+  - tool-type: "sca"
+    tool-name: "GuardDog"
+    tool-url: "https://github.com/DataDog/guarddog"
+    tool-version: "latest"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+    comment: |
+      - "GuardDog runs on pull requests, on the main branch, weekly and before every release."
+      - "It checks runtime dependencies (core and extras tiers) and GitHub Actions for malicious code."
+      - "Pull requests list findings in the job summary only (non-blocking)."
+      - Sarif files are uploaded to the GitHub Security tab
+      from the main branch (push and weekly) and from release tags
+      (categories /tool:guarddog/scope:dependencies-<tier>/language:python
+      and /tool:guarddog/scope:actions/language:actions)
       and attested in releases
   - tool-type: "sca"
     tool-name: "Grype"
@@ -79,8 +98,10 @@ security-testing:
       ci: true
       before-release: true
     comment: |
-      - "Grype scans every SBOM during CI and before every release."
+      - "Grype scans every SBOM during CI, weekly and before every release."
+      - "Pull requests list findings in the job summary only."
       - Sarif files are uploaded to the GitHub Security tab
+      weekly (main branch) and from release tags
       (category /tool:grype/scope:sbom-<name>/language:python)
       and attested in releases together with the SBOMs
   # SAST
@@ -110,7 +131,9 @@ security-testing:
       - "Semgrep security analysis is ran during CI and before every release."
       - "It checks for known Python vulnerabilities."
       - "It is an open-source version instead of Semgrep CI"
+      - "Pull requests list findings in the job summary only."
       - Sarif files are uploaded to the GitHub Security tab
+      from the main branch (push and weekly) and from release tags
       (for open source projects,
       category /tool:semgrep/scope:repository/language:all)
       and attested in releases
@@ -125,7 +148,9 @@ security-testing:
     comment: |
       - "CodeQL analysis is ran during CI, on the main branch and before every release."
       - "It checks GitHub Actions workflows only (Python is not analyzed)."
+      - "Pull requests fail on any finding, findings are listed in the job summary."
       - Sarif files are uploaded to the GitHub Security tab
+      from the main branch (push and weekly) and from release tags
       (for open source projects,
       category /tool:codeql/scope:workflows/language:actions)
       and attested in releases
@@ -141,6 +166,7 @@ security-testing:
       - "zizmor analysis is ran during CI, on the main branch and before every release."
       - "It checks GitHub Actions workflows and actions security."
       - Sarif files are uploaded to the GitHub Security tab
+      from the main branch (push and weekly) and from release tags
       (for open source projects,
       category /tool:zizmor/scope:workflows/language:actions)
       and attested in releases

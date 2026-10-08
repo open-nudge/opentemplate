@@ -1168,3 +1168,87 @@ ecosystem = "PyPI"
 name = "text-unidecode"
 license.ignore = true
 reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "guarddog"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "boto3"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "botocore"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "configparser"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "disposable-email-domains"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "jmespath"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "nono-py"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "prettytable"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "pygit2"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "python-whois"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "s3transfer"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "tarsafe"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "termcolor"
+license.ignore = true
+reason = "dev dependency"
+
+[[PackageOverrides]]
+ecosystem = "PyPI"
+name = "yara-python"
+license.ignore = true
+reason = "dev dependency"

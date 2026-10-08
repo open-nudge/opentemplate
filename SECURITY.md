@@ -51,6 +51,8 @@ Some of the security measures undertaken in this project include:
     - [zizmor](https://github.com/zizmorcore/zizmor) (GitHub Actions workflows)
     - [Semgrep](https://github.com/semgrep/semgrep)
     - [OSV-Scanner](https://github.com/google/osv-scanner) (dependencies)
+    - [GuardDog](https://github.com/DataDog/guarddog)
+        (malicious runtime dependencies and actions)
 - Protected `main` branch (rulesets) with required status checks
 - GitHub Actions CI/CD pipelines with minimal permissions
     (write permissions only in dedicated upload and attestation jobs)

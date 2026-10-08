@@ -25,6 +25,9 @@ Key security checks include:
 
 - __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
 
+- __Malicious dependencies detection:__ [`DataDog/guarddog`](https://github.com/DataDog/guarddog)
+    (runtime Python dependencies and GitHub Actions, CI only)
+
 - __Secret scanning:__ [`trufflesecurity/trufflehog`](https://github.com/trufflesecurity/trufflehog)
 
 - __Language-specific security checks:__
@@ -91,21 +94,32 @@ permissions). Their SARIF files are uploaded by
 and during releases, one analysis per tool, categorized as
 `/tool:<tool>/scope:<scope>/language:<language>`:
 
-<!-- pyml disable-num-lines 10 line-length-->
+<!-- pyml disable-num-lines 12 line-length-->
 
-| Tool        | Category                                               |
-| ----------- | ------------------------------------------------------ |
-| CodeQL      | `/tool:codeql/scope:workflows/language:actions`        |
-| zizmor      | `/tool:zizmor/scope:workflows/language:actions`        |
-| Semgrep     | `/tool:semgrep/scope:repository/language:all`          |
-| OSV-Scanner | `/tool:osv-scanner/scope:dependencies/language:python` |
-| Grype       | `/tool:grype/scope:sbom-<name>/language:python`        |
-| Scorecard   | `/tool:scorecard/scope:repository/language:all`        |
+| Tool        | Category                                                   |
+| ----------- | ---------------------------------------------------------- |
+| CodeQL      | `/tool:codeql/scope:workflows/language:actions`            |
+| zizmor      | `/tool:zizmor/scope:workflows/language:actions`            |
+| Semgrep     | `/tool:semgrep/scope:repository/language:all`              |
+| OSV-Scanner | `/tool:osv-scanner/scope:dependencies/language:python`     |
+| GuardDog    | `/tool:guarddog/scope:dependencies-<tier>/language:python` |
+| GuardDog    | `/tool:guarddog/scope:actions/language:actions`            |
+| Grype       | `/tool:grype/scope:sbom-<name>/language:python`            |
+| Scorecard   | `/tool:scorecard/scope:repository/language:all`            |
 
 > [!NOTE]
 > Analyses uploaded under other categories (e.g. by previous template
 > versions) are not replaced. Delete them under
 > __Security → Code scanning → Tool status__ so their alerts get closed.
+
+Analyses are kept per ref and category:
+
+- `main` (push and weekly) replaces the previous `main` analysis,
+    so the Security tab reflects the latest commit, not the latest release
+- releases upload against the tag (separate from `main`); the SARIF files
+    are also attested and attached to the GitHub release, describing
+    exactly the released commit
+- pull requests upload nothing, findings are listed in the job summary
 
 ### OSV Scanner
 
@@ -117,6 +131,61 @@ To ignore specific vulnerabilities, modify `osv-scanner.toml` ([docs](https://go
 
 > [!TIP]
 > `osv-scanner.toml` settings are respected by OSSF Scorecard.
+
+### GuardDog
+
+[GuardDog](https://github.com/DataDog/guarddog) looks for malicious code
+(heuristics such as obfuscation, exfiltration or typosquatting) in Python
+dependencies and in the source of third-party actions used by
+`.github/workflows` steps (`.github/workflows/security-guarddog*.yml`).
+Unlike OSV-Scanner, Grype or `zizmor`, it does not rely on known advisories.
+GuardDog is installed (hash-locked) from the template's `dev-security` group.
+
+Python dependencies are scanned per tier (as SBOMs are):
+
+| Tier     | Dependencies     | Scanned on                     |
+| -------- | ---------------- | ------------------------------ |
+| `core`   | `--prod`         | releases                       |
+| `extras` | `--prod -G :all` | pull requests, `main`, release |
+
+> [!NOTE]
+> Heuristics produce false positives, therefore findings do not fail the
+> check. Review them in the Security tab (dismissed alerts stay dismissed).
+> On pull requests findings are listed only in the job summary.
+
+> [!IMPORTANT]
+> Development dependencies are not scanned. GuardDog downloads every
+> package anew (roughly 1.5 seconds per package), the template's own
+> development dependencies (over 250 packages) take around 8 minutes.
+
+Excluded rules (`--exclude-rules` in the reusable workflow):
+
+- `capability-*` (Python dependencies only): describe normal behavior
+    (reading files, spawning processes, network access), around 90% of
+    findings for Python packages. Actions are scanned with all rules,
+    their capabilities (e.g. downloads, spawned processes) are few
+    and worth triaging in the Security tab
+- `repository_integrity_mismatch`: fully clones the GitHub repository of
+    every package (for 68 dependencies it took 10 minutes instead of 2,
+    a single repository took over 5 minutes), finding no issues in practice
+
+> [!WARNING]
+> Maintainers' e-mail domains are checked with WHOIS (unclaimed or
+> re-registered domains indicate account takeover risk).
+> [`harden-runner`](https://github.com/step-security/harden-runner)
+> allows only the WHOIS servers of currently used top-level domains.
+> If the job warns about coverage and its log shows
+> `Error trying to connect to socket`, add the missing registry
+> (see its IANA entry) to the reusable workflow.
+
+Known limitations (the job warns when something was not scanned):
+
+- GuardDog exits successfully even if a package could not be downloaded
+- actions referenced by a path inside a repository
+    (e.g. `github/codeql-action/init`) and `docker://` images are not scanned,
+    neither are actions used by composite actions in `.github/actions`
+- each action is scanned once per workflow using it, alerts point to the
+    first such workflow
 
 ### CodeQL
 

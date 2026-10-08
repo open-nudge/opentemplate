@@ -1,0 +1,186 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security GuardDog Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    outputs:
+      digests:
+        description: "sha256sum of the SARIF file (named as in the artifact)"
+        value: "${{ jobs.security-guarddog-reusable.outputs.digests }}"
+    inputs:
+      target:
+        description: >
+          What to scan: 'python' (exported dependencies of the given groups)
+          or 'actions' (third-party actions used by .github/workflows steps)
+        type: "string"
+        required: true
+      groups:
+        description: >
+          Dependency groups (pdm export flags) scanned by the 'python' target,
+          e.g. '--prod' (core) or '--prod -G :all' (with extras)
+        type: "string"
+        default: "--prod -G :all"
+      name:
+        description: >
+          Name of the artifact and its SARIF file (<name>.sarif),
+          default: '' - no artifact upload
+        type: "string"
+        default: ""
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+defaults:
+  run:
+    shell: "bash"
+
+jobs:
+  security-guarddog-reusable:
+    name: "Security GuardDog Reusable (${{ inputs.target }})"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 30
+    permissions:
+      contents: "read"
+    outputs:
+      digests: "${{ steps.upload.outputs.digests }}"
+    env:
+      FILE: "${{ inputs.name || 'guarddog' }}.sarif"
+      # Inside the checkout, so findings point to a stable, relative path
+      REQUIREMENTS: "requirements-guarddog.txt"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          # hugovk.github.io: top PyPI packages (typosquatting rule)
+          # whois.*:43: WHOIS of maintainers' e-mail domains (unclaimed and
+          # compromised e-mail domain rules), whois.iana.org refers to the
+          # registry of each top-level domain. Add the registry of a new
+          # top-level domain when the scan log reports socket errors.
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            codeload.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            hugovk.github.io:443
+            objects.githubusercontent.com:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+            results-receiver.actions.githubusercontent.com:443
+            whois.denic.de:43
+            whois.educause.edu:43
+            whois.fi:43
+            whois.iana.org:43
+            whois.nic.cx:43
+            whois.nic.google:43
+            whois.nic.io:43
+            whois.nic.la:43
+            whois.nic.me:43
+            whois.nic.uk:43
+            whois.nixiregistry.in:43
+            whois.publicinterestregistry.org:43
+            whois.verisign-grs.com:43
+      # .git is required to scan GitHub Actions workflows
+      - name: "Checkout source"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          path: "source"
+          persist-credentials: false
+      # Hash-locked GuardDog from the template, the caller cannot alter it
+      - name: "Setup GuardDog"
+        uses: "$/.github/actions/setup-release"
+        with:
+          group: "dev-security"
+      # GuardDog does not support pdm.lock
+      - name: "Export dependencies"
+        if: >
+          inputs.target == 'python'
+        env:
+          DEPENDENCY_GROUPS: "${{ inputs.groups }}"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          # enq: string splitting of DEPENDENCY_GROUPS is intentional
+          # shellcheck disable=SC2086
+          pdm export --project source ${DEPENDENCY_GROUPS} --without-hashes \
+            -o "source/${REQUIREMENTS}"
+        # yamllint enable rule:indentation
+      # Heuristics are noisy, findings are triaged in the Security tab
+      # (like Grype in sbom-reusable.yml) instead of failing the job.
+      # stderr (packages, actions or rules which could not be scanned)
+      # is kept in the job log and checked below.
+      - name: "Scan Python dependencies"
+        if: >
+          inputs.target == 'python'
+        env:
+          # capability-* label normal behaviour of Python packages (file
+          # reads, subprocesses, network), most of these findings would be
+          # false positives so it is skipped altogether (as measured on few packages)
+          EXCLUDE: >-
+            --exclude-rules=repository_integrity_mismatch
+            --exclude-rules=capability-filesystem-browser
+            --exclude-rules=capability-filesystem-delete
+            --exclude-rules=capability-filesystem-read
+            --exclude-rules=capability-filesystem-write-executable
+            --exclude-rules=capability-network-download
+            --exclude-rules=capability-network-lolbas
+            --exclude-rules=capability-network-outbound
+            --exclude-rules=capability-process-hooks
+            --exclude-rules=capability-process-schedule
+            --exclude-rules=capability-process-spawn
+            --exclude-rules=capability-runtime-clipboard
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          # enq: string splitting of EXCLUDE is intentional,
+          # enq: working dir is resolved against the project, hence absolute
+          # shellcheck disable=SC2086
+          pdm run --project template --working-dir "${GITHUB_WORKSPACE}/source" \
+            guarddog pypi verify "${REQUIREMENTS}" ${EXCLUDE} \
+            --output-format=sarif > "${FILE}" 2> >(tee guarddog.log >&2)
+        # yamllint enable rule:indentation
+      # All rules, capabilities of third-party actions (downloads, spawned
+      # processes, hooks) are few and worth triaging in the Security tab
+      - name: "Scan GitHub Actions"
+        if: >
+          inputs.target == 'actions'
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          # enq: working dir is resolved against the project, hence absolute
+          pdm run --project template --working-dir "${GITHUB_WORKSPACE}/source" \
+            guarddog github_action verify . \
+            --output-format=sarif > "${FILE}" 2> >(tee guarddog.log >&2)
+        # yamllint enable rule:indentation
+      # GuardDog exits with 0 even if a package could not be downloaded
+      # and python-whois treats unreachable registries as no finding
+      # so we want to raise awareness here by parsing the results
+      - name: "Check coverage"
+        if: >
+          !cancelled()
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          if grep -qE 'failed to run|Error trying to connect to socket' guarddog.log; then
+            echo "::warning title=GuardDog coverage::Not everything was scanned, see the Scan step log"
+          fi
+        # yamllint enable rule:indentation
+      - name: "Upload files"
+        id: "upload"
+        if: >
+          !cancelled()
+        uses: "$/.github/actions/sarif-upload"
+        with:
+          name: "${{ inputs.name }}"
+          file: "${{ env.FILE }}"
+...

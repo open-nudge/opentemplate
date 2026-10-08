@@ -21,6 +21,7 @@ and are run periodically as vulnerabilities evolve, namely:
 - __Security posture analysis:__ [`ossf/scorecard`](https://github.com/ossf/scorecard)
 - __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
 - __Bug detection and code quality:__ [`semgrep/semgrep`](https://github.com/semgrep/semgrep)
+- __Malicious dependencies detection:__ [`DataDog/guarddog`](https://github.com/DataDog/guarddog)
 - __GitHub Actions analysis:__ [CodeQL](https://codeql.github.com/)
     and [`zizmor`](https://github.com/zizmorcore/zizmor)
 
@@ -65,6 +66,7 @@ Together with GitHub Actions, these ensure:
 - `.github/workflows/prek*.yml`
 - `.github/workflows/security-osv-scanner*.yml`
 - `.github/workflows/security-semgrep*.yml`
+- `.github/workflows/security-guarddog*.yml`
 - `.github/workflows/security-codeql*.yml`
 - `.github/workflows/security-zizmor*.yml`
 - `.github/workflows/security-scorecard-update.yml`
