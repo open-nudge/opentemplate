@@ -173,7 +173,8 @@ dev-legal = [
 
 # Installed from the template by the security workflows (see setup-release)
 dev-security = [
-  "guarddog>=3.2.0; sys_platform != 'win32'",
+  # No Windows support; pinned pygit2 and yara-python lack Python 3.14 wheels
+  "guarddog>=3.2.0; sys_platform != 'win32' and python_version < '3.14'",
   "zizmor>=1",
 ]
 
