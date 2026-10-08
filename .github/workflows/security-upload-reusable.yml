@@ -29,6 +29,13 @@ jobs:
   # Separate from the scanners, so these (and PRs) run without write permissions
   security-upload-reusable:
     name: "Security Upload Reusable"
+    # Without GitHub Code Security (see security-codeql-reusable.yml)
+    # there is no Security tab, findings are in the scanner job summary.
+    # Skipped job reports success
+    if: >
+      vars.NO_GITHUB_CODE_SECURITY == ''
+      || github.event.repository.visibility == 'public'
+      || github.event.repository.visibility == 'internal'
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
     permissions:

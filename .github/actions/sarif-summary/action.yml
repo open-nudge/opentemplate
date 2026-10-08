@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "SARIF Summary"
+description: >
+  List findings of a SARIF file (one per line) in the job summary,
+  so they are visible without GitHub Code Security (Security tab)
+
+inputs:
+  file:
+    description: "Path to the SARIF file"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Summarize findings"
+      shell: "bash"
+      env:
+        FILE: "${{ inputs.file }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation rule:line-length
+      run: |
+        {
+          echo "### $(basename "${FILE}")"
+          echo '```'
+          jq --raw-output '
+            [.runs[].results[]
+              | (.locations[0].physicalLocation // {}) as $location
+              | "\(.level // "warning") \(.ruleId) \($location.artifactLocation.uri // ""):\($location.region.startLine // "") \(.message.text)"]
+            | if length == 0 then "No findings" else .[] end
+          ' "${FILE}"
+          echo '```'
+        } >> "${GITHUB_STEP_SUMMARY}"
+      # yamllint enable rule:indentation rule:line-length
+...

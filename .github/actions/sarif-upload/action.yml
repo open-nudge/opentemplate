@@ -7,7 +7,8 @@
 name: "SARIF Upload"
 description: >
   Upload a SARIF file as an artifact (outputting its digests, to be signed
-  by an attestation job of the calling workflow) and/or to GitHub code scanning
+  by an attestation job of the calling workflow) and summarize its findings
+  in the job summary, or upload it to GitHub code scanning
 
 inputs:
   file:
@@ -54,6 +55,14 @@ runs:
       uses: "$/.github/actions/digests"
       with:
         paths: "${{ inputs.file }}"
+    # In the scanner job only (not in the Security tab upload),
+    # findings are visible without GitHub Code Security
+    - name: "Summarize findings"
+      if: >
+        inputs.sarif != 'true'
+      uses: "$/.github/actions/sarif-summary"
+      with:
+        file: "${{ inputs.file }}"
     - name: "Upload SARIF file to GitHub Advanced Security Dashboard"
       if: >
         inputs.sarif == 'true'

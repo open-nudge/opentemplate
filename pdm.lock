@@ -2,10 +2,10 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default", "dev-all", "dev-bootstrap", "dev-build", "dev-citation", "dev-commit", "dev-docs", "dev-generation", "dev-github", "dev-ini", "dev-json", "dev-json5", "dev-legal", "dev-markdown", "dev-prek", "dev-pyproject", "dev-python", "dev-release", "dev-shell", "dev-template-setup", "dev-tests", "dev-text", "dev-toml", "dev-typing", "dev-xml", "dev-yaml"]
+groups = ["default", "dev-all", "dev-bootstrap", "dev-build", "dev-citation", "dev-commit", "dev-docs", "dev-generation", "dev-github", "dev-ini", "dev-json", "dev-json5", "dev-legal", "dev-markdown", "dev-prek", "dev-pyproject", "dev-python", "dev-release", "dev-security", "dev-shell", "dev-template-setup", "dev-tests", "dev-text", "dev-toml", "dev-typing", "dev-xml", "dev-yaml"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:f5738112c94386da5cc14c5c7850e7b2972a0c683e2fb923d5f8742488783205"
+content_hash = "sha256:6793f19673aa5c2bb001bfcbe6754385ca6a2037497691fd32904e9b9c57a400"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -5537,7 +5537,7 @@ name = "zizmor"
 version = "1.30.1"
 requires_python = ">=3.10"
 summary = "Static analysis for GitHub Actions"
-groups = ["dev-all", "dev-github"]
+groups = ["dev-all", "dev-github", "dev-security"]
 files = [
     {file = "zizmor-1.30.1-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:17fda74e15fe41a6aa354ea4cf71fc7ff3cd025cda6584bb6d7466b3f1d00fe6"},
     {file = "zizmor-1.30.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:f9eb092f089e35fa9fb3b70aeec0a19eca7dacf2ab161f1d50b18351895f085c"},

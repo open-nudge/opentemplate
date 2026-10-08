@@ -91,11 +91,12 @@ permissions). Their SARIF files are uploaded by
 and during releases, one analysis per tool, categorized as
 `/tool:<tool>/scope:<scope>/language:<language>`:
 
-<!-- pyml disable-num-lines 9 line-length-->
+<!-- pyml disable-num-lines 10 line-length-->
 
 | Tool        | Category                                               |
 | ----------- | ------------------------------------------------------ |
 | CodeQL      | `/tool:codeql/scope:workflows/language:actions`        |
+| zizmor      | `/tool:zizmor/scope:workflows/language:actions`        |
 | Semgrep     | `/tool:semgrep/scope:repository/language:all`          |
 | OSV-Scanner | `/tool:osv-scanner/scope:dependencies/language:python` |
 | Grype       | `/tool:grype/scope:sbom-<name>/language:python`        |
@@ -139,11 +140,41 @@ Security tab on `main` (push and weekly) and attached to releases.
 > [!NOTE]
 > Advanced setup needs no switch, the first upload enables code scanning
 > for public repositories. Private repositories need
-> [GitHub Code Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security)
-> (formerly part of GitHub Advanced Security); without it set the
-> `NO_GITHUB_CODE_SECURITY` configuration variable (repository or
-> organization) to any value, e.g. `true`, to skip CodeQL (the required
-> check passes as skipped).
+> GitHub Code Security, see
+> [Without GitHub Code Security](#without-github-code-security).
+
+### zizmor
+
+[zizmor](https://github.com/zizmorcore/zizmor) audits GitHub Actions
+workflows (`check-github` in `pyproject.toml`) on pull requests, on `main`
+(push and weekly) and during releases.
+
+> [!IMPORTANT]
+> Outside of pull requests zizmor is installed from `open-nudge/opentemplate`
+> (`dev-security` group) and ignores zizmor configuration files
+> (`--no-config`), so the attested results cannot be altered by the project.
+> Use inline `# zizmor: ignore[<audit>]` comments instead.
+
+### Without GitHub Code Security
+
+Private repositories need
+[GitHub Code Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security)
+(formerly part of GitHub Advanced Security) for the Security tab.
+Without it set the `NO_GITHUB_CODE_SECURITY` configuration variable
+(repository or organization) to any value, e.g. `true`, which:
+
+- skips CodeQL (the required check passes as skipped), as its
+    [license](https://securitylab.github.com/tools/codeql/license/)
+    does not allow analyzing private code without GitHub Code Security
+- skips uploads to the Security tab, findings are listed in the job
+    summary of each scanner instead (checks still fail on findings)
+
+> [!NOTE]
+> SARIFs are still produced and attached to releases. Their attestation
+> depends only on `NO_GITHUB_ENTERPRISE_CLOUD`
+> (see [release process](../release-your-project/process.md)).
+
+> [!CAUTION]
 > __This escape hatch is ignored for public and internal repositories!__
 
 ### Conform

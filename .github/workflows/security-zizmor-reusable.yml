@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security zizmor Reusable"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    outputs:
+      digests:
+        description: "sha256sum of the SARIF file (named as in the artifact)"
+        value: "${{ jobs.security-zizmor-reusable.outputs.digests }}"
+    inputs:
+      name:
+        description: >
+          Name of the artifact and its SARIF file (<name>.sarif),
+          default: '' - no artifact upload
+        type: "string"
+        default: ""
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  security-zizmor-reusable:
+    name: "Security zizmor Reusable"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: "read"
+    outputs:
+      digests: "${{ steps.upload.outputs.digests }}"
+    env:
+      FILE: "${{ inputs.name || 'zizmor' }}.sarif"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            codeload.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            objects.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+      - name: "Checkout repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          path: "source"
+          persist-credentials: false
+      # zizmor installed from the template (not the caller's pdm.lock),
+      # so the attested SARIF cannot come from an altered zizmor
+      - name: "Setup template security tools"
+        uses: "$/.github/actions/setup-release"
+        with:
+          group: "dev-security"
+      # Same audits as the GitHub check (check-github in pyproject.toml),
+      # --no-config: the caller cannot disable audits (inline ignores apply),
+      # SARIF output never fails on findings (see the last step)
+      - name: "Run zizmor"
+        env:
+          # Used by zizmor online audits
+          GH_TOKEN: "${{ github.token }}"
+        run: >
+          pdm run --project template --working-dir "${GITHUB_WORKSPACE}/source"
+          check-github --no-config --format=sarif . > "${FILE}"
+      # Even on findings, so the caller can upload them to the Security tab
+      - name: "Upload files"
+        id: "upload"
+        if: >
+          !cancelled()
+        uses: "$/.github/actions/sarif-upload"
+        with:
+          name: "${{ inputs.name }}"
+          file: "${{ env.FILE }}"
+      # After the artifact upload, so findings still reach the Security tab
+      - name: "Fail on findings"
+        run: >
+          jq --exit-status '[.runs[].results[]] | length == 0' "${FILE}"
+...

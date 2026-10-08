@@ -48,6 +48,7 @@ Some of the security measures undertaken in this project include:
 - Static analysis and vulnerability scanning in CI, before every release
     and weekly, with results uploaded to the GitHub Security tab:
     - [CodeQL](https://codeql.github.com/) (GitHub Actions workflows)
+    - [zizmor](https://github.com/zizmorcore/zizmor) (GitHub Actions workflows)
     - [Semgrep](https://github.com/semgrep/semgrep)
     - [OSV-Scanner](https://github.com/google/osv-scanner) (dependencies)
 - Protected `main` branch (rulesets) with required status checks

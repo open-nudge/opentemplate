@@ -91,8 +91,11 @@ Releases include only attested artifacts:
 - __Python package__ ([packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/))
 
 - [OSV-Scanner](https://google.github.io/osv-scanner/output/#sarif),
-    [Semgrep](https://semgrep.dev/docs/cli-reference)
-    and [CodeQL](https://codeql.github.com/) SARIFs
+    [Semgrep](https://semgrep.dev/docs/cli-reference),
+    [zizmor](https://github.com/zizmorcore/zizmor)
+    and [CodeQL](https://codeql.github.com/) SARIFs, named
+    `security-<tool>-<commit SHA>.sarif`
+    (CodeQL not available [without GitHub Code Security](../details/security.md#without-github-code-security))
 
 - __Software Bills of Materials (SBOMs)__ ([CISA guide](https://www.cisa.gov/sbom))
     and their [Grype](https://github.com/anchore/grype) scans (SARIF):
@@ -115,10 +118,12 @@ Releases include only attested artifacts:
 
 > [!IMPORTANT]
 > Public/internal repositories created from `open-nudge/opentemplate`
-> satisfy SLSA L3 Build.
+> (and private ones on GitHub Enterprise Cloud) satisfy SLSA L3 Build.
 
 > [!WARNING]
-> Private repositories do not have any SLSA attestations, therefore are L0.
+> Private repositories without GitHub Enterprise Cloud
+> (`NO_GITHUB_ENTERPRISE_CLOUD` variable set) do not have any SLSA
+> attestations, therefore are L0.
 
 Every signed release asset is produced by an `open-nudge/opentemplate`
 reusable workflow and __attested within the same workflow__ by a separate job.
@@ -127,11 +132,11 @@ attestation of __its__ producing workflow:
 
 <!-- pyml disable-num-lines 7 line-length-->
 
-| Asset                               | Signer workflow               |
-| ----------------------------------- | ----------------------------- |
-| Wheel and source distribution       | `release-build-reusable.yml`  |
-| SBOMs and their Grype SARIFs        | `sbom-reusable.yml`           |
-| OSV-Scanner, Semgrep, CodeQL SARIFs | `release-sarifs-reusable.yml` |
+| Asset                                       | Signer workflow               |
+| ------------------------------------------- | ----------------------------- |
+| Wheel and source distribution               | `release-build-reusable.yml`  |
+| SBOMs and their Grype SARIFs                | `sbom-reusable.yml`           |
+| OSV-Scanner, Semgrep, zizmor, CodeQL SARIFs | `release-sarifs-reusable.yml` |
 
 > [!NOTE]
 > Release notes (changelog) and documentation are not attested (their build

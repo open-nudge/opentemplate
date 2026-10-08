@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Security zizmor"
+
+# Pull requests are already checked by zizmor (see github.yml)
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/*.yml"
+      - ".github/actions/*/action.yml"
+  schedule:
+    - cron: "0 3 * * 6"
+  workflow_dispatch:
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+cache-mode: "read"
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-zizmor:
+    permissions:
+      contents: "read"
+    name: "Security zizmor"
+    uses: "$/.github/workflows/security-zizmor-reusable.yml"
+    with:
+      name: "zizmor"
+
+  # Separate job, so the scanner runs without write permissions
+  security-zizmor-upload:
+    name: "Security zizmor Upload"
+    needs: "security-zizmor"
+    # Also on failure, so findings reach the Security tab
+    if: >
+      !cancelled()
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
+    uses: "$/.github/workflows/security-upload-reusable.yml"
+    with:
+      name: "zizmor"
+      category: "/tool:zizmor/scope:workflows/language:actions"
+...
