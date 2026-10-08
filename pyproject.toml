@@ -171,6 +171,11 @@ dev-legal = [
   "reuse>=4",
 ]
 
+# Installed from the template by the security workflows (see setup-release)
+dev-security = [
+  "zizmor>=1",
+]
+
 # Exported (hashed) to .github/requirements.txt, installs PDM in release jobs
 dev-bootstrap = [
   "pdm>=2.29.2",
@@ -247,6 +252,7 @@ dev-all = [
   { include-group = "dev-citation" },
   { include-group = "dev-github" },
   { include-group = "dev-legal" },
+  { include-group = "dev-security" },
   { include-group = "dev-build" },
   { include-group = "dev-release" },
   { include-group = "dev-generation" },

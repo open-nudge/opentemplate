@@ -130,6 +130,21 @@ security-testing:
       category /tool:codeql/scope:workflows/language:actions)
       and attested in releases
   - tool-type: "sast"
+    tool-name: "zizmor"
+    tool-url: "https://github.com/zizmorcore/zizmor"
+    tool-version: "latest"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+    comment: |
+      - "zizmor analysis is ran during CI, on the main branch and before every release."
+      - "It checks GitHub Actions workflows and actions security."
+      - Sarif files are uploaded to the GitHub Security tab
+      (for open source projects,
+      category /tool:zizmor/scope:workflows/language:actions)
+      and attested in releases
+  - tool-type: "sast"
     tool-name: "Prek hooks"
     tool-url: >
       https://github.com/open-nudge/opentemplate/blob/main/prek.toml

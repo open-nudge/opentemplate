@@ -68,8 +68,9 @@ outlining security hardening steps.
     (formerly part of GitHub Advanced Security),
     set the `NO_GITHUB_CODE_SECURITY` configuration variable
     (repository or organization) to any value (e.g. `true`),
-    as CodeQL runs by default
-    (switch ignored for public and internal repositories).
+    as CodeQL runs and findings are uploaded to the Security tab by default
+    (switch ignored for public and internal repositories, see
+    [security](../details/security.md#without-github-code-security)).
 
 > [!WARNING]
 > Any non-empty value disables the feature, including `false`.
