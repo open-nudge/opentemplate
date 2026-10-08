@@ -42,6 +42,36 @@ jobs:
     with:
       name: "security-zizmor-${{ github.sha }}"
 
+  # Separate jobs (no matrix), as each digests output is attested
+  sarif-guarddog-core:
+    permissions:
+      contents: "read"
+    name: "Sarif GuardDog Core"
+    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    with:
+      target: "python"
+      groups: "--prod"
+      name: "security-guarddog-core-${{ github.sha }}"
+
+  sarif-guarddog-extras:
+    permissions:
+      contents: "read"
+    name: "Sarif GuardDog Extras"
+    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    with:
+      target: "python"
+      groups: "--prod -G :all"
+      name: "security-guarddog-extras-${{ github.sha }}"
+
+  sarif-guarddog-actions:
+    permissions:
+      contents: "read"
+    name: "Sarif GuardDog Actions"
+    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    with:
+      target: "actions"
+      name: "security-guarddog-actions-${{ github.sha }}"
+
   sarif-codeql:
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
@@ -58,6 +88,9 @@ jobs:
       - "sarif-osv-scanner"
       - "sarif-semgrep"
       - "sarif-zizmor"
+      - "sarif-guarddog-core"
+      - "sarif-guarddog-extras"
+      - "sarif-guarddog-actions"
       - "sarif-codeql"
     if: >
       !cancelled()
@@ -73,6 +106,15 @@ jobs:
             skip: false
           - name: "zizmor"
             category: "/tool:zizmor/scope:workflows/language:actions"
+            skip: false
+          - name: "guarddog-core"
+            category: "/tool:guarddog/scope:dependencies-core/language:python"
+            skip: false
+          - name: "guarddog-extras"
+            category: "/tool:guarddog/scope:dependencies-extras/language:python"
+            skip: false
+          - name: "guarddog-actions"
+            category: "/tool:guarddog/scope:actions/language:actions"
             skip: false
           # Digests are empty if CodeQL was skipped (see security-codeql-reusable.yml)
           - name: "codeql"
@@ -100,6 +142,9 @@ jobs:
       - "sarif-osv-scanner"
       - "sarif-semgrep"
       - "sarif-zizmor"
+      - "sarif-guarddog-core"
+      - "sarif-guarddog-extras"
+      - "sarif-guarddog-actions"
       - "sarif-codeql"
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
@@ -133,5 +178,8 @@ jobs:
             ${{ needs.sarif-osv-scanner.outputs.digests }}
             ${{ needs.sarif-semgrep.outputs.digests }}
             ${{ needs.sarif-zizmor.outputs.digests }}
+            ${{ needs.sarif-guarddog-core.outputs.digests }}
+            ${{ needs.sarif-guarddog-extras.outputs.digests }}
+            ${{ needs.sarif-guarddog-actions.outputs.digests }}
             ${{ needs.sarif-codeql.outputs.digests }}
 ...

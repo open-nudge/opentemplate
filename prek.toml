@@ -147,7 +147,7 @@ rev = "cfdb3cce90daece912e6a5cb3f20b2316a78a5bf" # frozen: v0.1.0-alpha.31
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "005b692bdfd0764e5da402887d9ab9196f8023dc" # frozen: v3.99.1
+rev = "e76dff8a7e57d6df0c60ad8cbf5d5cba505a8fc9" # frozen: v3.99.2
 
   [[repos.hooks]]
   id = "trufflehog"
