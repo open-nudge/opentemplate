@@ -16,8 +16,6 @@ on:
   push:
     branches:
       - "main"
-  schedule:
-    - cron: "0 3 * * 6"
   workflow_dispatch:
 
 # enq: the only way to set permissions to none in GH Actions

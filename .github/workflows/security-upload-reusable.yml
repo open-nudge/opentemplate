@@ -21,6 +21,18 @@ on:
           (see docs/template/details/security.md)
         type: "string"
         required: true
+      ref:
+        description: >
+          Full Git reference the SARIF belongs to, e.g. refs/tags/<tag>
+          (default: '' - the triggering ref), set together with sha
+        type: "string"
+        default: ""
+      sha:
+        description: >
+          Commit SHA the SARIF belongs to
+          (default: '' - the triggering commit), set together with ref
+        type: "string"
+        default: ""
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -64,4 +76,6 @@ jobs:
           file: "${{ inputs.name }}.sarif"
           sarif: "true"
           category: "${{ inputs.category }}"
+          ref: "${{ inputs.ref }}"
+          sha: "${{ inputs.sha }}"
 ...

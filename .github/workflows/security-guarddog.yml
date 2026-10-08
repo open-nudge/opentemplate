@@ -20,8 +20,6 @@ on:
   push:
     branches:
       - "main"
-  schedule:
-    - cron: "0 3 * * 6"
   workflow_dispatch:
 
 # enq: the only way to set permissions to none in GH Actions
@@ -35,8 +33,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Core is a subset of extras, its exact SARIF is needed only for releases,
-  # dev dependencies are not scanned as it takes too long.
+  # Dev dependencies are not scanned as it takes too long
+  security-guarddog-core:
+    permissions:
+      contents: "read"
+    name: "Security GuardDog Core"
+    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    with:
+      target: "python"
+      groups: "--prod"
+      name: "guarddog-core"
+
   security-guarddog-python:
     permissions:
       contents: "read"
@@ -60,6 +67,7 @@ jobs:
   security-guarddog-upload:
     name: "Security GuardDog Upload (${{ matrix.scan.name }})"
     needs:
+      - "security-guarddog-core"
       - "security-guarddog-python"
       - "security-guarddog-actions"
     # Also on failure, so findings reach the Security tab
@@ -71,6 +79,8 @@ jobs:
       fail-fast: false
       matrix:
         scan:
+          - name: "guarddog-core"
+            category: "/tool:guarddog/scope:dependencies-core/language:python"
           - name: "guarddog-extras"
             category: "/tool:guarddog/scope:dependencies-extras/language:python"
           - name: "guarddog-actions"

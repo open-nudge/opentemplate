@@ -13,123 +13,13 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  ###############################################################################
-  #
-  #                             SECURITY JOBS
-  #
-  ###############################################################################
-  sarif-osv-scanner:
-    permissions:
-      contents: "read"
-    name: "Sarif OSV-Scanner"
-    uses: "$/.github/workflows/security-osv-scanner-reusable.yml"
-    with:
-      name: "security-osv-scanner-${{ github.sha }}"
-
-  sarif-semgrep:
-    permissions:
-      contents: "read"
-    name: "Sarif Semgrep"
-    uses: "$/.github/workflows/security-semgrep-reusable.yml"
-    with:
-      name: "security-semgrep-${{ github.sha }}"
-
-  sarif-zizmor:
-    permissions:
-      contents: "read"
-    name: "Sarif zizmor"
-    uses: "$/.github/workflows/security-zizmor-reusable.yml"
-    with:
-      name: "security-zizmor-${{ github.sha }}"
-
-  # Separate jobs (no matrix), as each digests output is attested
-  sarif-guarddog-core:
-    permissions:
-      contents: "read"
-    name: "Sarif GuardDog Core"
-    uses: "$/.github/workflows/security-guarddog-reusable.yml"
-    with:
-      target: "python"
-      groups: "--prod"
-      name: "security-guarddog-core-${{ github.sha }}"
-
-  sarif-guarddog-extras:
-    permissions:
-      contents: "read"
-    name: "Sarif GuardDog Extras"
-    uses: "$/.github/workflows/security-guarddog-reusable.yml"
-    with:
-      target: "python"
-      groups: "--prod -G :all"
-      name: "security-guarddog-extras-${{ github.sha }}"
-
-  sarif-guarddog-actions:
-    permissions:
-      contents: "read"
-    name: "Sarif GuardDog Actions"
-    uses: "$/.github/workflows/security-guarddog-reusable.yml"
-    with:
-      target: "actions"
-      name: "security-guarddog-actions-${{ github.sha }}"
-
-  sarif-codeql:
-    permissions:
-      actions: "read" # https://github.com/github/codeql-action/issues/2117
-      security-events: "read" # Needed by CodeQL init and analyze (no upload)
-      contents: "read"
-    name: "Sarif CodeQL"
-    uses: "$/.github/workflows/security-codeql-reusable.yml"
-    with:
-      name: "security-codeql-${{ github.sha }}"
-
-  sarif-upload:
-    name: "Sarif Upload (${{ matrix.tool.name }})"
-    needs:
-      - "sarif-osv-scanner"
-      - "sarif-semgrep"
-      - "sarif-zizmor"
-      - "sarif-guarddog-core"
-      - "sarif-guarddog-extras"
-      - "sarif-guarddog-actions"
-      - "sarif-codeql"
-    if: >
-      !cancelled()
-    strategy:
-      fail-fast: false
-      matrix:
-        tool:
-          - name: "osv-scanner"
-            category: "/tool:osv-scanner/scope:dependencies/language:python"
-            skip: false
-          - name: "semgrep"
-            category: "/tool:semgrep/scope:repository/language:all"
-            skip: false
-          - name: "zizmor"
-            category: "/tool:zizmor/scope:workflows/language:actions"
-            skip: false
-          - name: "guarddog-core"
-            category: "/tool:guarddog/scope:dependencies-core/language:python"
-            skip: false
-          - name: "guarddog-extras"
-            category: "/tool:guarddog/scope:dependencies-extras/language:python"
-            skip: false
-          - name: "guarddog-actions"
-            category: "/tool:guarddog/scope:actions/language:actions"
-            skip: false
-          # Digests are empty if CodeQL was skipped (see security-codeql-reusable.yml)
-          - name: "codeql"
-            category: "/tool:codeql/scope:workflows/language:actions"
-            skip: "${{ needs.sarif-codeql.outputs.digests == '' }}"
-        exclude:
-          - tool:
-              skip: true
+  sarifs:
+    name: "SARIFs"
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
-    uses: "$/.github/workflows/security-upload-reusable.yml"
-    with:
-      name: "security-${{ matrix.tool.name }}-${{ github.sha }}"
-      category: "${{ matrix.tool.category }}"
+      contents: "read" # Needed by the scanners to checkout repository
+    uses: "$/.github/workflows/security-sarifs-reusable.yml"
 
   sarif-attest:
     name: "Sarif Attest"
@@ -138,14 +28,7 @@ jobs:
       !cancelled() && !failure()
       && github.ref_type == 'tag'
       && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
-    needs:
-      - "sarif-osv-scanner"
-      - "sarif-semgrep"
-      - "sarif-zizmor"
-      - "sarif-guarddog-core"
-      - "sarif-guarddog-extras"
-      - "sarif-guarddog-actions"
-      - "sarif-codeql"
+    needs: "sarifs"
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
     permissions:
@@ -173,13 +56,6 @@ jobs:
       - name: "Attest SARIFs provenance"
         uses: "actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d" # v4.2.1
         with:
-          # Literal block: each digest must stay on its own line
-          subject-checksums: |
-            ${{ needs.sarif-osv-scanner.outputs.digests }}
-            ${{ needs.sarif-semgrep.outputs.digests }}
-            ${{ needs.sarif-zizmor.outputs.digests }}
-            ${{ needs.sarif-guarddog-core.outputs.digests }}
-            ${{ needs.sarif-guarddog-extras.outputs.digests }}
-            ${{ needs.sarif-guarddog-actions.outputs.digests }}
-            ${{ needs.sarif-codeql.outputs.digests }}
+          # One digest per line (see security-sarifs-reusable.yml)
+          subject-checksums: "${{ needs.sarifs.outputs.digests }}"
 ...
