@@ -16,6 +16,9 @@ outputs:
   ref:
     description: "The latest release commit SHA."
     value: "${{ steps.release-ref.outputs.ref }}"
+  tag:
+    description: "The latest release tag."
+    value: "${{ steps.release-ref.outputs.tag }}"
 
 runs:
   using: "composite"
@@ -29,4 +32,5 @@ runs:
         tag="$(gh api "/repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
         ref="$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${tag}" --jq '.sha')"
         echo "ref=${ref}" >> "${GITHUB_OUTPUT}"
+        echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
 ...

@@ -31,6 +31,11 @@ and are run periodically as vulnerabilities evolve, namely:
 > SBOM scans (`security-sbom-*-update.yml`) target the latest release
 > instead, therefore run on schedule only.
 
+Weekly `osv-scanner`, `semgrep`, `guarddog`, CodeQL and `zizmor` scans
+run from a single workflow (`security-sarifs-update.yml`), against both
+`main` and the latest release (the code users install), as `main` may
+contain unreleased commits.
+
 ## Cache
 
 Dependency caches are rebuilt after every merge to `main` and weekly,
@@ -69,6 +74,7 @@ Together with GitHub Actions, these ensure:
 - `.github/workflows/security-guarddog*.yml`
 - `.github/workflows/security-codeql*.yml`
 - `.github/workflows/security-zizmor*.yml`
+- `.github/workflows/security-sarifs*.yml`
 - `.github/workflows/security-scorecard-update.yml`
 - `.github/workflows/cache.yml`
 - `.github/workflows/generation*.yml`

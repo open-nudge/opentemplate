@@ -13,6 +13,9 @@ on:
       ref:
         description: "The latest release commit SHA."
         value: "${{ jobs.latest-release.outputs.ref }}"
+      tag:
+        description: "The latest release tag."
+        value: "${{ jobs.latest-release.outputs.tag }}"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -26,6 +29,7 @@ jobs:
       contents: "read"
     outputs:
       ref: "${{ steps.latest-release.outputs.ref }}"
+      tag: "${{ steps.latest-release.outputs.tag }}"
     steps:
       - name: "Harden Runner"
         uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1

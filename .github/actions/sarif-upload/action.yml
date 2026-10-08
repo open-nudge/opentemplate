@@ -28,6 +28,16 @@ inputs:
       Code scanning category, distinguishes uploads of the same tool
       (default: '' - derived from the workflow and job)
     default: ""
+  ref:
+    description: >
+      Full Git reference the SARIF belongs to, e.g. refs/tags/<tag>
+      (default: '' - the triggering ref), set together with sha
+    default: ""
+  sha:
+    description: >
+      Commit SHA the SARIF belongs to
+      (default: '' - the triggering commit), set together with ref
+    default: ""
 
 outputs:
   digests:
@@ -72,4 +82,6 @@ runs:
       with:
         sarif_file: "${{ inputs.file }}"
         category: "${{ inputs.category }}"
+        ref: "${{ inputs.ref }}"
+        sha: "${{ inputs.sha }}"
 ...

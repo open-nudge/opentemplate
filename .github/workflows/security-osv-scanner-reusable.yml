@@ -20,6 +20,10 @@ on:
           default: '' - no artifact upload
         type: "string"
         default: ""
+      ref:
+        description: "The ref to checkout (default: '' - the triggering ref)"
+        type: "string"
+        default: ""
       continue-on-error:
         description: "Whether to continue on error"
         type: "boolean"
@@ -62,6 +66,7 @@ jobs:
       - name: "Checkout repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
+          ref: "${{ inputs.ref }}"
           persist-credentials: false
       - name: "Run scanner"
         uses: "google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8

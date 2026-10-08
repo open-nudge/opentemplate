@@ -1,0 +1,168 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "Security SARIFs Reusable"  # zizmor: ignore[concurrency-limits]
+
+# Every SARIF scanner, uploaded to the Security tab. Used by releases
+# (release-sarifs-reusable.yml) and their weekly rescans
+# (security-sarifs-update.yml)
+on:
+  workflow_call:
+    outputs:
+      digests:
+        description: >
+          sha256sum of each SARIF file (named as in the artifact),
+          one per line, empty for skipped CodeQL
+        # Literal block: each digest must stay on its own line
+        value: |
+          ${{ jobs.sarif-osv-scanner.outputs.digests }}
+          ${{ jobs.sarif-semgrep.outputs.digests }}
+          ${{ jobs.sarif-zizmor.outputs.digests }}
+          ${{ jobs.sarif-guarddog-core.outputs.digests }}
+          ${{ jobs.sarif-guarddog-extras.outputs.digests }}
+          ${{ jobs.sarif-guarddog-actions.outputs.digests }}
+          ${{ jobs.sarif-codeql.outputs.digests }}
+    inputs:
+      ref:
+        description: >
+          Commit SHA to scan, set together with tag
+          (default: '' - the triggering ref and commit)
+        type: "string"
+        default: ""
+      tag:
+        description: >
+          Release tag the SARIFs are uploaded under, set together with ref
+          (default: '' - the triggering ref)
+        type: "string"
+        default: ""
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  sarif-osv-scanner:
+    permissions:
+      contents: "read"
+    name: "Sarif OSV-Scanner"
+    uses: "$/.github/workflows/security-osv-scanner-reusable.yml"
+    with:
+      name: "security-osv-scanner-${{ inputs.tag || github.sha }}"
+      ref: "${{ inputs.ref }}"
+
+  sarif-semgrep:
+    permissions:
+      contents: "read"
+    name: "Sarif Semgrep"
+    uses: "$/.github/workflows/security-semgrep-reusable.yml"
+    with:
+      name: "security-semgrep-${{ inputs.tag || github.sha }}"
+      ref: "${{ inputs.ref }}"
+
+  sarif-zizmor:
+    permissions:
+      contents: "read"
+    name: "Sarif zizmor"
+    uses: "$/.github/workflows/security-zizmor-reusable.yml"
+    with:
+      name: "security-zizmor-${{ inputs.tag || github.sha }}"
+      ref: "${{ inputs.ref }}"
+
+  # Separate jobs (no matrix), as each digests output is attested
+  sarif-guarddog-core:
+    permissions:
+      contents: "read"
+    name: "Sarif GuardDog Core"
+    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    with:
+      target: "python"
+      groups: "--prod"
+      name: "security-guarddog-core-${{ inputs.tag || github.sha }}"
+      ref: "${{ inputs.ref }}"
+
+  sarif-guarddog-extras:
+    permissions:
+      contents: "read"
+    name: "Sarif GuardDog Extras"
+    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    with:
+      target: "python"
+      groups: "--prod -G :all"
+      name: "security-guarddog-extras-${{ inputs.tag || github.sha }}"
+      ref: "${{ inputs.ref }}"
+
+  sarif-guarddog-actions:
+    permissions:
+      contents: "read"
+    name: "Sarif GuardDog Actions"
+    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    with:
+      target: "actions"
+      name: "security-guarddog-actions-${{ inputs.tag || github.sha }}"
+      ref: "${{ inputs.ref }}"
+
+  sarif-codeql:
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "read" # Needed by CodeQL init and analyze (no upload)
+      contents: "read"
+    name: "Sarif CodeQL"
+    uses: "$/.github/workflows/security-codeql-reusable.yml"
+    with:
+      name: "security-codeql-${{ inputs.tag || github.sha }}"
+      ref: "${{ inputs.ref }}"
+
+  sarif-upload:
+    name: "Sarif Upload (${{ matrix.tool.name }})"
+    needs:
+      - "sarif-osv-scanner"
+      - "sarif-semgrep"
+      - "sarif-zizmor"
+      - "sarif-guarddog-core"
+      - "sarif-guarddog-extras"
+      - "sarif-guarddog-actions"
+      - "sarif-codeql"
+    if: >
+      !cancelled()
+    strategy:
+      fail-fast: false
+      matrix:
+        tool:
+          - name: "osv-scanner"
+            category: "/tool:osv-scanner/scope:dependencies/language:python"
+            skip: false
+          - name: "semgrep"
+            category: "/tool:semgrep/scope:repository/language:all"
+            skip: false
+          - name: "zizmor"
+            category: "/tool:zizmor/scope:workflows/language:actions"
+            skip: false
+          - name: "guarddog-core"
+            category: "/tool:guarddog/scope:dependencies-core/language:python"
+            skip: false
+          - name: "guarddog-extras"
+            category: "/tool:guarddog/scope:dependencies-extras/language:python"
+            skip: false
+          - name: "guarddog-actions"
+            category: "/tool:guarddog/scope:actions/language:actions"
+            skip: false
+          # Digests are empty if CodeQL was skipped (see security-codeql-reusable.yml)
+          - name: "codeql"
+            category: "/tool:codeql/scope:workflows/language:actions"
+            skip: "${{ needs.sarif-codeql.outputs.digests == '' }}"
+        exclude:
+          - tool:
+              skip: true
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
+    uses: "$/.github/workflows/security-upload-reusable.yml"
+    with:
+      name: "security-${{ matrix.tool.name }}-${{ inputs.tag || github.sha }}"
+      category: "${{ matrix.tool.category }}"
+      ref: "${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || '' }}"
+      sha: "${{ inputs.ref }}"
+...

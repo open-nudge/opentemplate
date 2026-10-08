@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Security SARIFs Update"
+
+# Weekly rescans of main and the latest release (what users install),
+# as new vulnerabilities are found over time and main may be unreleased
+on:
+  schedule:
+    - cron: "0 3 * * 6"
+  workflow_dispatch:
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+cache-mode: "read"
+
+jobs:
+  latest-release:
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/latest-release-sha-reusable.yml"
+
+  security-sarifs-update:
+    name: "Security SARIFs Update (${{ matrix.target.name }})"
+    needs:
+      - "latest-release"
+    if: >
+      !cancelled()
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - name: "main"
+            ref: ""
+            tag: ""
+            skip: false
+          - name: "release"
+            ref: "${{ needs.latest-release.outputs.ref }}"
+            tag: "${{ needs.latest-release.outputs.tag }}"
+            # Might fail before first official release which is normal
+            skip: "${{ needs.latest-release.result != 'success' }}"
+        exclude:
+          - target:
+              skip: true
+    permissions:
+      actions: "read" # https://github.com/github/codeql-action/issues/2117
+      security-events: "write" # Needed to upload SARIF file to tab
+      contents: "read" # Needed by the scanners to checkout repository
+    uses: "$/.github/workflows/security-sarifs-reusable.yml"
+    with:
+      ref: "${{ matrix.target.ref }}"
+      tag: "${{ matrix.target.tag }}"
+...

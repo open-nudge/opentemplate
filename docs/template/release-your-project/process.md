@@ -276,6 +276,7 @@ This process can be adjusted by editing:
 - `.github/workflows/release-tag.yml`
 - `.github/workflows/release-upload.yml`
 - `.github/workflows/release-sarifs-reusable.yml`
+- `.github/workflows/security-sarifs-reusable.yml`
 - `.github/workflows/release-changelog-reusable.yml`
 - `.github/workflows/release-docs-reusable.yml`
 - `.github/workflows/release-build-reusable.yml`

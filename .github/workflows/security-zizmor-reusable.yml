@@ -20,6 +20,10 @@ on:
           default: '' - no artifact upload
         type: "string"
         default: ""
+      ref:
+        description: "The ref to checkout (default: '' - the triggering ref)"
+        type: "string"
+        default: ""
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -56,6 +60,7 @@ jobs:
       - name: "Checkout repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
+          ref: "${{ inputs.ref }}"
           path: "source"
           persist-credentials: false
       # zizmor installed from the template (not the caller's pdm.lock),
