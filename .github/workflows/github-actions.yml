@@ -12,8 +12,10 @@ on:
       - "main"
     paths:
       - ".github/actions/*/action.yml"
-      - ".github/workflows/github-actions*.yml"
-      - ".github/workflows/run-*reusable.yml"
+      - ".github/workflows/github-actions.yml"
+      - ".github/workflows/_github-actions.yml"
+      - ".github/workflows/_run-check.yml"
+      - ".github/workflows/__run.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -28,5 +30,5 @@ jobs:
     name: "GitHub Actions"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/github-actions-reusable.yml"
+    uses: "$/.github/workflows/_github-actions.yml"
 ...

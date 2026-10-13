@@ -17,8 +17,8 @@ on:
       - "pdm.lock"
       - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/tests.yml"
-      - ".github/workflows/tests-reusable.yml"
-      - ".github/workflows/run-reusable.yml"
+      - ".github/workflows/_tests.yml"
+      - ".github/workflows/__run.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -39,5 +39,5 @@ jobs:
     name: "Tests"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/tests-reusable.yml"
+    uses: "$/.github/workflows/_tests.yml"
 ...

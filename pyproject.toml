@@ -34,8 +34,8 @@ authors = [
 # cycle = cogeol.scientific()[-1]["cycle"]
 # cog.out(f'requires-python = ">={cycle}"')
 # ]]]
-requires-python = ">=3.12"
-# [[[end]]] (sum: ChWHeFtwKI)
+requires-python = ">=3.13"
+# [[[end]]] (sum: zX38HHIAaw)
 
 # Full list of classifiers: https://pypi.org/classifiers/
 classifiers = [
@@ -54,10 +54,10 @@ classifiers = [
   #     cycle = version["cycle"]
   #     cog.outl(f'  "Programming Language :: Python :: {cycle}",')
   # ]]]
-  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
-  # [[[end]]] (sum: n4HYN0jbX1)
+  "Programming Language :: Python :: 3.15",
+  # [[[end]]] (sum: Z4mtja39mg)
   "Topic :: Software Development :: Libraries",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
@@ -530,8 +530,8 @@ site-package-path = [
   # cycle = cogeol.scientific()[-1]["cycle"]
   # cog.outl(f'  "__pypackages__/{cycle}/lib",')
   # ]]]
-  "__pypackages__/3.12/lib",
-  # [[[end]]] (sum: n3sNA6FJ81)
+  "__pypackages__/3.13/lib",
+  # [[[end]]] (sum: U5bt93kaVN)
 ]
 skip-interpreter-query = false
 
@@ -570,6 +570,9 @@ plugins.md034.enabled = false
 # Disabled as the first line is SPDX license header
 plugins.md041.enabled = false
 plugins.md042.enabled = false
+# Disabled as it conflicts with mdformat around pyml pragmas
+# (pymarkdownlnt 0.9.41 counts the pragma line as blank)
+plugins.md012.enabled = false
 
 [tool.md_dead_link_check]
 exclude_links = [
@@ -752,13 +755,13 @@ tests-all = { composite = [
   #         '  "pdm run tests-coverage {args}",'
   #     )
   # ]]]
+  "pdm use 3.15",
+  "pdm run tests-coverage {args}",
   "pdm use 3.14",
   "pdm run tests-coverage {args}",
   "pdm use 3.13",
   "pdm run tests-coverage {args}",
-  "pdm use 3.12",
-  "pdm run tests-coverage {args}",
-  # [[[end]]] (sum: citw/g+FuK)
+  # [[[end]]] (sum: nbTQE75I6z)
   "pdm run tests-mutation",
 ] }
 
@@ -887,10 +890,10 @@ setup = { composite = [
   #     cycle = version["cycle"]
   #     cog.outl(f'  "pdm python install {cycle}",')
   # ]]]
+  "pdm python install 3.15",
   "pdm python install 3.14",
   "pdm python install 3.13",
-  "pdm python install 3.12",
-  # [[[end]]] (sum: EKFElxllOV)
+  # [[[end]]] (sum: I9swYbzfED)
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -903,11 +906,11 @@ setup = { composite = [
   #     cog.outl(f'  "pdm use {cycle}",')
   #     cog.outl(f'  "pdm run refresh",')
   # ]]]
+  "pdm use 3.15",
+  "pdm run refresh",
   "pdm use 3.14",
   "pdm run refresh",
-  "pdm use 3.13",
-  "pdm run refresh",
-  # [[[end]]] (sum: /IUGZwEqDU)
+  # [[[end]]] (sum: oaK8zBXwvq)
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -918,8 +921,8 @@ setup = { composite = [
   # cycle = cogeol.scientific()[-1]["cycle"]
   # cog.outl(f'  "pdm use {cycle}",')
   # ]]]
-  "pdm use 3.12",
-  # [[[end]]] (sum: VskYZaUrei)
+  "pdm use 3.13",
+  # [[[end]]] (sum: ptsI+evsT9)
   "pdm install -G:all --without dev-bootstrap --no-editable",
   "pdm run env -u PYTHONPATH -u PEP582_PACKAGES -u NO_SITE_PACKAGES prek install --install-hooks",
 ] }

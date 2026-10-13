@@ -26,5 +26,5 @@ jobs:
     name: "Template Update"
     permissions:
       contents: "write" # Needed to update repository contents
-    uses: "$/.github/workflows/template-update-reusable.yml"
+    uses: "$/.github/workflows/_template-update.yml"
 ...

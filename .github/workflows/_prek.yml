@@ -1,0 +1,89 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "_prek"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  _prek:
+    timeout-minutes: 30
+    name: "_prek"
+    permissions:
+      contents: "read"
+      pull-requests: "write" # Needed to create pull request
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            nodejs.org:443
+            objects.githubusercontent.com:443
+            pdm-project.org:443
+            pdm.fming.dev:443
+            proxy.golang.org:443
+            go.dev:443
+            dl.google.com:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            registry.npmjs.org:443
+            storage.googleapis.com:443
+            sum.golang.org:443
+            endoflife.date:443
+            api.osv.dev:443
+            api.deps.dev:443
+            endoflife.date:443
+            semgrep.dev:443
+            fonts.google.com:443
+            fonts.gstatic.com:443
+            release-assets.githubusercontent.com:443
+      - name: "Checkout repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          persist-credentials: false
+      - name: "Setup git credentials"
+        uses: "$/.github/actions/git-setup"
+      - name: "Setup PDM"
+        uses: "$/.github/actions/pdm-setup"
+        with:
+          all: true
+      - name: "Update prek dependencies"
+        run: >
+          pdm run -v prek autoupdate --freeze
+      - name: "Check for changes"
+        id: "check-changes"
+        # enq: indentation disable to aid readability
+        # yamllint disable rule:indentation
+        run: |
+          if git diff --exit-code prek.toml; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
+          fi
+        # yamllint enable rule:indentation
+      - name: "Run prek with updated dependencies"
+        env:
+          SKIP: "dco,vale,fix-legal,markdown"
+        if: >
+          steps.check-changes.outputs.changed == 'true'
+        run: >
+          pdm run -v prek run --all-files
+...

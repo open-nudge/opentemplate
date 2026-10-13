@@ -29,5 +29,5 @@ jobs:
     name: "Legal"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/legal-reusable.yml"
+    uses: "$/.github/workflows/_legal.yml"
 ...

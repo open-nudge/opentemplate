@@ -1,0 +1,239 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "_Release Upload"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    inputs:
+      digests:
+        description: >
+          sha256sum of the distributions (release build workflow output),
+          job outputs cannot be altered by other jobs, unlike artifacts
+        type: "string"
+        required: true
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-upload:
+    name: "Release Upload"
+    permissions:
+      contents: "write" # Needed to write documentation to gh-pages directly
+      attestations: "read" # Needed to download and verify attestations
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+    env:
+      # Condition shared with _release-build.yml (see there)
+      ATTESTED: >-
+        ${{
+        github.ref_type == 'tag'
+        && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
+        }}
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            github.com:443
+            tuf-repo-cdn.sigstore.dev:443
+            tuf-repo.github.com:443
+            uploads.github.com:443
+        # enq: credentials kept for gh release upload
+      - name: "Checkout repository"  # zizmor: ignore[artipacked]
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          ref: "gh-pages"
+      # Release assets are artifacts named <name>-<commit SHA> (flat files),
+      # NOTE: no other artifact of the run may end with the commit SHA
+      - name: "Download release assets"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
+        with:
+          pattern: "*-${{ github.sha }}"
+          path: "${{ runner.temp }}/assets"
+          merge-multiple: true
+      - name: "Download release notes and documentation"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
+        with:
+          pattern: "release-{notes,docs}"
+          path: "${{ runner.temp }}/unattested"
+          merge-multiple: true
+      - name: "Verify distributions"
+        uses: "$/.github/actions/digests-verify"
+        with:
+          digests: "${{ inputs.digests }}"
+          directory: "${{ runner.temp }}/assets"
+      # Each asset kind has one template signer (keep in sync with the signer
+      # table in docs/template/release-your-project/process.md)
+      - name: "Verify attestations"
+        if: >
+          env.ATTESTED == 'true'
+        uses: "$/.github/actions/attestation-verify"
+        with:
+          directory: "${{ runner.temp }}/assets"
+          bundles: "true"
+          # security- prefix keeps Grype SARIFs (another signer) out of the
+          # scanner glob, CodeQL SARIF is absent if CodeQL was skipped
+          # (see _security-codeql.yml)
+          # enq: JSON indentation is more readable
+          # yamllint disable rule:indentation
+          signers: |
+            {
+              "_release-build": ["*.whl", "*.tar.gz"],
+              "_sbom": ["sbom-*.json", "grype-*.sarif"],
+              "_release-sarifs": ["security-*-${{ github.sha }}.sarif"]
+            }
+          # yamllint enable rule:indentation
+      # Verified assets have a bundle, unknown ones (e.g. added by any job
+      # of the run) must not be attached.
+      - name: "Reject unexpected assets"
+        working-directory: "${{ runner.temp }}/assets"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          for file in *; do
+            if [[ "${ATTESTED}" == "true" && "${file}" != *.sigstore.jsonl && ! -f "${file}.sigstore.jsonl" ]]; then
+              echo "::error title=Unexpected asset::${file} is not verified"
+              exit 1
+            fi
+          done
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Upload assets to draft release"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          ASSETS: "${{ runner.temp }}/assets"
+          NOTES: "${{ runner.temp }}/unattested/LATEST.md"
+        # Annotated tag message (author's notes) precedes the generated
+        # changelog. Signed tags end their message with the signature,
+        # which the API also returns as verification.signature
+        # Should also upload the attestations created by gh-action-pypi-publish
+        # enq: multiline without char limit more readable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          tag_sha="$(
+            gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${GITHUB_REF_NAME}" \
+              --jq 'select(.object.type == "tag") | .object.sha'
+          )"
+          message=""
+          if [[ -n "${tag_sha}" ]]; then
+            # enq: $sig is a jq variable, not a shell one
+            # shellcheck disable=SC2016
+            message="$(
+              gh api "repos/${GITHUB_REPOSITORY}/git/tags/${tag_sha}" \
+                --jq '(.verification.signature // "") as $sig | .message | rtrimstr($sig)'
+            )"
+          fi
+          notes_file="${RUNNER_TEMP}/release-notes.md"
+          {
+            if [[ -n "${message}" ]]; then
+              printf '%s\n\n' "${message}"
+            fi
+            cat "${NOTES}"
+          } > "${notes_file}"
+          draft="$(gh release view "${GITHUB_REF_NAME}" --json isDraft --jq '.isDraft' 2>/dev/null || echo "none")"
+          case "${draft}" in
+            "none") ;;
+            "true") gh release delete "${GITHUB_REF_NAME}" --yes ;;
+            *)
+              echo "::error title=Release already published::${GITHUB_REF_NAME} is immutable, push a new tag instead"
+              exit 1
+              ;;
+          esac
+          gh release create "${GITHUB_REF_NAME}" "${ASSETS}"/* \
+            --draft \
+            --verify-tag \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file "${notes_file}"
+        # yamllint enable rule:indentation rule:line-length
+      # Extracted outside of the checkout, so the archive cannot alter .git
+      # Only files and directories, links could point outside of the site
+      - name: "Extract documentation"
+        env:
+          ARCHIVE: "${{ runner.temp }}/unattested/site-${{ github.sha }}.tar"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          if tar --list --verbose --file "${ARCHIVE}" | cut -c1 | grep --quiet '[^-d]'; then
+            echo "::error title=Unsafe documentation archive::Only files and directories are allowed"
+            exit 1
+          fi
+          mkdir "${RUNNER_TEMP}/site"
+          tar --extract --no-same-owner --no-same-permissions \
+            --file "${ARCHIVE}" \
+            --directory "${RUNNER_TEMP}/site" \
+            "site-${GITHUB_SHA}"
+          mv "${RUNNER_TEMP}/site/site-${GITHUB_SHA}" .
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Clear directory contents"
+        run: >
+          find . -maxdepth 1 -mindepth 1
+          ! -name "versions.json"
+          ! -name "index.html"
+          ! -regex './v?[0-9]+\.[0-9]+'
+          ! -name "site-${GITHUB_SHA}"
+          ! -name '.*'
+          -exec rm -rf {} +
+      - name: "Update documentation content"
+        # enq: disabled for readability
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          JSON_FILE="versions.json"
+
+          VERSION_XY="$(cut -d. -f1,2 <<< "${GITHUB_REF_NAME}")"
+
+          TMP_FILE="$(mktemp)"
+
+          jq --arg verXY "${VERSION_XY}" '
+            (
+              map(
+                if .version == $verXY then
+                  empty
+                elif .aliases | index("latest") then
+                  .aliases -= ["latest"]
+                else
+                  .
+                end
+              )
+              + [
+                {
+                  version: $verXY,
+                  title: $verXY,
+                  aliases: ["latest"]
+                }
+              ]
+            )
+          ' "${JSON_FILE}" > "${TMP_FILE}"
+
+          mv --force "${TMP_FILE}" "${JSON_FILE}"
+          mv --force "site-${GITHUB_SHA}" "${VERSION_XY}"
+          ln -sfn "${VERSION_XY}" "latest"
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Upload documentation"
+        # enq: disabled for readability
+        # yamllint disable rule:indentation rule:line-length
+        run: |
+          git config --global user.email github-actions[bot]@users.noreply.github.com
+          git config --global user.name github-actions[bot]
+          git add --force --all
+          if ! git diff --cached --quiet; then
+            git commit --message "feat: update ${GITHUB_REF_NAME} [skip ci]"
+            git push origin gh-pages
+          fi
+        # yamllint enable rule:indentation rule:line-length
+      - name: "Upload documentation as Pages artifact"
+        uses: "actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9" # v5.0.0
+        with:
+          path: "."
+...

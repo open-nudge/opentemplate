@@ -84,5 +84,5 @@ regular source code.
 ## Code sources
 
 - `pyproject.toml`
-- `.github/workflows/tests*.yml`
-- `.github/workflows/typing*.yml`
+- `.github/workflows/*tests*.yml`
+- `.github/workflows/*typing*.yml`

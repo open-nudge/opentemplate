@@ -68,13 +68,13 @@ Together with GitHub Actions, these ensure:
 
 ## Code sources
 
-- `.github/workflows/prek*.yml`
-- `.github/workflows/security-osv-scanner*.yml`
-- `.github/workflows/security-semgrep*.yml`
-- `.github/workflows/security-guarddog*.yml`
-- `.github/workflows/security-codeql*.yml`
-- `.github/workflows/security-zizmor*.yml`
-- `.github/workflows/security-sarifs*.yml`
+- `.github/workflows/*prek*.yml`
+- `.github/workflows/*security-osv-scanner*.yml`
+- `.github/workflows/*security-semgrep*.yml`
+- `.github/workflows/*security-guarddog*.yml`
+- `.github/workflows/*security-codeql*.yml`
+- `.github/workflows/*security-zizmor*.yml`
+- `.github/workflows/*security-sarifs*.yml`
 - `.github/workflows/security-scorecard-update.yml`
 - `.github/workflows/cache.yml`
-- `.github/workflows/generation*.yml`
+- `.github/workflows/*generation*.yml`

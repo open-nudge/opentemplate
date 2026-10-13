@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: © 2025 open-nudge <https://github.com/open-nudge>
+SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
 SPDX-FileContributor: szymonmaszke <github@maszke.co>
 
 SPDX-License-Identifier: Apache-2.0
@@ -92,4 +92,4 @@ and `<!-- mkdocs remove end -->` HTML/markdown comments.
 - `pyproject.toml`
 - `docs/`
 - `docs/gen_ref_pages.py`
-- `.github/workflows/docs*.yml`
+- `.github/workflows/*docs*.yml`

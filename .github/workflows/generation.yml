@@ -29,5 +29,5 @@ jobs:
     name: "Generation"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/generation-reusable.yml"
+    uses: "$/.github/workflows/_generation.yml"
 ...

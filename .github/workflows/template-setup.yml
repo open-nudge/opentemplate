@@ -318,7 +318,7 @@ jobs:
     name: "Cache Setup"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/cache-reusable.yml"
+    uses: "$/.github/workflows/_cache.yml"
     # Checkout main as otherwise the files will not be available
     with:
       ref: "main"
@@ -332,7 +332,7 @@ jobs:
       security-events: "write" # Needed to upload SARIF file to tab
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
-    uses: "$/.github/workflows/security-scorecard-reusable.yml"
+    uses: "$/.github/workflows/_security-scorecard.yml"
     with:
       sarif: true
 ...

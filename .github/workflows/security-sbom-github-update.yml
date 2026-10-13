@@ -25,7 +25,7 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
     name: "Security SBOM GitHub Update"
-    uses: "$/.github/workflows/sbom-reusable.yml"
+    uses: "$/.github/workflows/_sbom.yml"
     with:
       type: "actions"
       upload-grype: true

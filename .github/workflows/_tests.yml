@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "_Tests"
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+on:
+  workflow_call:
+    inputs:
+      additional-allowed-endpoints:
+        description: "Additional endpoints to allow"
+        type: "string"
+        default: ""
+      timeout-minutes:
+        description: "Timeout in minutes"
+        type: "number"
+        default: 30
+
+jobs:
+  _tests:
+    strategy:
+      matrix:
+        python:
+          #
+          #           DO NOT EDIT UNTIL end marker
+          #
+          # [[[cog
+          # import cog
+          # import cogeol
+          #
+          # for version in reversed(cogeol.scientific()):
+          #     cycle = version['cycle']
+          #     cog.outl(f'          - "{cycle}"')
+          # ]]]
+          - "3.13"
+          - "3.14"
+          - "3.15"
+          # [[[end]]] (sum: 5IRAfcdF4m)
+        os:
+          - name: "ubuntu-latest"
+            endpoints: ""
+          - name: "macos-latest"
+            endpoints: |
+              bag.itunes.apple.com:443
+              cf.iadsdk.apple.com:443
+              configuration.apple.com:443
+              device-config.pcms.apple.com:443
+              iadsdk.apple.com:443
+              sas.pcms.apple.com:443
+          - name: "windows-latest"
+            endpoints: |
+              client.wns.windows.com:443
+              crl.sectigo.com:443
+              ipv6.msftconnecttest.com:443
+              mobile.events.data.microsoft.com:443
+              ocsp.sectigo.com:443
+              www.msftconnecttest.com:443
+    name: >
+      Tests | ${{ matrix.os.name }} | python-${{ matrix.python }}
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/__run.yml"
+    with:
+      # enq: long line more readable than splitting within command
+      # yamllint disable rule:line-length
+      command: |
+        pdm run tests-coverage
+        mv .coverage coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
+      # yamllint enable rule:line-length
+      sparse-checkout: |
+        **.py
+        tests/**
+      group: "tests"
+      core: true
+      # Not a release asset, hence commit SHA is not the suffix
+      upload-name: >
+        coverage-${{ github.sha }}-${{ matrix.os.name }}-${{ matrix.python }}
+      upload-path: >
+        coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
+      python-version: "${{ matrix.python }}"
+      os: "${{ matrix.os.name }}"
+      additional-allowed-endpoints: >
+        ${{ inputs.additional-allowed-endpoints }}
+        ${{ matrix.os.endpoints }}
+      timeout-minutes: "${{ inputs.timeout-minutes }}"
+
+  tests-mutation:
+    name: "Tests Mutation"
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/__run.yml"
+    with:
+      command: |
+        pdm run tests-mutation
+      sparse-checkout: |
+        **.py
+        tests/**
+        .github/tools/tests-mutation.sh
+      group: "tests"
+      core: true
+      os: "ubuntu-latest"
+      additional-allowed-endpoints: >
+        ${{ inputs.additional-allowed-endpoints }}
+      timeout-minutes: "${{ inputs.timeout-minutes }}"
+
+  coverage:
+    name: "Coverage"
+    needs: "_tests"
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/__run.yml"
+    with:
+      # enq: long line more readable than splitting within command
+      # yamllint disable rule:line-length
+      command: |
+        pdm run coverage combine --debug=pathmap --keep $(find coverage-${{ github.sha }}-*/ -name "coverage-*-${{ github.sha }}.sqlite")
+        pdm run coverage html --skip-empty
+        pdm run coverage report
+      # yamllint enable rule:line-length
+      # Needed for source code
+      sparse-checkout: |
+        **.py
+      group: "tests"
+      download-pattern: "coverage-${{ github.sha }}-*"
+      upload-name: "coverage-${{ github.sha }}-combined"
+      upload-path: "htmlcov"
+      timeout-minutes: "${{ inputs.timeout-minutes }}"
+...

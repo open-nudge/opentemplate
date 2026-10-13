@@ -29,5 +29,5 @@ jobs:
     name: "Release Check"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/release-check-reusable.yml"
+    uses: "$/.github/workflows/_release-check.yml"
 ...

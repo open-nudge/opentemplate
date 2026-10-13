@@ -29,5 +29,5 @@ jobs:
     name: "Commit"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/commit-reusable.yml"
+    uses: "$/.github/workflows/_commit.yml"
 ...

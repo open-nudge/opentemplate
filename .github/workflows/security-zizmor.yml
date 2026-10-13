@@ -31,7 +31,7 @@ jobs:
     permissions:
       contents: "read"
     name: "Security zizmor"
-    uses: "$/.github/workflows/security-zizmor-reusable.yml"
+    uses: "$/.github/workflows/_security-zizmor.yml"
     with:
       name: "zizmor"
 
@@ -45,7 +45,7 @@ jobs:
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
-    uses: "$/.github/workflows/security-upload-reusable.yml"
+    uses: "$/.github/workflows/_security-upload.yml"
     with:
       name: "zizmor"
       category: "/tool:zizmor/scope:workflows/language:actions"

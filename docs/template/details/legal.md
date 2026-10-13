@@ -58,7 +58,7 @@ Allowed licenses (subject to change):
 To update allowed licenses for `osv-scanner`:
 
 - Modify `prek.toml` (`id: osv-scanner`) for local changes.
-- Update `.github/workflows/security-osv-scanner-reusable.yml` for CI.
+- Update `.github/workflows/_security-osv-scanner.yml` for CI.
 
 ## Documents
 
@@ -81,4 +81,4 @@ To update allowed licenses for `osv-scanner`:
 ## Code Sources
 
 - `pyproject.toml`
-- `.github/workflows/legal*.yml`
+- `.github/workflows/*legal*.yml`

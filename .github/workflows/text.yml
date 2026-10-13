@@ -35,5 +35,5 @@ jobs:
     name: "Text"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/text-reusable.yml"
+    uses: "$/.github/workflows/_text.yml"
 ...

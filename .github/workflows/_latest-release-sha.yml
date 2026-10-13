@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "_Latest Release SHA"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    outputs:
+      ref:
+        description: "The latest release commit SHA."
+        value: "${{ jobs.latest-release.outputs.ref }}"
+      tag:
+        description: "The latest release tag."
+        value: "${{ jobs.latest-release.outputs.tag }}"
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  latest-release:
+    name: "Latest Release"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: "read"
+    outputs:
+      ref: "${{ steps.latest-release.outputs.ref }}"
+      tag: "${{ steps.latest-release.outputs.tag }}"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            github.com:443
+            raw.githubusercontent.com:443
+            objects.githubusercontent.com:443
+            release-assets.githubusercontent.com:443
+      - name: "Checkout repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          sparse-checkout: |
+            .github/actions/release-ref
+          persist-credentials: false
+      - name: "Get latest release ref"
+        id: "latest-release"
+        uses: "$/.github/actions/release-ref"
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+...

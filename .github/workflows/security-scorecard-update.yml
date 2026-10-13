@@ -32,7 +32,7 @@ jobs:
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
     name: "Security Scorecard Update"
-    uses: "$/.github/workflows/security-scorecard-reusable.yml"
+    uses: "$/.github/workflows/_security-scorecard.yml"
     with:
       sarif: true
 ...

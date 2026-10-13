@@ -17,8 +17,8 @@ on:
       - "src/**.py"
       - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/docs.yml"
-      - ".github/workflows/docs-reusable.yml"
-      - ".github/workflows/run-*reusable.yml"
+      - ".github/workflows/_docs.yml"
+      - ".github/workflows/__run.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -38,5 +38,5 @@ jobs:
     name: "Docs"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/docs-reusable.yml"
+    uses: "$/.github/workflows/_docs.yml"
 ...

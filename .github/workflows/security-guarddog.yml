@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: "read"
     name: "Security GuardDog Core"
-    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
       groups: "--prod"
@@ -48,7 +48,7 @@ jobs:
     permissions:
       contents: "read"
     name: "Security GuardDog Python"
-    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
       groups: "--prod -G :all"
@@ -58,7 +58,7 @@ jobs:
     permissions:
       contents: "read"
     name: "Security GuardDog Actions"
-    uses: "$/.github/workflows/security-guarddog-reusable.yml"
+    uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "actions"
       name: "guarddog-actions"
@@ -88,7 +88,7 @@ jobs:
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
-    uses: "$/.github/workflows/security-upload-reusable.yml"
+    uses: "$/.github/workflows/_security-upload.yml"
     with:
       name: "${{ matrix.scan.name }}"
       category: "${{ matrix.scan.category }}"

@@ -26,9 +26,9 @@ as __`opentemplate` is also a Python package__.
 
 Caveats to remember:
 
-- `.github/workflows/template-*` - files should be of special interest
+- `.github/workflows/*template-*` - files should be of special interest
     as they are used for `template` related functionality, e.g. testing
-- `.github/workflows/release*.yml` - most complex workflow, a few parts
+- `.github/workflows/*release*.yml` - most complex workflow, a few parts
     __are not fully tested currently__.
 
 ## Tips
@@ -64,9 +64,9 @@ algorithm-like steps:
 
         1. `<category>.yml` - checker run on human PRs
 
-        1. `<category>-reusable.yml` - checker run used by the caller
+        1. `_<category>.yml` - checker run used by the caller
             and which probably uses
-            `.github/workflows/run-check-reusable.yml`
+            `.github/workflows/_run-check.yml`
 
     1. Go to testing steps below
 

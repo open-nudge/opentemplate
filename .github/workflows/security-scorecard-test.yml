@@ -12,7 +12,7 @@ on:
       - "main"
     paths:
       - ".github/workflows/security-scorecard-test.yml"
-      - ".github/workflows/security-scorecard-reusable.yml"
+      - ".github/workflows/_security-scorecard.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -31,5 +31,5 @@ jobs:
       security-events: "write" # Needed to upload SARIF file to tab
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
-    uses: "$/.github/workflows/security-scorecard-reusable.yml"
+    uses: "$/.github/workflows/_security-scorecard.yml"
 ...

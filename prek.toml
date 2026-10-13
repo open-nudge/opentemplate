@@ -158,7 +158,7 @@ rev = "e76dff8a7e57d6df0c60ad8cbf5d5cba505a8fc9" # frozen: v3.99.2
 
 [[repos]]
 repo = "https://github.com/google/osv-scanner/"
-rev = "e840a6e8adb14b7777c78e26cfbf6e2abc1d1fc6" # frozen: v2.6.0
+rev = "bfe2f84abd2f09fe0b83ba7f6dad40d296762f40" # frozen: v2.7.0
 
   [[repos.hooks]]
   id = "osv-scanner"
@@ -211,7 +211,7 @@ repo = "https://github.com/semgrep/pre-commit"
 rev = "225f70772e8c65f2bdd38ef3164807e907d09e49" # frozen: v1.180.0
 
   # Keep these arguments aligned with the Docker scan in
-  # .github/workflows/security-semgrep-reusable.yml.
+  # .github/workflows/_security-semgrep.yml.
   [[repos.hooks]]
   id = "semgrep"
   alias = "security"

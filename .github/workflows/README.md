@@ -36,8 +36,16 @@ Features of note include:
     - `<type>.yml` - analogous to check/linter of `type`, done for every push to
         the pull request (usually ran __only if files of interest where changed__
         in the pull request, e.g. `**.md` files for `markdown.yml`
-    - `<type>-reusable.yml` - de facto implementation of the linter,
+    - `_<type>.yml` - de facto implementation of the linter,
         called by `<type>.yml`
+
+- reusable (helper) workflows are prefixed with underscores:
+    `_<name>.yml` if any top-level workflow calls it directly
+    (e.g. `_<type>.yml`, `_run-check.yml`), `__<name>.yml` if it is
+    only ever called by other helpers (e.g. `__run.yml` called by
+    `_run-check.yml`), never more than two underscores,
+    their names (and main job IDs and names) use the same prefix,
+    e.g. `_Commit` for `_commit.yml`
 
 - `*-update.yml` workflows are ran periodically, see
     [scheduled jobs documentation](/docs/template/details/scheduled-jobs.md)
@@ -71,8 +79,8 @@ If so, check the [configuration](#configuration) section.
 
 These workflows might be of special interest:
 
-- `check-run-reusable.yml` - runs __most of the checks__
-    defined in `<type>-reusable.yml` as a sort of centralized runner
+- `_run-check.yml` - runs __most of the checks__
+    defined in `_<type>.yml` as a sort of centralized runner
 - `security-*` - ran on PRs and periodically to ensure the security
     of the project, see [security](/docs/template/details/security.md)
     section for more details
