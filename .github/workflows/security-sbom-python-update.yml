@@ -19,7 +19,7 @@ jobs:
   latest-release:
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/latest-release-sha-reusable.yml"
+    uses: "$/.github/workflows/_latest-release-sha.yml"
 
   security-sbom-python-update:
     needs:
@@ -32,7 +32,7 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
     name: "Security SBOM Python Update"
-    uses: "$/.github/workflows/security-sbom-python-reusable.yml"
+    uses: "$/.github/workflows/_security-sbom-python.yml"
     with:
       ref: "${{ needs.latest-release.outputs.ref }}"
       upload-grype: true

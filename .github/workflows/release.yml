@@ -37,7 +37,7 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
       contents: "read"
-    uses: "$/.github/workflows/release-sboms-reusable.yml"
+    uses: "$/.github/workflows/_release-sboms.yml"
     with:
       digests: "${{ needs.package-create.outputs.digests }}"
 
@@ -53,7 +53,7 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
-    uses: "$/.github/workflows/release-sarifs-reusable.yml"
+    uses: "$/.github/workflows/_release-sarifs.yml"
 
   tests:
     name: "Tests"
@@ -62,7 +62,7 @@ jobs:
       github.ref_type == 'tag'
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/tests-reusable.yml"
+    uses: "$/.github/workflows/_tests.yml"
 
   docs:
     name: "Docs"
@@ -71,7 +71,7 @@ jobs:
       github.ref_type == 'tag'
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/release-docs-reusable.yml"
+    uses: "$/.github/workflows/_release-docs.yml"
 
   # Works regardless of repo type
   package-create:
@@ -84,7 +84,7 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
-    uses: "$/.github/workflows/release-build-reusable.yml"
+    uses: "$/.github/workflows/_release-build.yml"
 
   changelog:
     name: "Changelog"
@@ -97,7 +97,7 @@ jobs:
     permissions:
       contents: "read"
       pull-requests: "read" # Needed to read PR metadata during changelog gen
-    uses: "$/.github/workflows/release-changelog-reusable.yml"
+    uses: "$/.github/workflows/_release-changelog.yml"
     with:
       package-name: "${{ needs.package-create.outputs.package-name }}"
       package-version: "${{ needs.package-create.outputs.package-version }}"
@@ -110,7 +110,7 @@ jobs:
     permissions:
       contents: "write" # Needed to create the draft release
       attestations: "read" # Needed to verify release assets
-    uses: "$/.github/workflows/release-upload.yml"
+    uses: "$/.github/workflows/_release-upload.yml"
     with:
       digests: "${{ needs.package-create.outputs.digests }}"
 

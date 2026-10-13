@@ -135,11 +135,11 @@ attestation of __its__ producing workflow:
 
 <!-- pyml disable-num-lines 7 line-length-->
 
-| Asset                                                 | Signer workflow               |
-| ----------------------------------------------------- | ----------------------------- |
-| Wheel and source distribution                         | `release-build-reusable.yml`  |
-| SBOMs and their Grype SARIFs                          | `sbom-reusable.yml`           |
-| OSV-Scanner, Semgrep, zizmor, GuardDog, CodeQL SARIFs | `release-sarifs-reusable.yml` |
+| Asset                                                 | Signer workflow       |
+| ----------------------------------------------------- | --------------------- |
+| Wheel and source distribution                         | `_release-build.yml`  |
+| SBOMs and their Grype SARIFs                          | `_sbom.yml`           |
+| OSV-Scanner, Semgrep, zizmor, GuardDog, CodeQL SARIFs | `_release-sarifs.yml` |
 
 > [!NOTE]
 > Release notes (changelog) and documentation are not attested (their build
@@ -229,7 +229,7 @@ The bundles of the distributions include these attestations.
 > produced them, not that their content is correct.
 
 Verify them with
-`--signer-workflow` pointing to `sbom-reusable.yml` and
+`--signer-workflow` pointing to `_sbom.yml` and
 `--predicate-type https://cyclonedx.org/bom`
 (or `https://spdx.dev/Document/v2.2` for the REUSE SBOM).
 
@@ -276,14 +276,14 @@ This process can be adjusted by editing:
 - `pyproject.toml`
 - `.github/workflows/release.yml`
 - `.github/workflows/release-tag.yml`
-- `.github/workflows/release-upload.yml`
-- `.github/workflows/release-sarifs-reusable.yml`
-- `.github/workflows/security-sarifs-reusable.yml`
-- `.github/workflows/release-changelog-reusable.yml`
-- `.github/workflows/release-docs-reusable.yml`
-- `.github/workflows/release-build-reusable.yml`
-- `.github/workflows/release-sboms-reusable.yml`
-- `.github/workflows/sbom-reusable.yml`
-- `.github/workflows/security-upload-reusable.yml`
+- `.github/workflows/_release-upload.yml`
+- `.github/workflows/_release-sarifs.yml`
+- `.github/workflows/_security-sarifs.yml`
+- `.github/workflows/_release-changelog.yml`
+- `.github/workflows/_release-docs.yml`
+- `.github/workflows/_release-build.yml`
+- `.github/workflows/_release-sboms.yml`
+- `.github/workflows/_sbom.yml`
+- `.github/workflows/_security-upload.yml`
 - `.github/actions/attestation-verify/action.yml`
 - `.github/actions/digests-verify/action.yml`

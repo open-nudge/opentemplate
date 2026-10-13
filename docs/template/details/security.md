@@ -84,13 +84,14 @@ Following [Open Source Security Foundation best practices](https://www.bestpract
 ## Adjustments
 
 Most security configurations (e.g., `check-security`, `check-workflow`) are in `pyproject.toml`.
-Additional security workflows are in `.github/workflows` (prefix: `security-`).
+Additional security workflows are in `.github/workflows` (prefix: `security-`,
+reusable helpers additionally prefixed with `_` per nesting level).
 
 ### Security tab categories
 
 Scanners do not upload results themselves (pull requests run without write
 permissions). Their SARIF files are uploaded by
-`.github/workflows/security-upload-reusable.yml` on `main` (push and weekly)
+`.github/workflows/_security-upload.yml` on `main` (push and weekly)
 and during releases, one analysis per tool, categorized as
 `/tool:<tool>/scope:<scope>/language:<language>`:
 
@@ -137,7 +138,7 @@ To ignore specific vulnerabilities, modify `osv-scanner.toml` ([docs](https://go
 [GuardDog](https://github.com/DataDog/guarddog) looks for malicious code
 (heuristics such as obfuscation, exfiltration or typosquatting) in Python
 dependencies and in the source of third-party actions used by
-`.github/workflows` steps (`.github/workflows/security-guarddog*.yml`).
+`.github/workflows` steps (`.github/workflows/*security-guarddog*.yml`).
 Unlike OSV-Scanner, Grype or `zizmor`, it does not rely on known advisories.
 GuardDog is installed (hash-locked) from the template's `dev-security` group.
 
@@ -190,7 +191,7 @@ Known limitations (the job warns when something was not scanned):
 ### CodeQL
 
 [CodeQL](https://codeql.github.com/) only analyzes GitHub Actions workflows
-(`.github/workflows/security-codeql*.yml`).
+(`.github/workflows/*security-codeql*.yml`).
 Pull requests fail on any finding, while results are uploaded to the
 Security tab on `main` (push and weekly) and attached to releases.
 

@@ -31,5 +31,5 @@ jobs:
     permissions:
       contents: "read"
       pull-requests: "write" # Needed to create pull request with update
-    uses: "$/.github/workflows/prek-reusable.yml"
+    uses: "$/.github/workflows/_prek.yml"
 ...

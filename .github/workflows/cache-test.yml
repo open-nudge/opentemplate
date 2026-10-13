@@ -13,8 +13,8 @@ on:
     paths:
       - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/cache-test.yml"
-      - ".github/workflows/cache-reusable.yml"
-      - ".github/workflows/cache-item-reusable.yml"
+      - ".github/workflows/_cache.yml"
+      - ".github/workflows/__cache.yml"
       - "project/**"
   merge_group:
     types:
@@ -31,5 +31,5 @@ jobs:
     name: "Cache Test"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/cache-reusable.yml"
+    uses: "$/.github/workflows/_cache.yml"
 ...

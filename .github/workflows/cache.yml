@@ -33,5 +33,5 @@ jobs:
       github.event.head_commit.message != 'Initial commit'
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/cache-reusable.yml"
+    uses: "$/.github/workflows/_cache.yml"
 ...

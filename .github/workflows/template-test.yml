@@ -123,5 +123,5 @@ jobs:
     permissions:
       pull-requests: "write" # Needed to create pull request
       contents: "read"
-    uses: "$/.github/workflows/prek-reusable.yml"
+    uses: "$/.github/workflows/_prek.yml"
 ...

@@ -28,5 +28,5 @@ jobs:
     name: "GitHub"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/github-reusable.yml"
+    uses: "$/.github/workflows/_github.yml"
 ...

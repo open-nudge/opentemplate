@@ -16,8 +16,9 @@ on:
       - "pdm.lock"
       - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/typing.yml"
-      - ".github/workflows/typing-reusable.yml"
-      - ".github/workflows/run-*reusable.yml"
+      - ".github/workflows/_typing.yml"
+      - ".github/workflows/_run-check.yml"
+      - ".github/workflows/__run.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -37,5 +38,5 @@ jobs:
     name: "Typing"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/typing-reusable.yml"
+    uses: "$/.github/workflows/_typing.yml"
 ...

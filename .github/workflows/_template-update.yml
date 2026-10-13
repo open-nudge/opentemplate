@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "_Template Update"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  _template-update:
+    name: "_Template Update"
+    permissions:
+      contents: "write" # Needed to update repository contents
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Placeholder operation"
+        run: >
+          echo "Placeholder operation, template update not yet implemented."
+...

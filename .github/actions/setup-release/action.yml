@@ -25,8 +25,8 @@ inputs:
     # cycle = cogeol.scientific()[-1]["cycle"]
     # cog.out(f'    default: "{cycle}"')
     # ]]]
-    default: "3.12"
-    # [[[end]]] (sum: SoRk4taE1i)
+    default: "3.13"
+    # [[[end]]] (sum: +w2vr+7KUV)
   sparse-checkout:
     description: >
       Additional paths (newline separated) of the template repository

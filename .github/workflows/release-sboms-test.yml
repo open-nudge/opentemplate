@@ -20,15 +20,15 @@ on:
       - ".github/actions/digests/action.yml"
       - ".github/actions/digests-verify/action.yml"
       - ".github/actions/dist-download/action.yml"
-      - ".github/workflows/release-build-reusable.yml"
+      - ".github/workflows/_release-build.yml"
       - ".github/workflows/release-sboms-test.yml"
-      - ".github/workflows/release-sboms-reusable.yml"
-      - ".github/workflows/sbom-reusable.yml"
+      - ".github/workflows/_release-sboms.yml"
+      - ".github/workflows/_sbom.yml"
       - ".github/workflows/security-sbom-github-update.yml"
       - ".github/workflows/security-sbom-github.yml"
       - ".github/workflows/security-sbom-legal-update.yml"
       - ".github/workflows/security-sbom-legal.yml"
-      - ".github/workflows/security-sbom-python-reusable.yml"
+      - ".github/workflows/_security-sbom-python.yml"
       - ".github/workflows/security-sbom-python-update.yml"
       - ".github/workflows/security-sbom-python.yml"
       - "pyproject.toml"
@@ -53,7 +53,7 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
-    uses: "$/.github/workflows/release-build-reusable.yml"
+    uses: "$/.github/workflows/_release-build.yml"
 
   release-sboms-test:
     name: "Release SBOMs Test"
@@ -66,7 +66,7 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
       contents: "read"
-    uses: "$/.github/workflows/release-sboms-reusable.yml"
+    uses: "$/.github/workflows/_release-sboms.yml"
     with:
       digests: "${{ needs.package-create.outputs.digests }}"
       upload-grype: false

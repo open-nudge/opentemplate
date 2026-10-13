@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "_Release Changelog"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    inputs:
+      package-name:
+        description: "The normalized package name."
+        required: true
+        type: "string"
+      package-version:
+        description: "The normalized package version."
+        required: true
+        type: "string"
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  release-changelog:
+    name: "Release Changelog"
+    permissions:
+      contents: "read"
+      pull-requests: "read" # Needed to read PR metadata during changelog gen
+    uses: "$/.github/workflows/__run.yml"
+    with:
+      full-checkout: true
+      group: "release"
+      fetch-depth: 0
+      # Package is published to PyPI after the changelog (public repos only)
+      # enq: long command, splitting is unreadable
+      # yamllint disable rule:indentation rule:line-length
+      command: |
+        export PYTHON_PACKAGE_VERSION="${{ inputs.package-version }}"
+        if [[ "${{ github.event.repository.private }}" == "false" ]]; then
+          export PACKAGE_REPOSITORIES="- [PyPI](https://pypi.org/project/${{ inputs.package-name }}/${{ inputs.package-version }}/)"
+        fi
+        pdm run changelog-latest > LATEST.md
+      # yamllint enable rule:indentation rule:line-length
+      # Release notes, not a release asset, hence no commit SHA suffix
+      upload-name: "release-notes"
+      upload-path: "LATEST.md"
+...

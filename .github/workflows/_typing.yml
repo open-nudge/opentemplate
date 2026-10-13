@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "_Typing"
+
+on:
+  workflow_call:
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  _typing:
+    name: "_Typing"
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/_run-check.yml"
+    with:
+      check: "typing"
+      core: true
+      sparse-checkout: |
+        **.py
+...

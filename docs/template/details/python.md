@@ -34,4 +34,4 @@ You can configure most of the settings in `pyproject.toml`
 ## Code sources
 
 - `pyproject.toml`
-- `.github/workflows/python*.yml`
+- `.github/workflows/*python*.yml`

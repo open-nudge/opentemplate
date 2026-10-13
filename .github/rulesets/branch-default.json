@@ -23,15 +23,15 @@
         "do_not_enforce_on_create": false,
         "required_status_checks": [
           {
-            "context": "Commit / Commit Reusable / Check / Run",
+            "context": "Commit / _Commit / Check / Run",
             "integration_id": 15368
           },
           {
-            "context": "Generation / Generation Reusable / Check / Run",
+            "context": "Generation / _Generation / Check / Run",
             "integration_id": 15368
           },
           {
-            "context": "Legal / Legal Reusable / Check / Run",
+            "context": "Legal / _Legal / Check / Run",
             "integration_id": 15368
           },
           {
@@ -39,7 +39,7 @@
             "integration_id": 15368
           },
           {
-            "context": "prek / prek Reusable",
+            "context": "prek / _prek",
             "integration_id": 15368
           },
           {
@@ -47,15 +47,15 @@
             "integration_id": 15368
           },
           {
-            "context": "Release Check / Release Check Reusable / Check / Run",
+            "context": "Release Check / _Release Check / Check / Run",
             "integration_id": 15368
           },
           {
-            "context": "Security CodeQL / Security CodeQL Reusable",
+            "context": "Security CodeQL / _Security CodeQL",
             "integration_id": 15368
           },
           {
-            "context": "Security OSV-Scanner / Security OSV-Scanner Reusable",
+            "context": "Security OSV-Scanner / _Security OSV-Scanner",
             "integration_id": 15368
           },
           {
@@ -71,7 +71,7 @@
             "integration_id": 15368
           },
           {
-            "context": "Security Semgrep / Security Semgrep Reusable",
+            "context": "Security Semgrep / _Security Semgrep",
             "integration_id": 15368
           }
         ]

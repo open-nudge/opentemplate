@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "_GitHub Actions"
+
+on:
+  workflow_call:
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  _github-actions:
+    name: "_GitHub Actions"
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/_run-check.yml"
+    with:
+      check: "github-actions"
+      arguments: ".github/actions/*/action.yml"
+      group: "github"
+      sparse-checkout: |
+        .github/actions/*/action.yml
+...

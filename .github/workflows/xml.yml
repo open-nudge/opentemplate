@@ -14,8 +14,9 @@ on:
       - "**.xml"
       - ".github/actions/pdm-*/action.yml"
       - ".github/workflows/xml.yml"
-      - ".github/workflows/xml-reusable.yml"
-      - ".github/workflows/run-*reusable.yml"
+      - ".github/workflows/_xml.yml"
+      - ".github/workflows/_run-check.yml"
+      - ".github/workflows/__run.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -35,5 +36,5 @@ jobs:
     name: "XML"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/xml-reusable.yml"
+    uses: "$/.github/workflows/_xml.yml"
 ...

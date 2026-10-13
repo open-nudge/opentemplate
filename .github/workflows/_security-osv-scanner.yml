@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "_Security OSV-Scanner"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    outputs:
+      digests:
+        description: "sha256sum of the SARIF file (named as in the artifact)"
+        value: "${{ jobs._security-osv-scanner.outputs.digests }}"
+    inputs:
+      name:
+        description: >
+          Name of the artifact and its SARIF file (<name>.sarif),
+          default: '' - no artifact upload
+        type: "string"
+        default: ""
+      ref:
+        description: "The ref to checkout (default: '' - the triggering ref)"
+        type: "string"
+        default: ""
+      continue-on-error:
+        description: "Whether to continue on error"
+        type: "boolean"
+        default: false
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  _security-osv-scanner:
+    name: "_Security OSV-Scanner"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 30
+    permissions:
+      contents: "read"
+    outputs:
+      digests: "${{ steps.upload.outputs.digests }}"
+    env:
+      FILE: "${{ inputs.name || 'osv-scanner' }}.sarif"
+    steps:
+
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        with:
+          # Uses docker container,
+          # disable-sudo-and-containers impossible
+          disable-sudo: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            codeload.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.deps.dev:443
+            api.github.com:443
+            api.osv.dev:443
+            ghcr.io:443
+            github.com:443
+            pkg-containers.githubusercontent.com:443
+      - name: "Checkout repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          ref: "${{ inputs.ref }}"
+          persist-credentials: false
+      - name: "Run scanner"
+        uses: "google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8
+        continue-on-error: "${{ inputs.continue-on-error }}"
+        with:
+          scan-args: |-
+            --format=sarif
+            --output=${{ env.FILE }}
+            --recursive
+            --config=osv-scanner.toml
+            --licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0
+            ./
+      - name: "Upload files"
+        id: "upload"
+        if: >
+          !cancelled()
+        uses: "$/.github/actions/sarif-upload"
+        with:
+          name: "${{ inputs.name }}"
+          file: "${{ env.FILE }}"
+...

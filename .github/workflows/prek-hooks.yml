@@ -14,7 +14,8 @@ on:
       - ".github/actions/pdm-*.yml"
       - ".prek-hooks.yaml"
       - ".github/workflows/prek-hooks.yml"
-      - ".github/workflows/run-*reusable.yml"
+      - ".github/workflows/_run-check.yml"
+      - ".github/workflows/__run.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -34,7 +35,7 @@ jobs:
     name: "prek"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/run-check-reusable.yml"
+    uses: "$/.github/workflows/_run-check.yml"
     with:
       check: "prek-hooks"
       group: "prek"

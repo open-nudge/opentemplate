@@ -445,7 +445,7 @@ jobs:
         # yamllint enable rule:indentation
         # Default CodeQL conflicts with opentemplate setup
       - name: "Disable CodeQL default setup (best effort)"
-        # Default setup rejects SARIFs of security-codeql-reusable.yml
+        # Default setup rejects SARIFs of _security-codeql.yml
         # (may be enforced by organization security configuration)
         # Administration write
         # https://docs.github.com/en/rest/code-scanning/code-scanning?apiVersion=2022-11-28#update-a-code-scanning-default-setup-configuration
@@ -535,7 +535,7 @@ jobs:
       security-events: "write" # Writing security events to upload SARIF file
       contents: "read"
       id-token: "write" # Needed for GitHub OIDC token if publish_results
-    uses: "$/.github/workflows/security-scorecard-reusable.yml"
+    uses: "$/.github/workflows/_security-scorecard.yml"
     with:
       sarif: true
 ...
