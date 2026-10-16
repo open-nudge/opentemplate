@@ -171,7 +171,9 @@ __opentemplate__ is a Python template which is:
     calls using the latest OpenTemplate
     `main` commit, so generated repositories receive pinned pipeline updates.
 - __Pinned dependencies__: all dependencies are pinned to specific versions
-    (GitHub Actions, `prek` and `uv.lock`)
+    (GitHub Actions, `prek` and `uv.lock`), with weekly
+    [Dependabot](https://docs.github.com/en/code-security/dependabot)
+    pull requests (one per ecosystem)
 - __Monitored egress in GitHub Actions__: [`harden-runner`](https://github.com/step-security/harden-runner)
     with a __whitelisted minimal set of domains__ necessary to run the workflows
 - __Security documentation__: `SECURITY.md`, `SECURITY-INSIGHTS.yml`,
