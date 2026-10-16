@@ -53,7 +53,7 @@ jobs:
       CODEQL_ACTION_DIFF_INFORMED_QUERIES: "false"
     steps:
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
         with:
           disable-sudo: true
           egress-policy: "block"
@@ -70,7 +70,7 @@ jobs:
           ref: "${{ inputs.ref }}"
           persist-credentials: false
       - name: "Initialize CodeQL"
-        uses: "github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
+        uses: "github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d" # v4.38.3
         with:
           languages: "actions"
           build-mode: "none"
@@ -79,7 +79,7 @@ jobs:
           tools: "linked"
       # Uploaded to the Security tab by the caller (like other tools)
       - name: "Perform CodeQL analysis"
-        uses: "github/codeql-action/analyze@1c5b675653bb5c22dbe9b12b556ec555138e09fd" # v4.38.1
+        uses: "github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d" # v4.38.3
         with:
           # Same as the upload category (see _security-upload.yml)
           category: "/tool:codeql/scope:workflows/language:actions"
