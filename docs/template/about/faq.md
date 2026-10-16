@@ -7,16 +7,6 @@ SPDX-License-Identifier: Apache-2.0
 
 # FAQ
 
-## Why use [`pdm`](https://github.com/pdm-project/pdm) instead of [`uv`](https://github.com/astral-sh/uv)?
-
-`pdm` offers more flexibility, including:
-
-- __PEP 582 support__ – Simplifies dependency management without virtual environments.
-- __Custom commands__ – Enables unified workflows without extra tools ([more details](https://github.com/astral-sh/uv/issues/5903)).
-
-> [!NOTE]
-> `uv` is under evaluation and may be adopted in the future.
-
 ## Why is [`pyrefly`](https://github.com/facebook/pyrefly) used?
 
 `pyrefly` is used for template type checking because it:
@@ -26,17 +16,12 @@ SPDX-License-Identifier: Apache-2.0
 - emits JSON output consumed by [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
     for type-aware mutation filtering
 
-## Why use the rejected [`pep582`](https://peps.python.org/pep-0582/) standard?
+## Where are the dependencies installed?
 
-This approach allows:
-
-- __Local dependencies__ – Everything stays in the project directory.
-
-- __Reusable installs__ – Simplifies scripting (e.g., running tests without
-    `nox` or `tox`).
-
-> [!NOTE]
-> This may change as tools such as `uv` evolve.
+In the `.venv` virtual environment inside the project directory
+(managed by `uv`), so everything stays local to the project.
+Tests run in separate environments per Python version (`.venvs/<version>`),
+which install the package non-editable, as users would.
 
 ## Why is `CHANGELOG.md` empty?
 

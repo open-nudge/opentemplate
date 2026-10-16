@@ -11,7 +11,7 @@ on:
     branches:
       - "main"
     paths:
-      - ".github/actions/pdm-*/action.yml"
+      - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/cache-test.yml"
       - ".github/workflows/_cache.yml"
       - ".github/workflows/__cache.yml"

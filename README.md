@@ -56,7 +56,7 @@ __opentemplate__ is a Python template which is:
 - [__Truly open source__](https://open-nudge.github.io/opentemplate/template/about/philosophy):
     no tokens, no fees, no premium plans, open source software only
 - [__Easy to use__](https://open-nudge.github.io/opentemplate/template/quickstart/usage):
-    clone templated repo, run `pdm setup` and __focus on your code__
+    clone templated repo, run `uv run poe setup` and __focus on your code__
 - [__State of the art__](https://open-nudge.github.io/opentemplate/template/details):
     best checkers for Python, YAML, Markdown, prose, and more unified
 - [__Secure__](https://open-nudge.github.io/opentemplate/template/details/security):
@@ -65,8 +65,8 @@ __opentemplate__ is a Python template which is:
     [secured egress](https://github.com/step-security/harden-runner),
     [OSSF Best Practices](https://github.com/ossf/scorecard)
 - [__Consistent__](https://open-nudge.github.io/opentemplate/template/configuration/basic):
-    package metadata is static in `pyproject.toml`, while PDM resolves
-    dependencies into `pdm.lock`
+    package metadata is static in `pyproject.toml`, while uv resolves
+    dependencies into `uv.lock`
 - [__Performant__](https://open-nudge.github.io/opentemplate/template/details/github-actions):
     parallel checks, builds, minimally-sized caches and checkouts
 
@@ -86,16 +86,17 @@ __opentemplate__ is a Python template which is:
 > [!IMPORTANT]
 > __Adjust package metadata and tool configuration in `pyproject.toml`.__
 
-- __Package manager:__ [`pdm`](https://pdm-project.org/en/latest/)
-    with a single `pdm setup` manages everything!
-    (see [why pdm](https://open-nudge.github.io/opentemplate/latest/template/about/faq/#why-use-pdm-instead-of-uv))
+- __Package manager:__ [`uv`](https://docs.astral.sh/uv/)
+    (with [`poe`](https://poethepoet.natn.io/) tasks)
+    and a single `uv run poe setup` manages everything!
+    (see [why uv](https://open-nudge.github.io/opentemplate/latest/template/about/faq/#why-use-uv-with-poe))
 - __Testing:__ [`pytest`](https://docs.pytest.org/en/stable/)
     (with [`coverage`](https://coverage.readthedocs.io/en/7.9.1/),
     and [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/) for
     fuzzing, doctests, and [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
     for mutation testing); __testing across all Python versions
     done WITHOUT [`tox`](https://tox.wiki/en/4.27.0/)
-    or [`nox`](https://nox.thea.codes/en/stable/)__(managed directly by `pdm`!)
+    or [`nox`](https://nox.thea.codes/en/stable/)__(managed directly by `uv`!)
 - __Documentation:__ [`mkdocs`](https://www.mkdocs.org/) -
     __document once, have it everywhere (unified look on GitHub and hosted docs)__,
     [semantically versioned](https://semver.org/)
@@ -123,14 +124,14 @@ __opentemplate__ is a Python template which is:
     deprecation and end-of-life policies
 - __Other code linting__: checks for `YAML`, `Markdown`, `INI`, `JSON`, `prose`,
     all config files, `shell`, `GitHub Actions` -
-    __all grouped as `check-<group>` and `fix-<group>` `pdm` commands__
+    __all grouped as `check-<group>` and `fix-<group>` `poe` tasks__
 - __Release to `PyPI` and `GitHub`__: done by making a
     [GitHub release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases),
     each release is attested and immutably versioned via
     [`commition`](https://pypi.org/project/commition/)
 - [__`prek`__](https://prek.j178.dev/): __all checks and fixers are run
     before commit__, no need to remember them!
-    (`prek` is also setup after running a single `pdm setup` command!)
+    (`prek` is also setup after running a single `uv run poe setup` command!)
 
 ### Security
 
@@ -170,7 +171,7 @@ __opentemplate__ is a Python template which is:
     calls using the latest OpenTemplate
     `main` commit, so generated repositories receive pinned pipeline updates.
 - __Pinned dependencies__: all dependencies are pinned to specific versions
-    (GitHub Actions, `prek` and `pdm.lock`)
+    (GitHub Actions, `prek` and `uv.lock`)
 - __Monitored egress in GitHub Actions__: [`harden-runner`](https://github.com/step-security/harden-runner)
     with a __whitelisted minimal set of domains__ necessary to run the workflows
 - __Security documentation__: `SECURITY.md`, `SECURITY-INSIGHTS.yml`,
@@ -240,11 +241,11 @@ __opentemplate__ is a Python template which is:
 ### Installation
 
 > [!NOTE]
-> [Install `pdm`](https://pdm-project.org/en/latest/#recommended-installation-method)
+> [Install `uv`](https://docs.astral.sh/uv/getting-started/installation/)
 > (if you don't have it already), for Linux/MacOS:
 
 ```sh
-curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 1. Create a new GitHub repository using this template
@@ -254,7 +255,7 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 1. __Wait until the setup commit appears__
     (performed by `github-actions[bot]`, it may take a few minutes)
 1. Clone the repository
-1. Run `pdm setup` command locally to setup development environment
+1. Run `uv run poe setup` command locally to setup development environment
 
 > [!TIP]
 > For more details read the
@@ -264,8 +265,8 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 
 1. Create a new branch
 1. Optionally adjust package metadata in `[project]` in `pyproject.toml`
-    (including `dependencies`, `keywords`, or `classifiers`), then run
-    `pdm lock` to resolve dependency declarations into `pdm.lock`
+    (including `dependencies`, `keywords`, or `classifiers`), `prek` runs
+    `uv lock --upgrade` on every commit (releases at least a week old)
 1. Write code in `/src/<project_name>` and tests in `/tests`
 1. Use `git add`, `git commit` and `git push` your changes
 1. `prek` will guide you through the process
@@ -284,25 +285,25 @@ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 &nbsp;
 
 ```sh
-> pdm check-<group> [FILE1, FILE2, ...] # pdm fix-<group>
+> uv run poe check-<group> [FILE1, FILE2, ...] # uv run poe fix-<group>
 ```
 
 For example, to check __all Python files__:
 
 ```sh
-> pdm check-python
+> uv run poe check-python
 ```
 
 Or to check `/src/__init__.py`:
 
 ```sh
-> pdm check-python src/__init__.py
+> uv run poe check-python src/__init__.py
 ```
 
-Note that all `check` and `fix` commands are grouped for your convenience:
+To run all checks and fixers at once (via `prek`):
 
 ```sh
-> pdm check-all # pdm fix-all
+> uv run poe fix-all
 ```
 
 </details>
@@ -324,7 +325,7 @@ Advanced tool and development changes still belong in `pyproject.toml`:
 
 - Add dev dependencies under `[dependency-groups]`
     (everything is named `dev-<group>`)
-- Modify `[tool.pdm.scripts]` for custom command
+- Modify `[tool.poe.tasks]` for custom command
     (`check-<group>` or `fix-<group>`, the latter modifies files)
 - Use `[tool.<name>]` to adjust specific tool configuration
 

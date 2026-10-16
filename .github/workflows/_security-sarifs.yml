@@ -79,7 +79,7 @@ jobs:
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
-      groups: "--prod"
+      groups: "--no-default-groups"
       name: "security-guarddog-core-${{ inputs.tag || github.sha }}"
       ref: "${{ inputs.ref }}"
 
@@ -90,7 +90,7 @@ jobs:
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
-      groups: "--prod -G :all"
+      groups: "--no-default-groups --all-extras"
       name: "security-guarddog-extras-${{ inputs.tag || github.sha }}"
       ref: "${{ inputs.ref }}"
 

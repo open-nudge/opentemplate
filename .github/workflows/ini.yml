@@ -13,7 +13,7 @@ on:
     paths:
       - "**.ini"
       - ".editorconfig"
-      - ".github/actions/pdm-*/action.yml"
+      - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/ini.yml"
       - ".github/workflows/_ini.yml"
       - ".github/workflows/_run-check.yml"

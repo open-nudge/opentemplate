@@ -16,8 +16,8 @@ SPDX-License-Identifier: Apache-2.0
 
 1. Create an issue for the task.
 1. Create a new branch (`<issue-number>` or similar).
-1. (Optional) Adjust package metadata in `[project]` in `pyproject.toml`
-    and run `pdm lock` after changing dependencies.
+1. (Optional) Adjust package metadata in `[project]` in `pyproject.toml`,
+    `prek` locks and upgrades dependencies (at least a week old) on every commit.
 1. Write code in `/src/<project_name>` and tests in `/tests`.
 1. Use `git add`, `git commit` (following [semver](https://semver.org/)),
     and `git push`.

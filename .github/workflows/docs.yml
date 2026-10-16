@@ -15,7 +15,7 @@ on:
       - "mkdocs.yml"
       - "docs/**"
       - "src/**.py"
-      - ".github/actions/pdm-*/action.yml"
+      - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/docs.yml"
       - ".github/workflows/_docs.yml"
       - ".github/workflows/__run.yml"

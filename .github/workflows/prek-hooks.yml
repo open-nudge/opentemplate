@@ -11,7 +11,7 @@ on:
     branches:
       - "main"
     paths:
-      - ".github/actions/pdm-*.yml"
+      - ".github/actions/uv-setup/action.yml"
       - ".prek-hooks.yaml"
       - ".github/workflows/prek-hooks.yml"
       - ".github/workflows/_run-check.yml"

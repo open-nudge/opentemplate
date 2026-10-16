@@ -37,8 +37,7 @@ jobs:
             github.com:443
             nodejs.org:443
             objects.githubusercontent.com:443
-            pdm-project.org:443
-            pdm.fming.dev:443
+            releases.astral.sh:443
             proxy.golang.org:443
             go.dev:443
             dl.google.com:443
@@ -61,13 +60,13 @@ jobs:
           persist-credentials: false
       - name: "Setup git credentials"
         uses: "$/.github/actions/git-setup"
-      - name: "Setup PDM"
-        uses: "$/.github/actions/pdm-setup"
+      - name: "Setup uv"
+        uses: "$/.github/actions/uv-setup"
         with:
           all: true
       - name: "Update prek dependencies"
         run: >
-          pdm run -v prek autoupdate --freeze
+          uv run prek autoupdate --freeze
       - name: "Check for changes"
         id: "check-changes"
         # enq: indentation disable to aid readability
@@ -85,5 +84,5 @@ jobs:
         if: >
           steps.check-changes.outputs.changed == 'true'
         run: >
-          pdm run -v prek run --all-files
+          uv run prek run --all-files
 ...

@@ -13,7 +13,7 @@ To host your own template based on `opentemplate`, you can follow these steps:
     to your own GitHub account/organization
 1. Make it a [template repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository)
 1. Follow the steps in the [quick start guide](../quickstart/usage.md) (e.g. hardening)
-1. Clone the repository, `pdm setup` and perform your changes
+1. Clone the repository, `uv run poe setup` and perform your changes
 
 > [!TIP]
 > Improvements to `opentemplate` are welcome! Please open an issue, discuss
@@ -47,7 +47,7 @@ algorithm-like steps:
     1. Specify only the major version (e.g. `>=1`) if above `1.0.0`,
         or the exact version if below `1.0.0`
 
-    1. Add the tool call to `[tool.pdm.scripts]` under `check-<category>`
+    1. Add the tool call to `[tool.poe.tasks]` under `check-<category>`
         and `fix-<category>` if applicable
 
     1. Go to testing steps below

@@ -61,7 +61,7 @@ contributors must follow these steps:
 1. Choose a compatible version of the package.
     Use the latest version whenever possible.
 1. Update `[project].dependencies` in `pyproject.toml`, then run
-    `pdm lock` to lock the dependencies.
+    `uv lock` to lock the dependencies.
 
 ## Archived or deprecated packages
 

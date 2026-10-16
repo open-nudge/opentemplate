@@ -37,7 +37,7 @@ SPDX-License-Identifier: Apache-2.0
     Double-check runtime dependencies and version constraints.
 - `[project].scripts`, `[project].gui-scripts`, and
     `[project].entry-points` – Confirm command and entry-point metadata.
-- For dependencies, run `pdm lock` and review the resulting `pdm.lock`.
+- For dependencies, review `uv.lock` (upgraded by `prek` on every commit).
 
 > [!TIP]
 > For public projects after the first release, remove `exclude_links`

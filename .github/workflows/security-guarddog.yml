@@ -12,7 +12,7 @@ on:
       - "main"
     paths:
       - "pyproject.toml"
-      - "pdm.lock"
+      - "uv.lock"
       - ".github/workflows/**"
   merge_group:
     types:
@@ -41,7 +41,7 @@ jobs:
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
-      groups: "--prod"
+      groups: "--no-default-groups"
       name: "guarddog-core"
 
   security-guarddog-python:
@@ -51,7 +51,7 @@ jobs:
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
-      groups: "--prod -G :all"
+      groups: "--no-default-groups --all-extras"
       name: "guarddog-extras"
 
   security-guarddog-actions:

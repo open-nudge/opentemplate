@@ -20,6 +20,7 @@ jobs:
     uses: "$/.github/workflows/_run-check.yml"
     with:
       check: "github"
+      arguments: "."
       sparse-checkout: |
         .github/workflows/*
         .github/actions/*/action.yml

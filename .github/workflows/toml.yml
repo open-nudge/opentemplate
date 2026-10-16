@@ -12,7 +12,7 @@ on:
       - "main"
     paths:
       - "**.toml"
-      - ".github/actions/pdm-*/action.yml"
+      - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/toml.yml"
       - ".github/workflows/_toml.yml"
       - ".github/workflows/_run-check.yml"

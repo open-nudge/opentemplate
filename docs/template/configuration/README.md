@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0
 # Configuration
 
 Routine package metadata is declared directly in the `[project]` table of
-`pyproject.toml`. PDM resolves dependency declarations into `pdm.lock`;
+`pyproject.toml`. uv resolves dependency declarations into `uv.lock`;
 `prek.toml` and workflows configure development tools and CI.
 
 Start here:

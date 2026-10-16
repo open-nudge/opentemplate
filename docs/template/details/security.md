@@ -144,10 +144,12 @@ GuardDog is installed (hash-locked) from the template's `dev-security` group.
 
 Python dependencies are scanned per tier (as SBOMs are):
 
-| Tier     | Dependencies     | Scanned on                     |
-| -------- | ---------------- | ------------------------------ |
-| `core`   | `--prod`         | releases                       |
-| `extras` | `--prod -G :all` | pull requests, `main`, release |
+<!-- pyml disable-num-lines 8 line-length-->
+
+| Tier     | Dependencies                       | Scanned on                     |
+| -------- | ---------------------------------- | ------------------------------ |
+| `core`   | `--no-default-groups`              | releases                       |
+| `extras` | `--no-default-groups --all-extras` | pull requests, `main`, release |
 
 > [!NOTE]
 > Heuristics produce false positives, therefore findings do not fail the

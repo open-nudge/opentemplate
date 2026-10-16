@@ -12,7 +12,7 @@ on:
   workflow_call:
     inputs:
       type:
-        description: "Type of SBOM to create, runs sbom-<type> pdm script"
+        description: "Type of SBOM to create, runs sbom-<type> poe task"
         type: "string"
         required: true
       name:
@@ -20,7 +20,7 @@ on:
         type: "string"
         default: ""
       groups:
-        description: "Dependency groups (pdm sync flags) of the assessed env"
+        description: "Dependency groups (uv sync flags) of the assessed env"
         type: "string"
         default: ""
       os:
@@ -80,7 +80,6 @@ jobs:
     env:
       # Only an assessed environment (groups) contains the distributions
       INSTALL_PROJECT: "${{ inputs.digests != '' && inputs.groups != '' }}"
-      PDM_VENV_WITH_PIP: "true"
       # Template workflows and actions are part of the release process
       SBOM_ACTIONS_EXTRA: "${{ github.workspace }}/template/.github"
     steps:
@@ -145,28 +144,30 @@ jobs:
           inputs.groups != ''
         env:
           DEPENDENCY_GROUPS: "${{ inputs.groups }}"
+          PYTHON_VERSION: "${{ inputs.python-version }}"
         # enq: shell indentation is more readable
         # yamllint disable rule:indentation
         run: |
-          # Local PDM configuration must not alter the assessed environment
-          rm -rf source/__pypackages__ source/pdm.toml source/.pdm-python
-          # --prod: default dependencies only, --prod -G :all: with extras,
-          # -G :all: with extras and dev dependency groups
+          # --no-default-groups: default dependencies only,
+          # --no-default-groups --all-extras: with extras,
+          # --all-extras --all-groups: with extras and dev dependency groups
           # enq: string splitting of DEPENDENCY_GROUPS is intentional
           # shellcheck disable=SC2086
-          pdm sync --project source --no-self --no-editable --skip=:all ${DEPENDENCY_GROUPS}
+          uv sync --project source --locked --python "${PYTHON_VERSION}" \
+            --no-install-project --no-editable ${DEPENDENCY_GROUPS}
           # Built on Linux, assumes the project provides a pure Python wheel
           if [[ "${INSTALL_PROJECT}" == "true" ]]; then
-            "$(pdm info --project source --python)" -m pip install --no-deps dist/*.whl
+            uv pip install --python source/.venv --no-deps dist/*.whl
           fi
         # yamllint enable rule:indentation
       - name: "Create SBOM (${{ inputs.type }})"
         env:
           TYPE: "${{ inputs.type }}"
-        # enq: working dir is resolved against the project, hence absolute
+        # Template tasks assess the source project (current directory)
+        working-directory: "source"
         run: >
-          pdm run --project template --working-dir "${GITHUB_WORKSPACE}/source"
-          "sbom-${TYPE}" > "${ARTIFACT}/${ARTIFACT}.json"
+          uv run --project ../template poe --directory ../template
+          "sbom-${TYPE}" > "../${ARTIFACT}/${ARTIFACT}.json"
       - name: "Scan SBOM"
         uses: "anchore/scan-action@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2" # v7.4.0
         with:
@@ -194,7 +195,7 @@ jobs:
           overwrite: true
 
   # This job exists so security-events token is not available to the SBOM Create
-  # as this is an untrusted workflow running pdm sync
+  # as this is an untrusted workflow running uv sync
   sbom-sarif:
     name: "SBOM SARIF"
     # Without GitHub Code Security (see _security-codeql.yml)
