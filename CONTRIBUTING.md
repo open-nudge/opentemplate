@@ -60,25 +60,20 @@ ideas, or want to report a bug, follow these steps:
 Prerequisites (one time setup):
 
 1. Check you have Python 3.x installation available (as `python3` or `python`)
-1. Install `pdm` (see [official installation instructions](https://pdm-project.org/en/latest/))
-1. Enable `pep582` globally (see [official instructions](https://pdm-project.org/latest/usage/pep582/#enable-pep-582-globally))
+1. Install `uv` (see [official installation instructions](https://docs.astral.sh/uv/getting-started/installation/))
 
 Change to the cloned directory and run:
 
 ```bash
-pdm setup
+uv run poe setup
 ```
 
-> [!CAUTION]
-> This project uses [PEP582](https://peps.python.org/pep-0582/) to manage dependencies.
-
-<!-- vale off -->
-
 > [!TIP]
-> Check [PDM's IDE configuration instructions](https://pdm-project.org/latest/usage/pep582/#configure-ide-to-support-pep-582)
-> for more information on IDE configuration with PEP582.
-
-<!-- vale on -->
+> Dependencies are installed into the `.venv` virtual environment,
+> point your IDE to it. All tasks are run via `uv run poe <task>`.
+> Tests run against the installed (non-editable) package in a persistent
+> environment per Python version (`.venvs/<version>`), the project is
+> reinstalled only when its source changes.
 
 ### Source code
 
@@ -130,15 +125,6 @@ git commit -s -S -m "feat: add new feature"
     for more information.
 
 <!-- vale off -->
-
-> [!TIP]
-> You can use `pdm commit-guided` for interactive commit adhering to the guide.
-
-> [!TIP]
-> You can use `pdm commit` (same as `git commit -s -S`).
-
-> [!TIP]
-> You can use `pdm commit-fast`, a faster version of `commit-guided`.
 
 > [!NOTE]
 > Signing and commit messages are automatically checked

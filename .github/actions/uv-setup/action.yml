@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "uv Setup"
+description: "Setup uv and install dev dependencies for opentemplate."
+inputs:
+  group:
+    description: >
+      Dev dependencies group to install.
+      If unspecified, no group will be installed.
+    required: false
+    default: ""
+  core:
+    description: >
+      If true, the main and optional dependencies will be installed.
+    required: false
+    default: "false"
+  all:
+    description: >
+      If true, all dependencies will be installed.
+    required: false
+    default: "false"
+  python-version:
+    description: >
+      Python version request (e.g. 3.13 or >=3.13) set as UV_PYTHON,
+      missing interpreters are downloaded by uv.
+    required: false
+    #
+    #           DO NOT EDIT UNTIL end marker
+    #
+    # [[[cog
+    # import cog
+    # import cogeol
+    #
+    # cycle = cogeol.scientific()[-1]["cycle"]
+    # cog.out(f'    default: "{cycle}"')
+    # ]]]
+    default: "3.13"
+    # [[[end]]] (sum: +w2vr+7KUV)
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup uv"
+      uses: "astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7" # v10.2.0
+      with:
+        # Same uv as release jobs (dev-bootstrap, see setup-release)
+        version-file: "uv.lock"
+        python-version: "${{ inputs.python-version }}"
+        # Release jobs (tags) do not restore caches, as in setup-release
+        enable-cache: "${{ !startsWith(github.ref, 'refs/tags/') }}"
+        cache-dependency-glob: "uv.lock"
+        # enq: complex multiline expression more readable with indentation
+        # yamllint disable rule:indentation
+        cache-suffix: >-
+          ${{
+            inputs.all == 'true' && 'all'
+            || format(
+              '{0}-{1}',
+              inputs.core == 'true' && 'core' || 'no-core',
+              inputs.group || 'no-group'
+            )
+          }}
+        # yamllint enable rule:indentation
+    - name: "Install dependencies"
+      shell: "bash"
+      env:
+        # all is core with dev-all (everything besides bootstrap)
+        GROUP: "${{ inputs.all == 'true' && 'all' || inputs.group }}"
+        CORE: "${{ inputs.all == 'true' || inputs.core == 'true' }}"
+      # enq: multiline bash more readable without indentation
+      # yamllint disable rule:indentation
+      run: |
+        # --only-group skips the project (conflicts with --all-extras)
+        select=(--only-group)
+        if [[ "${CORE}" == "true" ]]; then
+          select=(--all-extras --group)
+        fi
+        # Task runner is always available (uv run poe <task>)
+        uv sync --locked --no-editable --no-default-groups \
+          "${select[@]}" dev-tasks ${GROUP:+"${select[-1]}" "dev-${GROUP}"}
+      # yamllint enable rule:indentation
+    - name: "Disable automatic uv sync"
+      shell: "bash"
+      run: >
+        echo "UV_NO_SYNC=true" >> "${GITHUB_ENV}"
+...

@@ -178,9 +178,14 @@ dev-security = [
   "zizmor>=1",
 ]
 
-# Exported (hashed) to .github/requirements.txt, installs PDM in release jobs
+# Exported (hashed) to .github/requirements.txt, installs uv in release jobs
 dev-bootstrap = [
-  "pdm>=2.29.2",
+  "uv>=0.11.8",
+]
+
+# Task runner, all tasks are run via `uv run poe <task>`
+dev-tasks = [
+  "poethepoet>=0.37",
 ]
 
 # templatedelete-start
@@ -241,6 +246,7 @@ dev-text = [
 # each separated to be more semantically coherent and expandable.
 
 dev-all = [
+  { include-group = "dev-tasks" },
   { include-group = "dev-tests" },
   { include-group = "dev-docs" },
   { include-group = "dev-python" },
@@ -284,8 +290,16 @@ only-include = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/opentemplate"]
 
-[tool.pdm]
-distribution = true
+[tool.uv]
+required-version = ">=0.11.8"
+package = true
+exclude-newer = "1 week"
+default-groups = [ "dev-all" ]
+cache-keys = [
+  { file = "pyproject.toml" },
+  { file = "src/**" },
+  { git = { commit = true, tags = true } },
+]
 
 [tool.ruff]
 line-length = 110
@@ -294,10 +308,9 @@ src = [
   "tests",
 ]
 extend-exclude = [
-  ".pdm-plugins",
   ".pytest_cache",
   ".venv",
-  "__pypackages__",
+  ".venvs",
   "build",
   "site",
 ]
@@ -417,7 +430,7 @@ lint.pylint.max-returns = 5
 lint.pylint.max-statements = 20
 
 [tool.codespell]
-skip = "*pdm.lock,*__pypackages__/*"
+skip = "*uv.lock,*.venv/*,*.venvs/*"
 ignore-words-list = "intoto"
 check-filenames = true
 interactive = 0
@@ -468,10 +481,9 @@ fail-under = 100
 exclude = [
   "build",
   "tests",
-  ".pdm-plugins",
   ".pytest_cache",
   ".venv",
-  "__pypackages__",
+  ".venvs",
   "site",
 ]
 
@@ -504,7 +516,7 @@ norecursedirs = [
   ".git",
   ".pytest_cache",
   ".venv",
-  "__pypackages__",
+  ".venvs",
   "build",
   "site",
   "docs/scripts",
@@ -516,24 +528,6 @@ project-includes = [
   "tests",
   "docs/scripts",
 ]
-search-path = [
-  "src",
-]
-site-package-path = [
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # cycle = cogeol.scientific()[-1]["cycle"]
-  # cog.outl(f'  "__pypackages__/{cycle}/lib",')
-  # ]]]
-  "__pypackages__/3.13/lib",
-  # [[[end]]] (sum: U5bt93kaVN)
-]
-skip-interpreter-query = false
 
 [tool.mutmut]
 use_setproctitle = false
@@ -717,7 +711,11 @@ topo_order = false
 # sort the commits inside sections by oldest/newest order
 sort_commits = "oldest"
 
-[tool.pdm.scripts]
+[tool.poe]
+# Tasks run in the environment set up by `uv run` (or uv-setup action in CI)
+executor.type = "simple"
+
+[tool.poe.tasks]
 
 ###############################################################################
 #
@@ -726,191 +724,26 @@ sort_commits = "oldest"
 ###############################################################################
 
 # SEED (random in CI, see reproducibility-setup action) seeds all randomness
-tests-coverage = { composite = [
-  "pdm run refresh",
-  "pdm run python -X dev -m coverage run -m pytest -vv -x --pretty --doctest-modules {args:tests src docs}",
-  "pdm run coverage report",
+# ./ makes --pyargs treat tests and docs as paths, opentemplate is the installed package
+tests-coverage = { sequence = [
+  { cmd = "python -X dev -m coverage run -m pytest -vv -x --pretty --doctest-modules --pyargs ${paths:-./tests ./docs opentemplate}" },
+  { cmd = "coverage report" },
+], args = [
+  { name = "paths", positional = true, multiple = true },
 ], env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--randomly-seed=${SEED:-0} --hypothesis-seed=${SEED:-0}" } }
 # mutmut disables pytest-randomly (unknown --randomly-seed)
-tests-mutation = { shell = ".github/tools/tests-mutation.sh {args}", env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--hypothesis-seed=${SEED:-0}" } }
-tests = { composite = [
-  "pdm run tests-coverage {args}",
-  "pdm run tests-mutation",
+tests-mutation = { cmd = ".github/tools/tests-mutation.sh", env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--hypothesis-seed=${SEED:-0}" } }
+env-tests = { shell = """
+  export UV_PROJECT_ENVIRONMENT="${POE_ROOT}/.venvs/${python}"
+  # Outer `uv run` sets VIRTUAL_ENV to .venv, nested uv would warn on mismatch
+  export VIRTUAL_ENV="${UV_PROJECT_ENVIRONMENT}"
+  uv sync --python "${python}" --no-editable --all-extras --no-default-groups --group dev-tests --group dev-tasks \
+    && if [ -n "${task}" ]; then uv run --no-sync --python "${python}" poe ${task}; fi
+""", args = [
+  { name = "python", options = ["--python"], required = true },
+  { name = "task", positional = true, multiple = true },
 ] }
-tests-all = { composite = [
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # Note: We start with the latest Python version to ensure the oldest one
-  # is the one that is used after any pipeline
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # for version in cogeol.scientific():
-  #     cycle = version["cycle"]
-  #     cog.outl(f'  "pdm use {cycle}",')
-  #     cog.outl(
-  #         '  "pdm run tests-coverage {args}",'
-  #     )
-  # ]]]
-  "pdm use 3.15",
-  "pdm run tests-coverage {args}",
-  "pdm use 3.14",
-  "pdm run tests-coverage {args}",
-  "pdm use 3.13",
-  "pdm run tests-coverage {args}",
-  # [[[end]]] (sum: nbTQE75I6z)
-  "pdm run tests-mutation",
-] }
-
-###############################################################################
-#
-#                           CHECKS AND FIXERS
-#
-###############################################################################
-
-check-python = { composite = [
-  "ruff format --check {args:.}",
-  "ruff check {args:.}",
-  "pynudger check {args}",
-  "interrogate {args:.}",
-  "noqaexplain check {args:src tests docs/scripts}",
-] }
-fix-python = { composite = [
-  "ruff format {args:.}",
-  "ruff check --fix {args:.}",
-  "pynudger check {args}",
-  "interrogate {args:.}",
-  "noqaexplain check {args:src tests docs/scripts}",
-] }
-
-check-typing = "pyrefly check {args}"
-
-check-shell = { composite = [
-  "shellcheck -x -S style -o all",
-  "noqaexplain check",
-] }
-
-fix-shell = { shell = "pdm run shellcheck -x -S style -o all {args} | git apply --allow-empty" }
-
-check-yaml = { composite = [
-  "yamllint {args:.}",
-  "noqaexplain check {args}",
-] }
-
-
-# @ is ignored for version pinning in pyproject.toml (as seen in cffconvert)
-# issues and blob are ignored as the repo might be private and unreachable
-check-markdown = "bash .github/tools/markdown.sh check {args}"
-fix-markdown = "bash .github/tools/markdown.sh fix {args}"
-
-check-ini = "pyinilint"
-
-check-pyproject = "validate-pyproject {args:pyproject.toml}"
-
-check-citation = "check-jsonschema --verbose --builtin-schema vendor.citation-file-format {args:CITATION.cff}"
-
-check-docs = "mkdocs build"
-
-check-prek-config = "prek validate-config {args:prek.toml}"
-check-prek-hooks = "prek validate-manifest {args:.pre-commit-hooks.yaml}"
-
-# Scripts below are (mostly) separated from prek-hooks to group them semantically
-# This approach allows opentemplate to run prek checks directly
-# which circumvents buggy venv creation within `pdm` environment
-
-# See definitions and specification here:
-# https://github.com/prek/prek-hooks/blob/main/.prek-hooks.yaml
-
-check-text = "bash .github/tools/text.sh check {args}"
-fix-text = "bash .github/tools/text.sh fix {args}"
-
-check-json = "prek run check-json --files {args}"
-
-check-json5 = "prek run check-json5 --files {args}"
-
-check-toml = "prek run check-toml --files {args}"
-
-check-xml = "prek run check-xml --files {args}"
-
-check-github-actions = "check-jsonschema --verbose --builtin-schema vendor.github-actions"
-
-check-github-workflows = { composite = [
-  "check-jsonschema --verbose --builtin-schema github-workflows-require-timeout",
-  "check-jsonschema --verbose --builtin-schema github-workflows",
-] }
-
-check-github = "zizmor --persona auditor --verbose {args:.}"
-
-check-legal = "reuse lint"
-# See here: https://github.com/pdm-project/pdm/issues/2937
-fix-legal = { shell = """
-  bash -c \
-  "pdm run reuse annotate \
-    --license='$(.github/tools/license.sh)' \
-    --copyright='open-nudge <https://github.com/open-nudge>' \
-    --contributor='$(git config get user.name) <$(git config get user.email)>' \
-    --copyright-prefix=spdx-symbol \
-    --merge-copyrights \
-    --recursive \
-    --fallback-dot-license \
-  {args:.}"
-""" }
-
-check-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c --check" }
-fix-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c -r" }
-
-fix-all = "prek run --all-files"
-
-###############################################################################
-#
-#                 NON-CHECKS (setup, sboms, changelogs etc.)
-#
-###############################################################################
-
-lock = "pdm lock -G:all"
-
-refresh = { composite = [
-  "pdm install --prod -G:all --no-editable",
-  "pdm install -G dev-tests --no-editable",
-] }
-
-setup = { composite = [
-  "pdm self update",
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # for version in cogeol.scientific():
-  #     cycle = version["cycle"]
-  #     cog.outl(f'  "pdm python install {cycle}",')
-  # ]]]
-  "pdm python install 3.15",
-  "pdm python install 3.14",
-  "pdm python install 3.13",
-  # [[[end]]] (sum: I9swYbzfED)
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # for version in cogeol.scientific()[:-1]:
-  #     cycle = version["cycle"]
-  #     cog.outl(f'  "pdm use {cycle}",')
-  #     cog.outl(f'  "pdm run refresh",')
-  # ]]]
-  "pdm use 3.15",
-  "pdm run refresh",
-  "pdm use 3.14",
-  "pdm run refresh",
-  # [[[end]]] (sum: oaK8zBXwvq)
+tests = { sequence = [
   #
   #           DO NOT EDIT UNTIL end marker
   #
@@ -919,35 +752,240 @@ setup = { composite = [
   # import cogeol
   #
   # cycle = cogeol.scientific()[-1]["cycle"]
-  # cog.outl(f'  "pdm use {cycle}",')
+  # cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-coverage ${{paths}}" }},')
+  # cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-mutation" }},')
   # ]]]
-  "pdm use 3.13",
-  # [[[end]]] (sum: ptsI+evsT9)
-  "pdm install -G:all --without dev-bootstrap --no-editable",
-  "pdm run env -u PYTHONPATH -u PEP582_PACKAGES -u NO_SITE_PACKAGES prek install --install-hooks",
+  { ref = "env-tests --python 3.13 tests-coverage ${paths}" },
+  { ref = "env-tests --python 3.13 tests-mutation" },
+  # [[[end]]] (sum: /BFHkZeaWr)
+], args = [
+  { name = "paths", positional = true, multiple = true },
 ] }
+tests-all = { sequence = [
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # for version in cogeol.scientific():
+  #     cycle = version["cycle"]
+  #     cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-coverage ${{paths}}" }},')
+  # cycle = cogeol.scientific()[-1]["cycle"]
+  # cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-mutation" }},')
+  # ]]]
+  { ref = "env-tests --python 3.15 tests-coverage ${paths}" },
+  { ref = "env-tests --python 3.14 tests-coverage ${paths}" },
+  { ref = "env-tests --python 3.13 tests-coverage ${paths}" },
+  { ref = "env-tests --python 3.13 tests-mutation" },
+  # [[[end]]] (sum: JgwQgDxvNU)
+], args = [
+  { name = "paths", positional = true, multiple = true },
+] }
+
+###############################################################################
+#
+#                           CHECKS AND FIXERS
+#
+###############################################################################
+
+check-python = { sequence = [
+  { cmd = "ruff format --check ${files:-.}" },
+  { cmd = "ruff check ${files:-.}" },
+  { cmd = "pynudger check ${files}" },
+  { cmd = "interrogate ${files:-.}" },
+  { cmd = "noqaexplain check ${files:-src tests docs/scripts}" },
+], args = [
+  { name = "files", positional = true, multiple = true },
+] }
+fix-python = { sequence = [
+  { cmd = "ruff format ${files:-.}" },
+  { cmd = "ruff check --fix ${files:-.}" },
+  { cmd = "pynudger check ${files}" },
+  { cmd = "interrogate ${files:-.}" },
+  { cmd = "noqaexplain check ${files:-src tests docs/scripts}" },
+], args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+# Type checks the installed (non-editable) package, not src, and the code using it:
+# runs in the test environment (env-tests), whose interpreter pyrefly picks up,
+# disabled search path heuristics (src) resolve imports from its site-packages
+check-typing = { sequence = [
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # cycle = cogeol.scientific()[-1]["cycle"]
+  # cog.outl(f'  {{ ref = "env-tests --python {cycle} typing-installed" }},')
+  # ]]]
+  { ref = "env-tests --python 3.13 typing-installed" },
+  # [[[end]]] (sum: F8Raasa4Ie)
+] }
+# Run via check-typing (needs the non-editable test environment),
+# flag is not in [tool.pyrefly] so mutmut type checks mutated src
+typing-installed = { shell = """
+  pyrefly check --disable-search-path-heuristics tests docs/scripts \
+    "$(python -P -c 'import opentemplate; print(opentemplate.__path__[0])')"
+""" }
+
+check-shell = { sequence = [
+  { cmd = "shellcheck -x -S style -o all ${files}" },
+  { cmd = "noqaexplain check ${files}" },
+], args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+fix-shell = { shell = "shellcheck -x -S style -o all ${files} | git apply --allow-empty", args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+check-yaml = { sequence = [
+  { cmd = "yamllint ${files:-.}" },
+  { cmd = "noqaexplain check ${files}" },
+], args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+
+# @ is ignored for version pinning in pyproject.toml (as seen in cffconvert)
+# issues and blob are ignored as the repo might be private and unreachable
+check-markdown = "bash .github/tools/markdown.sh check"
+fix-markdown = "bash .github/tools/markdown.sh fix"
+
+check-ini = "pyinilint"
+
+check-pyproject = { cmd = "validate-pyproject ${files:-pyproject.toml}", args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+check-citation = { cmd = "check-jsonschema --verbose --builtin-schema vendor.citation-file-format ${files:-CITATION.cff}", args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+check-docs = "mkdocs build"
+
+check-prek-config = { cmd = "prek validate-config ${files:-prek.toml}", args = [
+  { name = "files", positional = true, multiple = true },
+] }
+check-prek-hooks = { cmd = "prek validate-manifest ${files:-.pre-commit-hooks.yaml}", args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+# Scripts below are (mostly) separated from prek-hooks to group them semantically
+# This approach allows opentemplate to run prek checks directly
+
+# See definitions and specification here:
+# https://github.com/prek/prek-hooks/blob/main/.prek-hooks.yaml
+
+check-text = "bash .github/tools/text.sh check"
+fix-text = "bash .github/tools/text.sh fix"
+
+check-json = "prek run check-json --files"
+
+check-json5 = "prek run check-json5 --files"
+
+check-toml = "prek run check-toml --files"
+
+check-xml = "prek run check-xml --files"
+
+check-github-actions = "check-jsonschema --verbose --builtin-schema vendor.github-actions"
+
+check-github-workflows = { sequence = [
+  { cmd = "check-jsonschema --verbose --builtin-schema github-workflows-require-timeout ${files}" },
+  { cmd = "check-jsonschema --verbose --builtin-schema github-workflows ${files}" },
+], args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+check-github = { cmd = "zizmor --persona auditor --verbose", cwd = "${POE_PWD}" }
+
+check-legal = "reuse lint"
+fix-legal = { shell = """
+  reuse annotate \
+    --license="$(.github/tools/license.sh)" \
+    --copyright='open-nudge <https://github.com/open-nudge>' \
+    --contributor="$(git config get user.name) <$(git config get user.email)>" \
+    --copyright-prefix=spdx-symbol \
+    --merge-copyrights \
+    --recursive \
+    --fallback-dot-license \
+  ${files:-.}
+""", args = [
+  { name = "files", positional = true, multiple = true },
+] }
+
+check-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c --check" }
+fix-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c -r" }
+
+fix-all = "prek run --all-files"
+
+# Used by the commit-msg prek hook
+check-commit = "conventional-pre-commit --strict --scopes '' feat fix feat! fix!"
+
+###############################################################################
+#
+#                 NON-CHECKS (setup, sboms, changelogs etc.)
+#
+###############################################################################
+
+setup = { sequence = [
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # cycle = cogeol.scientific()[-1]["cycle"]
+  # cog.outl(f'  "uv python pin {cycle}",')
+  # ]]]
+  "uv python pin 3.13",
+  # [[[end]]] (sum: LKBAXzM6ed)
+  # Project environment (.venv): everything, editable (linters, docs, IDE)
+  "uv sync --all-extras",
+  # Test environments (.venvs/<python>), missing interpreters are downloaded
+  #
+  #           DO NOT EDIT UNTIL end marker
+  #
+  # [[[cog
+  # import cog
+  # import cogeol
+  #
+  # for version in cogeol.scientific():
+  #     cycle = version["cycle"]
+  #     cog.outl(f'  {{ ref = "env-tests --python {cycle}" }},')
+  # ]]]
+  { ref = "env-tests --python 3.15" },
+  { ref = "env-tests --python 3.14" },
+  { ref = "env-tests --python 3.13" },
+  # [[[end]]] (sum: Ui9IDUjl7k)
+  "prek install --install-hooks",
+], default_item_type = "cmd" }
 
 
 # SBOM scripts assess the project in the current directory with tools
 # from the invoking environment, e.g. in CI (template tools, source project):
-# pdm run --project template --working-dir source sbom-legal
+# cd source && uv run --project ../template poe --directory ../template sbom-legal
 sbom-python = { shell = """
-  bash -c \
-  ' cyclonedx-py environment --mc-type library --output-reproducible "$(PDM_IGNORE_ACTIVE_VENV=1 pdm info --python)"'
-""" }
+  cyclonedx-py environment --mc-type library --output-reproducible "${UV_PROJECT_ENVIRONMENT:-.venv}"
+""", cwd = "${POE_PWD}" }
 
 sbom-legal = { shell = """
-  bash -c \
-  " reuse spdx \
+  reuse spdx \
       --add-license-concluded \
       --creator-organization='open-nudge <https://github.com/open-nudge>' \
-      --creator-person='$(git config get user.name) <$(git config get user.email)>' \
+      --creator-person="$(git config get user.name) <$(git config get user.email)>" \
     > .sbom-legal.spdx \
     && pyspdxtools \
       --version "SPDX-2.2" --novalidation \
       -i .sbom-legal.spdx -o .sbom-legal.json \
-    && ( cat .sbom-legal.json && rm .sbom-legal.spdx .sbom-legal.json )"
-""" }
+    && ( cat .sbom-legal.json && rm .sbom-legal.spdx .sbom-legal.json )
+""", cwd = "${POE_PWD}" }
 
 # Pinned GitHub Actions used by .github (and ${SBOM_ACTIONS_EXTRA} directories)
 sbom-actions = { shell = '''
@@ -978,109 +1016,25 @@ grep -rhoE 'uses:[[:space:]]*"?[[:alnum:]_-][^"[:space:]#]*@[^"[:space:]#]+' \
           end
       ]
     }'
-''' }
+''', cwd = "${POE_PWD}" }
 
-sbom-all = { composite = [
+sbom-all = { sequence = [
   "sbom-python",
   "sbom-legal",
   "sbom-actions",
 ] }
 
-changelog = { cmd = "pdm run git-cliff" }
-changelog-latest = { cmd = "pdm run git-cliff --latest" }
+changelog = "git-cliff"
+changelog-latest = "git-cliff --latest"
 
-check-release = { composite = [
+check-release = { sequence = [
   "sbom-all",
   "changelog",
   "changelog-latest",
   "build-dist",
 ] }
 
-build-dist = { shell = 'SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git log -1 --format=%ct)}" pdm build {args}' }
-
-###############################################################################
-#
-#                     COMMITTING (move to opentemplate later)
-#
-###############################################################################
-
-check-commit = "conventional-pre-commit --strict --scopes '' feat fix feat! fix!"
-
-# Manual testing
-commit = { shell = """
-echo "By committing to this repository, you agree to the Developer Certificate of Origin (DCO)."
-printf "See here: https://developercertificate.org/ for more information.\n"
-git commit --signoff --gpg-sign
-""" }
-
-# Manual testing
-commit-type = { shell = """
-echo "By committing to this repository, you agree to the Developer Certificate of Origin (DCO)."
-printf "See here: https://developercertificate.org/ for more information.\n"
-
-options=("fix" "feat" "fix!" "feat!")
-PS3="Select commit type (1-4) or Quit (5): "
-select opt in "${options[@]}" "Quit"; do
-    case "$REPLY" in
-    1) break;;
-    2) break;;
-    3) break;;
-    4) break;;
-    5) exit 0; break;;
-    *) echo "Invalid option."; continue;;
-    esac
-done
-
-read -r -p "\nCommit title message: " title
-
-echo "\nYour commit will be: '$opt: $title'\n"
-
-git commit -S --signoff -m "$opt: $title"
-""" }
-
-# Manual testing
-commit-guided = { shell = """
-echo "By committing to this repository, you agree to the Developer Certificate of Origin (DCO)."
-printf "See here: https://developercertificate.org/ for more information.\n"
-
-echo "Please provide commit type (one of fix/feat/fix!/feat!):"
-echo "- fix: A bug fix (not breaking backward compatibility)."
-echo "- feat: A new feature (not breaking backward compatibility)."
-echo "- fix!: A bug fix (breaking backward compatibility)."
-echo "- feat!: A new feature (breaking backward compatibility)."
-echo ""
-
-options=("fix" "feat" "fix!" "feat!")
-PS3="Select commit type (1-4) or Quit (5): "
-select opt in "${options[@]}" "Quit"; do
-    case "$REPLY" in
-    1) break;;
-    2) break;;
-    3) break;;
-    4) break;;
-    5) exit 0; break;;
-    *) echo "Invalid option.";continue;;
-    esac
-done
-
-printf "\nYou picked %s type.\n" "$opt"
-
-echo "Please provide commit title message:"
-echo "- Use the imperative, present tense: 'change' not 'changed' nor 'changes'"
-echo "- Short (72 chars or less) informative summary of changes"
-echo "- Lowercase"
-echo "- No dot at the end\n"
-echo "Example: 'add performance tests'\n"
-
-read -r -p "Commit title message: " title
-
-echo "\nYour commit will be: '$opt: $title'\n"
-
-read -p "Would you like to make this commit? (Y/N): " \
-  confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
-
-git commit -S --signoff -m "$opt: $title"
-""" }
+build-dist = { shell = 'SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git log -1 --format=%ct)}" uv build' }
 
 ###############################################################################
 #
@@ -1088,7 +1042,7 @@ git commit -S --signoff -m "$opt: $title"
 #
 ###############################################################################
 
-[tool.pdm.scripts.harness]
+[tool.poe.tasks.harness]
 shell = """\
   prek run --color never --show-diff-on-failure --no-progress --quiet --files \
   $(git diff --name-only --cached; git diff --name-only; git ls-files --others --exclude-standard)

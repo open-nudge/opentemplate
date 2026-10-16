@@ -10,7 +10,7 @@ name: "__Cache"  # zizmor: ignore[concurrency-limits]
 on:
   workflow_call:
     inputs:
-      # PDM INSTALLATION
+      # DEPENDENCIES INSTALLATION
       group:
         description: "Group to install, empty means no group, install all"
         type: "string"
@@ -76,8 +76,7 @@ jobs:
             api.github.com:443
             files.pythonhosted.org:443
             github.com:443
-            pdm-project.org:443
-            pdm.fming.dev:443
+            releases.astral.sh:443
             pypi.org:443
             raw.githubusercontent.com:443
             objects.githubusercontent.com:443
@@ -89,17 +88,17 @@ jobs:
           sparse-checkout: |
             LICENSES
             .github/actions
-            .github/actions/pdm-setup
+            .github/actions/uv-setup
             pyproject.toml
-            pdm.lock
+            uv.lock
             project
           sparse-checkout-cone-mode: true
           persist-credentials: false
           # Checkout `main` as otherwise the files may not be available
           # after initial template usage
           ref: "${{ inputs.ref }}"
-      - name: "Setup PDM and cache"
-        uses: "$/.github/actions/pdm-setup"
+      - name: "Setup uv and cache"
+        uses: "$/.github/actions/uv-setup"
         with:
           group: "${{ inputs.group }}"
           core: "${{ inputs.core }}"

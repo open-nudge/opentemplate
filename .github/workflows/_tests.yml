@@ -69,7 +69,7 @@ jobs:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
       command: |
-        pdm run tests-coverage
+        uv run poe tests-coverage
         mv .coverage coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       # yamllint enable rule:line-length
       sparse-checkout: |
@@ -96,7 +96,7 @@ jobs:
     uses: "$/.github/workflows/__run.yml"
     with:
       command: |
-        pdm run tests-mutation
+        uv run poe tests-mutation
       sparse-checkout: |
         **.py
         tests/**
@@ -118,9 +118,9 @@ jobs:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
       command: |
-        pdm run coverage combine --debug=pathmap --keep $(find coverage-${{ github.sha }}-*/ -name "coverage-*-${{ github.sha }}.sqlite")
-        pdm run coverage html --skip-empty
-        pdm run coverage report
+        uv run coverage combine --debug=pathmap --keep $(find coverage-${{ github.sha }}-*/ -name "coverage-*-${{ github.sha }}.sqlite")
+        uv run coverage html --skip-empty
+        uv run coverage report
       # yamllint enable rule:line-length
       # Needed for source code
       sparse-checkout: |

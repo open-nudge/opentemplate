@@ -13,7 +13,7 @@ deps:
   - changed-files:
       - any-glob-to-any-file:
           - "pyproject.toml"
-          - "pdm.lock"
+          - "uv.lock"
           - "prek.toml"
 
 config:

@@ -36,7 +36,7 @@ on:
         description: "The ref to checkout"
         required: false
         type: "string"
-      # PDM INSTALLATION
+      # DEPENDENCIES INSTALLATION
       group:
         description: >
           The group of the dependency to install.
@@ -75,7 +75,7 @@ jobs:
     uses: "$/.github/workflows/__run.yml"
     with:
       command: |
-        pdm run check-${{ inputs.check }} ${{ inputs.arguments }}
+        uv run poe check-${{ inputs.check }} ${{ inputs.arguments }}
       group: "${{ inputs.group || inputs.check }}"
       core: "${{ inputs.core }}"
       full-checkout: "${{ inputs.full-checkout }}"

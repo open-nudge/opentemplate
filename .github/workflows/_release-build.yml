@@ -138,18 +138,15 @@ jobs:
           PY
         # yamllint enable rule:indentation
       # Backend is called directly: an isolated build would install
-      # [build-system] requires unpinned, while PDM would load project config
-      # and plugins. The template's hash-locked dev-build group provides the
-      # backend and the guard above ensures [build-system] matches it.
+      # [build-system] requires unpinned, while uv would load project config.
+      # The template's hash-locked dev-build group provides the backend
+      # and the guard above ensures [build-system] matches it.
       # -P: source directory must not shadow hatchling (or stdlib) modules
       - name: "Build distributions"
-        # enq: shell indentation is more readable
-        # yamllint disable rule:indentation
-        run: |
-          python="$(pdm info --project template --python)"
-          cd source
-          "${python}" -P -m hatchling build --no-hooks --directory ../dist
-        # yamllint enable rule:indentation
+        working-directory: "source"
+        run: >
+          uv run --project ../template
+          python -P -m hatchling build --no-hooks --directory ../dist
       - name: "Get package metadata"
         id: "metadata"
         run: |

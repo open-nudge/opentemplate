@@ -64,8 +64,7 @@ jobs:
             opensource.org:443
             openssf.org:443
             osv.dev:443
-            pdm-project.org:443
-            pdm.fming.dev:443
+            releases.astral.sh:443
             peps.python.org:443
             pre-commit.com:443
             prek.j178.dev:443
@@ -111,12 +110,13 @@ jobs:
       - name: "Create new branch"
         run: >
           git checkout -b template-test
-      - name: "Check outdated PDM packages"
+      # uv is installed by the template setup action
+      - name: "Check outdated packages"
         run: >
-          pdm outdated -v --include-sub
+          uv tree --outdated --depth 1
       - name: "Setup dev environment"
         run: >
-          pdm setup
+          uv run poe setup
 
   prek-test:
     name: "prek"

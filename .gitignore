@@ -4,6 +4,7 @@
 
 mutants
 .python-version
+.venvs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

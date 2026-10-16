@@ -43,7 +43,7 @@ Allowed licenses (subject to change):
 
 ### Changing license
 
-- Run `pdm run reuse download <LICENSE-SPDX>`
+- Run `uv run reuse download <LICENSE-SPDX>`
     __and copy it over the [`/LICENSE`](../../LICENSE.md) file__
     (`prek` checks both files are identical).
 - Change the package license metadata to the new SPDX identifier.
@@ -66,7 +66,7 @@ To update allowed licenses for `osv-scanner`:
     should be a copy (not a symbolic link, which GitHub cannot detect)
     of the actual license file in `LICENSES/`.
 - __`LICENSES/`__ folder contains all project licenses
-    (e.g., `pdm.lock` is [`CC0-1.0`](https://creativecommons.org/publicdomain/zero/1.0/deed.en)).
+    (e.g., `uv.lock` is [`CC0-1.0`](https://creativecommons.org/publicdomain/zero/1.0/deed.en)).
 - __[`CODE_OF_CONDUCT.md`](../../CODE_OF_CONDUCT.md)__ follows the
     [Contributor Covenant](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
 - __[`DCO.md`](../../DCO.md)__ (Developer Certificate of Origin) must remain unchanged;

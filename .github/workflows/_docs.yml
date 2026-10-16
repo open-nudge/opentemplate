@@ -20,7 +20,7 @@ jobs:
     uses: "$/.github/workflows/__run.yml"
     with:
       command: |
-        pdm run check-docs
+        uv run poe check-docs
       group: "docs"
       core: true
       fetch-depth: 0

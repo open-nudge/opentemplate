@@ -13,8 +13,8 @@ on:
     paths:
       - "**.py"
       - "pyproject.toml"
-      - "pdm.lock"
-      - ".github/actions/pdm-*/action.yml"
+      - "uv.lock"
+      - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/typing.yml"
       - ".github/workflows/_typing.yml"
       - ".github/workflows/_run-check.yml"

@@ -12,11 +12,11 @@ SPDX-License-Identifier: Apache-2.0
 Before starting, install the following on your local machine:
 
 1. [Python](https://www.python.org/downloads/) (latest version recommended).
-1. [`pdm`](https://pdm-project.org/en/latest/#recommended-installation-method)
+1. [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
     package manager.
 
 > [!NOTE]
-> Learn more about `pdm` in the [pdm documentation](https://pdm-project.org/en/latest/)
+> Learn more about `uv` in the [uv documentation](https://docs.astral.sh/uv/)
 
 ## Setup
 
@@ -25,7 +25,7 @@ Before starting, install the following on your local machine:
 1. Add a project description (__required!__).
 1. __Wait for the setup commit__ (done by `github-actions[bot]`, may take a few minutes).
 
-Once complete, clone the repository and run `pdm setup`
+Once complete, clone the repository and run `uv run poe setup`
 to install dependencies and set up the project.
 
 ## Effects

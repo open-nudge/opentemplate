@@ -26,7 +26,7 @@ jobs:
       # yamllint disable rule:line-length
       command: |
         TAG="$(cut -d. -f1,2 <<< "${GITHUB_REF_NAME}")"
-        pdm run mike deploy "${TAG}" --branch "site-${GITHUB_SHA}" --ignore-remote-status
+        uv run mike deploy "${TAG}" --branch "site-${GITHUB_SHA}" --ignore-remote-status
         git checkout "site-${GITHUB_SHA}" -- .
         mv "${TAG}" "site-${GITHUB_SHA}"
         tar -cf "site-${GITHUB_SHA}.tar" --sort=name --mtime="@${SOURCE_DATE_EPOCH}" --owner=0 --group=0 --numeric-owner "site-${GITHUB_SHA}"

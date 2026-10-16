@@ -41,7 +41,7 @@ jobs:
         if [[ "${{ github.event.repository.private }}" == "false" ]]; then
           export PACKAGE_REPOSITORIES="- [PyPI](https://pypi.org/project/${{ inputs.package-name }}/${{ inputs.package-version }}/)"
         fi
-        pdm run changelog-latest > LATEST.md
+        uv run poe changelog-latest > LATEST.md
       # yamllint enable rule:indentation rule:line-length
       # Release notes, not a release asset, hence no commit SHA suffix
       upload-name: "release-notes"

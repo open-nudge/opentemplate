@@ -7,10 +7,12 @@
 
 from __future__ import annotations
 
+from importlib import resources
+
 import opentemplate
 
-# enq: the smoke test is intentionally a small standalone module
-# noqa-file: PYNUDGER46
+# enq: pytest requires the test_ prefix, which pynudger counts as a shared word
+# noqa-file: PYNUDGER43
 
 
 def test_version() -> None:
@@ -18,3 +20,8 @@ def test_version() -> None:
     # nosemgrep
     # enq: this assertion verifies the public version API directly
     assert opentemplate.__version__ != ""  # noqa: PYNUDGER29
+
+
+def test_typed() -> None:
+    """Installed package ships the py.typed marker (PEP 561)."""
+    assert (resources.files(opentemplate) / "py.typed").is_file()

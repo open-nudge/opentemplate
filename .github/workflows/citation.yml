@@ -14,7 +14,7 @@ on:
       - "CITATION.cff"
       - ".github/workflows/citation.yml"
       - ".github/workflows/_citation.yml"
-      - ".github/actions/pdm-*/action.yml"
+      - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/_run-check.yml"
       - ".github/workflows/__run.yml"
   merge_group:

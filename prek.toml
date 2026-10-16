@@ -15,6 +15,13 @@ default_install_hook_types = [
 ]
 fail_fast = true
 
+[update]
+cooldown_days = 7
+
+# Patch releases every few days, minor releases are enough
+[update.repos."https://github.com/trufflesecurity/trufflehog"]
+include_tags = ["v*.*.0"]
+
 ##############################################################################
 #
 #                       NON PYPROJECT BASED CHECKS
@@ -208,7 +215,7 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
 
 [[repos]]
 repo = "https://github.com/semgrep/pre-commit"
-rev = "225f70772e8c65f2bdd38ef3164807e907d09e49" # frozen: v1.180.0
+rev = "4442ea4b1e93a847e27a22559ee8d4b53795c549" # frozen: v1.181.0
 
   # Keep these arguments aligned with the Docker scan in
   # .github/workflows/_security-semgrep.yml.
@@ -218,7 +225,7 @@ rev = "225f70772e8c65f2bdd38ef3164807e907d09e49" # frozen: v1.180.0
   name = "<<<CHECK>>> Security"
   args = [
     "scan",
-    "--exclude=*pdm.lock",
+    "--exclude=*uv.lock",
     "--config=p/python",
     "--config=p/secrets",
     "--config=p/security-audit",
@@ -248,11 +255,11 @@ rev = "225f70772e8c65f2bdd38ef3164807e907d09e49" # frozen: v1.180.0
 repo = "local"
 
   [[repos.hooks]]
-  id = "pdm-sync"
+  id = "uv-sync"
   alias = "sync"
   verbose = true
-  name = "<<<CHECK>>> PDM sync"
-  entry = "pdm sync -v"
+  name = "<<<CHECK>>> uv sync"
+  entry = "uv sync --all-extras"
   pass_filenames = false
   language = "system"
   stages = ["post-checkout", "post-merge"]
@@ -278,7 +285,7 @@ repo = "local"
   id = "commit"
   verbose = true
   name = "<<<CHECK>>> Commit"
-  entry = "pdm run -v check-commit"
+  entry = "uv run poe -v check-commit"
   language = "system"
   stages = ["commit-msg"]
   always_run = true
@@ -287,37 +294,39 @@ repo = "local"
 
 
   [[repos.hooks]]
-  id = "pdm-lock"
+  id = "uv-lock"
   verbose = true
-  name = "<<<CHECK>>> PDM lock (use `pdm run lock` to fix)"
-  entry = "pdm lock -v --check"
+  name = "<<<FIX>>> uv lock (upgrade)"
+  # Upgrade on every commit, cooldown via exclude-newer in pyproject.toml
+  entry = "uv lock --upgrade"
   pass_filenames = false
   language = "system"
-  files = "^pyproject.toml$"
-  priority = 30
+  always_run = true
+  # Before the exports below, which read uv.lock
+  priority = 25
 
-  # Hash-locked PDM installed by release jobs (setup-release action)
+  # Hash-locked uv installed by release jobs (setup-release action)
   [[repos.hooks]]
-  id = "pdm-bootstrap"
+  id = "uv-bootstrap"
   verbose = true
-  name = "<<<FIX>>> PDM bootstrap requirements"
-  entry = "pdm export --no-default -G dev-bootstrap -o .github/requirements.txt"
+  name = "<<<FIX>>> uv bootstrap requirements"
+  entry = "uv export --frozen --only-group dev-bootstrap --output-file .github/requirements.txt"
   pass_filenames = false
   language = "system"
-  files = "^(pyproject.toml|pdm.lock)$"
+  files = "^(pyproject.toml|uv.lock)$"
   priority = 30
 
   # templatedelete-start
   # Hash-locked cookiecutter installed by template-setup.yml
   # Block removed during template setup (template-setup/delete-blocks.sh)
   [[repos.hooks]]
-  id = "pdm-template-setup"
+  id = "uv-template-setup"
   verbose = true
-  name = "<<<FIX>>> PDM template setup requirements"
-  entry = "pdm export --no-default -G dev-template-setup -o template-setup/requirements.txt"
+  name = "<<<FIX>>> uv template setup requirements"
+  entry = "uv export --frozen --only-group dev-template-setup --output-file template-setup/requirements.txt"
   pass_filenames = false
   language = "system"
-  files = "^(pyproject.toml|pdm.lock)$"
+  files = "^(pyproject.toml|uv.lock)$"
   priority = 30
   # templatedelete-end
 
@@ -325,19 +334,19 @@ repo = "local"
   id = "prek"
   verbose = true
   name = "<<<FIX>>> Prek"
-  entry = "pdm run -v prek autoupdate --freeze"
+  entry = "uv run prek autoupdate --freeze"
   pass_filenames = false
   language = "system"
   require_serial = true
   always_run = true
-  # PDM and prek are essentially independent
+  # uv and prek are essentially independent
   priority = 30
 
   [[repos.hooks]]
   id = "generation"
   verbose = true
   name = "<<<FIX>>> Generation"
-  entry = "pdm run -v fix-generation"
+  entry = "uv run poe -v fix-generation"
   pass_filenames = false
   language = "system"
   require_serial = true
@@ -348,17 +357,17 @@ repo = "local"
   [[repos.hooks]]
   id = "fix-legal"
   name = "<<<FIX>>> Legal"
-  entry = "pdm run -v fix-legal"
+  entry = "uv run poe -v fix-legal"
   language = "system"
   require_serial = true
-  exclude = "^(pdm.lock.*|(.github|template-setup)/requirements.txt.*|DCO.md|.gitignore|LICENSE|LICENSES/.*)$"
+  exclude = "^(uv.lock.*|(.github|template-setup)/requirements.txt.*|DCO.md|.gitignore|LICENSE|LICENSES/.*)$"
   priority = 50
 
   [[repos.hooks]]
   id = "text"
   verbose = true
   name = "<<<FIX>>> Text"
-  entry = "pdm run -v fix-text"
+  entry = "uv run poe -v fix-text"
   language = "system"
   require_serial = true
   types = ["text"]
@@ -379,7 +388,7 @@ repo = "local"
   id = "check-legal"
   verbose = true
   name = "<<<CHECK>>> Legal"
-  entry = "pdm run -v check-legal"
+  entry = "uv run poe -v check-legal"
   language = "system"
   require_serial = true
   pass_filenames = false
@@ -389,7 +398,7 @@ repo = "local"
   id = "github"
   verbose = true
   name = "<<<CHECK>>> GitHub"
-  entry = "pdm run -v check-github"
+  entry = "uv run poe -v check-github"
   language = "system"
   require_serial = true
   types = ["file"]
@@ -400,7 +409,7 @@ repo = "local"
   id = "github-actions"
   verbose = true
   name = "<<<CHECK>>> GitHub Actions"
-  entry = "pdm run -v check-github-actions"
+  entry = "uv run poe -v check-github-actions"
   language = "system"
   require_serial = true
   types = ["file"]
@@ -411,7 +420,7 @@ repo = "local"
   id = "github-workflows"
   verbose = true
   name = "<<<CHECK>>> GitHub Workflows"
-  entry = "pdm run -v check-github-workflows"
+  entry = "uv run poe -v check-github-workflows"
   language = "system"
   require_serial = true
   types = ["file"]
@@ -422,7 +431,7 @@ repo = "local"
   id = "pyproject"
   verbose = true
   name = "<<<CHECK>>> pyproject"
-  entry = "pdm run -v check-pyproject"
+  entry = "uv run poe -v check-pyproject"
   files = "^pyproject.toml$"
   language = "system"
   priority = 70
@@ -431,7 +440,7 @@ repo = "local"
   id = "pre-commit-config"
   verbose = true
   name = "<<<CHECK>>> prek config"
-  entry = "pdm run -v check-prek-config"
+  entry = "uv run poe -v check-prek-config"
   files = "^.pre-commit-config.yaml$"
   language = "system"
   priority = 70
@@ -440,7 +449,7 @@ repo = "local"
   id = "pre-commit-hooks"
   verbose = true
   name = "<<<CHECK>>> prek hooks"
-  entry = "pdm run -v check-prek-hooks"
+  entry = "uv run poe -v check-prek-hooks"
   files = "^.pre-commit-hooks.yaml$"
   language = "system"
   priority = 70
@@ -449,7 +458,7 @@ repo = "local"
   id = "citation"
   verbose = true
   name = "<<<CHECK>>> Citation"
-  entry = "pdm run -v check-citation"
+  entry = "uv run poe -v check-citation"
   files = "^CITATION.cff$"
   language = "system"
   priority = 70
@@ -458,7 +467,7 @@ repo = "local"
   id = "ini"
   verbose = true
   name = "<<<CHECK>>> INI"
-  entry = "pdm run -v check-ini"
+  entry = "uv run poe -v check-ini"
   language = "system"
   require_serial = true
   types_or = ["ini", "editorconfig"]
@@ -468,7 +477,7 @@ repo = "local"
   id = "markdown"
   verbose = true
   name = "<<<FIX>>> Markdown"
-  entry = "pdm run -v fix-markdown"
+  entry = "uv run poe -v fix-markdown"
   language = "system"
   require_serial = true
   types = ["markdown"]
@@ -479,7 +488,7 @@ repo = "local"
   id = "yaml"
   verbose = true
   name = "<<<CHECK>>> YAML"
-  entry = "pdm run -v check-yaml"
+  entry = "uv run poe -v check-yaml"
   language = "system"
   require_serial = true
   types = ["yaml"]
@@ -489,7 +498,7 @@ repo = "local"
   id = "docs"
   verbose = true
   name = "<<<CHECK>>> Docs"
-  entry = "pdm run -v check-docs"
+  entry = "uv run poe -v check-docs"
   pass_filenames = false
   language = "system"
   require_serial = true
@@ -501,7 +510,7 @@ repo = "local"
   id = "fix-shell"
   verbose = true
   name = "<<<FIX>>> Shell"
-  entry = "pdm run -v fix-shell"
+  entry = "uv run poe -v fix-shell"
   language = "system"
   require_serial = true
   types = ["shell"]
@@ -511,7 +520,7 @@ repo = "local"
   id = "check-shell"
   verbose = true
   name = "<<<CHECK>>> Shell"
-  entry = "pdm run -v check-shell"
+  entry = "uv run poe -v check-shell"
   language = "system"
   require_serial = true
   types = ["shell"]
@@ -521,7 +530,7 @@ repo = "local"
   id = "python"
   verbose = true
   name = "<<<FIX>>> Python"
-  entry = "pdm run -v fix-python"
+  entry = "uv run poe -v fix-python"
   language = "system"
   require_serial = true
   types = ["python"]
@@ -531,7 +540,8 @@ repo = "local"
   id = "typing"
   verbose = true
   name = "<<<CHECK>>> Typing"
-  entry = "pdm run -v check-typing"
+  entry = "uv run poe -v check-typing"
+  pass_filenames = false
   language = "system"
   require_serial = true
   types = ["python"]
@@ -542,7 +552,7 @@ repo = "local"
   alias = "tests"
   verbose = true
   name = "<<<CHECK>>> Tests all"
-  entry = "pdm run -v tests-all"
+  entry = "uv run poe -v tests-all"
   pass_filenames = false
   language = "system"
   require_serial = true
@@ -552,7 +562,7 @@ repo = "local"
   [[repos.hooks]]
   id = "release"
   name = "<<<CHECK>>> Release"
-  entry = "pdm run -v check-release"
+  entry = "uv run poe -v check-release"
   pass_filenames = false
   language = "system"
   require_serial = true

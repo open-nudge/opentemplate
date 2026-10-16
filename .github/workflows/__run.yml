@@ -12,10 +12,10 @@ on:
     inputs:
       # COMMAND
       command:
-        description: "Command to run (probably using `pdm run`)"
+        description: "Command to run (probably using `uv run poe`)"
         type: "string"
         required: true
-      # PDM INSTALLATION
+      # DEPENDENCIES INSTALLATION
       group:
         description: "Group to install, if any"
         type: "string"
@@ -133,8 +133,7 @@ jobs:
             api.github.com:443
             files.pythonhosted.org:443
             github.com:443
-            pdm-project.org:443
-            pdm.fming.dev:443
+            releases.astral.sh:443
             pypi.org:443
             raw.githubusercontent.com:443
             objects.githubusercontent.com:443
@@ -166,8 +165,7 @@ jobs:
                 'LICENSES
                 .github/actions/git-setup
                 .github/actions/reproducibility-setup
-                .github/actions/pdm-setup
-                .github/actions/pdm-compatibility
+                .github/actions/uv-setup
                 project
                 {0}',
                 inputs.sparse-checkout
@@ -179,10 +177,9 @@ jobs:
                 LICENSES/*
                 .github/actions/git-setup
                 .github/actions/reproducibility-setup
-                .github/actions/pdm-setup
-                .github/actions/pdm-compatibility
+                .github/actions/uv-setup
                 pyproject.toml
-                pdm.lock
+                uv.lock
                 project/*
                 {0}',
                 inputs.sparse-checkout
@@ -196,14 +193,12 @@ jobs:
         uses: "$/.github/actions/reproducibility-setup"
       - name: "Setup git credentials"
         uses: "$/.github/actions/git-setup"
-      - name: "Setup PDM"
-        uses: "$/.github/actions/pdm-setup"
+      - name: "Setup uv"
+        uses: "$/.github/actions/uv-setup"
         with:
           group: "${{ inputs.group }}"
           core: "${{ inputs.core }}"
           python-version: "${{ inputs.python-version }}"
-      - name: "PDM Compatibility"
-        uses: "$/.github/actions/pdm-compatibility"
 
       - name: "Download artifacts"
         if: >

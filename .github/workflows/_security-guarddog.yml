@@ -22,10 +22,11 @@ on:
         required: true
       groups:
         description: >
-          Dependency groups (pdm export flags) scanned by the 'python' target,
-          e.g. '--prod' (core) or '--prod -G :all' (with extras)
+          Dependency groups (uv export flags) scanned by the 'python' target,
+          e.g. '--no-default-groups' (core)
+          or '--no-default-groups --all-extras' (with extras)
         type: "string"
-        default: "--prod -G :all"
+        default: "--no-default-groups --all-extras"
       name:
         description: >
           Name of the artifact and its SARIF file (<name>.sarif),
@@ -106,7 +107,7 @@ jobs:
         uses: "$/.github/actions/setup-release"
         with:
           group: "dev-security"
-      # GuardDog does not support pdm.lock
+      # GuardDog does not support uv.lock
       - name: "Export dependencies"
         if: >
           inputs.target == 'python'
@@ -117,8 +118,8 @@ jobs:
         run: |
           # enq: string splitting of DEPENDENCY_GROUPS is intentional
           # shellcheck disable=SC2086
-          pdm export --project source ${DEPENDENCY_GROUPS} --without-hashes \
-            -o "source/${REQUIREMENTS}"
+          uv export --project source --locked ${DEPENDENCY_GROUPS} \
+            --no-hashes --no-emit-project --output-file "source/${REQUIREMENTS}"
         # yamllint enable rule:indentation
       # Heuristics are noisy, findings are triaged in the Security tab
       # (like Grype in _sbom.yml) instead of failing the job.
@@ -127,6 +128,7 @@ jobs:
       - name: "Scan Python dependencies"
         if: >
           inputs.target == 'python'
+        working-directory: "source"
         env:
           # capability-* label normal behaviour of Python packages (file
           # reads, subprocesses, network), most of these findings would be
@@ -147,25 +149,26 @@ jobs:
         # enq: shell indentation is more readable
         # yamllint disable rule:indentation
         run: |
-          # enq: string splitting of EXCLUDE is intentional,
-          # enq: working dir is resolved against the project, hence absolute
+          # enq: string splitting of EXCLUDE is intentional
           # shellcheck disable=SC2086
-          pdm run --project template --working-dir "${GITHUB_WORKSPACE}/source" \
+          uv run --project ../template \
             guarddog pypi verify "${REQUIREMENTS}" ${EXCLUDE} \
-            --output-format=sarif > "${FILE}" 2> >(tee guarddog.log >&2)
+            --output-format=sarif > "${GITHUB_WORKSPACE}/${FILE}" \
+            2> >(tee "${GITHUB_WORKSPACE}/guarddog.log" >&2)
         # yamllint enable rule:indentation
       # All rules, capabilities of third-party actions (downloads, spawned
       # processes, hooks) are few and worth triaging in the Security tab
       - name: "Scan GitHub Actions"
         if: >
           inputs.target == 'actions'
+        working-directory: "source"
         # enq: shell indentation is more readable
         # yamllint disable rule:indentation
         run: |
-          # enq: working dir is resolved against the project, hence absolute
-          pdm run --project template --working-dir "${GITHUB_WORKSPACE}/source" \
+          uv run --project ../template \
             guarddog github_action verify . \
-            --output-format=sarif > "${FILE}" 2> >(tee guarddog.log >&2)
+            --output-format=sarif > "${GITHUB_WORKSPACE}/${FILE}" \
+            2> >(tee "${GITHUB_WORKSPACE}/guarddog.log" >&2)
         # yamllint enable rule:indentation
       # GuardDog exits with 0 even if a package could not be downloaded
       # and python-whois treats unreachable registries as no finding

@@ -10,4 +10,4 @@
 # in pyproject.toml fix-generation and check-generation
 DIRECTORY="${1:-.}"
 
-git -C "${DIRECTORY}" grep -lz '\[\[\[cog' -- ':!pdm.lock'
+git -C "${DIRECTORY}" grep -lz '\[\[\[cog' -- ':!uv.lock'

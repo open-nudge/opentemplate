@@ -20,7 +20,7 @@ Declare package metadata directly in the `[project]` table of
 `pyproject.toml`.
 
 - __Runtime Dependencies__ – Add dependencies to `[project].dependencies`;
-    PDM resolves them into `pdm.lock`.
+    uv resolves them into `uv.lock`.
 - __Keywords__ – Edit `[project].keywords`.
 - __Classifiers__ – Edit `[project].classifiers`.
 - __Nested Metadata__ – Configure optional dependencies, scripts,
@@ -35,7 +35,7 @@ Development and tool adjustments are made in `pyproject.toml`, which controls:
 - __Tool Settings__ – Configures tools like
     [`ruff`](https://docs.astral.sh/ruff/configuration/)
     section `[tool.<name-of-tool>]`.
-- __Developer Commands__ – Defined under `[tool.pdm.scripts]`
+- __Developer Commands__ – Defined under `[tool.poe.tasks]`
     (usually `check-<type>` or `fix-<type>`).
 
 > [!NOTE]

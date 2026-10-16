@@ -74,7 +74,7 @@ jobs:
           entrypoint: "semgrep"
           args: >-
             scan
-            --exclude=*pdm.lock
+            --exclude=*uv.lock
             --config=p/python
             --config=p/secrets
             --config=p/security-audit

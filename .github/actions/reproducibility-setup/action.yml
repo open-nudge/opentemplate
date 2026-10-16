@@ -33,7 +33,7 @@ runs:
       # yamllint disable rule:indentation
       run: |
         epoch="$(git -C "${REPOSITORY}" log -1 --format=%ct)"
-        # Fits PYTHONHASHSEED range, consumed by tests pdm scripts
+        # Fits PYTHONHASHSEED range, consumed by tests poe tasks
         seed="${SEED:-$(( (RANDOM << 15) | RANDOM ))}"
         {
           echo "SOURCE_DATE_EPOCH=${epoch}"

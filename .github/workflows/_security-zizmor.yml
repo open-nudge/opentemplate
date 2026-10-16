@@ -63,7 +63,7 @@ jobs:
           ref: "${{ inputs.ref }}"
           path: "source"
           persist-credentials: false
-      # zizmor installed from the template (not the caller's pdm.lock),
+      # zizmor installed from the template (not the caller's uv.lock),
       # so the attested SARIF cannot come from an altered zizmor
       - name: "Setup template security tools"
         uses: "$/.github/actions/setup-release"
@@ -73,12 +73,13 @@ jobs:
       # --no-config: the caller cannot disable audits (inline ignores apply),
       # SARIF output never fails on findings (see the last step)
       - name: "Run zizmor"
+        working-directory: "source"
         env:
           # Used by zizmor online audits
           GH_TOKEN: "${{ github.token }}"
         run: >
-          pdm run --project template --working-dir "${GITHUB_WORKSPACE}/source"
-          check-github --no-config --format=sarif . > "${FILE}"
+          uv run --project ../template poe --directory ../template
+          check-github --no-config --format=sarif . > "${GITHUB_WORKSPACE}/${FILE}"
       # Even on findings, so the caller can upload them to the Security tab
       - name: "Upload files"
         id: "upload"

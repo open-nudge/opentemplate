@@ -12,7 +12,7 @@ on:
       - "main"
     paths:
       - "**.xml"
-      - ".github/actions/pdm-*/action.yml"
+      - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/xml.yml"
       - ".github/workflows/_xml.yml"
       - ".github/workflows/_run-check.yml"
