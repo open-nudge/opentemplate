@@ -15,6 +15,7 @@ deps:
           - "pyproject.toml"
           - "uv.lock"
           - "prek.toml"
+          - ".github/dependabot.yml"
 
 config:
   - changed-files:
