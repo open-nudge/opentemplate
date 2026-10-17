@@ -72,8 +72,10 @@ jobs:
         uv run poe tests-coverage
         mv .coverage coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       # yamllint enable rule:line-length
+      # src/** ships package data (e.g. py.typed) in the built wheel
       sparse-checkout: |
         **.py
+        src/**
         tests/**
       group: "tests"
       core: true
@@ -97,8 +99,10 @@ jobs:
     with:
       command: |
         uv run poe tests-mutation
+      # src/** ships package data (e.g. py.typed) in the built wheel
       sparse-checkout: |
         **.py
+        src/**
         tests/**
         .github/tools/tests-mutation.sh
       group: "tests"
