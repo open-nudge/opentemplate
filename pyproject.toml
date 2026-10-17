@@ -872,7 +872,12 @@ check-docs = "mkdocs build"
 check-prek-config = { cmd = "prek validate-config ${files:-prek.toml}", args = [
   { name = "files", positional = true, multiple = true },
 ] }
-check-prek-hooks = { cmd = "prek validate-manifest ${files:-.pre-commit-hooks.yaml}", args = [
+# Skipped when no files are passed and the default manifest does not exist
+check-prek-hooks = { shell = """
+  if [ -n "${files}" ] || [ -f .pre-commit-hooks.yaml ]; then
+    prek validate-manifest ${files:-.pre-commit-hooks.yaml}
+  fi
+""", args = [
   { name = "files", positional = true, multiple = true },
 ] }
 

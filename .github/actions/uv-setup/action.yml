@@ -75,13 +75,17 @@ runs:
       # yamllint disable rule:indentation
       run: |
         # --only-group skips the project (conflicts with --all-extras)
-        select=(--only-group)
+        # No arrays with negative indices (macOS ships bash 3.2)
+        flag="--only-group"
+        extras=""
         if [[ "${CORE}" == "true" ]]; then
-          select=(--all-extras --group)
+          flag="--group"
+          extras="--all-extras"
         fi
         # Task runner is always available (uv run poe <task>)
         uv sync --locked --no-editable --no-default-groups \
-          "${select[@]}" dev-tasks ${GROUP:+"${select[-1]}" "dev-${GROUP}"}
+          ${extras:+"${extras}"} "${flag}" dev-tasks \
+          ${GROUP:+"${flag}" "dev-${GROUP}"}
       # yamllint enable rule:indentation
     - name: "Disable automatic uv sync"
       shell: "bash"
