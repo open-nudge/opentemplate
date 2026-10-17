@@ -12,10 +12,10 @@ on:
       - "main"
     paths:
       - ".github/actions/uv-setup/action.yml"
-      - ".prek-hooks.yaml"
+      - ".pre-commit-hooks.yaml"
       - ".github/workflows/prek-hooks.yml"
       - ".github/workflows/_run-check.yml"
-      - ".github/workflows/__run.yml"
+      - ".github/workflows/_run.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -40,5 +40,5 @@ jobs:
       check: "prek-hooks"
       group: "prek"
       sparse-checkout: |
-        .prek-hooks.yaml
+        .pre-commit-hooks.yaml
 ...

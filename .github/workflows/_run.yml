@@ -5,7 +5,7 @@
 
 ---
 # enq: reusable workflows offload concurrency limits to the caller
-name: "__Run"  # zizmor: ignore[concurrency-limits]
+name: "_Run"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
@@ -114,7 +114,7 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  __run:
+  _run:
     name: "Run"
     permissions:
       contents: "read"
@@ -211,7 +211,7 @@ jobs:
           pattern: "${{ inputs.download-pattern }}"
 
       # nosemgrep
-      # enq: __run.yml should **ONLY** be used internally by opentemplate!
+      # enq: _run.yml should **ONLY** be used internally by opentemplate!
       - name: "Run command" # zizmor: ignore[template-injection]
         env:
           # GH_TOKEN is used by, for example, zizmor

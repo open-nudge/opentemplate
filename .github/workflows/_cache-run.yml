@@ -5,7 +5,7 @@
 
 ---
 # enq: reusable workflows offload concurrency limits to the caller
-name: "__Cache"  # zizmor: ignore[concurrency-limits]
+name: "_Cache Run"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
@@ -57,8 +57,8 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  __cache:
-    name: "__Cache"
+  _cache-run:
+    name: "_Cache Run"
     runs-on: "${{ inputs.os }}"
     timeout-minutes: 60
     permissions:

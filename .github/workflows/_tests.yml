@@ -64,7 +64,7 @@ jobs:
       Tests | ${{ matrix.os.name }} | python-${{ matrix.python }}
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
@@ -72,8 +72,10 @@ jobs:
         uv run poe tests-coverage
         mv .coverage coverage-${{ matrix.os.name }}-${{ matrix.python }}-${{ github.sha }}.sqlite
       # yamllint enable rule:line-length
+      # src/** ships package data (e.g. py.typed) in the built wheel
       sparse-checkout: |
         **.py
+        src/**
         tests/**
       group: "tests"
       core: true
@@ -93,12 +95,14 @@ jobs:
     name: "Tests Mutation"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       command: |
         uv run poe tests-mutation
+      # src/** ships package data (e.g. py.typed) in the built wheel
       sparse-checkout: |
         **.py
+        src/**
         tests/**
         .github/tools/tests-mutation.sh
       group: "tests"
@@ -113,7 +117,7 @@ jobs:
     needs: "_tests"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length

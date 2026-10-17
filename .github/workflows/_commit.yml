@@ -21,6 +21,6 @@ jobs:
     with:
       check: "commit"
       arguments: >-
-        <(git log -1 --format=%s)
+        /dev/stdin <<< "$(git log -1 --format=%s)"
       ref: "${{ github.event.pull_request.head.sha }}"
 ...

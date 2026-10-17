@@ -28,7 +28,7 @@ jobs:
     permissions:
       contents: "read"
       pull-requests: "read" # Needed to read PR metadata during changelog gen
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       full-checkout: true
       group: "release"

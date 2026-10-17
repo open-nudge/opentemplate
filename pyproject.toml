@@ -872,7 +872,12 @@ check-docs = "mkdocs build"
 check-prek-config = { cmd = "prek validate-config ${files:-prek.toml}", args = [
   { name = "files", positional = true, multiple = true },
 ] }
-check-prek-hooks = { cmd = "prek validate-manifest ${files:-.pre-commit-hooks.yaml}", args = [
+# Skipped when no files are passed and the default manifest does not exist
+check-prek-hooks = { shell = """
+  if [ -n "${files}" ] || [ -f .pre-commit-hooks.yaml ]; then
+    prek validate-manifest ${files:-.pre-commit-hooks.yaml}
+  fi
+""", args = [
   { name = "files", positional = true, multiple = true },
 ] }
 
@@ -934,18 +939,6 @@ check-commit = "conventional-pre-commit --strict --scopes '' feat fix feat! fix!
 ###############################################################################
 
 setup = { sequence = [
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # cycle = cogeol.scientific()[-1]["cycle"]
-  # cog.outl(f'  "uv python pin {cycle}",')
-  # ]]]
-  "uv python pin 3.13",
-  # [[[end]]] (sum: LKBAXzM6ed)
   # Project environment (.venv): everything, editable (linters, docs, IDE)
   "uv sync --all-extras",
   # Test environments (.venvs/<python>), missing interpreters are downloaded
