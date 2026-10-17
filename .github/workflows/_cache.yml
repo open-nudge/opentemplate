@@ -75,7 +75,7 @@ jobs:
               www.msftconnecttest.com:443
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__cache.yml"
+    uses: "$/.github/workflows/_cache-run.yml"
     with:
       group: "${{ matrix.install.group }}"
       core: true
@@ -116,7 +116,7 @@ jobs:
           - "json5"
           - "toml"
           - "xml"
-    uses: "$/.github/workflows/__cache.yml"
+    uses: "$/.github/workflows/_cache-run.yml"
     with:
       group: "${{ matrix.group }}"
       ref: "${{ github.event.inputs.ref }}"

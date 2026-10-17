@@ -39,13 +39,8 @@ Features of note include:
     - `_<type>.yml` - de facto implementation of the linter,
         called by `<type>.yml`
 
-- reusable (helper) workflows are prefixed with underscores:
-    `_<name>.yml` if any top-level workflow calls it directly
-    (e.g. `_<type>.yml`, `_run-check.yml`), `__<name>.yml` if it is
-    only ever called by other helpers (e.g. `__run.yml` called by
-    `_run-check.yml`), never more than two underscores,
-    their names (and main job IDs and names) use the same prefix,
-    e.g. `_Commit` for `_commit.yml`
+- reusable (helper) workflows are prefixed with a single underscore
+    (`_<name>.yml`) (e.g. `_<type>.yml`, `_run-check.yml`)
 
 - `*-update.yml` workflows are ran periodically, see
     [scheduled jobs documentation](/docs/template/details/scheduled-jobs.md)

@@ -72,7 +72,7 @@ jobs:
     name: "Check"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       command: |
         uv run poe check-${{ inputs.check }} ${{ inputs.arguments }}

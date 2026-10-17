@@ -18,7 +18,7 @@ on:
       - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/docs.yml"
       - ".github/workflows/_docs.yml"
-      - ".github/workflows/__run.yml"
+      - ".github/workflows/_run.yml"
   merge_group:
     types:
       - "checks_requested"

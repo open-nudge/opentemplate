@@ -14,7 +14,7 @@ on:
       - ".github/actions/uv-setup/action.yml"
       - ".github/workflows/cache-test.yml"
       - ".github/workflows/_cache.yml"
-      - ".github/workflows/__cache.yml"
+      - ".github/workflows/_cache-run.yml"
       - "project/**"
   merge_group:
     types:

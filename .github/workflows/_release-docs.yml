@@ -18,7 +18,7 @@ jobs:
     name: "Release Docs"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       # Double checkout used to refresh the content of generated docs, which
       # happens on some linux distributions at least.

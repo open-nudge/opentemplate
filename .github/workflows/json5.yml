@@ -16,7 +16,7 @@ on:
       - ".github/workflows/json5.yml"
       - ".github/workflows/_json5.yml"
       - ".github/workflows/_run-check.yml"
-      - ".github/workflows/__run.yml"
+      - ".github/workflows/_run.yml"
   merge_group:
     types:
       - "checks_requested"

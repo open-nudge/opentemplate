@@ -17,7 +17,7 @@ on:
       - ".github/workflows/yaml.yml"
       - ".github/workflows/_yaml.yml"
       - ".github/workflows/_run-check.yml"
-      - ".github/workflows/__run.yml"
+      - ".github/workflows/_run.yml"
   merge_group:
     types:
       - "checks_requested"

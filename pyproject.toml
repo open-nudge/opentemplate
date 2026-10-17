@@ -934,18 +934,6 @@ check-commit = "conventional-pre-commit --strict --scopes '' feat fix feat! fix!
 ###############################################################################
 
 setup = { sequence = [
-  #
-  #           DO NOT EDIT UNTIL end marker
-  #
-  # [[[cog
-  # import cog
-  # import cogeol
-  #
-  # cycle = cogeol.scientific()[-1]["cycle"]
-  # cog.outl(f'  "uv python pin {cycle}",')
-  # ]]]
-  "uv python pin 3.13",
-  # [[[end]]] (sum: LKBAXzM6ed)
   # Project environment (.venv): everything, editable (linters, docs, IDE)
   "uv sync --all-extras",
   # Test environments (.venvs/<python>), missing interpreters are downloaded

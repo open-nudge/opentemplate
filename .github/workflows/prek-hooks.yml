@@ -15,7 +15,7 @@ on:
       - ".prek-hooks.yaml"
       - ".github/workflows/prek-hooks.yml"
       - ".github/workflows/_run-check.yml"
-      - ".github/workflows/__run.yml"
+      - ".github/workflows/_run.yml"
   merge_group:
     types:
       - "checks_requested"

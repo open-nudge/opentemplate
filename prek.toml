@@ -223,6 +223,9 @@ rev = "4442ea4b1e93a847e27a22559ee8d4b53795c549" # frozen: v1.181.0
   id = "semgrep"
   alias = "security"
   name = "<<<CHECK>>> Security"
+  # Python 3.15 crashes semgrep-core on Linux (RLIM_INFINITY stack limit),
+  # see https://github.com/semgrep/semgrep/issues/11979
+  language_version = "3.14"
   args = [
     "scan",
     "--exclude=*uv.lock",

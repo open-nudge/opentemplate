@@ -17,7 +17,7 @@ jobs:
     name: "_Docs"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       command: |
         uv run poe check-docs

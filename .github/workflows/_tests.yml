@@ -64,7 +64,7 @@ jobs:
       Tests | ${{ matrix.os.name }} | python-${{ matrix.python }}
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
@@ -93,7 +93,7 @@ jobs:
     name: "Tests Mutation"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       command: |
         uv run poe tests-mutation
@@ -113,7 +113,7 @@ jobs:
     needs: "_tests"
     permissions:
       contents: "read"
-    uses: "$/.github/workflows/__run.yml"
+    uses: "$/.github/workflows/_run.yml"
     with:
       # enq: long line more readable than splitting within command
       # yamllint disable rule:line-length
