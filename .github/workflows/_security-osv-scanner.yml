@@ -46,7 +46,7 @@ jobs:
     steps:
 
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1" # v2.21.1
+        uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
         with:
           # Uses docker container,
           # disable-sudo-and-containers impossible
@@ -69,7 +69,7 @@ jobs:
           ref: "${{ inputs.ref }}"
           persist-credentials: false
       - name: "Run scanner"
-        uses: "google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8
+        uses: "google/osv-scanner-action/osv-scanner-action@a345acffa64b0eaede81a3d9aae6141214d9c8fc" # v2.6.0
         continue-on-error: "${{ inputs.continue-on-error }}"
         with:
           scan-args: |-
