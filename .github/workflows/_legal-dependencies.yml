@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# enq: reusable workflows offload concurrency limits to the caller
+name: "_Legal Dependencies"  # zizmor: ignore[concurrency-limits]
+
+on:
+  workflow_call:
+    inputs:
+      base-ref:
+        description: "Commit SHA dependencies are compared against"
+        type: "string"
+        required: true
+      head-ref:
+        description: "Commit SHA whose added or changed dependencies are checked"
+        type: "string"
+        required: true
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+jobs:
+  # Licenses of dependencies added or changed between the refs (GitHub dependency
+  # graph): GitHub Actions and requirements.txt files, uv.lock is unsupported
+  # and covered by Trivy (_sbom.yml) instead
+  _legal-dependencies:
+    timeout-minutes: 10
+    permissions:
+      # Only need to read contents (configuration, dependency graph comparison)
+      contents: "read"
+    name: "_Legal Dependencies"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            api.securityscorecards.dev:443
+            github.com:443
+      # Allowed licenses are project specific and shared with Trivy
+      - name: "Checkout configuration"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          ref: "${{ inputs.head-ref }}"
+          sparse-checkout: |
+            /.trivy.yaml
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: "Dependency review"
+        uses: "actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294" # v5.0.0
+        with:
+          base-ref: "${{ inputs.base-ref }}"
+          head-ref: "${{ inputs.head-ref }}"
+          config-file: ".trivy.yaml"
+          vulnerability-check: false
+          license-check: true
+          fail-on-scopes: "runtime, development, unknown"
+          warn-only: false
+          show-openssf-scorecard: true
+          # Results are always written to the job summary,
+          comment-summary-in-pr: "never"
+...

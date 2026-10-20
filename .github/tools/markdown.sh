@@ -29,7 +29,3 @@ fi
 
 mdformat --check "${files[@]}"
 pymarkdownlnt scan -r "${files[@]}"
-# enq: external hosts flag CI runners as bot traffic, making link checks flaky
-if [[ -z "${CI:-}" ]]; then
-    md-dead-link-check "${files[@]}"
-fi

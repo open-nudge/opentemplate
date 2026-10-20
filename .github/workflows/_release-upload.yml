@@ -84,7 +84,7 @@ jobs:
         with:
           directory: "${{ runner.temp }}/assets"
           bundles: "true"
-          # security- prefix keeps Grype SARIFs (another signer) out of the
+          # security- prefix keeps Trivy SARIFs (another signer) out of the
           # scanner glob, CodeQL SARIF is absent if CodeQL was skipped
           # (see _security-codeql.yml)
           # enq: JSON indentation is more readable
@@ -92,7 +92,7 @@ jobs:
           signers: |
             {
               "_release-build": ["*.whl", "*.tar.gz"],
-              "_sbom": ["sbom-*.json", "grype-*.sarif"],
+              "_sbom": ["sbom-*.json", "trivy-*.sarif", "trivy-*.yaml"],
               "_release-sarifs": ["security-*-${{ github.sha }}.sarif"]
             }
           # yamllint enable rule:indentation
@@ -118,7 +118,6 @@ jobs:
         # Annotated tag message (author's notes) precedes the generated
         # changelog. Signed tags end their message with the signature,
         # which the API also returns as verification.signature
-        # Should also upload the attestations created by gh-action-pypi-publish
         # enq: multiline without char limit more readable
         # yamllint disable rule:indentation rule:line-length
         run: |

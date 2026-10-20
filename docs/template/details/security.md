@@ -23,7 +23,8 @@ Key security checks include:
 - __Branch protection:__ No direct commits to `main` enforced locally by
     [`prek` built-in `no-commit-to-branch` hook](https://prek.j178.dev/built-in-hooks/)
 
-- __Vulnerability scanning:__ [`google/osv-scanner`](https://github.com/google/osv-scanner)
+- __Vulnerability scanning:__ [`uv audit`](https://docs.astral.sh/uv/)
+    (all locked dependencies)
 
 - __Malicious dependencies detection:__ [`DataDog/guarddog`](https://github.com/DataDog/guarddog)
     (runtime Python dependencies and GitHub Actions, CI only)
@@ -85,7 +86,7 @@ Following [Open Source Security Foundation best practices](https://www.bestpract
 
 Most security configurations (e.g., `check-security`, `check-workflow`) are in `pyproject.toml`.
 Additional security workflows are in `.github/workflows` (prefix: `security-`,
-reusable helpers additionally prefixed with `_` per nesting level).
+reusable workflows additionally prefixed with `_`).
 
 ### Security tab categories
 
@@ -95,18 +96,19 @@ permissions). Their SARIF files are uploaded by
 and during releases, one analysis per tool, categorized as
 `/tool:<tool>/scope:<scope>/language:<language>`:
 
-<!-- pyml disable-num-lines 12 line-length-->
+<!-- pyml disable-num-lines 13 line-length-->
 
-| Tool        | Category                                                   |
-| ----------- | ---------------------------------------------------------- |
-| CodeQL      | `/tool:codeql/scope:workflows/language:actions`            |
-| zizmor      | `/tool:zizmor/scope:workflows/language:actions`            |
-| Semgrep     | `/tool:semgrep/scope:repository/language:all`              |
-| OSV-Scanner | `/tool:osv-scanner/scope:dependencies/language:python`     |
-| GuardDog    | `/tool:guarddog/scope:dependencies-<tier>/language:python` |
-| GuardDog    | `/tool:guarddog/scope:actions/language:actions`            |
-| Grype       | `/tool:grype/scope:sbom-<name>/language:python`            |
-| Scorecard   | `/tool:scorecard/scope:repository/language:all`            |
+| Tool      | Category                                                   |
+| --------- | ---------------------------------------------------------- |
+| CodeQL    | `/tool:codeql/scope:workflows/language:actions`            |
+| zizmor    | `/tool:zizmor/scope:workflows/language:actions`            |
+| Semgrep   | `/tool:semgrep/scope:repository/language:all`              |
+| uv audit  | `/tool:uv-audit/scope:dependencies/language:python`        |
+| GuardDog  | `/tool:guarddog/scope:dependencies-<tier>/language:python` |
+| GuardDog  | `/tool:guarddog/scope:actions/language:actions`            |
+| Trivy     | `/tool:trivy/scope:sbom-<name>/language:python`            |
+| Trivy     | `/tool:trivy/scope:licenses-<name>/language:python`        |
+| Scorecard | `/tool:scorecard/scope:repository/language:all`            |
 
 > [!NOTE]
 > Analyses uploaded under other categories (e.g. by previous template
@@ -122,16 +124,48 @@ Analyses are kept per ref and category:
     exactly the released commit
 - pull requests upload nothing, findings are listed in the job summary
 
-### OSV Scanner
+### uv audit
 
-To ignore specific vulnerabilities, modify `osv-scanner.toml` ([docs](https://google.github.io/osv-scanner/configuration/)).
+`uv audit` checks `uv.lock` (all groups) against the [OSV database](https://osv.dev/)
+on every commit (`prek`, after `uv lock --upgrade`) and in CI.
+To ignore specific vulnerabilities, add their IDs (any alias)
+with a reason to `[tool.uv.audit]` in `pyproject.toml`:
 
-> [!WARNING]
-> License-related issues in __currently defined__ development dependencies
-> are ignored by default.
+- `ignore` - not applicable to the project
+- `ignore-until-fixed` - no fix released yet, reported again once it is
 
-> [!TIP]
-> `osv-scanner.toml` settings are respected by OSSF Scorecard.
+> [!IMPORTANT]
+> Fixes younger than the cooldown (`exclude-newer`) need a pinned exemption,
+> see [`SECURITY-DEPENDENCY.md`](../../SECURITY-DEPENDENCY.md#vulnerabilities).
+
+### Trivy
+
+[Trivy](https://github.com/aquasecurity/trivy) scans the Python SBOMs
+(per tier, Python version and OS) for known vulnerabilities and the licenses
+of the distributed environments (`core` and `extras`) on pull requests
+(job summary only), weekly (`main` and the latest release)
+and before every release (`.github/workflows/_sbom.yml`)
+(latter two being uploaded to the security tab).
+Vulnerabilities are triaged in the Security tab, while licenses outside of
+the allowed ones fail the job (see [legal](legal.md#python-dependencies)).
+
+Configuration (allowed licenses) is stored in `.trivy.yaml`,
+triaged findings are ignored in `.trivyignore.yaml`. __Both files are required__,
+used by every scan, attested and attached to releases
+(`trivy-config-<commit SHA>.yaml`, `trivy-ignore-<commit SHA>.yaml`),
+so what the released scans ignore can be audited.
+
+Every run installs the newest Trivy release published __at least 7 days ago__
+(the Dependabot-like cooldown), so no manual updates are needed, while
+compromised releases (like [`v0.69.4`](https://github.com/aquasecurity/trivy/security/advisories/GHSA-69fq-xp46-6x23),
+withdrawn after 3 hours) are not used.
+The version used is recorded in every SARIF (`tool.driver.version`),
+attested and released with the scans.
+The vulnerability database is downloaded on every run.
+
+> [!NOTE]
+> GitHub Actions are not scanned by Trivy (it does not match them),
+> their known vulnerabilities are reported by `zizmor`.
 
 ### GuardDog
 
@@ -139,7 +173,7 @@ To ignore specific vulnerabilities, modify `osv-scanner.toml` ([docs](https://go
 (heuristics such as obfuscation, exfiltration or typosquatting) in Python
 dependencies and in the source of third-party actions used by
 `.github/workflows` steps (`.github/workflows/*security-guarddog*.yml`).
-Unlike OSV-Scanner, Grype or `zizmor`, it does not rely on known advisories.
+Unlike `uv audit`, Trivy or `zizmor`, it does not rely on known advisories.
 GuardDog is installed (hash-locked) from the template's `dev-security` group.
 
 Python dependencies are scanned per tier (as SBOMs are):

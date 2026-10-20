@@ -20,8 +20,14 @@ on:
           if given they are installed and the SBOMs attested against them
         type: "string"
         default: ""
-      upload-grype:
-        description: "Upload the Grype SARIFs to Security tab"
+      tag:
+        description: >
+          Release tag the SARIFs are uploaded under, set together with ref
+          (default: '' - the triggering ref)
+        type: "string"
+        default: ""
+      upload-sarif:
+        description: "Upload the Trivy SARIFs to Security tab"
         type: "boolean"
         default: false
 
@@ -36,7 +42,8 @@ jobs:
       python-${{ matrix.python-version }} |
       ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      # A failed license check must not cancel the other scans (and uploads)
+      fail-fast: false
       max-parallel: 5
       matrix:
         python-version:
@@ -88,6 +95,9 @@ jobs:
       os: "${{ matrix.os }}"
       python-version: "${{ matrix.python-version }}"
       ref: "${{ inputs.ref }}"
+      tag: "${{ inputs.tag }}"
       digests: "${{ inputs.digests }}"
-      upload-grype: "${{ inputs.upload-grype }}"
+      # Licenses matter for distributed tiers only (core, extras)
+      licenses: "${{ matrix.tier.name != 'dev' }}"
+      upload-sarif: "${{ inputs.upload-sarif }}"
 ...

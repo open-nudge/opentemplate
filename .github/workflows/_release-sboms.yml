@@ -14,8 +14,8 @@ on:
         description: "sha256sum of the distributions (release build output)"
         type: "string"
         required: true
-      upload-grype:
-        description: "Upload the Grype SARIFs to Security tab"
+      upload-sarif:
+        description: "Upload the Trivy SARIFs to Security tab"
         type: "boolean"
         default: true
 
@@ -42,7 +42,7 @@ jobs:
     with:
       type: "${{ matrix.type }}"
       digests: "${{ inputs.digests }}"
-      upload-grype: "${{ inputs.upload-grype }}"
+      upload-sarif: "${{ inputs.upload-sarif }}"
 
   sbom-python:
     name: "SBOM Python"
@@ -56,5 +56,5 @@ jobs:
     uses: "$/.github/workflows/_security-sbom-python.yml"
     with:
       digests: "${{ inputs.digests }}"
-      upload-grype: "${{ inputs.upload-grype }}"
+      upload-sarif: "${{ inputs.upload-sarif }}"
 ...

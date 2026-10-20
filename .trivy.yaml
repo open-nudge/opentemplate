@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# Configuration of the Trivy scans (.github/workflows/_sbom.yml) and of
+# dependency-review-action (.github/workflows/_legal-dependencies.yml).
+
+# Allowed licenses (exact SPDX identifiers) of the distributed Python
+# dependencies are classified as notice (LOW severity) and not reported,
+# any other license (including unknown ones) fails the license check.
+license:
+  notice: &allowed-licenses
+    - "MIT"
+    - "MIT-0"
+    - "Apache-2.0"
+    - "BSD-2-Clause"
+    - "BSD-3-Clause"
+    - "ISC"
+    - "PSF-2.0"
+    - "Python-2.0"
+    - "0BSD"
+    - "Unlicense"
+    - "Zlib"
+    - "OFL-1.1"
+  # Emptied, these would otherwise be LOW severity (not reported) as well
+  # enq: the only way to set an empty list in YAML
+  permissive: [] # yamllint disable-line rule:brackets
+  # enq: the only way to set an empty list in YAML
+  unencumbered: [] # yamllint disable-line rule:brackets
+
+allow-licenses: *allowed-licenses
+# Exceptions as package URLs, e.g. pkg:githubactions/<owner>/<repo>
+# enq: the only way to set an empty list in YAML
+allow-dependencies-licenses: [] # yamllint disable-line rule:brackets
+...

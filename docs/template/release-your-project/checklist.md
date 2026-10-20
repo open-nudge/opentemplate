@@ -40,8 +40,8 @@ SPDX-License-Identifier: Apache-2.0
 - For dependencies, review `uv.lock` (upgraded by `prek` on every commit).
 
 > [!TIP]
-> For public projects after the first release, remove `exclude_links`
-> in `[tool.md_dead_link_check]` to validate all links.
+> For public projects after the first release, remove the repository
+> and documentation entries of `exclude` in `lychee.toml` to validate all links.
 
 ## Documentation
 

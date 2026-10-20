@@ -11,7 +11,8 @@ on:
     branches:
       - "main"
     paths:
-      - ".grype.yaml"
+      - ".trivy.yaml"
+      - ".trivyignore.yaml"
       - ".github/actions/sarif-upload/action.yml"
       - ".github/actions/git-setup/action.yml"
       - ".github/actions/setup-release/action.yml"
@@ -24,9 +25,7 @@ on:
       - ".github/workflows/release-sboms-test.yml"
       - ".github/workflows/_release-sboms.yml"
       - ".github/workflows/_sbom.yml"
-      - ".github/workflows/security-sbom-github-update.yml"
       - ".github/workflows/security-sbom-github.yml"
-      - ".github/workflows/security-sbom-legal-update.yml"
       - ".github/workflows/security-sbom-legal.yml"
       - ".github/workflows/_security-sbom-python.yml"
       - ".github/workflows/security-sbom-python-update.yml"
@@ -69,5 +68,5 @@ jobs:
     uses: "$/.github/workflows/_release-sboms.yml"
     with:
       digests: "${{ needs.package-create.outputs.digests }}"
-      upload-grype: false
+      upload-sarif: false
 ...

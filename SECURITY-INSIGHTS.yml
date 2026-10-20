@@ -51,26 +51,28 @@ security-testing:
     integration:
       ad-hoc: false
       ci: true
-      before-release: true
+      before-release: false
     comment: |
-      - "Dependency review action is ran during CI and before every release."
-      - "It checks for vulnerabilities in the dependencies of the project."
-      - "Low severity brings alerts to the PR (although PR might be merged)."
+      - "Dependency review action is ran during CI on every pull request and merge queue."
+      - "Weekly, it checks dependencies added since the first commit (latest release and main)."
+      - "It checks licenses of added or changed dependencies (GitHub Actions, requirements.txt)."
+      - "Allowed licenses are read from .trivy.yaml (shared with Trivy)."
+      - "Vulnerabilities are checked by uv audit, zizmor and Trivy instead."
   - tool-type: "sca"
-    tool-name: "OSV-Scanner"
-    tool-url: "https://github.com/google/osv-scanner"
+    tool-name: "uv audit"
+    tool-url: "https://docs.astral.sh/uv/"
     tool-version: "latest"
     integration:
       ad-hoc: false
       ci: true
       before-release: true
     comment: |
-      - "OSV-Scanner is ran during CI, on the main branch and before every release."
-      - "It checks dependencies for known vulnerabilities and licenses."
+      - "uv audit is ran locally (prek), during CI, on the main branch and before every release."
+      - "It checks uv.lock dependencies for known vulnerabilities."
       - "Pull requests list findings in the job summary only."
       - Sarif files are uploaded to the GitHub Security tab
       from the main branch (push and weekly) and from release tags
-      (category /tool:osv-scanner/scope:dependencies/language:python)
+      (category /tool:uv-audit/scope:dependencies/language:python)
       and attested in releases
   - tool-type: "sca"
     tool-name: "GuardDog"
@@ -90,20 +92,24 @@ security-testing:
       and /tool:guarddog/scope:actions/language:actions)
       and attested in releases
   - tool-type: "sca"
-    tool-name: "Grype"
-    tool-url: "https://github.com/anchore/grype"
+    tool-name: "Trivy"
+    tool-url: "https://github.com/aquasecurity/trivy"
     tool-version: "latest"
     integration:
       ad-hoc: false
       ci: true
       before-release: true
     comment: |
-      - "Grype scans every SBOM during CI, weekly and before every release."
-      - "Pull requests list findings in the job summary only."
+      - "Trivy scans every Python SBOM during CI, weekly and before every release."
+      - "The newest Trivy release published at least 7 days ago is used."
+      - "It also checks licenses of the distributed environments (core and extras tiers)."
+      - "Disallowed licenses fail the job, pull requests list vulnerabilities in the job summary only."
       - Sarif files are uploaded to the GitHub Security tab
-      weekly (main branch) and from release tags
-      (category /tool:grype/scope:sbom-<name>/language:python)
+      weekly (main branch and latest release) and from release tags
+      (categories /tool:trivy/scope:sbom-<name>/language:python
+      and /tool:trivy/scope:licenses-<name>/language:python)
       and attested in releases together with the SBOMs
+      and the Trivy configuration (.trivy.yaml, .trivyignore.yaml)
   # SAST
   - tool-type: "sast"
     tool-name: "Security Scorecard"

@@ -105,8 +105,9 @@ __It should be extended by adding project-specific security information.__
 
 Project tries to comply with the following security standards:
 
-- [SLSA](https://slsa.dev/) - L3+ if the project is public or coming
-    from a GitHub Enterprise Account with Advanced Security, L2 otherwise
+- [SLSA](https://slsa.dev/) - Build L3 for attested releases (public
+    repositories, or private ones on GitHub Enterprise Cloud),
+    L0 otherwise (no attestations are created)
 - The project is currently not third-party audited or verified
 
 ## Secure development practices

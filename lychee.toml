@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Dead link checking (prek only, hosts often block CI runners as bots)
+# See https://lychee.cli.rs/guides/config/ for all options
+
+no_progress = true
+include_fragments = "full"
+# Root-relative links (e.g. /SECURITY.md) resolve against the repository root
+root_dir = "."
+
+cache = true
+max_cache_age = "1d"
+
+# Regexes matched against full URLs
+# For public projects after the first release, remove the repository
+# and documentation entries to validate all links
+exclude = [
+  # Repository and documentation, unreachable before the first release
+  '^https://github\.com/open-nudge/opentemplate',
+  '^https://open-nudge\.github\.io',
+  # Placeholders handled by template setup (template-setup/rename.sh)
+  'templateskip$',
+  # LICENSE linked from files symlinked into docs/ (docs/LICENSE.md in mkdocs)
+  '/docs/LICENSE$',
+  # Links ignored due to automated requests denials
+  'https://wiki.linuxfoundation.org/dco',
+]
+
+exclude_path = [
+  # Copied over the project during template setup
+  '^template-setup/',
+]

@@ -140,7 +140,6 @@ dev-yaml = [
 ]
 
 dev-markdown = [
-  "md-dead-link-check>=1.2.0",
   "mdformat>=0.7.19",
   "mdformat_frontmatter>=2",
   "mdformat_footnote>=0.1.1",
@@ -300,6 +299,14 @@ cache-keys = [
   { file = "src/**" },
   { git = { commit = true, tags = true } },
 ]
+# Cooldown exemptions for fixes of known vulnerabilities, see SECURITY-DEPENDENCY.md
+exclude-newer-package = {}
+
+# Vulnerability IDs (any alias), each with a reason in a comment
+[tool.uv.audit]
+ignore = []
+# Advisories without a fix, reported again once a fix is released
+ignore-until-fixed = []
 
 [tool.ruff]
 line-length = 110
@@ -344,6 +351,10 @@ lint.extend-per-file-ignores."tests/**.py" = [
   # Pytest should not be a module
   "INP001",
   "S101",
+]
+lint.extend-per-file-ignores.".github/tools/*.py" = [
+  # Standalone scripts, not a package
+  "INP001",
 ]
 lint.extend-per-file-ignores."template-setup/overwrite/tests/**.py" = [
   # Pytest should not be a module
@@ -567,19 +578,6 @@ plugins.md042.enabled = false
 # Disabled as it conflicts with mdformat around pyml pragmas
 # (pymarkdownlnt 0.9.41 counts the pragma line as blank)
 plugins.md012.enabled = false
-
-[tool.md_dead_link_check]
-exclude_links = [
-  "https://github.com/open-nudge/opentemplate*",
-  "https://open-nudge.github.io/opentemplate*",
-  "/LICENSE",
-  "https://open-nudge.github.io*",
-  "templateskip",
-]
-
-exclude_files = [
-  "template-setup/overwrite/*",
-]
 
 [tool.comver]
 path_includes = [
@@ -923,6 +921,9 @@ fix-legal = { shell = """
 """, args = [
   { name = "files", positional = true, multiple = true },
 ] }
+
+# Known vulnerabilities in uv.lock (all groups), ignores in [tool.uv.audit]
+check-audit = "uv audit --frozen --preview-features audit-command"
 
 check-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c --check" }
 fix-generation = { shell = ".github/tools/find-cog-files.sh | xargs -0 -r cog -c -r" }

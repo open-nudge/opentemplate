@@ -19,7 +19,7 @@ on:
           one per line, empty for skipped CodeQL
         # Literal block: each digest must stay on its own line
         value: |
-          ${{ jobs.sarif-osv-scanner.outputs.digests }}
+          ${{ jobs.sarif-uv-audit.outputs.digests }}
           ${{ jobs.sarif-semgrep.outputs.digests }}
           ${{ jobs.sarif-zizmor.outputs.digests }}
           ${{ jobs.sarif-guarddog-core.outputs.digests }}
@@ -44,13 +44,13 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  sarif-osv-scanner:
+  sarif-uv-audit:
     permissions:
       contents: "read"
-    name: "Sarif OSV-Scanner"
-    uses: "$/.github/workflows/_security-osv-scanner.yml"
+    name: "Sarif uv audit"
+    uses: "$/.github/workflows/_security-uv-audit.yml"
     with:
-      name: "security-osv-scanner-${{ inputs.tag || github.sha }}"
+      name: "security-uv-audit-${{ inputs.tag || github.sha }}"
       ref: "${{ inputs.ref }}"
 
   sarif-semgrep:
@@ -118,7 +118,7 @@ jobs:
   sarif-upload:
     name: "Sarif Upload (${{ matrix.tool.name }})"
     needs:
-      - "sarif-osv-scanner"
+      - "sarif-uv-audit"
       - "sarif-semgrep"
       - "sarif-zizmor"
       - "sarif-guarddog-core"
@@ -131,8 +131,8 @@ jobs:
       fail-fast: false
       matrix:
         tool:
-          - name: "osv-scanner"
-            category: "/tool:osv-scanner/scope:dependencies/language:python"
+          - name: "uv-audit"
+            category: "/tool:uv-audit/scope:dependencies/language:python"
             skip: false
           - name: "semgrep"
             category: "/tool:semgrep/scope:repository/language:all"

@@ -22,6 +22,10 @@ cooldown_days = 7
 [update.repos."https://github.com/trufflesecurity/trufflehog"]
 include_tags = ["v*.*.0"]
 
+# Older v* tags and lychee-lib-v* tags are not lychee releases
+[update.repos."https://github.com/lycheeverse/lychee"]
+include_tags = ["lychee-v*"]
+
 ##############################################################################
 #
 #                       NON PYPROJECT BASED CHECKS
@@ -164,19 +168,19 @@ rev = "e76dff8a7e57d6df0c60ad8cbf5d5cba505a8fc9" # frozen: v3.99.2
   priority = 10
 
 [[repos]]
-repo = "https://github.com/google/osv-scanner/"
-rev = "bfe2f84abd2f09fe0b83ba7f6dad40d296762f40" # frozen: v2.7.0
+repo = "https://github.com/lycheeverse/lychee"
+rev = "2bba271688c1abb1503097a064e6c3bc1d1b6a9b"  # frozen: lychee-v0.24.2
 
+  # Built from the pinned source (cargo install --locked), configured in lychee.toml
   [[repos.hooks]]
-  id = "osv-scanner"
-  name = "<<<CHECK>>> OSV Scanner"
-  args = [
-    "--recursive",
-    "--config=osv-scanner.toml",
-    "--licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0",
-    "./",
-  ]
-  priority = 10
+  id = "lychee-system"
+  alias = "links"
+  name = "<<<CHECK>>> Links"
+  language = "rust"
+  verbose = true
+  types = ["markdown"]
+  exclude = "^(DCO.md|template-setup/.*|LICENSE|LICENSES/.*|\\.agents/.*)$"
+  priority = 70
 
 
 [[repos]]
@@ -307,6 +311,19 @@ repo = "local"
   always_run = true
   # Before the exports below, which read uv.lock
   priority = 25
+
+  # Runs on every commit, new advisories appear without lock changes
+  [[repos.hooks]]
+  id = "uv-audit"
+  alias = "audit"
+  verbose = true
+  name = "<<<CHECK>>> uv audit"
+  entry = "uv run poe -v check-audit"
+  pass_filenames = false
+  language = "system"
+  always_run = true
+  # After uv-lock, reads uv.lock
+  priority = 30
 
   # Hash-locked uv installed by release jobs (setup-release action)
   [[repos.hooks]]

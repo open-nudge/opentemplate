@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# Triaged findings ignored by the Trivy scans (.github/workflows/_sbom.yml)
+# Licenses fail the check, ignore them here or allow the license in .trivy.yaml.
+# For example:
+# vulnerabilities:
+#   - id: "CVE-2026-12345"
+#     purls:
+#       - "pkg:pypi/example-package@1.0.0"
+#     statement: "Not reachable, the affected function is unused"
+#     expired_at: "2026-12-31"
+# licenses:
+#   # License paths (no purls) as reported by the check, glob matches
+#   # every Python version, OS and version of the package checked
+#   - id: "MPL-2.0"
+#     paths:
+#       - "**/example_package-*.dist-info/METADATA"
+#     statement: "Unmodified, distributed as a separate package"
+
+# enq: the only way to set an empty list in YAML
+vulnerabilities: [] # yamllint disable-line rule:brackets
+# enq: the only way to set an empty list in YAML
+licenses: [] # yamllint disable-line rule:brackets
+...

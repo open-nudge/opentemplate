@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Legal Dependencies"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+  merge_group:
+    types:
+      - "checks_requested"
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+cache-mode: "read"
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  legal-dependencies:
+    name: "Legal Dependencies"
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/_legal-dependencies.yml"
+    with:
+      base-ref: "${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}"
+      head-ref: "${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}"
+...

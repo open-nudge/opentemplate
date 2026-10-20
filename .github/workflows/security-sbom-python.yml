@@ -11,7 +11,8 @@ on:
     branches:
       - "main"
     paths:
-      - ".grype.yaml"
+      - ".trivy.yaml"
+      - ".trivyignore.yaml"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/security-sbom-python.yml"

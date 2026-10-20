@@ -20,8 +20,9 @@ The following tools ensure consistency and quality:
 - __Formatting:__ [`mdformat`](https://github.com/hukkin/mdformat)
 - __Linting:__ [`pymarkdownlnt`](https://github.com/jackdewinter/pymarkdown)
     (similar to [`markdownlint`](https://github.com/DavidAnson/markdownlint))
-- __Dead link checking:__ [`md-dead-link-check`](https://github.com/AlexanderDokuchaev/md-dead-link-check)
-    (`prek` only, skipped in GitHub Actions as hosts often block CI runners)
+- __Dead link checking:__ [`lychee`](https://github.com/lycheeverse/lychee)
+    (`prek` only, skipped in GitHub Actions as hosts often block CI runners,
+    configured in `lychee.toml`)
 
 ### `vale`
 

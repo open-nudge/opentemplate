@@ -5,14 +5,14 @@
 
 ---
 # enq: reusable workflows offload concurrency limits to the caller
-name: "_Security OSV-Scanner"  # zizmor: ignore[concurrency-limits]
+name: "_Security uv audit"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
     outputs:
       digests:
         description: "sha256sum of the SARIF file (named as in the artifact)"
-        value: "${{ jobs._security-osv-scanner.outputs.digests }}"
+        value: "${{ jobs._security-uv-audit.outputs.digests }}"
     inputs:
       name:
         description: >
@@ -32,9 +32,13 @@ on:
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
 
+defaults:
+  run:
+    shell: "bash"
+
 jobs:
-  _security-osv-scanner:
-    name: "_Security OSV-Scanner"
+  _security-uv-audit:
+    name: "_Security uv audit"
     runs-on: "ubuntu-latest"
     timeout-minutes: 30
     permissions:
@@ -42,43 +46,43 @@ jobs:
     outputs:
       digests: "${{ steps.upload.outputs.digests }}"
     env:
-      FILE: "${{ inputs.name || 'osv-scanner' }}.sarif"
+      FILE: "${{ inputs.name || 'uv-audit' }}.sarif"
     steps:
 
       - name: "Harden Runner"
         uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
         with:
-          # Uses docker container,
-          # disable-sudo-and-containers impossible
-          disable-sudo: true
+          disable-sudo-and-containers: true
           egress-policy: "block"
           allowed-endpoints: >
             *.actions.githubusercontent.com:443
-            codeload.github.com:443
-            results-receiver.actions.githubusercontent.com:443
             *.blob.core.windows.net:443
-            api.deps.dev:443
             api.github.com:443
             api.osv.dev:443
-            ghcr.io:443
+            codeload.github.com:443
+            files.pythonhosted.org:443
             github.com:443
-            pkg-containers.githubusercontent.com:443
-      - name: "Checkout repository"
+            objects.githubusercontent.com:443
+            pypi.org:443
+            release-assets.githubusercontent.com:443
+            results-receiver.actions.githubusercontent.com:443
+      - name: "Checkout source"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
           ref: "${{ inputs.ref }}"
+          path: "source"
           persist-credentials: false
-      - name: "Run scanner"
-        uses: "google/osv-scanner-action/osv-scanner-action@a345acffa64b0eaede81a3d9aae6141214d9c8fc" # v2.6.0
-        continue-on-error: "${{ inputs.continue-on-error }}"
+      # Hash-locked uv from the template, the caller cannot alter it
+      - name: "Setup uv"
+        uses: "$/.github/actions/setup-release"
         with:
-          scan-args: |-
-            --format=sarif
-            --output=${{ env.FILE }}
-            --recursive
-            --config=osv-scanner.toml
-            --licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,Unlicense,Zlib,OFL-1.1,0BSD,PSF-2.0
-            ./
+          group: "dev-bootstrap"
+      # Ignores are read from [tool.uv.audit] of the source project
+      - name: "Run audit"
+        continue-on-error: "${{ inputs.continue-on-error }}"
+        run: >
+          uv audit --project source --frozen --preview-features audit-command
+          --output-format sarif > "${FILE}"
       - name: "Upload files"
         id: "upload"
         if: >

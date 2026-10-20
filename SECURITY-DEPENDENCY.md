@@ -47,6 +47,12 @@ when consuming third-party packages:
 - Specify `major`, `minor`, and `patch` versions for all pre-release
     third-party packages (version `0.x.y`).
 - Use the latest `major` version of all third-party packages whenever possible.
+- Tools outside of the lock file follow the same 7 day cooldown
+    (GitHub Actions pinned to commit SHAs by Dependabot, the newest Trivy
+    release at least 7 days old), while components of GitHub-hosted runners
+    (e.g. the `actions/setup-python` interpreter, `git`, `gh`) follow
+    the runner image updates. Python minor version is set by `cog`,
+    `uv` version by `uv.lock`.
 
 ## Procedure
 
@@ -62,6 +68,38 @@ contributors must follow these steps:
     Use the latest version whenever possible.
 1. Update `[project].dependencies` in `pyproject.toml`, then run
     `uv lock` to lock the dependencies.
+
+## Vulnerabilities
+
+Dependencies are locked with a cooldown (`exclude-newer` in `pyproject.toml`),
+so freshly published (possibly malicious) releases are not used.
+`uv audit` (`prek` and CI) fails on known vulnerabilities, resolve them as follows:
+
+<!-- pyml disable-num-lines 8 line-length-->
+
+| Situation                        | Action                                                            |
+| -------------------------------- | ----------------------------------------------------------------- |
+| Fix released before the cooldown | `uv lock --upgrade` (if a dependency caps it, bump or replace it) |
+| Fix released within the cooldown | Pinned exemption in `exclude-newer-package` (see below)           |
+| No fix released                  | `ignore-until-fixed` in `[tool.uv.audit]` with a reason           |
+| Not applicable to `opentemplate` | `ignore` in `[tool.uv.audit]` with a reason                       |
+
+The cooldown is broken __only__ for the package with the vulnerability
+and __only__ up to its fix release, by setting the exemption to the upload
+time of the fix release's last file:
+
+```sh
+curl -s https://pypi.org/pypi/<package>/<fix version>/json \
+  | jq -r '[.urls[].upload_time_iso_8601] | max'
+```
+
+```toml
+[tool.uv]
+exclude-newer-package = { <package> = "<timestamp>" }
+```
+
+Never exempt with `false` (it admits any newer release) and remove the exemption
+once the cooldown passes the fix release, otherwise it pins the package to that time.
 
 ## Archived or deprecated packages
 

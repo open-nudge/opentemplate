@@ -122,7 +122,7 @@ jobs:
             --no-hashes --no-emit-project --output-file "source/${REQUIREMENTS}"
         # yamllint enable rule:indentation
       # Heuristics are noisy, findings are triaged in the Security tab
-      # (like Grype in _sbom.yml) instead of failing the job.
+      # (like Trivy in _sbom.yml) instead of failing the job.
       # stderr (packages, actions or rules which could not be scanned)
       # is kept in the job log and checked below.
       - name: "Scan Python dependencies"
