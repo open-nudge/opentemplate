@@ -42,11 +42,11 @@ Licenses of dependencies are checked in CI against a single list of allowed
 
 <!-- pyml disable-num-lines 7 line-length-->
 
-| Dependencies                             | Tool                       | Checked on                                         |
-| ---------------------------------------- | -------------------------- | -------------------------------------------------- |
-| Python `core` and `extras` (distributed) | Trivy                      | pull requests changing them, weekly, every release |
-| GitHub Actions, `requirements.txt` files | `dependency-review-action` | every pull request, weekly                         |
-| Python development groups                | -                          | never (not distributed)                            |
+| Dependencies                                        | Tool                       | Checked on                                         |
+| --------------------------------------------------- | -------------------------- | -------------------------------------------------- |
+| Python `core` and `extras` (distributed)            | Trivy                      | pull requests changing them, weekly, every release |
+| GitHub Actions, `requirements.txt`, `uv.lock` files | `dependency-review-action` | every pull request, weekly                         |
+| Python development groups                           | -                          | never (not distributed)                            |
 
 Both tools fail on a license outside of the list.
 
@@ -87,6 +87,8 @@ refers to `license.notice`).
 It covers ecosystems which Trivy cannot see, most notably third-party
 GitHub Actions and reusable workflows used in workflows (and composite actions)
 and the hash-locked `requirements.txt` files (`.github/`, `template-setup/`).
+It compares `uv.lock` as well (overlapping Trivy), development
+dependencies (dependency groups) are ignored (`fail-on-scopes`).
 
 `legal-dependencies-update.yml` runs the same check weekly between
 the first commit and the latest release, and between the latest release

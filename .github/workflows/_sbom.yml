@@ -119,6 +119,7 @@ jobs:
             api.github.com:443
             codeload.github.com:443
             files.pythonhosted.org:443
+            get.trivy.dev:443
             github.com:443
             ghcr.io:443
             mirror.gcr.io:443
@@ -129,6 +130,10 @@ jobs:
             release-assets.githubusercontent.com:443
             results-receiver.actions.githubusercontent.com:443
             storage.googleapis.com:443
+
+            ${{ runner.os == 'Windows'
+            && '*.c.lencr.org:80 c.pki.goog:80 crl.sectigo.com:80 ocsp.sectigo.com:80'
+            || '' }}
       # Fails early, an empty version would install the latest Trivy release
       - name: "Check Trivy version"
         if: >

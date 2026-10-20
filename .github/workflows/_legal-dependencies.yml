@@ -24,8 +24,6 @@ permissions: {} # yamllint disable-line rule:braces
 
 jobs:
   # Licenses of dependencies added or changed between the refs (GitHub dependency
-  # graph): GitHub Actions and requirements.txt files, uv.lock is unsupported
-  # and covered by Trivy (_sbom.yml) instead
   _legal-dependencies:
     timeout-minutes: 10
     permissions:
@@ -61,7 +59,7 @@ jobs:
           config-file: ".trivy.yaml"
           vulnerability-check: false
           license-check: true
-          fail-on-scopes: "runtime, development, unknown"
+          fail-on-scopes: "runtime, unknown"
           warn-only: false
           show-openssf-scorecard: true
           # Results are always written to the job summary,
