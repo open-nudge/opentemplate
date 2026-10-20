@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: "Security OSV-Scanner"
+name: "Security uv audit"
 
 on:
   pull_request:
@@ -28,19 +28,20 @@ concurrency:
     ${{ github.workflow_ref }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Weekly rescans of main and the latest release: security-sarifs-update.yml
 jobs:
-  security-osv-scanner:
+  security-uv-audit:
     permissions:
       contents: "read"
-    name: "Security OSV-Scanner"
-    uses: "$/.github/workflows/_security-osv-scanner.yml"
+    name: "Security uv audit"
+    uses: "$/.github/workflows/_security-uv-audit.yml"
     with:
-      name: "osv-scanner"
+      name: "uv-audit"
 
   # Separate job, so PRs (which do not upload) run without write permissions
-  security-osv-scanner-upload:
-    name: "Security OSV-Scanner Upload"
-    needs: "security-osv-scanner"
+  security-uv-audit-upload:
+    name: "Security uv audit Upload"
+    needs: "security-uv-audit"
     # Also on failure, so findings reach the Security tab
     if: >
       !cancelled()
@@ -51,6 +52,6 @@ jobs:
       security-events: "write" # Needed to upload SARIF file to tab
     uses: "$/.github/workflows/_security-upload.yml"
     with:
-      name: "osv-scanner"
-      category: "/tool:osv-scanner/scope:dependencies/language:python"
+      name: "uv-audit"
+      category: "/tool:uv-audit/scope:dependencies/language:python"
 ...

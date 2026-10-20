@@ -17,8 +17,8 @@ guidelines.
 ## Reporting a vulnerability
 
 - If you discover a vulnerability, report it directly to the code
-    maintainers, __preferably using GitHub's
-    [Private Vulnerability Reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability)__.
+    maintainers, \_\_preferably using GitHub's
+    [Private Vulnerability Reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/report-privately)
 - If you cannot find a way to report it, or have received no
     response after repeated attempts,
     __[contact the creators directly](https://github.com/open-nudge).__
@@ -40,7 +40,8 @@ Some of the security measures undertaken in this project include:
 - [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
 - [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
 - [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
-    scanned by [Grype](https://github.com/anchore/grype)
+    scanned by [Trivy](https://github.com/aquasecurity/trivy)
+    (Python vulnerabilities and licenses)
 - [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
     (Sigstore-backed) of distributions, SBOMs and SARIF files, each verified
     against its producing workflow before being attached to the
@@ -50,7 +51,7 @@ Some of the security measures undertaken in this project include:
     - [CodeQL](https://codeql.github.com/) (GitHub Actions workflows)
     - [zizmor](https://github.com/zizmorcore/zizmor) (GitHub Actions workflows)
     - [Semgrep](https://github.com/semgrep/semgrep)
-    - [OSV-Scanner](https://github.com/google/osv-scanner) (dependencies)
+    - [uv audit](https://docs.astral.sh/uv/) (dependencies)
     - [GuardDog](https://github.com/DataDog/guarddog)
         (malicious runtime dependencies and actions)
 - Protected `main` branch (rulesets) with required status checks

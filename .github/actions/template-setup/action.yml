@@ -102,6 +102,7 @@ runs:
         mutants
         .python-version
         .venvs
+        .lycheecache
         ' > .gitignore
       # REUSE-IgnoreEnd
     - name: "Add the latest Python .gitignore"

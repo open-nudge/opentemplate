@@ -6,6 +6,9 @@
 ---
 name: "Security SBOM Python Update"
 
+# Weekly rescans (vulnerabilities and licenses) of main and the latest
+# release (what users install), as new vulnerabilities are found over time
+# and main may be unreleased
 on:
   schedule:
     - cron: "0 3 * * 6"
@@ -22,8 +25,27 @@ jobs:
     uses: "$/.github/workflows/_latest-release-sha.yml"
 
   security-sbom-python-update:
+    name: "Security SBOM Python Update (${{ matrix.target.name }})"
     needs:
       - "latest-release"
+    if: >
+      !cancelled()
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - name: "main"
+            ref: ""
+            tag: ""
+            skip: false
+          - name: "release"
+            ref: "${{ needs.latest-release.outputs.ref }}"
+            tag: "${{ needs.latest-release.outputs.tag }}"
+            # Might fail before first official release which is normal
+            skip: "${{ needs.latest-release.result != 'success' }}"
+        exclude:
+          - target:
+              skip: true
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
@@ -31,9 +53,9 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
-    name: "Security SBOM Python Update"
     uses: "$/.github/workflows/_security-sbom-python.yml"
     with:
-      ref: "${{ needs.latest-release.outputs.ref }}"
-      upload-grype: true
+      ref: "${{ matrix.target.ref }}"
+      tag: "${{ matrix.target.tag }}"
+      upload-sarif: true
 ...

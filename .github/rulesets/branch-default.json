@@ -35,6 +35,10 @@
             "integration_id": 15368
           },
           {
+            "context": "Legal Dependencies / _Legal Dependencies",
+            "integration_id": 15368
+          },
+          {
             "context": "Policy",
             "integration_id": 15368
           },
@@ -55,7 +59,7 @@
             "integration_id": 15368
           },
           {
-            "context": "Security OSV-Scanner / _Security OSV-Scanner",
+            "context": "Security uv audit / _Security uv audit",
             "integration_id": 15368
           },
           {

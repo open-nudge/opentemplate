@@ -46,6 +46,12 @@ on:
         description: "The ref to checkout"
         type: "string"
         default: ""
+      tag:
+        description: >
+          Release tag the SARIFs are uploaded under, set together with ref
+          (default: '' - the triggering ref)
+        type: "string"
+        default: ""
       digests:
         description: >
           sha256sum of the distributions (release build workflow output),
@@ -53,8 +59,20 @@ on:
           and the SBOM is attested against them
         type: "string"
         default: ""
-      upload-grype:
-        description: "Upload the Grype SARIF to Security tab"
+      licenses:
+        description: >
+          Check licenses of the assessed environment (groups) with Trivy,
+          configurable using .trivy.yaml of the repository
+        type: "boolean"
+        default: false
+      trivy-version:
+        description: >
+          Trivy release to scan with (required for python type or licenses),
+          resolved by the caller as the newest release older than 7 days
+        type: "string"
+        default: ""
+      upload-sarif:
+        description: "Upload the Trivy SARIFs to Security tab"
         type: "boolean"
         default: false
 
@@ -66,7 +84,14 @@ defaults:
     shell: "bash"
 
 env:
-  ARTIFACT: "sbom-${{ inputs.name || inputs.type }}-${{ github.sha }}"
+  ARTIFACT: "sbom-${{ inputs.name || inputs.type }}-${{ inputs.tag || github.sha }}"
+  # Only Python SBOMs are scanned for vulnerabilities, Trivy (like Grype)
+  # does not match GitHub Actions (zizmor does) and the legal SBOM lists files
+  SCAN: "${{ inputs.type == 'python' }}"
+  # Trivy configuration of the scans, attested and released with them
+  # (same names for every SBOM of a commit, hence a single release asset)
+  SCAN_CONFIG: "trivy-config-${{ inputs.tag || github.sha }}.yaml"
+  SCAN_IGNORES: "trivy-ignore-${{ inputs.tag || github.sha }}.yaml"
 
 jobs:
   sbom-create:
@@ -88,20 +113,34 @@ jobs:
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
+          # Windows curl (Schannel) fetches CRLs over HTTP to install Trivy,
+          # entries space separated, Windows agent drops ones after a newline
           allowed-endpoints: >
             *.actions.githubusercontent.com:443
             *.blob.core.windows.net:443
             api.github.com:443
             codeload.github.com:443
             files.pythonhosted.org:443
+            get.trivy.dev:443
             github.com:443
-            grype.anchore.io:443
+            ghcr.io:443
+            mirror.gcr.io:443
             objects.githubusercontent.com:443
+            pkg-containers.githubusercontent.com:443
             pypi.org:443
             raw.githubusercontent.com:443
             release-assets.githubusercontent.com:443
             results-receiver.actions.githubusercontent.com:443
-            toolbox-data.anchore.io:443
+            storage.googleapis.com:443
+            ${{ runner.os == 'Windows'
+            && '*.c.lencr.org:80 c.pki.goog:80 crl.sectigo.com:80 ocsp.sectigo.com:80'
+            || '' }}
+      # Fails early, an empty version would install the latest Trivy release
+      - name: "Check Trivy version"
+        if: >
+          (env.SCAN == 'true' || inputs.licenses) && inputs.trivy-version == ''
+        run: >
+          echo "::error::trivy-version input is required to scan with Trivy" && exit 1
       - name: "Checkout source"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
@@ -129,15 +168,19 @@ jobs:
       # Identity is part of the legal SBOM
       - name: "Setup git identity"
         uses: "$/.github/actions/git-setup"
-      # Grype configuration is project specific (e.g. ignored findings)
       - name: "Create directory for SBOM"
+        run: >
+          mkdir "${ARTIFACT}"
+      # Trivy configuration is project specific (allowed licenses, ignores),
+      # scans use the copies, the template provides both files (none optional)
+      - name: "Copy Trivy configuration"
+        if: >
+          env.SCAN == 'true'
         # enq: shell indentation is more readable
         # yamllint disable rule:indentation
         run: |
-          mkdir "${ARTIFACT}"
-          if [[ -f source/.grype.yaml ]]; then
-            cp source/.grype.yaml .
-          fi
+          cp source/.trivy.yaml "${ARTIFACT}/${SCAN_CONFIG}"
+          cp source/.trivyignore.yaml "${ARTIFACT}/${SCAN_IGNORES}"
         # yamllint enable rule:indentation
       - name: "Install assessed environment"
         if: >
@@ -168,18 +211,51 @@ jobs:
         run: >
           uv run --project ../template poe --directory ../template
           "sbom-${TYPE}" > "../${ARTIFACT}/${ARTIFACT}.json"
-      - name: "Scan SBOM"
-        uses: "anchore/scan-action@27805bf3b4e84b4a5c980df22ed233c00390a439" # v7.4.2
+      # The version used is recorded in the SARIFs (tool.driver.version)
+      - name: "Setup Trivy"
+        if: >
+          env.SCAN == 'true' || inputs.licenses
+        uses: "aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567" # v0.3.1
         with:
-          sbom: "${{ env.ARTIFACT }}/${{ env.ARTIFACT }}.json"
-          fail-build: false
-          output-format: "sarif"
-          output-file: "${{ env.ARTIFACT }}/grype-${{ env.ARTIFACT }}.sarif"
+          # enq: resolved by the caller to an exact release with a 7-day cooldown
+          version: "${{ inputs.trivy-version }}" # zizmor: ignore[unpinned-tools]
+          cache: "false"
+      # Vulnerabilities are triaged in the Security tab instead of failing the job
+      - name: "Scan SBOM vulnerabilities"
+        if: >
+          env.SCAN == 'true'
+        run: >
+          trivy sbom --skip-version-check
+          --config "${ARTIFACT}/${SCAN_CONFIG}"
+          --ignorefile "${ARTIFACT}/${SCAN_IGNORES}"
+          --scanners vuln
+          --format sarif --output "${ARTIFACT}/trivy-vuln-${ARTIFACT}.sarif"
+          "${ARTIFACT}/${ARTIFACT}.json"
+      # Installed environment, as Trivy maps license classifiers of installed
+      # packages (not of the SBOM) to SPDX identifiers
+      - name: "Scan environment licenses"
+        if: >
+          inputs.licenses
+        run: >
+          trivy rootfs --skip-version-check
+          --config "${ARTIFACT}/${SCAN_CONFIG}"
+          --ignorefile "${ARTIFACT}/${SCAN_IGNORES}"
+          --scanners license --severity UNKNOWN,MEDIUM,HIGH,CRITICAL
+          --format sarif --output "${ARTIFACT}/trivy-licenses-${ARTIFACT}.sarif"
+          source/.venv
       # Read-only, digests and artifact are unaffected
-      - name: "Summarize SBOM scan"
+      - name: "Summarize SBOM vulnerabilities"
+        if: >
+          env.SCAN == 'true'
         uses: "$/.github/actions/sarif-summary"
         with:
-          file: "${{ env.ARTIFACT }}/grype-${{ env.ARTIFACT }}.sarif"
+          file: "${{ env.ARTIFACT }}/trivy-vuln-${{ env.ARTIFACT }}.sarif"
+      - name: "Summarize environment licenses"
+        if: >
+          inputs.licenses
+        uses: "$/.github/actions/sarif-summary"
+        with:
+          file: "${{ env.ARTIFACT }}/trivy-licenses-${{ env.ARTIFACT }}.sarif"
       - name: "Get digests"
         id: "digests"
         uses: "$/.github/actions/digests"
@@ -193,17 +269,32 @@ jobs:
           retention-days: 1
           if-no-files-found: "error"
           overwrite: true
+      # Last, so the SBOM and its scans are uploaded regardless,
+      # licenses not allowed by .trivy.yaml fail the job (and the release)
+      - name: "Check environment licenses"
+        if: >
+          inputs.licenses
+        run: >
+          trivy rootfs --skip-version-check
+          --config "${ARTIFACT}/${SCAN_CONFIG}"
+          --ignorefile "${ARTIFACT}/${SCAN_IGNORES}"
+          --scanners license --severity UNKNOWN,MEDIUM,HIGH,CRITICAL
+          --exit-code 1
+          source/.venv
 
   # This job exists so security-events token is not available to the SBOM Create
   # as this is an untrusted workflow running uv sync
   sbom-sarif:
     name: "SBOM SARIF"
     # Without GitHub Code Security (see _security-codeql.yml)
-    # there is no Security tab to upload to
+    # there is no Security tab to upload to.
     # enq: complex expression more readable with indentation
     # yamllint disable-line rule:indentation
     if: >
-      inputs.upload-grype
+      !cancelled()
+      && needs.sbom-create.outputs.digests != ''
+      && inputs.upload-sarif
+      && inputs.type == 'python'
       && (
         vars.NO_GITHUB_CODE_SECURITY == ''
         || github.event.repository.visibility == 'public'
@@ -237,18 +328,36 @@ jobs:
         uses: "$/.github/actions/digests-verify"
         with:
           digests: "${{ needs.sbom-create.outputs.digests }}"
+          # enq: long expressions, splitting is unreadable
+          # yamllint disable rule:line-length
           names: |
             ${{ env.ARTIFACT }}.json
-            grype-${{ env.ARTIFACT }}.sarif
+            ${{ env.SCAN == 'true' && format('trivy-vuln-{0}.sarif', env.ARTIFACT) || '' }}
+            ${{ inputs.licenses && format('trivy-licenses-{0}.sarif', env.ARTIFACT) || '' }}
+            ${{ env.SCAN == 'true' && env.SCAN_CONFIG || '' }}
+            ${{ env.SCAN == 'true' && env.SCAN_IGNORES || '' }}
+          # yamllint enable rule:line-length
           directory: "${{ env.ARTIFACT }}"
           exact: "true"
-      - name: "Upload Grype SARIF"
+      - name: "Upload Trivy vulnerabilities SARIF"
         uses: "$/.github/actions/sarif-upload"
         with:
-          file: "${{ env.ARTIFACT }}/grype-${{ env.ARTIFACT }}.sarif"
+          file: "${{ env.ARTIFACT }}/trivy-vuln-${{ env.ARTIFACT }}.sarif"
           sarif: "true"
           # Without commit SHA, so alerts of fixed findings get closed
-          category: "/tool:grype/scope:sbom-${{ inputs.name || inputs.type }}/language:python"
+          category: "/tool:trivy/scope:sbom-${{ inputs.name || inputs.type }}/language:python"
+          ref: "${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || '' }}"
+          sha: "${{ inputs.tag && inputs.ref || '' }}"
+      - name: "Upload Trivy licenses SARIF"
+        if: >
+          inputs.licenses
+        uses: "$/.github/actions/sarif-upload"
+        with:
+          file: "${{ env.ARTIFACT }}/trivy-licenses-${{ env.ARTIFACT }}.sarif"
+          sarif: "true"
+          category: "/tool:trivy/scope:licenses-${{ inputs.name || inputs.type }}/language:python"
+          ref: "${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || '' }}"
+          sha: "${{ inputs.tag && inputs.ref || '' }}"
 
   sbom-attest:
     name: "SBOM Attest"
@@ -308,16 +417,29 @@ jobs:
         uses: "$/.github/actions/digests-verify"
         with:
           digests: "${{ needs.sbom-create.outputs.digests }}"
+          # enq: long expressions, splitting is unreadable
+          # yamllint disable rule:line-length
           names: |
             ${{ env.ARTIFACT }}.json
-            grype-${{ env.ARTIFACT }}.sarif
+            ${{ env.SCAN == 'true' && format('trivy-vuln-{0}.sarif', env.ARTIFACT) || '' }}
+            ${{ inputs.licenses && format('trivy-licenses-{0}.sarif', env.ARTIFACT) || '' }}
+            ${{ env.SCAN == 'true' && env.SCAN_CONFIG || '' }}
+            ${{ env.SCAN == 'true' && env.SCAN_IGNORES || '' }}
+          # yamllint enable rule:line-length
           directory: "${{ env.ARTIFACT }}"
           exact: "true"
+      # Not sbom-path, it requires serialNumber, which reproducible CycloneDX
+      # SBOMs omit, predicate types are the ones sbom-path would set
+      # (SPDX version of sbom-legal in pyproject.toml)
       - name: "Attest SBOM"
         uses: "actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6" # v4.2.2
         with:
           subject-path: "dist/*"
-          sbom-path: "${{ env.ARTIFACT }}/${{ env.ARTIFACT }}.json"
+          predicate-type: >-
+            ${{ inputs.type == 'legal'
+            && 'https://spdx.dev/Document/v2.2'
+            || 'https://cyclonedx.org/bom' }}
+          predicate-path: "${{ env.ARTIFACT }}/${{ env.ARTIFACT }}.json"
       # Release assets (SBOM and its scan) are verified before upload
       - name: "Attest SBOM and scan provenance"
         uses: "actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6" # v4.2.2

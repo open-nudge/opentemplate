@@ -122,9 +122,7 @@ Description of the example
 
 </details>
 
-<!-- enq: repository links resolve only after this nested template is copied -->
 
-<!-- md-dead-link-check: off -->
 
 <!-- mkdocs remove start -->
 
@@ -147,7 +145,3 @@ We welcome your contributions! Start here:
     appropriate copyright notice is included in each file.
 
 <!-- mkdocs remove end -->
-
-<!-- enq: link checking resumes after repository-only contribution links -->
-
-<!-- md-dead-link-check: on -->

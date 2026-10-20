@@ -80,7 +80,7 @@ jobs:
         # yamllint enable rule:indentation
       - name: "Run prek with updated dependencies"
         env:
-          SKIP: "dco,vale,fix-legal,markdown"
+          SKIP: "dco,vale,fix-legal,links"
         if: >
           steps.check-changes.outputs.changed == 'true'
         run: >

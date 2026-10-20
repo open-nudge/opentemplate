@@ -1,0 +1,92 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Legal Dependencies Update"
+
+on:
+  schedule:
+    - cron: "0 3 * * 6"
+  workflow_dispatch:
+
+# enq: the only way to set permissions to none in GH Actions
+permissions: {} # yamllint disable-line rule:braces
+
+cache-mode: "read"
+
+concurrency:
+  group: >
+    ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  latest-release:
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/_latest-release-sha.yml"
+
+  first-commit:
+    name: "First Commit"
+    timeout-minutes: 10
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: "read"
+    outputs:
+      sha: "${{ steps.first-commit.outputs.sha }}"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            api.github.com:443
+            codeload.github.com:443
+            github.com:443
+      - name: "Checkout repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: "tree:0"
+          persist-credentials: false
+      # Oldest root, in case unrelated histories were merged
+      - name: "Get first commit"
+        id: "first-commit"
+        run: >
+          echo "sha=$(git rev-list --max-parents=0 HEAD | tail -n 1)"
+          >> "${GITHUB_OUTPUT}"
+
+  legal-dependencies-update:
+    name: "Legal Dependencies Update (${{ matrix.target.name }})"
+    needs:
+      - "latest-release"
+      - "first-commit"
+    if: >
+      !cancelled()
+      && needs.first-commit.result == 'success'
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - name: "release"
+            base: "${{ needs.first-commit.outputs.sha }}"
+            head: "${{ needs.latest-release.outputs.ref }}"
+            # Might fail before first official release which is normal
+            skip: "${{ needs.latest-release.result != 'success' }}"
+          # From the first commit before the first release
+          - name: "main"
+            base: "${{ needs.latest-release.outputs.ref || needs.first-commit.outputs.sha }}"
+            head: "${{ github.sha }}"
+            skip: false
+        exclude:
+          - target:
+              skip: true
+    permissions:
+      contents: "read"
+    uses: "$/.github/workflows/_legal-dependencies.yml"
+    with:
+      base-ref: "${{ matrix.target.base }}"
+      head-ref: "${{ matrix.target.head }}"
+...

@@ -77,7 +77,8 @@ developer workflows, security posture and best practices.
 - [Security Self Assessment](SECURITY-SELF-ASSESSMENT.md)
 - [Security Dependencies Policy](SECURITY-DEPENDENCY.md)
 - [Software Bills Of Material (SBOMs)](https://github.com/open-nudge/opentemplate/releases)
-    scanned by [Grype](https://github.com/anchore/grype)
+    scanned by [Trivy](https://github.com/aquasecurity/trivy)
+    (Python vulnerabilities and licenses)
 - [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
     (Sigstore-backed) of distributions, SBOMs and SARIF files, each verified
     against its producing workflow before being attached to the
@@ -87,7 +88,7 @@ developer workflows, security posture and best practices.
     - [CodeQL](https://codeql.github.com/) (GitHub Actions workflows)
     - [zizmor](https://github.com/zizmorcore/zizmor) (GitHub Actions workflows)
     - [Semgrep](https://github.com/semgrep/semgrep)
-    - [OSV-Scanner](https://github.com/google/osv-scanner) (dependencies)
+    - [uv audit](https://docs.astral.sh/uv/) (dependencies)
     - [GuardDog](https://github.com/DataDog/guarddog)
         (malicious runtime dependencies and actions)
 - Protected `main` branch (rulesets) with required status checks
