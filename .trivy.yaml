@@ -32,6 +32,9 @@ license:
 
 allow-licenses: *allowed-licenses
 # Exceptions as package URLs, e.g. pkg:githubactions/<owner>/<repo>
-# enq: the only way to set an empty list in YAML
-allow-dependencies-licenses: [] # yamllint disable-line rule:brackets
+# The dependency graph reports every uv.lock package as runtime (development
+# scope requires a virtual project), hence development groups are listed here
+allow-dependencies-licenses:
+  # MPL-2.0, dev-tests group (not distributed)
+  - "pkg:pypi/hypothesis"
 ...

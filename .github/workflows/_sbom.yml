@@ -113,6 +113,8 @@ jobs:
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
+          # Windows curl (Schannel) fetches CRLs over HTTP to install Trivy,
+          # entries space separated, Windows agent drops ones after a newline
           allowed-endpoints: >
             *.actions.githubusercontent.com:443
             *.blob.core.windows.net:443
@@ -130,7 +132,6 @@ jobs:
             release-assets.githubusercontent.com:443
             results-receiver.actions.githubusercontent.com:443
             storage.googleapis.com:443
-
             ${{ runner.os == 'Windows'
             && '*.c.lencr.org:80 c.pki.goog:80 crl.sectigo.com:80 ocsp.sectigo.com:80'
             || '' }}
