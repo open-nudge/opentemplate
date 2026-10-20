@@ -65,6 +65,12 @@ on:
           configurable using .trivy.yaml of the repository
         type: "boolean"
         default: false
+      trivy-version:
+        description: >
+          Trivy release to scan with (required for python type or licenses),
+          resolved by the caller as the newest release older than 7 days
+        type: "string"
+        default: ""
       upload-sarif:
         description: "Upload the Trivy SARIFs to Security tab"
         type: "boolean"
@@ -123,6 +129,12 @@ jobs:
             release-assets.githubusercontent.com:443
             results-receiver.actions.githubusercontent.com:443
             storage.googleapis.com:443
+      # Fails early, an empty version would install the latest Trivy release
+      - name: "Check Trivy version"
+        if: >
+          (env.SCAN == 'true' || inputs.licenses) && inputs.trivy-version == ''
+        run: >
+          echo "::error::trivy-version input is required to scan with Trivy" && exit 1
       - name: "Checkout source"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
@@ -193,31 +205,14 @@ jobs:
         run: >
           uv run --project ../template poe --directory ../template
           "sbom-${TYPE}" > "../${ARTIFACT}/${ARTIFACT}.json"
-      # Newest release older than 7 days (as the Dependabot cooldown),
-      # the version used is recorded in the SARIFs (tool.driver.version)
-      - name: "Get Trivy version"
-        id: "trivy-version"
-        if: >
-          env.SCAN == 'true' || inputs.licenses
-        env:
-          GH_TOKEN: "${{ github.token }}"
-        # enq: shell indentation is more readable
-        # yamllint disable rule:indentation
-        run: |
-          # Fails if none, an empty version would install the latest release
-          version="$(gh api repos/aquasecurity/trivy/releases --jq '
-            map(select(.prerelease | not)
-              | select(.published_at | fromdateiso8601 < now - 604800))
-            | .[0].tag_name // error("no Trivy release older than 7 days")')"
-          echo "version=${version}" >> "${GITHUB_OUTPUT}"
-        # yamllint enable rule:indentation
+      # The version used is recorded in the SARIFs (tool.driver.version)
       - name: "Setup Trivy"
         if: >
           env.SCAN == 'true' || inputs.licenses
         uses: "aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567" # v0.3.1
         with:
-          # enq: resolved to an exact release with a 7-day cooldown above
-          version: "${{ steps.trivy-version.outputs.version }}" # zizmor: ignore[unpinned-tools]
+          # enq: resolved by the caller to an exact release with a 7-day cooldown
+          version: "${{ inputs.trivy-version }}" # zizmor: ignore[unpinned-tools]
           cache: "false"
       # Vulnerabilities are triaged in the Security tab instead of failing the job
       - name: "Scan SBOM vulnerabilities"

@@ -35,12 +35,51 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
+  # Separate job before the matrix, as anonymous API limit (60/hour) is per IP, shared by macOS runners
+  trivy-version:
+    name: "Trivy Version"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 5
+    outputs:
+      version: "${{ steps.trivy-version.outputs.version }}"
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            api.github.com:443
+            results-receiver.actions.githubusercontent.com:443
+      # Newest release older than 7 days (as the Dependabot cooldown),
+      # the version used is recorded in the SARIFs (tool.driver.version)
+      - name: "Get Trivy version"
+        id: "trivy-version"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          # Anonymous, the aquasecurity IP allow list refuses tokens (GITHUB_TOKEN too)
+          curl --silent --show-error --retry 3 --output releases.json \
+            https://api.github.com/repos/aquasecurity/trivy/releases
+          # API errors are objects whose message is shown (e.g. anonymous limit of
+          # 60 requests/hour per IP), an empty version would install the latest release
+          version="$(jq --raw-output '
+            if type == "array" then . else error(.message) end
+            | map(select(.prerelease | not)
+              | select(.published_at | fromdateiso8601 < now - 604800))
+            | .[0].tag_name // error("no Trivy release older than 7 days")' releases.json)"
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+        # yamllint enable rule:indentation
+
   security-sbom-python:
     name: >
       Security SBOM Python |
       ${{ matrix.tier.name }} |
       python-${{ matrix.python-version }} |
       ${{ matrix.os }}
+    needs:
+      - "trivy-version"
     strategy:
       # A failed license check must not cancel the other scans (and uploads)
       fail-fast: false
@@ -99,5 +138,6 @@ jobs:
       digests: "${{ inputs.digests }}"
       # Licenses matter for distributed tiers only (core, extras)
       licenses: "${{ matrix.tier.name != 'dev' }}"
+      trivy-version: "${{ needs.trivy-version.outputs.version }}"
       upload-sarif: "${{ inputs.upload-sarif }}"
 ...
