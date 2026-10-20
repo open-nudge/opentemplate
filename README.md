@@ -159,6 +159,9 @@ __opentemplate__ is a Python template which is:
     and the signed bundle is attached to each release
     (public repositories or GitHub Enterprise Cloud,
     once `harden.yml` pins the reusable workflows)
+- [__SLSA Verification Summary Attestation__](https://slsa.dev/spec/v1.2/verification_summary)
+    (VSA): the build provenance of the distributions is verified
+    and the achieved SLSA Build level is attested for them
 - __[Software Bills of Materials](https://www.cisa.gov/sbom) (SBOMs)__:
     generated per-Python, per-OS, per-dependency group -
     __each [attested](https://github.com/actions/attest)__,

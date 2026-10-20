@@ -132,11 +132,12 @@ reusable workflow and __attested within the same workflow__ by a separate job.
 Before attaching to the release each artifact is verified against the
 attestation of __its__ producing workflow:
 
-<!-- pyml disable-num-lines 7 line-length-->
+<!-- pyml disable-num-lines 8 line-length-->
 
 | Asset                                              | Signer workflow       |
 | -------------------------------------------------- | --------------------- |
 | Wheel and source distribution                      | `_release-build.yml`  |
+| Wheel and source distribution (VSA)                | `_release-vsa.yml`    |
 | SBOMs, their Trivy SARIFs and configuration        | `_sbom.yml`           |
 | uv audit, Semgrep, zizmor, GuardDog, CodeQL SARIFs | `_release-sarifs.yml` |
 
@@ -232,6 +233,28 @@ Verify them with
 `--predicate-type https://cyclonedx.org/bom`
 (or `https://spdx.dev/Document/v2.2` for the REUSE SBOM).
 
+The distributions also carry a
+[Verification Summary Attestation](https://slsa.dev/spec/v1.2/verification_summary)
+(VSA), created __after their build provenance is verified__
+(policy: `.github/actions/attestation-verify/action.yml` at `<sha>`).
+Consumers can check the verified SLSA level instead of the provenance:
+
+```sh
+gh attestation verify <asset> \
+  --bundle <asset>.sigstore.jsonl \
+  --repo <owner>/<repo> \
+  --predicate-type https://slsa.dev/verification_summary/v1 \
+  --signer-workflow open-nudge/opentemplate/.github/workflows/_release-vsa.yml \
+  --signer-digest <sha> \
+  --source-ref refs/tags/<tag> \
+  --deny-self-hosted-runners \
+  --format json \
+  | jq '.[].verificationResult.statement.predicate.verifiedLevels'
+```
+
+It outputs `["SLSA_BUILD_LEVEL_3"]`
+(`["SLSA_BUILD_LEVEL_2"]` for `open-nudge/opentemplate` itself).
+
 As published releases are immutable (see [above](#attestations)),
 GitHub additionally creates a
 [release attestation](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases)
@@ -298,6 +321,7 @@ This process can be adjusted by editing:
 - `.github/workflows/_release-changelog.yml`
 - `.github/workflows/_release-docs.yml`
 - `.github/workflows/_release-build.yml`
+- `.github/workflows/_release-vsa.yml`
 - `.github/workflows/_release-sboms.yml`
 - `.github/workflows/_sbom.yml`
 - `.github/workflows/_security-upload.yml`

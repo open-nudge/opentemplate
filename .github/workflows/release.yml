@@ -102,11 +102,28 @@ jobs:
       package-name: "${{ needs.package-create.outputs.package-name }}"
       package-version: "${{ needs.package-create.outputs.package-version }}"
 
+  vsa:
+    name: "VSA"
+    needs:
+      - "package-create"
+    permissions:
+      contents: "read"
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to verify and upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
+    uses: "$/.github/workflows/_release-vsa.yml"
+    with:
+      digests: "${{ needs.package-create.outputs.digests }}"
+      package-name: "${{ needs.package-create.outputs.package-name }}"
+      package-version: "${{ needs.package-create.outputs.package-version }}"
+
   github-upload:
     name: "GitHub Upload"
+    # vsa: its attestation is bundled with the distributions
     needs:
       - "changelog"
       - "package-create"
+      - "vsa"
     permissions:
       contents: "write" # Needed to create the draft release
       attestations: "read" # Needed to verify release assets
