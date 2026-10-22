@@ -39,9 +39,9 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: "read"
-      id-token: "write" # Needed to get GH Token to attest
-      attestations: "write" # Needed to verify and upload attestation
-      artifact-metadata: "write" # Needed to create artifact metadata
+      attestations: "read" # Needed to download and verify attestations
+    outputs:
+      predicate: "${{ steps.predicate.outputs.predicate }}"
     steps:
       - name: "Harden Runner"
         uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
@@ -54,12 +54,10 @@ jobs:
             results-receiver.actions.githubusercontent.com:443
             *.blob.core.windows.net:443
             api.github.com:443
-            fulcio.sigstore.dev:443
             github.com:443
             rekor.sigstore.dev:443
             tuf-repo-cdn.sigstore.dev:443
             tuf-repo.github.com:443
-            uploads.github.com:443
       - name: "Get distributions"
         uses: "$/.github/actions/dist-download"
         with:
@@ -80,8 +78,9 @@ jobs:
           directory: "dist"
           paths: "*.sigstore.jsonl"
       # https://slsa.dev/spec/v1.2/verification_summary
-      # The template builds itself (no isolation from the project), hence L2,
+      # The template builds itself (no isolation from the project), hence L2
       - name: "Create VSA predicate"
+        id: "predicate"
         # enq: URLs cannot be split, jq indentation is more readable
         # yamllint disable rule:indentation rule:line-length
         env:
@@ -93,7 +92,7 @@ jobs:
           PACKAGE_NAME: "${{ inputs.package-name }}"
           PACKAGE_VERSION: "${{ inputs.package-version }}"
         run: |
-          jq --null-input --arg resource "pkg:pypi/${PACKAGE_NAME//_/-}@${PACKAGE_VERSION}" '{
+          predicate="$(jq --null-input --compact-output --arg resource "pkg:pypi/${PACKAGE_NAME//_/-}@${PACKAGE_VERSION}" '{
             verifier: {id: env.VERIFIER},
             timeVerified: (now | todateiso8601),
             resourceUri: $resource,
@@ -102,12 +101,42 @@ jobs:
             verificationResult: "PASSED",
             verifiedLevels: [env.LEVEL],
             slsaVersion: "1.2"
-          }' | tee "${RUNNER_TEMP}/vsa.json"
+          }')"
+          echo "predicate=${predicate}" >> "${GITHUB_OUTPUT}"
         # yamllint enable rule:indentation rule:line-length
+
+  release-vsa-attest:
+    name: "Release VSA Attest"
+    needs:
+      - "release-vsa"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+    permissions:
+      id-token: "write" # Needed to get GH Token to attest
+      attestations: "write" # Needed to upload attestation
+      artifact-metadata: "write" # Needed to create artifact metadata
+    steps:
+      - name: "Harden Runner"
+        uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
+        with:
+          disable-sudo-and-containers: true
+          egress-policy: "block"
+          allowed-endpoints: >
+            *.actions.githubusercontent.com:443
+            *.blob.core.windows.net:443
+            api.github.com:443
+            fulcio.githubapp.com:443
+            fulcio.sigstore.dev:443
+            github.com:443
+            rekor.sigstore.dev:443
+            results-receiver.actions.githubusercontent.com:443
+            timestamp.githubapp.com:443
+            tuf-repo-cdn.sigstore.dev:443
+            tuf-repo.github.com:443
       - name: "Attest VSA"
         uses: "actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6" # v4.2.2
         with:
           subject-checksums: "${{ inputs.digests }}"
           predicate-type: "https://slsa.dev/verification_summary/v1"
-          predicate-path: "${{ runner.temp }}/vsa.json"
+          predicate: "${{ needs.release-vsa.outputs.predicate }}"
 ...
