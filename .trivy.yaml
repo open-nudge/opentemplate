@@ -33,8 +33,13 @@ license:
 allow-licenses: *allowed-licenses
 # Exceptions as package URLs, e.g. pkg:githubactions/<owner>/<repo>
 # The dependency graph reports every uv.lock package as runtime (development
-# scope requires a virtual project), hence development groups are listed here
+# scope requires a virtual project), hence development and template setup
+# dependencies are listed here
 allow-dependencies-licenses:
+  # MPL-2.0, tooling and template setup dependency (not distributed)
+  - "pkg:pypi/certifi"
   # MPL-2.0, dev-tests group (not distributed)
   - "pkg:pypi/hypothesis"
+  # MIT-CMU, dev-docs group (not distributed)
+  - "pkg:pypi/pillow"
 ...

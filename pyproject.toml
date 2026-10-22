@@ -300,7 +300,7 @@ cache-keys = [
   { git = { commit = true, tags = true } },
 ]
 # Cooldown exemptions for fixes of known vulnerabilities, see SECURITY-DEPENDENCY.md
-exclude-newer-package = {}
+exclude-newer-package = { certifi = "2026-10-20T02:24:16.604828Z", pillow = "2026-10-16T22:18:09.718711Z", uv = "2026-10-20T15:12:06.801164Z" }
 
 # Vulnerability IDs (any alias), each with a reason in a comment
 [tool.uv.audit]
