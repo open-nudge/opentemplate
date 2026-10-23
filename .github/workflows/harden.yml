@@ -27,7 +27,7 @@ on:
         required: true
       release-reviewers:
         description: >-
-          PyPI release approvers: GitHub usernames (e.g. "alice, bob").
+          PyPI release approvers: whitespace-separated GitHub usernames (e.g. "alice bob").
           Together with release-teams: at most 6 entries covering at least
           2 distinct people (if 2 or more contributors)
         type: "string"
@@ -35,7 +35,7 @@ on:
         required: false
       release-teams:
         description: >-
-          PyPI release approver teams: organization team slugs (e.g. "core").
+          PyPI release approver teams: whitespace-separated organization team slugs (e.g. "core release").
           Counts toward the 6-entry limit shared with release-reviewers
         type: "string"
         default: ""
@@ -125,6 +125,8 @@ jobs:
       issues: "write" # Needed to close the issue
     timeout-minutes: 10
     runs-on: "ubuntu-latest"
+    env:
+      GH_REPO: "${{ github.repository }}"
     steps:
       - name: "Harden Runner"
         uses: "step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25" # v2.22.1
@@ -177,18 +179,27 @@ jobs:
               ;;
           esac
         # yamllint enable rule:indentation
-      - name: "Parse PyPI release approvers"
-        # Runs before any change, so invalid approvers fail the setup early.
-        # Self-review prevention needs at least 2 distinct approvers (users and team
-        # members), otherwise a sole approver publishing a release could
-        # never approve its deployment (deadlock).
-        # Required reviewers in private repositories need Enterprise plan
-        id: "release-input"
+      - name: "Checkout repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          sparse-checkout: |
+            .github/rulesets
+            .github/tools/harden
+            .github/tools/pypi
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: "Resolve PyPI release approvers"
+        # Check the two-person policy before hardening mutations.
+        # GitHub validates reviewer eligibility and limits when applying the environment.
+        # Two distinct people leave an alternative when self-review is prevented.
+        # Required reviewers in private repositories need Enterprise plan.
+        id: "release-approvers"
         env:
+          # enq: One-time short-lived token (1 day).
+          # enq: This workflow is deleted after setup, so it is not a security threat.
+          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
           RELEASE_REVIEWERS: "${{ inputs.release-reviewers }}"
           RELEASE_TEAMS: "${{ inputs.release-teams }}"
-          # GitHub limit on environment reviewers (users and teams combined)
-          MAX_REVIEWERS: "6"
           REQUIRE_REVIEWERS: >-
             ${{ steps.contributors.outputs.approvals != '0'
             && (github.event.repository.visibility == 'public'
@@ -197,135 +208,14 @@ jobs:
         # enq: indentation disabled to aid bash script readability
         # yamllint disable rule:indentation
         run: |
-          fail() { echo "::error::$*"; exit 1; }
-          if [ "${REQUIRE_REVIEWERS}" != "true" ]; then
-            if [ -n "${RELEASE_REVIEWERS}${RELEASE_TEAMS}" ]; then
-              echo "::warning::release reviewers/teams ignored (solo or plan without environment reviewers)"
-            fi
-            echo "required=false" >> "${GITHUB_OUTPUT}"
-            exit 0
+          body='{}'
+          if [ "${REQUIRE_REVIEWERS}" = "true" ]; then
+            body=$(./.github/tools/pypi/resolve.sh "${RELEASE_REVIEWERS}" "${RELEASE_TEAMS}")
+          elif [ -n "${RELEASE_REVIEWERS}${RELEASE_TEAMS}" ]; then
+            echo "::warning::release reviewers/teams ignored (solo or plan without environment reviewers)"
           fi
-          read -r -a users <<< "${RELEASE_REVIEWERS//,/ }"
-          read -r -a teams <<< "${RELEASE_TEAMS//,/ }"
-          if (( ${#users[@]} + ${#teams[@]} > MAX_REVIEWERS )); then
-            fail "At most ${MAX_REVIEWERS} release reviewers and teams combined are allowed"
-          fi
-          for entry in "${users[@]}" "${teams[@]}"; do
-            [[ "${entry}" =~ ^[A-Za-z0-9._-]+$ ]] \
-              || fail "Invalid release reviewer or team: ${entry}"
-          done
-          {
-            echo "required=true"
-            echo "users=${users[*]}"
-            echo "teams=${teams[*]}"
-          } >> "${GITHUB_OUTPUT}"
-        # yamllint enable rule:indentation
-      - name: "Resolve PyPI release reviewer users"
-        id: "release-users"
-        if: >
-          steps.release-input.outputs.required == 'true'
-        env:
-          # enq: One-time short-lived token (1 day).
-          # enq: This workflow is deleted after setup, so it is not a security threat.
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          USERS: "${{ steps.release-input.outputs.users }}"
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation
-        run: |
-          fail() { echo "::error::$*"; exit 1; }
-          user_id() { gh api "users/$1" --jq 'select(.type == "User") | .id'; }
-          add() {
-            jq -c --argjson id "$1" --arg login "$2" \
-              '.reviewers += [{type: "User", id: $id}] | .people += [$login]'
-          }
-          resolved='{"reviewers":[],"people":[]}'
-          read -r -a users <<< "${USERS}"
-          for user in "${users[@]}"; do
-            if ! id=$(user_id "${user}") || [ -z "${id}" ]; then
-              fail "Release reviewer '${user}' is not an existing GitHub user"
-            fi
-            resolved=$(add "${id}" "${user}" <<< "${resolved}")
-          done
-          echo "resolved=${resolved}" >> "${GITHUB_OUTPUT}"
-        # yamllint enable rule:indentation
-      - name: "Resolve PyPI release reviewer teams"
-        id: "release-teams"
-        if: >
-          steps.release-input.outputs.required == 'true'
-        env:
-          # enq: One-time short-lived token (1 day).
-          # enq: This workflow is deleted after setup, so it is not a security threat.
-          GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          OWNER: "${{ github.repository_owner }}"
-          TEAMS: "${{ steps.release-input.outputs.teams }}"
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation
-        run: |
-          fail() { echo "::error::$*"; exit 1; }
-          team_id() { gh api "orgs/${OWNER}/teams/$1" --jq '.id'; }
-          team_members() {
-            gh api --paginate "orgs/${OWNER}/teams/$1/members" --jq '.[].login'
-          }
-          add() {
-            jq -c --argjson id "$1" --arg members "$2" \
-              '.reviewers += [{type: "Team", id: $id}]
-              | .people += ($members | split("\n") | map(select(. != "")))'
-          }
-          resolved='{"reviewers":[],"people":[]}'
-          read -r -a teams <<< "${TEAMS}"
-          for slug in "${teams[@]}"; do
-            id=$(team_id "${slug}") \
-              || fail "Release team '${slug}' not found in ${OWNER} (or token lacks members:read)"
-            members=$(team_members "${slug}") \
-              || fail "Could not list members of release team '${slug}'"
-            resolved=$(add "${id}" "${members}" <<< "${resolved}")
-          done
-          echo "resolved=${resolved}" >> "${GITHUB_OUTPUT}"
-        # yamllint enable rule:indentation
-      - name: "Validate PyPI release approvers"
-        id: "release-approvers"
-        if: >
-          steps.release-input.outputs.required == 'true'
-        env:
-          USERS: "${{ steps.release-users.outputs.resolved }}"
-          TEAMS: "${{ steps.release-teams.outputs.resolved }}"
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation
-        run: |
-          fail() { echo "::error::$*"; exit 1; }
-          merged() {
-            jq -c -n --argjson users "${USERS}" --argjson teams "${TEAMS}" \
-              "{users: \$users, teams: \$teams} | $1"
-          }
-          count=$(merged '.users.people + .teams.people
-            | map(ascii_downcase) | unique | length')
-          users=$(merged '.users.reviewers | length')
-          teams=$(merged '.teams.reviewers | length')
-          echo "::notice::Found ${count} distinct reviewer(s) (${users} user(s), ${teams} team(s))"
-          if [ "${count}" -lt 2 ]; then
-            fail "Release reviewers/teams must cover at least 2 distinct people (got ${count})"
-          fi
-          body=$(merged '{prevent_self_review: true,
-            reviewers: (.users.reviewers + .teams.reviewers | unique)}')
           echo "body=${body}" >> "${GITHUB_OUTPUT}"
         # yamllint enable rule:indentation
-      - name: "Checkout repository"
-        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
-        with:
-          sparse-checkout: |
-            .github/rulesets
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-      - name: "Adjust reviewers in rulesets"
-        env:
-          REVIEWERS: "${{ steps.contributors.outputs.approvals }}"
-          LAST_PUSH_APPROVAL: >-
-            ${{ steps.contributors.outputs.approvals != '0' && 'true' || 'false' }}
-        run: >
-          sed -i
-          -e "s/\"PLACEHOLDER_REVIEWERS\"/${REVIEWERS}/g"
-          -e "s/\"PLACEHOLDER_LAST_PUSH_APPROVAL\"/${LAST_PUSH_APPROVAL}/g"
-          .github/rulesets/branch-default.json
       - name: "Apply rulesets (public/enterprise/pro/team only)"
         # Administration write
         # https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28#create-a-repository-ruleset
@@ -334,13 +224,11 @@ jobs:
           || steps.organization.outputs.type == 'enterprise'
           || steps.organization.outputs.type == 'pro'
         env:
+          REVIEWERS: "${{ steps.contributors.outputs.approvals }}"
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        run: >
-          find .github/rulesets -name "*.json" -print0
-          | parallel -0 -j0 --halt now,fail=1
-          "gh api --method POST repos/${GITHUB_REPOSITORY}/rulesets --input {}"
+        run: "./.github/tools/harden/rulesets.sh \"${REVIEWERS}\" .github/rulesets"
       - name: "Enable GitHub Pages (public/enterprise only)"
         # Administration AND Pages write
         # https://docs.github.com/en/rest/pages/pages?apiVersion=2022-11-28#create-a-github-pages-site
@@ -353,9 +241,7 @@ jobs:
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
         # Deployed by actions/deploy-pages (release.yml), gh-pages branch
         # only stores the versioned (mike) documentation
-        run: >
-          gh api --method POST "repos/${GITHUB_REPOSITORY}/pages"
-          -f "build_type=workflow"
+        run: "./.github/tools/harden/pages.sh"
       - name: "Allow GitHub Pages deployments from tags (public/enterprise only)"
         # Administration write, releases (tags) deploy the documentation,
         # github-pages environment allows the default branch only otherwise
@@ -367,15 +253,7 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation rule:line-length
-        run: |
-          gh api --method PUT "repos/${GITHUB_REPOSITORY}/environments/github-pages" \
-            -F "deployment_branch_policy[protected_branches]=false" \
-            -F "deployment_branch_policy[custom_branch_policies]=true"
-          gh api --method POST "repos/${GITHUB_REPOSITORY}/environments/github-pages/deployment-branch-policies" \
-            -f "name=*" -f "type=tag"
-        # yamllint enable rule:indentation rule:line-length
+        run: "./.github/tools/harden/pages-tags.sh"
       - name: "Apply general settings for the repository"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
@@ -383,33 +261,7 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          # enq: one line is more readable in this case
-          # yamllint disable rule:line-length
-          HOMEPAGE: >-
-            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
-          # yamllint enable rule:line-length
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation
-        run: >
-          cat <<EOF | gh api --method PATCH "repos/${GITHUB_REPOSITORY}" --input -
-            {
-              "allow_auto_merge": true,
-              "allow_merge_commit": false,
-              "allow_rebase_merge": false,
-              "allow_squash_merge": true,
-              "allow_update_branch": true,
-              "delete_branch_on_merge": true,
-              "use_squash_pr_title_as_default": true,
-              "has_issues": true,
-              "has_projects": true,
-              "has_wiki": false,
-              "homepage": "${HOMEPAGE}",
-              "squash_merge_commit_title": "PR_TITLE",
-              "squash_merge_commit_message": "COMMIT_MESSAGES",
-              "web_commit_signoff_required": true
-            }
-          EOF
-        # yamllint enable rule:indentation
+        run: "./.github/tools/harden/settings.sh"
       - name: "Enable security features for the repository (best effort)"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#update-a-repository
@@ -418,31 +270,7 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        # enq: indentation disabled to aid bash script readability
-        # yamllint disable rule:indentation
-        run: >
-          cat <<EOF | gh api --method PATCH "repos/${GITHUB_REPOSITORY}" --input -
-            {
-              "security_and_analysis": {
-                "advanced_security": {
-                  "status": "enabled"
-                },
-                "secret_scanning": {
-                  "status": "enabled"
-                },
-                "secret_scanning_ai_detection": {
-                  "status": "enabled"
-                },
-                "secret_scanning_push_protection": {
-                  "status": "enabled"
-                },
-                "secret_scanning_non_provider_patterns": {
-                  "status": "enabled"
-                }
-              }
-            }
-          EOF
-        # yamllint enable rule:indentation
+        run: "./.github/tools/harden/security.sh"
         # Default CodeQL conflicts with opentemplate setup
       - name: "Disable CodeQL default setup (best effort)"
         # Default setup rejects SARIFs of _security-codeql.yml
@@ -454,10 +282,7 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        run: >
-          gh api --method PATCH
-          "repos/${GITHUB_REPOSITORY}/code-scanning/default-setup"
-          -f "state=not-configured"
+        run: "./.github/tools/harden/codeql.sh"
       - name: "Enable discussions"
         # Discussions cannot be managed via API currently
         # See here: https://github.com/orgs/community/discussions/46930
@@ -466,8 +291,7 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        run: >
-          gh repo edit --enable-discussions=true
+        run: "./.github/tools/harden/discussions.sh"
       - name: "Enable immutable releases"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-immutable-releases
@@ -476,8 +300,7 @@ jobs:
         env:
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        run: >
-          gh api --method PUT "repos/${GITHUB_REPOSITORY}/immutable-releases"
+        run: "./.github/tools/harden/immutable-releases.sh"
       - name: "Enable private vulnerability reporting (public only)"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-private-vulnerability-reporting-for-a-repository
@@ -489,9 +312,7 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        run: >
-          gh api --method PUT
-          "repos/${GITHUB_REPOSITORY}/private-vulnerability-reporting"
+        run: "./.github/tools/harden/private-vulnerability-reporting.sh"
       - name: "Enable vulnerability alerts (public only)"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-vulnerability-alerts
@@ -503,8 +324,7 @@ jobs:
           # enq: One-time short-lived token (1 day).
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-        run: >
-          gh api --method PUT "repos/${GITHUB_REPOSITORY}/vulnerability-alerts"
+        run: "./.github/tools/harden/vulnerability-alerts.sh"
       - name: "Create PyPI release environment (public/enterprise/pro/team only)"
         # Administration write
         # https://docs.github.com/en/rest/deployments/environments?apiVersion=2022-11-28#create-or-update-an-environment
@@ -515,10 +335,8 @@ jobs:
         env:
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
-          BODY: "${{ steps.release-approvers.outputs.body || '{}' }}"
-        run: >
-          printf '%s' "${BODY}" | gh api --method PUT
-          "repos/${GITHUB_REPOSITORY}/environments/pypi" --input -
+          BODY: "${{ steps.release-approvers.outputs.body }}"
+        run: "./.github/tools/harden/pypi.sh"
       - name: "Close the issue"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
