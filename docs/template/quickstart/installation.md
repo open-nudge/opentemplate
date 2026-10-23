@@ -79,6 +79,78 @@ outlining security hardening steps.
 > [!NOTE]
 > Full automation is not currently possible due to platform limitations.
 
+### Local hardening
+
+> [!WARNING]
+> If you ran the `harden` workflow feel free to skip it.
+
+The executable scripts in [`.github/tools/harden`](../../../.github/tools/harden)
+apply individual settings locally and are also called by `harden.yml`.
+
+| File                                 | Purpose                                |
+| ------------------------------------ | -------------------------------------- |
+| `rulesets.sh`                        | Apply repository rulesets              |
+| `pages.sh`                           | Enable Pages via Actions               |
+| `pages-tags.sh`                      | Allow Pages deployments from tags      |
+| `settings.sh`                        | Configure repository settings          |
+| `security.sh`                        | Enable security features               |
+| `codeql.sh`                          | Disable CodeQL default setup           |
+| `discussions.sh`                     | Enable discussions                     |
+| `immutable-releases.sh`              | Enable immutable releases              |
+| `private-vulnerability-reporting.sh` | Enable private reports                 |
+| `vulnerability-alerts.sh`            | Enable vulnerability alerts            |
+| `pypi.sh`                            | Configure the PyPI release environment |
+
+Install __Bash__, __GitHub CLI__ (`gh`), and __jq__, then authenticate with
+`gh auth login` or `GH_TOKEN` using `Administration` `write` permission
+(also `Pages` `write` for Pages operations).
+Run scripts directly from the checkout root:
+
+```bash
+./.github/tools/harden/rulesets.sh 2 .github/rulesets
+./.github/tools/harden/settings.sh
+./.github/tools/harden/pages.sh
+./.github/tools/harden/pages-tags.sh
+```
+
+GitHub CLI resolves the target from the current checkout; set `GH_REPO=owner/repo`
+to override it.
+Pass `0` approvals for solo projects, `1` for two contributors, or `2`
+for larger teams (just like hosted `harden` workflow).
+
+> [!NOTE]
+> Local scripts apply only their selected settings and require the corresponding
+> GitHub features to be available for the repository.
+
+> [!NOTE]
+> Scripts are idempotent, __existing rulesets will be deleted
+> ONLY after new ones were created successfully.__
+
+Configure PyPI approvers locally:
+
+```bash
+./.github/tools/harden/pypi.sh 'alice bob' 'release-team'
+```
+
+Both arguments accept whitespace-separated values; use `''`
+for an empty user or team list. The resolver requires at least two distinct
+people to allow an alternative approver when self-review is prevented.
+GitHub checks reviewer eligibility, repository access, and the six-reviewer limit
+when applying the environment. In the workflow, these errors can occur after
+other hardening changes have been applied.
+GitHub requires only one of those people to approve each deployment.
+Team lookups additionally need organization Members read permission
+(`read:org` for classic tokens). Users and team members are deduplicated by ID.
+The script resolves approvers before updating the environment. With no arguments,
+it uses `BODY` if nonempty, otherwise `{}`. Explicit arguments take precedence
+over `BODY`.
+
+For solo projects or plans without environment reviewers, use the default:
+
+```bash
+./.github/tools/harden/pypi.sh
+```
+
 ### Benefits
 
 - Improved security following
@@ -109,4 +181,5 @@ repositories.
 - `/.github/workflows/template-setup.yml`
 - `/.github/workflows/template-update.yml`
 - `/.github/workflows/harden.yml`
+- `/.github/tools/harden`
 - `/.github/rulesets`
