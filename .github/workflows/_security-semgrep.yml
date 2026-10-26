@@ -89,6 +89,18 @@ jobs:
             --strict
             --sarif-output="${{ env.FILE }}"
             .
+      # GitHub rejects SARIFs with non-numeric security-severity,
+      # some Semgrep rules use labels instead, see https://github.com/semgrep/semgrep/issues/10834
+      - name: "Fix security severities"
+        shell: "bash"
+        # enq: shell indentation is more readable
+        # yamllint disable rule:indentation
+        run: |
+          jq '(.runs[].tool.driver.rules[]?.properties["security-severity"] | strings)
+            |= ({"Info": "0.0", "Low": "3.0", "Medium": "5.0", "High": "8.0", "Critical": "9.5"}[.] // .)' \
+            "${FILE}" > "${FILE}.tmp"
+          mv "${FILE}.tmp" "${FILE}"
+        # yamllint enable rule:indentation
       - name: "Upload files"
         id: "upload"
         if: >

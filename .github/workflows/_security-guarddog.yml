@@ -157,7 +157,9 @@ jobs:
             2> >(tee "${GITHUB_WORKSPACE}/guarddog.log" >&2)
         # yamllint enable rule:indentation
       # All rules, capabilities of third-party actions (downloads, spawned
-      # processes, hooks) are few and worth triaging in the Security tab
+      # processes, hooks) are few and worth triaging in the Security tab.
+      # GuardDog reports an action once per workflow using it (identical
+      # results pointing to the first workflow), duplicates are removed
       - name: "Scan GitHub Actions"
         if: >
           inputs.target == 'actions'
@@ -167,8 +169,9 @@ jobs:
         run: |
           uv run --project ../template \
             guarddog github_action verify . \
-            --output-format=sarif > "${GITHUB_WORKSPACE}/${FILE}" \
-            2> >(tee "${GITHUB_WORKSPACE}/guarddog.log" >&2)
+            --output-format=sarif \
+            2> >(tee "${GITHUB_WORKSPACE}/guarddog.log" >&2) \
+            | jq '.runs[].results |= unique' > "${GITHUB_WORKSPACE}/${FILE}"
         # yamllint enable rule:indentation
       # GuardDog exits with 0 even if a package could not be downloaded
       # and python-whois treats unreachable registries as no finding
