@@ -33,6 +33,12 @@ updates:
       uv:
         patterns:
           - "*"
+    ignore:
+      # pytest-markdown-docs pins markdown-it-py<4, uv.lock keeps 3.x and
+      # requirements.txt files are re-exported from it (see prek.toml)
+      - dependency-name: "markdown-it-py"
+        versions:
+          - ">=4"
 
   - package-ecosystem: "pip"
     directories:
@@ -50,4 +56,10 @@ updates:
       pip:
         patterns:
           - "*"
+    ignore:
+      # pytest-markdown-docs pins markdown-it-py<4, uv.lock keeps 3.x and
+      # requirements.txt files are re-exported from it (see prek.toml)
+      - dependency-name: "markdown-it-py"
+        versions:
+          - ">=4"
 ...
