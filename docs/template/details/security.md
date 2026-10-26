@@ -234,8 +234,8 @@ Known limitations (the job warns when something was not scanned):
 - actions referenced by a path inside a repository
     (e.g. `github/codeql-action/init`) and `docker://` images are not scanned,
     neither are actions used by composite actions in `.github/actions`
-- each action is scanned once per workflow using it, alerts point to the
-    first such workflow
+- each action is scanned once per workflow using it, identical results
+    are deduplicated and alerts point to the first such workflow
 
 ### CodeQL
 
