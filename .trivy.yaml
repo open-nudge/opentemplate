@@ -41,5 +41,7 @@ allow-dependencies-licenses:
   # MPL-2.0, dev-tests group (not distributed)
   - "pkg:pypi/hypothesis"
   # MIT-CMU, dev-docs group (not distributed)
-  - "pkg:pypi/pillow"
+  - "pkg:pypi/wcwidth"
+  # MPL-2.0 (with MIT and BSD-3-Clause), dev-pyproject group (not distributed)
+  - "pkg:pypi/validate-pyproject"
 ...

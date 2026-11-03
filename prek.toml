@@ -185,7 +185,7 @@ rev = "2bba271688c1abb1503097a064e6c3bc1d1b6a9b"  # frozen: lychee-v0.24.2
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "2ee781716f8c177c2a143e18d535ddb11e264f00" # frozen: v3.24.0
+rev = "d7a379da688e3ec07138ef94e4f0f0889954d617" # frozen: v3.25.1
 
   [[repos.hooks]]
   id = "vale"
@@ -219,7 +219,7 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
 
 [[repos]]
 repo = "https://github.com/semgrep/pre-commit"
-rev = "4442ea4b1e93a847e27a22559ee8d4b53795c549" # frozen: v1.181.0
+rev = "8e64a20b3807724512502aff9a03b22356e1462f" # frozen: v1.181.1
 
   # Keep these arguments aligned with the Docker scan in
   # .github/workflows/_security-semgrep.yml.
