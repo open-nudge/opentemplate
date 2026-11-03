@@ -42,11 +42,11 @@ Licenses of dependencies are checked in CI against a single list of allowed
 
 <!-- pyml disable-num-lines 7 line-length-->
 
-| Dependencies                                        | Tool                       | Checked on                                         |
-| --------------------------------------------------- | -------------------------- | -------------------------------------------------- |
-| Python `core` and `extras` (distributed)            | Trivy                      | pull requests changing them, weekly, every release |
-| GitHub Actions, `requirements.txt`, `uv.lock` files | `dependency-review-action` | every pull request, weekly                         |
-| Python development groups                           | `dependency-review-action` | every pull request (`uv.lock`), weekly             |
+| Dependencies                             | Tool                       | Checked on                                         |
+| ---------------------------------------- | -------------------------- | -------------------------------------------------- |
+| Python `core` and `extras` (distributed) | Trivy                      | pull requests changing them, weekly, every release |
+| GitHub Actions, `uv.lock` files          | `dependency-review-action` | every pull request, weekly                         |
+| Python development groups                | `dependency-review-action` | every pull request (`uv.lock`), weekly             |
 
 Both tools fail on a license outside of the list.
 
@@ -85,8 +85,7 @@ has a license outside of the list (`allow-licenses` in `.trivy.yaml`
 refers to `license.notice`).
 
 It covers ecosystems which Trivy cannot see, most notably third-party
-GitHub Actions and reusable workflows used in workflows (and composite actions)
-and the hash-locked `requirements.txt` files (`.github/`, `template-setup/`).
+GitHub Actions and reusable workflows used in workflows (and composite actions).
 It compares `uv.lock` as well (overlapping Trivy). Development dependencies
 (dependency groups) would be ignored (`fail-on-scopes`), but the dependency
 graph reports every `uv.lock` package of a non-virtual project as `runtime`,
@@ -137,7 +136,7 @@ Exceptions for single dependencies:
     the path of the package metadata as a glob (matching every Python version
     and OS), e.g. `**/<package>-*.dist-info/METADATA`, optionally until
     `expired_at` (prefer allowing the license if acceptable)
-- GitHub Actions, `requirements.txt` and `uv.lock`: `allow-dependencies-licenses`
+- GitHub Actions and `uv.lock`: `allow-dependencies-licenses`
     in `.trivy.yaml` as [package URLs](https://github.com/package-url/purl-spec),
     e.g. `pkg:githubactions/<owner>/<repo>`
 

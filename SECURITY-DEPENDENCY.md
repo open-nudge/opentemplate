@@ -71,35 +71,24 @@ contributors must follow these steps:
 
 ## Vulnerabilities
 
-Dependencies are locked with a cooldown (`exclude-newer` in `pyproject.toml`),
-so freshly published (possibly malicious) releases are not used.
+`uv.lock` is the single source of dependency versions and it is updated
+only by Dependabot (or when `pyproject.toml` changes):
+
+- version updates wait 7 days after a release (`cooldown`),
+    so freshly published (possibly malicious) releases are not used
+- security updates fix vulnerable packages without the cooldown,
+    as soon as the advisory is published
+
 `uv audit` (`prek` and CI) fails on known vulnerabilities, resolve them as follows:
 
-<!-- pyml disable-num-lines 8 line-length-->
+<!-- pyml disable-num-lines 7 line-length-->
 
-| Situation                        | Action                                                            |
-| -------------------------------- | ----------------------------------------------------------------- |
-| Fix released before the cooldown | `uv lock --upgrade` (if a dependency caps it, bump or replace it) |
-| Fix released within the cooldown | Pinned exemption in `exclude-newer-package` (see below)           |
-| No fix released                  | `ignore-until-fixed` in `[tool.uv.audit]` with a reason           |
-| Not applicable to `opentemplate` | `ignore` in `[tool.uv.audit]` with a reason                       |
-
-The cooldown is broken __only__ for the package with the vulnerability
-and __only__ up to its fix release, by setting the exemption to the upload
-time of the fix release's last file:
-
-```sh
-curl -s https://pypi.org/pypi/<package>/<fix version>/json \
-  | jq -r '[.urls[].upload_time_iso_8601] | max'
-```
-
-```toml
-[tool.uv]
-exclude-newer-package = { <package> = "<timestamp>" }
-```
-
-Never exempt with `false` (it admits any newer release) and remove the exemption
-once the cooldown passes the fix release, otherwise it pins the package to that time.
+| Situation                        | Action                                                                |
+| -------------------------------- | --------------------------------------------------------------------- |
+| Fix released                     | Merge the Dependabot security update (or `uv lock --upgrade-package`) |
+| Fix capped by a dependency       | Bump or replace the dependency                                        |
+| No fix released                  | `ignore-until-fixed` in `[tool.uv.audit]` with a reason               |
+| Not applicable to `opentemplate` | `ignore` in `[tool.uv.audit]` with a reason                           |
 
 ## Archived or deprecated packages
 

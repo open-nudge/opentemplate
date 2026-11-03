@@ -140,16 +140,15 @@ Analyses are kept per ref and category:
 ### uv audit
 
 `uv audit` checks `uv.lock` (all groups) against the [OSV database](https://osv.dev/)
-on every commit (`prek`, after `uv lock --upgrade`) and in CI.
+on every commit (`prek`) and in CI.
+Fixes arrive as Dependabot security updates, which (unlike version updates)
+are not delayed by the 7 day cooldown,
+see [`SECURITY-DEPENDENCY.md`](../../SECURITY-DEPENDENCY.md#vulnerabilities).
 To ignore specific vulnerabilities, add their IDs (any alias)
 with a reason to `[tool.uv.audit]` in `pyproject.toml`:
 
 - `ignore` - not applicable to the project
 - `ignore-until-fixed` - no fix released yet, reported again once it is
-
-> [!IMPORTANT]
-> Fixes younger than the cooldown (`exclude-newer`) need a pinned exemption,
-> see [`SECURITY-DEPENDENCY.md`](../../SECURITY-DEPENDENCY.md#vulnerabilities).
 
 ### Trivy
 

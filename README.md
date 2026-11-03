@@ -278,7 +278,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 1. Create a new branch
 1. Optionally adjust package metadata in `[project]` in `pyproject.toml`
     (including `dependencies`, `keywords`, or `classifiers`), `prek` runs
-    `uv lock --upgrade` on every commit (releases at least a week old)
+    `uv lock` on every commit, Dependabot updates `uv.lock` weekly
+    (releases at least a week old) and on security advisories
 1. Write code in `/src/<project_name>` and tests in `/tests`
 1. Use `git add`, `git commit` and `git push` your changes
 1. `prek` will guide you through the process

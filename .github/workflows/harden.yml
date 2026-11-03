@@ -313,11 +313,13 @@ jobs:
           # enq: This workflow is deleted after setup, so it is not a security threat.
           GH_TOKEN: "${{ secrets.TEMPLATE_GITHUB_TOKEN }}" # zizmor: ignore[secrets-outside-env]
         run: "./.github/tools/harden/private-vulnerability-reporting.sh"
-      - name: "Enable vulnerability alerts (public only)"
+      - name: "Enable vulnerability alerts and security updates (public only)"
         # Administration write
         # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-vulnerability-alerts
+        # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#enable-dependabot-security-updates
         # More info:
         # https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-dependabot-alerts
+        # https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
         if: >
           github.event.repository.visibility == 'public'
         env:

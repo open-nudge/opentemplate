@@ -55,7 +55,7 @@ security-testing:
     comment: |
       - "Dependency review action is ran during CI on every pull request and merge queue."
       - "Weekly, it checks dependencies added since the first commit (latest release and main)."
-      - "It checks licenses of added or changed dependencies (GitHub Actions, requirements.txt)."
+      - "It checks licenses of added or changed dependencies (GitHub Actions, uv.lock)."
       - "Allowed licenses are read from .trivy.yaml (shared with Trivy)."
       - "Vulnerabilities are checked by uv audit, zizmor and Trivy instead."
   - tool-type: "sca"

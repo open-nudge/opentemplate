@@ -98,7 +98,7 @@ apply individual settings locally and are also called by `harden.yml`.
 | `discussions.sh`                     | Enable discussions                     |
 | `immutable-releases.sh`              | Enable immutable releases              |
 | `private-vulnerability-reporting.sh` | Enable private reports                 |
-| `vulnerability-alerts.sh`            | Enable vulnerability alerts            |
+| `vulnerability-alerts.sh`            | Enable Dependabot alerts and updates   |
 | `pypi.sh`                            | Configure the PyPI release environment |
 
 Install __Bash__, __GitHub CLI__ (`gh`), and __jq__, then authenticate with

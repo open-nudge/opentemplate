@@ -34,31 +34,7 @@ updates:
         patterns:
           - "*"
     ignore:
-      # pytest-markdown-docs pins markdown-it-py<4, uv.lock keeps 3.x and
-      # requirements.txt files are re-exported from it (see prek.toml)
-      - dependency-name: "markdown-it-py"
-        versions:
-          - ">=4"
-
-  - package-ecosystem: "pip"
-    directories:
-      - "/.github"
-      # templatedelete-start
-      - "/template-setup"
-      # templatedelete-end
-    schedule:
-      interval: "weekly"
-    cooldown:
-      default-days: 7
-    commit-message:
-      prefix: "fix"
-    groups:
-      pip:
-        patterns:
-          - "*"
-    ignore:
-      # pytest-markdown-docs pins markdown-it-py<4, uv.lock keeps 3.x and
-      # requirements.txt files are re-exported from it (see prek.toml)
+      # pytest-markdown-docs pins markdown-it-py<4, uv.lock keeps 3.x
       - dependency-name: "markdown-it-py"
         versions:
           - ">=4"
