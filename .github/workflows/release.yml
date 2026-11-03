@@ -148,7 +148,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2" # v2.22.2
+        uses: "step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43" # v2.22.3
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -176,7 +176,7 @@ jobs:
     # https://github.com/pypi/warehouse/issues/11096
     steps:
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2" # v2.22.2
+        uses: "step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43" # v2.22.3
         with:
           disable-sudo: true
           egress-policy: "block"
@@ -204,7 +204,7 @@ jobs:
       - name: "Upload python package"
         if: >
           ! github.event.repository.private
-        uses: "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33" # v1.14.2
+        uses: "pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086" # v1.14.3
         with:
           print-hash: true
 
@@ -221,7 +221,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2" # v2.22.2
+        uses: "step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43" # v2.22.3
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
