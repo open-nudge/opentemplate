@@ -23,7 +23,7 @@ and are run periodically as vulnerabilities evolve, namely:
     and [Trivy](https://github.com/aquasecurity/trivy) (Python SBOMs)
 - __License compliance:__ Trivy (all distributed Python dependencies) and
     [`dependency-review-action`](https://github.com/actions/dependency-review-action)
-    (GitHub Actions, `requirements.txt` added since the first commit)
+    (GitHub Actions, `uv.lock` added since the first commit)
 - __Bug detection and code quality:__ [`semgrep/semgrep`](https://github.com/semgrep/semgrep)
 - __Malicious dependencies detection:__ [`DataDog/guarddog`](https://github.com/DataDog/guarddog)
 - __GitHub Actions analysis:__ [CodeQL](https://codeql.github.com/)

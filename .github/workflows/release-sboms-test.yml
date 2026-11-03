@@ -16,7 +16,7 @@ on:
       - ".github/actions/sarif-upload/action.yml"
       - ".github/actions/git-setup/action.yml"
       - ".github/actions/setup-release/action.yml"
-      - ".github/requirements.txt"
+      - "uv.lock"
       - ".github/actions/attestation-verify/action.yml"
       - ".github/actions/digests/action.yml"
       - ".github/actions/digests-verify/action.yml"

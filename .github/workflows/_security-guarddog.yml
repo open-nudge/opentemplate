@@ -81,6 +81,7 @@ jobs:
             pypi.org:443
             raw.githubusercontent.com:443
             release-assets.githubusercontent.com:443
+            releases.astral.sh:443
             results-receiver.actions.githubusercontent.com:443
             whois.denic.de:43
             whois.educause.edu:43

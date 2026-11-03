@@ -177,7 +177,7 @@ dev-security = [
   "zizmor>=1",
 ]
 
-# Exported (hashed) to .github/requirements.txt, installs uv in release jobs
+# uv version installed by CI and release jobs (setup-uv reads it from uv.lock)
 dev-bootstrap = [
   "uv>=0.11.8",
 ]
@@ -188,7 +188,7 @@ dev-tasks = [
 ]
 
 # templatedelete-start
-# Exported (hashed) to template-setup/requirements.txt, used by template-setup.yml
+# Installed from uv.lock by template-setup.yml
 # Block removed during template setup (template-setup/delete-blocks.sh)
 dev-template-setup = [
   "cookiecutter>=2",
@@ -292,15 +292,12 @@ packages = ["src/opentemplate"]
 [tool.uv]
 required-version = ">=0.11.8"
 package = true
-exclude-newer = "1 week"
 default-groups = [ "dev-all" ]
 cache-keys = [
   { file = "pyproject.toml" },
   { file = "src/**" },
   { git = { commit = true, tags = true } },
 ]
-# Cooldown exemptions for fixes of known vulnerabilities, see SECURITY-DEPENDENCY.md
-exclude-newer-package = { certifi = "2026-10-20T02:24:16.604828Z", pillow = "2026-10-16T22:18:09.718711Z", uv = "2026-10-20T15:12:06.801164Z" }
 
 # Vulnerability IDs (any alias), each with a reason in a comment
 [tool.uv.audit]
