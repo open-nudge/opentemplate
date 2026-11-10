@@ -31,7 +31,12 @@ To release a new version, either:
 
 Both trigger all necessary pipelines, which create a draft
 [GitHub release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
-with all assets and publish it as the last step.
+with all assets, upload the package to PyPI, and publish the release.
+Documentation is then pushed to `gh-pages` and deployed to GitHub Pages.
+
+> [!TIP]
+> Pull requests changing the release run it (`release-test.yml`)
+> without attesting or publishing anything.
 
 > [!NOTE]
 > Changelog (release description) will be automatically created by the pipelines.
@@ -237,6 +242,13 @@ The distributions also carry a
 [Verification Summary Attestation](https://slsa.dev/spec/v1.2/verification_summary)
 (VSA), created __after their build provenance is verified__
 (policy: `.github/actions/attestation-verify/action.yml` at `<sha>`).
+Its `inputAttestations` are the verified provenance statements
+(digest of the signed in-toto statement, not of the bundle):
+
+```sh
+jq -r .dsseEnvelope.payload <asset>.sigstore.jsonl | base64 -d | sha256sum
+```
+
 Consumers can check the verified SLSA level instead of the provenance:
 
 ```sh
@@ -314,6 +326,8 @@ This process can be adjusted by editing:
 
 - `pyproject.toml`
 - `.github/workflows/release.yml`
+- `.github/workflows/_release.yml`
+- `.github/workflows/release-test.yml`
 - `.github/workflows/release-tag.yml`
 - `.github/workflows/_release-upload.yml`
 - `.github/workflows/_release-sarifs.yml`
@@ -327,3 +341,5 @@ This process can be adjusted by editing:
 - `.github/workflows/_security-upload.yml`
 - `.github/actions/attestation-verify/action.yml`
 - `.github/actions/digests-verify/action.yml`
+- `.github/actions/pages-update/action.yml`
+- `.github/actions/release-version/action.yml`

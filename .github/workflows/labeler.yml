@@ -56,6 +56,9 @@ jobs:
           sparse-checkout: |
             .github
           sparse-checkout-cone-mode: true
+          # All blobs in the retried fetch, not lazily during checkout
+          # https://github.com/actions/checkout/issues/2597
+          filter: "blob:limit=1g"
           persist-credentials: false
       - name: "Label PR"
         uses: "actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13" # v7.0.0

@@ -21,6 +21,12 @@ inputs:
   directory:
     description: "Directory containing the files"
     default: "."
+  verify:
+    description: >
+      Whether to verify the attestations (releases), otherwise only the files
+      and their digests are resolved
+      (nothing is attested, e.g. during pull requests)
+    default: "true"
   bundles:
     description: >
       Whether to keep all attestations of each file as <file>.sigstore.jsonl
@@ -29,6 +35,11 @@ inputs:
   token:
     description: "Token with attestations read permission"
     default: "${{ github.token }}"
+
+outputs:
+  statements:
+    description: "sha256sum-like lines of each verified signed statement and its file"
+    value: "${{ steps.verify.outputs.statements }}"
 
 runs:
   using: "composite"
@@ -56,6 +67,11 @@ runs:
         directory: "${{ inputs.directory }}"
         paths: "${{ steps.files.outputs.paths }}"
     - name: "Verify attestations"
+      id: "verify"
+      # Without attestations (e.g. pull requests) only the files and their
+      # digests are resolved (unmatched globs fail the digests step)
+      if: >
+        inputs.verify == 'true'
       shell: "bash"
       working-directory: "${{ inputs.directory }}"
       env:
@@ -70,16 +86,13 @@ runs:
       # Bundle is named sha256:<digest>.jsonl (sha256-<digest>.jsonl on
       # Windows), hence downloaded alone into its own directory
       run: |
+        echo "statements<<EOF" >> "${GITHUB_OUTPUT}"
         shopt -s dotglob
         while read -r signer pattern; do
           # enq: glob expansion of the pattern is intentional
           # shellcheck disable=SC2086
           for file in ${pattern}; do
             digest="$(awk -v name="${file}" '$2 == name { print $1; exit }' <<< "${DIGESTS}")"
-            if [[ -z "${digest}" ]]; then
-              echo "::error title=Missing digest::${file} (signed by ${signer})"
-              exit 1
-            fi
             download="$(mktemp -d)"
             (cd "${download}" && gh attestation download "${OLDPWD}/${file}" --repo "${GITHUB_REPOSITORY}" --limit 1000)
             bundle=("${download}"/*.jsonl)
@@ -92,13 +105,18 @@ runs:
               --source-ref "${GITHUB_REF}" \
               --deny-self-hosted-runners \
               --format json \
-              | jq --exit-status --arg name "${file}" --arg digest "${digest}" \
-                'any(.[].verificationResult.statement.subject[]; .name == $name and .digest.sha256 == $digest)' \
-              > /dev/null
+              | jq --exit-status --raw-output --arg name "${file}" --arg digest "${digest}" \
+                '.[] | select(any(.verificationResult.statement.subject[]; .name == $name and .digest.sha256 == $digest))
+                | .attestation.bundle.dsseEnvelope.payload' \
+              | while read -r payload; do
+                statement="$(base64 --decode <<< "${payload}" | sha256sum)"
+                echo "${statement%% *}  ${file}"
+              done >> "${GITHUB_OUTPUT}"
             if [[ "${BUNDLES}" == "true" ]]; then
               cp -- "${bundle[0]}" "${file}.sigstore.jsonl"
             fi
           done
         done < <(jq --raw-output 'to_entries[] | .key as $signer | .value[] | select(. != "") | "\($signer) \(.)"' <<< "${SIGNERS}")
+        echo "EOF" >> "${GITHUB_OUTPUT}"
       # yamllint enable rule:indentation rule:line-length
 ...

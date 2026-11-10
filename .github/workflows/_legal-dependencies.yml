@@ -50,6 +50,9 @@ jobs:
           sparse-checkout: |
             /.trivy.yaml
           sparse-checkout-cone-mode: false
+          # All blobs in the retried fetch, not lazily during checkout
+          # https://github.com/actions/checkout/issues/2597
+          filter: "blob:limit=1g"
           persist-credentials: false
       - name: "Dependency review"
         uses: "actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294" # v5.0.0

@@ -187,6 +187,9 @@ jobs:
             }}$
           # yamllint enable rule:indentation
           sparse-checkout-cone-mode: "${{ inputs.cone }}"
+          # All blobs in the retried fetch, not lazily during checkout
+          # https://github.com/actions/checkout/issues/2597
+          filter: "blob:limit=1g"
           persist-credentials: false
 
       - name: "Setup reproducibility"

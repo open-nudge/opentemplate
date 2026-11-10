@@ -27,6 +27,10 @@ on:
           ${{ jobs.sarif-guarddog-actions.outputs.digests }}
           ${{ jobs.sarif-codeql.outputs.digests }}
     inputs:
+      upload-sarif:
+        description: "Upload SARIFs to the Security tab"
+        type: "boolean"
+        default: true
       ref:
         description: >
           Commit SHA to scan, set together with tag
@@ -126,7 +130,7 @@ jobs:
       - "sarif-guarddog-actions"
       - "sarif-codeql"
     if: >
-      !cancelled()
+      !cancelled() && inputs.upload-sarif
     strategy:
       fail-fast: false
       matrix:

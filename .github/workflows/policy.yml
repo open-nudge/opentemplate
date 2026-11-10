@@ -52,6 +52,9 @@ jobs:
           sparse-checkout: |
             .conform.yaml
           sparse-checkout-cone-mode: false
+          # All blobs in the retried fetch, not lazily during checkout
+          # https://github.com/actions/checkout/issues/2597
+          filter: "blob:limit=1g"
           persist-credentials: false
           # Necessary for the conform action to work (commit ranges)
           # See here: https://github.com/siderolabs/conform/issues/231

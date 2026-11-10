@@ -51,6 +51,9 @@ jobs:
         with:
           sparse-checkout: |
             .github/actions/release-ref
+          # All blobs in the retried fetch, not lazily during checkout
+          # https://github.com/actions/checkout/issues/2597
+          filter: "blob:limit=1g"
           persist-credentials: false
       - name: "Get latest release ref"
         id: "latest-release"
