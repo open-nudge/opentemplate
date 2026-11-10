@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Release Version"
+description: >
+  Resolve the release tag and its documentation version (vX.Y). Non-tag refs
+  (release-test.yml) use the latest release, if any.
+
+inputs:
+  token:
+    description: "Token with contents read permission"
+    default: "${{ github.token }}"
+
+outputs:
+  tag:
+    description: "Release tag, empty on non-tag refs without any release"
+    value: "${{ steps.version.outputs.tag }}"
+  version:
+    description: "Documentation version (vX.Y of the tag, v0.0 without one)"
+    value: "${{ steps.version.outputs.version }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get release version"
+      id: "version"
+      shell: "bash"
+      env:
+        GH_TOKEN: "${{ inputs.token }}"
+        GH_REPO: "${{ github.repository }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation rule:line-length
+      # pages-update keeps only directories matching the version pattern
+      run: |
+        tag="${GITHUB_REF_NAME}"
+        if [[ "${GITHUB_REF_TYPE}" != "tag" ]]; then
+          tag="$(gh release list --json tagName,isLatest --jq '.[] | select(.isLatest) | .tagName')"
+        fi
+        version="$(cut -d. -f1,2 <<< "${tag:-v0.0}")"
+        if [[ ! "${version}" =~ ^v?[0-9]+\.[0-9]+$ ]]; then
+          echo "::error title=Invalid release tag::${tag} is not vX.Y.Z"
+          exit 1
+        fi
+        echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
+        echo "version=${version}" >> "${GITHUB_OUTPUT}"
+      # yamllint enable rule:indentation rule:line-length
+...

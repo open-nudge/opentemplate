@@ -16,6 +16,22 @@ on:
           job outputs cannot be altered by other jobs, unlike artifacts
         type: "string"
         required: true
+      tag:
+        description: "Release tag (release-version output), empty for none"
+        type: "string"
+        required: true
+      version:
+        description: "Documentation version (vX.Y, release-version output)"
+        type: "string"
+        required: true
+
+    outputs:
+      digests:
+        description: "Digests of the release draft artifact (assets and notes)"
+        value: "${{ jobs.release-upload.outputs.digests }}"
+      docs-digests:
+        description: "Digest of the documentation archive (release-docs)"
+        value: "${{ jobs.release-upload.outputs.docs-digests }}"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -24,10 +40,13 @@ jobs:
   release-upload:
     name: "Release Upload"
     permissions:
-      contents: "write" # Needed to write documentation to gh-pages directly
+      contents: "read" # Needed to checkout gh-pages
       attestations: "read" # Needed to download and verify attestations
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
+    outputs:
+      digests: "${{ steps.draft.outputs.digests }}"
+      docs-digests: "${{ steps.docs.outputs.digests }}"
     env:
       # Condition shared with _release-build.yml (see there)
       ATTESTED: >-
@@ -50,12 +69,12 @@ jobs:
             github.com:443
             tuf-repo-cdn.sigstore.dev:443
             tuf-repo.github.com:443
-            uploads.github.com:443
-        # enq: credentials kept for gh release upload
-      - name: "Checkout repository"  # zizmor: ignore[artipacked]
+      # Documentation update is checked here, release.yml pushes it
+      - name: "Checkout repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
           ref: "gh-pages"
+          persist-credentials: false
       # Release assets are artifacts named <name>-<commit SHA> (flat files),
       # NOTE: no other artifact of the run may end with the commit SHA
       - name: "Download release assets"
@@ -70,6 +89,13 @@ jobs:
           pattern: "release-{notes,docs}"
           path: "${{ runner.temp }}/unattested"
           merge-multiple: true
+      # release.yml publishes the archive verified against this digest
+      - name: "Get docs digests"
+        id: "docs"
+        uses: "$/.github/actions/digests"
+        with:
+          directory: "${{ runner.temp }}/unattested"
+          paths: "site-${{ github.sha }}.tar"
       - name: "Verify distributions"
         uses: "$/.github/actions/digests-verify"
         with:
@@ -77,12 +103,12 @@ jobs:
           directory: "${{ runner.temp }}/assets"
       # Each asset kind has one template signer (keep in sync with the signer
       # table in docs/template/release-your-project/process.md)
+      # Without attestations (e.g. pull requests) only the files are checked
       - name: "Verify attestations"
-        if: >
-          env.ATTESTED == 'true'
         uses: "$/.github/actions/attestation-verify"
         with:
           directory: "${{ runner.temp }}/assets"
+          verify: "${{ env.ATTESTED }}"
           bundles: "true"
           # security- prefix keeps Trivy SARIFs (another signer) out of the
           # scanner glob, CodeQL SARIF is absent if CodeQL was skipped
@@ -110,10 +136,10 @@ jobs:
             fi
           done
         # yamllint enable rule:indentation rule:line-length
-      - name: "Upload assets to draft release"
+      - name: "Create release notes"
         env:
           GH_TOKEN: "${{ github.token }}"
-          ASSETS: "${{ runner.temp }}/assets"
+          TAG: "${{ inputs.tag }}"
           NOTES: "${{ runner.temp }}/unattested/LATEST.md"
         # Annotated tag message (author's notes) precedes the generated
         # changelog. Signed tags end their message with the signature,
@@ -121,118 +147,45 @@ jobs:
         # enq: multiline without char limit more readable
         # yamllint disable rule:indentation rule:line-length
         run: |
-          tag_sha="$(
-            gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${GITHUB_REF_NAME}" \
-              --jq 'select(.object.type == "tag") | .object.sha'
-          )"
           message=""
-          if [[ -n "${tag_sha}" ]]; then
-            # enq: $sig is a jq variable, not a shell one
-            # shellcheck disable=SC2016
-            message="$(
-              gh api "repos/${GITHUB_REPOSITORY}/git/tags/${tag_sha}" \
-                --jq '(.verification.signature // "") as $sig | .message | rtrimstr($sig)'
+          if [[ -n "${TAG}" ]]; then
+            tag_sha="$(
+              gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${TAG}" \
+                --jq 'select(.object.type == "tag") | .object.sha'
             )"
+            if [[ -n "${tag_sha}" ]]; then
+              # enq: $sig is a jq variable, not a shell one
+              # shellcheck disable=SC2016
+              message="$(
+                gh api "repos/${GITHUB_REPOSITORY}/git/tags/${tag_sha}" \
+                  --jq '(.verification.signature // "") as $sig | .message | rtrimstr($sig)'
+              )"
+            fi
           fi
-          notes_file="${RUNNER_TEMP}/release-notes.md"
           {
             if [[ -n "${message}" ]]; then
               printf '%s\n\n' "${message}"
             fi
             cat "${NOTES}"
-          } > "${notes_file}"
-          draft="$(gh release view "${GITHUB_REF_NAME}" --json isDraft --jq '.isDraft' 2>/dev/null || echo "none")"
-          case "${draft}" in
-            "none") ;;
-            "true") gh release delete "${GITHUB_REF_NAME}" --yes ;;
-            *)
-              echo "::error title=Release already published::${GITHUB_REF_NAME} is immutable, push a new tag instead"
-              exit 1
-              ;;
-          esac
-          gh release create "${GITHUB_REF_NAME}" "${ASSETS}"/* \
-            --draft \
-            --verify-tag \
-            --title "${GITHUB_REF_NAME}" \
-            --notes-file "${notes_file}"
+          } > "${RUNNER_TEMP}/assets/notes.md"
         # yamllint enable rule:indentation rule:line-length
-      # Extracted outside of the checkout, so the archive cannot alter .git
-      # Only files and directories, links could point outside of the site
-      - name: "Extract documentation"
-        env:
-          ARCHIVE: "${{ runner.temp }}/unattested/site-${{ github.sha }}.tar"
-        # enq: shell indentation is more readable
-        # yamllint disable rule:indentation rule:line-length
-        run: |
-          if tar --list --verbose --file "${ARCHIVE}" | cut -c1 | grep --quiet '[^-d]'; then
-            echo "::error title=Unsafe documentation archive::Only files and directories are allowed"
-            exit 1
-          fi
-          mkdir "${RUNNER_TEMP}/site"
-          tar --extract --no-same-owner --no-same-permissions \
-            --file "${ARCHIVE}" \
-            --directory "${RUNNER_TEMP}/site" \
-            "site-${GITHUB_SHA}"
-          mv "${RUNNER_TEMP}/site/site-${GITHUB_SHA}" .
-        # yamllint enable rule:indentation rule:line-length
-      - name: "Clear directory contents"
-        run: >
-          find . -maxdepth 1 -mindepth 1
-          ! -name "versions.json"
-          ! -name "index.html"
-          ! -regex './v?[0-9]+\.[0-9]+'
-          ! -name "site-${GITHUB_SHA}"
-          ! -name '.*'
-          -exec rm -rf {} +
-      - name: "Update documentation content"
-        # enq: disabled for readability
-        # yamllint disable rule:indentation rule:line-length
-        run: |
-          JSON_FILE="versions.json"
-
-          VERSION_XY="$(cut -d. -f1,2 <<< "${GITHUB_REF_NAME}")"
-
-          TMP_FILE="$(mktemp)"
-
-          jq --arg verXY "${VERSION_XY}" '
-            (
-              map(
-                if .version == $verXY then
-                  empty
-                elif .aliases | index("latest") then
-                  .aliases -= ["latest"]
-                else
-                  .
-                end
-              )
-              + [
-                {
-                  version: $verXY,
-                  title: $verXY,
-                  aliases: ["latest"]
-                }
-              ]
-            )
-          ' "${JSON_FILE}" > "${TMP_FILE}"
-
-          mv --force "${TMP_FILE}" "${JSON_FILE}"
-          mv --force "site-${GITHUB_SHA}" "${VERSION_XY}"
-          ln -sfn "${VERSION_XY}" "latest"
-        # yamllint enable rule:indentation rule:line-length
-      - name: "Upload documentation"
-        # enq: disabled for readability
-        # yamllint disable rule:indentation rule:line-length
-        run: |
-          git config --global user.email github-actions[bot]@users.noreply.github.com
-          git config --global user.name github-actions[bot]
-          git add --force --all
-          if ! git diff --cached --quiet; then
-            git commit --message "feat: update ${GITHUB_REF_NAME} [skip ci]"
-            git push origin gh-pages
-          fi
-        # yamllint enable rule:indentation rule:line-length
-      - name: "Upload documentation as Pages artifact"
-        uses: "actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9" # v5.0.0
+      - name: "Update documentation"
+        uses: "$/.github/actions/pages-update"
         with:
-          path: "."
+          archive: "${{ runner.temp }}/unattested/site-${{ github.sha }}.tar"
+          version: "${{ inputs.version }}"
+      - name: "Get draft digests"
+        id: "draft"
+        uses: "$/.github/actions/digests"
+        with:
+          directory: "${{ runner.temp }}/assets"
+          paths: "*"
+      # Overwritten on re-runs, release.yml verifies it against the digests
+      - name: "Upload release draft"
+        uses: "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9" # v7.0.2
+        with:
+          name: "release-draft"
+          path: "${{ runner.temp }}/assets"
+          if-no-files-found: "error"
+          overwrite: true
 ...

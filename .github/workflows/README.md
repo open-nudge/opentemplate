@@ -74,6 +74,8 @@ If so, check the [configuration](#configuration) section.
 
 These workflows might be of special interest:
 
+- `release-test.yml` - runs the release (`_release.yml`) on PRs
+    without attesting or publishing anything
 - `_run-check.yml` - runs __most of the checks__
     defined in `_<type>.yml` as a sort of centralized runner
 - `security-*` - ran on PRs and periodically to ensure the security

@@ -9,6 +9,11 @@ name: "_Release Docs"  # zizmor: ignore[concurrency-limits]
 
 on:
   workflow_call:
+    inputs:
+      version:
+        description: "Documentation version (vX.Y, release-version output)"
+        type: "string"
+        required: true
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -22,10 +27,11 @@ jobs:
     with:
       # Double checkout used to refresh the content of generated docs, which
       # happens on some linux distributions at least.
+      # Version is validated (vX.Y) by the release-version action.
       # enq: long command, splitting is unreadable
       # yamllint disable rule:line-length
       command: |
-        TAG="$(cut -d. -f1,2 <<< "${GITHUB_REF_NAME}")"
+        TAG="${{ inputs.version }}"
         uv run mike deploy "${TAG}" --branch "site-${GITHUB_SHA}" --ignore-remote-status
         git checkout "site-${GITHUB_SHA}" -- .
         mv "${TAG}" "site-${GITHUB_SHA}"

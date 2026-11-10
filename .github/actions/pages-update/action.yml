@@ -1,0 +1,79 @@
+# SPDX-FileCopyrightText: © 2025, 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Pages Update"
+description: >
+  Replace the release's minor version documentation in the gh-pages checkout
+  (current directory) and make it the latest one.
+
+inputs:
+  archive:
+    description: "Documentation archive (site-<commit SHA> directory)"
+    required: true
+  version:
+    description: "Documentation version (vX.Y, release-version output)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Check documentation archive"
+      shell: "bash"
+      env:
+        ARCHIVE: "${{ inputs.archive }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation rule:line-length
+      run: |
+        if tar --list --verbose --file "${ARCHIVE}" | cut -c1 | grep --quiet '[^-d]'; then
+          echo "::error title=Unsafe documentation archive::Only files and directories are allowed"
+          exit 1
+        fi
+      # yamllint enable rule:indentation rule:line-length
+    # Extracted outside of the checkout, so the archive cannot alter .git
+    - name: "Extract documentation"
+      shell: "bash"
+      env:
+        ARCHIVE: "${{ inputs.archive }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation
+      run: |
+        mkdir "${RUNNER_TEMP}/pages-site"
+        tar --extract --no-same-owner --no-same-permissions \
+          --file "${ARCHIVE}" \
+          --directory "${RUNNER_TEMP}/pages-site" \
+          "site-${GITHUB_SHA}"
+      # yamllint enable rule:indentation
+    - name: "Clear unversioned content"
+      shell: "bash"
+      run: >
+        find . -maxdepth 1 -mindepth 1
+        ! -name "versions.json"
+        ! -name "index.html"
+        ! -regex './v?[0-9]+\.[0-9]+'
+        ! -name '.*'
+        -exec rm -rf {} +
+    - name: "Update versions"
+      shell: "bash"
+      env:
+        VERSION: "${{ inputs.version }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation
+      run: |
+        jq --arg version "${VERSION}" '
+          map(select(.version != $version) | .aliases -= ["latest"])
+          + [{version: $version, title: $version, aliases: ["latest"]}]
+        ' versions.json > "${RUNNER_TEMP}/versions.json"
+        mv --force "${RUNNER_TEMP}/versions.json" versions.json
+      # yamllint enable rule:indentation
+    - name: "Replace version documentation"
+      shell: "bash"
+      env:
+        VERSION: "${{ inputs.version }}"
+      run: |
+        rm -rf -- "${VERSION}"
+        mv "${RUNNER_TEMP}/pages-site/site-${GITHUB_SHA}" "${VERSION}"
+        ln -sfn "${VERSION}" "latest"
+...

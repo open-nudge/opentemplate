@@ -31,10 +31,6 @@ permissions: {} # yamllint disable-line rule:braces
 jobs:
   release-vsa:
     name: "Release VSA"
-    # Condition shared with _release-build.yml (see there)
-    if: >
-      github.ref_type == 'tag'
-      && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
     runs-on: "ubuntu-latest"
     timeout-minutes: 10
     permissions:
@@ -42,6 +38,13 @@ jobs:
       attestations: "read" # Needed to download and verify attestations
     outputs:
       predicate: "${{ steps.predicate.outputs.predicate }}"
+    env:
+      # Condition shared with _release-build.yml (see there)
+      ATTESTED: >-
+        ${{
+        github.ref_type == 'tag'
+        && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
+        }}
     steps:
       - name: "Harden Runner"
         uses: "step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43" # v2.22.3
@@ -64,19 +67,13 @@ jobs:
           digests: "${{ inputs.digests }}"
       # The policy the VSA attests to (referenced in its predicate)
       - name: "Verify build provenance"
+        id: "provenance"
         uses: "$/.github/actions/attestation-verify"
         with:
           directory: "dist"
-          bundles: "true"
+          verify: "${{ env.ATTESTED }}"
           signers: |
             {"_release-build": ["*.whl", "*.tar.gz"]}
-      # inputAttestations of the VSA are the bundles verified above
-      - name: "Get bundle digests"
-        id: "bundles"
-        uses: "$/.github/actions/digests"
-        with:
-          directory: "dist"
-          paths: "*.sigstore.jsonl"
       # https://slsa.dev/spec/v1.2/verification_summary
       # The template builds itself (no isolation from the project), hence L2
       - name: "Create VSA predicate"
@@ -88,7 +85,7 @@ jobs:
           POLICY: "https://github.com/${{ job.workflow_repository }}/blob/${{ job.workflow_sha }}/.github/actions/attestation-verify/action.yml"
           TEMPLATE_SHA: "${{ job.workflow_sha }}"
           LEVEL: "${{ job.workflow_repository == github.repository && 'SLSA_BUILD_LEVEL_2' || 'SLSA_BUILD_LEVEL_3' }}"
-          BUNDLES: "${{ steps.bundles.outputs.digests }}"
+          STATEMENTS: "${{ steps.provenance.outputs.statements }}"
           PACKAGE_NAME: "${{ inputs.package-name }}"
           PACKAGE_VERSION: "${{ inputs.package-version }}"
         run: |
@@ -97,7 +94,7 @@ jobs:
             timeVerified: (now | todateiso8601),
             resourceUri: $resource,
             policy: {uri: env.POLICY, digest: {gitCommit: env.TEMPLATE_SHA}},
-            inputAttestations: [env.BUNDLES | splits("\n") | split("  ") | {uri: .[1], digest: {sha256: .[0]}}],
+            inputAttestations: [env.STATEMENTS | splits("\n") | select(. != "") | split("  ") | {name: .[1], digest: {sha256: .[0]}, mediaType: "application/vnd.in-toto+json"}],
             verificationResult: "PASSED",
             verifiedLevels: [env.LEVEL],
             slsaVersion: "1.2"
@@ -107,6 +104,10 @@ jobs:
 
   release-vsa-attest:
     name: "Release VSA Attest"
+    # Condition shared with _release-build.yml (see there)
+    if: >
+      github.ref_type == 'tag'
+      && (vars.NO_GITHUB_ENTERPRISE_CLOUD == '' || github.event.repository.visibility != 'private')
     needs:
       - "release-vsa"
     runs-on: "ubuntu-latest"
