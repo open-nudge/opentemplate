@@ -187,6 +187,9 @@ jobs:
             .github/tools/harden
             .github/tools/pypi
           sparse-checkout-cone-mode: false
+          # All blobs in the retried fetch, not lazily during checkout
+          # https://github.com/actions/checkout/issues/2597
+          filter: "blob:limit=1g"
           persist-credentials: false
       - name: "Resolve PyPI release approvers"
         # Check the two-person policy before hardening mutations.

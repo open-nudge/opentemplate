@@ -61,6 +61,9 @@ runs:
           /uv.lock
           ${{ inputs.sparse-checkout }}
         sparse-checkout-cone-mode: false
+        # All blobs in the retried fetch, not lazily during checkout
+        # https://github.com/actions/checkout/issues/2597
+        filter: "blob:limit=1g"
         persist-credentials: false
     - name: "Setup Python"
       uses: "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0" # v7.1.0

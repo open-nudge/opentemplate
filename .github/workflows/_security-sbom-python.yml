@@ -83,6 +83,8 @@ jobs:
     strategy:
       # A failed license check must not cancel the other scans (and uploads)
       fail-fast: false
+      # GitHub allows 80 content-creating API requests per minute
+      # (attestations, SARIF uploads), not configurable
       max-parallel: 5
       matrix:
         python-version:
