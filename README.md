@@ -94,7 +94,7 @@ __opentemplate__ is a Python template which is:
     (with [`coverage`](https://coverage.readthedocs.io/en/7.9.1/),
     and [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/) for
     fuzzing, doctests, and [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
-    for mutation testing); __testing across all Python versions
+    for on-demand mutation testing); __testing across all Python versions
     done WITHOUT [`tox`](https://tox.wiki/en/4.27.0/)
     or [`nox`](https://nox.thea.codes/en/stable/)__(managed directly by `uv`!)
 - __Documentation:__ [`mkdocs`](https://www.mkdocs.org/) -

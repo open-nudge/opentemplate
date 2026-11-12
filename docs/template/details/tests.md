@@ -29,15 +29,10 @@ This document outlines the testing process of `opentemplate`-based projects.
 - Reports the `10` slowest tests and a summary of all non-passed outcomes.
 - Measures test coverage with [`coverage`](https://github.com/nedbat/coveragepy)
     (default threshold: `100%`).
-- Runs mutation testing with [`mutmut`](https://mutmut.readthedocs.io/en/latest/)
-    (skipped without failing if there is nothing to mutate).
 - __Local testing:__ Runs on the latest three Python versions,
-    following [SPEC 0](https://scientific-python.org/specs/spec-0000/),
-    then runs mutation testing once.
+    following [SPEC 0](https://scientific-python.org/specs/spec-0000/).
 - __CI testing:__ Runs across multiple Python versions and
     OSs (Linux, macOS, Windows) via GitHub Actions.
-- __CI mutation testing:__ Runs once on Ubuntu, as `mutmut`
-    requires fork support.
 - __Randomized test execution__ ensures independence.
 - Includes [`Hypothesis`](https://github.com/HypothesisWorks/hypothesis)
     for property-based testing.
