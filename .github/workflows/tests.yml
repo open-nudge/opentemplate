@@ -39,5 +39,7 @@ jobs:
     name: "Tests"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_tests.yml"
 ...

@@ -35,6 +35,8 @@ jobs:
       security-events: "read" # Needed by CodeQL init and analyze (no upload)
       contents: "read"
     name: "Security CodeQL"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-codeql.yml"
     with:
       name: "codeql"
@@ -53,6 +55,8 @@ jobs:
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-upload.yml"
     with:
       name: "codeql"

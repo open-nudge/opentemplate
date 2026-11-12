@@ -49,6 +49,8 @@ jobs:
       artifact-metadata: "write" # Needed to create artifact metadata
       contents: "read"
       pull-requests: "read" # Needed to read PR metadata during changelog gen
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release.yml"
     with:
       upload-sarif: false

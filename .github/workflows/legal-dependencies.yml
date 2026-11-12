@@ -29,6 +29,8 @@ jobs:
     name: "Legal Dependencies"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_legal-dependencies.yml"
     with:
       base-ref: "${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}"

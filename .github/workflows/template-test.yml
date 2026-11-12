@@ -94,8 +94,12 @@ jobs:
         with:
           persist-credentials: false
       - name: "Setup git credentials"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/git-setup"
       - name: "Setup template"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/template-setup"
         with:
           template-repository: "opentemplate"
@@ -106,6 +110,8 @@ jobs:
             All-in-one Python template. One click. Everything included.
           description: "Test opentemplate setup"
       - name: "Setup git credentials"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/git-setup"
       - name: "Create new branch"
         run: >
@@ -123,5 +129,7 @@ jobs:
     permissions:
       pull-requests: "write" # Needed to create pull request
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_prek.yml"
 ...

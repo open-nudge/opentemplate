@@ -150,10 +150,14 @@ jobs:
           persist-credentials: false
       # SBOM timestamps are derived from the source commit time
       - name: "Setup reproducibility"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/reproducibility-setup"
         with:
           path: "source"
       - name: "Setup template release tools"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/setup-release"
         with:
           python-version: "${{ inputs.python-version }}"
@@ -163,11 +167,15 @@ jobs:
       - name: "Get verified distributions"
         if: >
           env.INSTALL_PROJECT == 'true'
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/dist-download"
         with:
           digests: "${{ inputs.digests }}"
       # Identity is part of the legal SBOM
       - name: "Setup git identity"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/git-setup"
       - name: "Create directory for SBOM"
         run: >
@@ -248,17 +256,23 @@ jobs:
       - name: "Summarize SBOM vulnerabilities"
         if: >
           env.SCAN == 'true'
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/sarif-summary"
         with:
           file: "${{ env.ARTIFACT }}/trivy-vuln-${{ env.ARTIFACT }}.sarif"
       - name: "Summarize environment licenses"
         if: >
           inputs.licenses
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/sarif-summary"
         with:
           file: "${{ env.ARTIFACT }}/trivy-licenses-${{ env.ARTIFACT }}.sarif"
       - name: "Get digests"
         id: "digests"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests"
         with:
           paths: "${{ env.ARTIFACT }}/*"
@@ -326,6 +340,8 @@ jobs:
           name: "${{ env.ARTIFACT }}"
           path: "${{ env.ARTIFACT }}"
       - name: "Verify SBOM and scan"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests-verify"
         with:
           digests: "${{ needs.sbom-create.outputs.digests }}"
@@ -341,6 +357,8 @@ jobs:
           directory: "${{ env.ARTIFACT }}"
           exact: "true"
       - name: "Upload Trivy vulnerabilities SARIF"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/sarif-upload"
         with:
           file: "${{ env.ARTIFACT }}/trivy-vuln-${{ env.ARTIFACT }}.sarif"
@@ -352,6 +370,8 @@ jobs:
       - name: "Upload Trivy licenses SARIF"
         if: >
           inputs.licenses
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/sarif-upload"
         with:
           file: "${{ env.ARTIFACT }}/trivy-licenses-${{ env.ARTIFACT }}.sarif"
@@ -395,12 +415,16 @@ jobs:
             tuf-repo-cdn.sigstore.dev:443
             tuf-repo.github.com:443
       - name: "Get verified distributions"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/dist-download"
         with:
           digests: "${{ inputs.digests }}"
       # Caller supplies the digests, the SBOM is attested only against
       # distributions built by the template for this commit
       - name: "Verify distributions provenance"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/attestation-verify"
         with:
           directory: "dist"
@@ -415,6 +439,8 @@ jobs:
       # (e.g. a wheel), hence only the expected names are signed
       - name: "Verify SBOM and scan"
         id: "digests"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests-verify"
         with:
           digests: "${{ needs.sbom-create.outputs.digests }}"

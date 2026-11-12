@@ -57,6 +57,8 @@ jobs:
           persist-credentials: false
       - name: "Get latest release ref"
         id: "latest-release"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/release-ref"
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"

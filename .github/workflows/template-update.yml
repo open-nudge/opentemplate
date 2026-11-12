@@ -26,5 +26,7 @@ jobs:
     name: "Template Update"
     permissions:
       contents: "write" # Needed to update repository contents
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_template-update.yml"
 ...

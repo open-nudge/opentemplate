@@ -62,12 +62,16 @@ jobs:
             tuf-repo-cdn.sigstore.dev:443
             tuf-repo.github.com:443
       - name: "Get distributions"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/dist-download"
         with:
           digests: "${{ inputs.digests }}"
       # The policy the VSA attests to (referenced in its predicate)
       - name: "Verify build provenance"
         id: "provenance"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/attestation-verify"
         with:
           directory: "dist"

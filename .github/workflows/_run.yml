@@ -193,10 +193,16 @@ jobs:
           persist-credentials: false
 
       - name: "Setup reproducibility"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/reproducibility-setup"
       - name: "Setup git credentials"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/git-setup"
       - name: "Setup uv"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/uv-setup"
         with:
           group: "${{ inputs.group }}"

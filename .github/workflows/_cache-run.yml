@@ -101,6 +101,8 @@ jobs:
           # after initial template usage
           ref: "${{ inputs.ref }}"
       - name: "Setup uv and cache"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/uv-setup"
         with:
           group: "${{ inputs.group }}"

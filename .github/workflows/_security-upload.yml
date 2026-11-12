@@ -71,6 +71,8 @@ jobs:
         with:
           name: "${{ inputs.name }}"
       - name: "Upload SARIF file"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/sarif-upload"
         with:
           file: "${{ inputs.name }}.sarif"

@@ -67,6 +67,8 @@ jobs:
       # zizmor installed from the template (not the caller's uv.lock),
       # so the attested SARIF cannot come from an altered zizmor
       - name: "Setup template security tools"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/setup-release"
         with:
           group: "dev-security"
@@ -86,6 +88,8 @@ jobs:
         id: "upload"
         if: >
           !cancelled()
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/sarif-upload"
         with:
           name: "${{ inputs.name }}"

@@ -100,6 +100,8 @@ jobs:
           ref: "${{ github.ref_name }}"
           persist-credentials: true
       - name: "Setup git"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/git-setup"
       - name: "Globalize workflows"
         run: "bash .github/reusability/globalize.sh"
@@ -358,6 +360,8 @@ jobs:
       security-events: "write" # Writing security events to upload SARIF file
       contents: "read"
       id-token: "write" # Needed for GitHub OIDC token if publish_results
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-scorecard.yml"
     with:
       sarif: true

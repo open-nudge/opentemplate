@@ -95,6 +95,8 @@ jobs:
         # yamllint enable rule:indentation rule:line-length
       # Same build as _release-check.yml runs on every pull request
       - name: "Build distributions"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/dist-build"
       - name: "Get package metadata"
         id: "metadata"
@@ -104,6 +106,8 @@ jobs:
           echo "package-version=${sdist##*-}" >> "${GITHUB_OUTPUT}"
       - name: "Get distribution digests"
         id: "digests"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests"
         with:
           paths: "dist/*"

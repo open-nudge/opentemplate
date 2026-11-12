@@ -38,6 +38,8 @@ jobs:
       artifact-metadata: "write" # Needed to create artifact metadata
       contents: "read"
       pull-requests: "read" # Needed to read PR metadata during changelog gen
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release.yml"
 
   release-draft:
@@ -69,6 +71,8 @@ jobs:
           path: "${{ runner.temp }}/draft"
       # Other jobs of the run can replace the artifact, but not job outputs
       - name: "Verify release draft"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests-verify"
         with:
           directory: "${{ runner.temp }}/draft"
@@ -146,6 +150,8 @@ jobs:
             upload.pypi.org:443
       # Other jobs of the run can replace the artifact, but not job outputs
       - name: "Get distributions"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/dist-download"
         with:
           digests: "${{ needs.release.outputs.digests }}"
@@ -220,17 +226,23 @@ jobs:
       - name: "Verify documentation"
         # Other jobs of the run can replace the artifact, but not job outputs
         # so we compare the digests here
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests-verify"
         with:
           directory: "${{ runner.temp }}/docs"
           digests: "${{ needs.release.outputs.docs-digests }}"
           exact: "true"
       - name: "Update documentation"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/pages-update"
         with:
           archive: "${{ runner.temp }}/docs/site-${{ github.sha }}.tar"
           version: "${{ needs.release.outputs.version }}"
       - name: "Setup git"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/git-setup"
       - name: "Commit documentation"
         # enq: shell indentation is more readable

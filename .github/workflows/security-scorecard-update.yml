@@ -32,6 +32,8 @@ jobs:
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
     name: "Security Scorecard Update"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-scorecard.yml"
     with:
       sarif: true

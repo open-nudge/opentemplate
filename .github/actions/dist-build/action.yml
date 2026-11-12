@@ -14,10 +14,14 @@ runs:
   using: "composite"
   steps:
     - name: "Setup reproducibility"
+      # enq: globalize.sh expands this to repository path and commit SHA
+      # yamllint disable-line rule:line-length
       uses: "$/.github/actions/reproducibility-setup"
       with:
         path: "source"
     - name: "Setup template build tools"
+      # enq: globalize.sh expands this to repository path and commit SHA
+      # yamllint disable-line rule:line-length
       uses: "$/.github/actions/setup-release"
       with:
         group: "dev-build"

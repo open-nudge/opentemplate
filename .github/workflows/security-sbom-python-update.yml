@@ -22,6 +22,8 @@ jobs:
   latest-release:
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_latest-release-sha.yml"
 
   security-sbom-python-update:
@@ -53,6 +55,8 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-sbom-python.yml"
     with:
       ref: "${{ matrix.target.ref }}"

@@ -26,6 +26,8 @@ runs:
         path: "dist"
     # Every downloaded file must be listed, so none can be added
     - name: "Verify distributions"
+      # enq: globalize.sh expands this to repository path and commit SHA
+      # yamllint disable-line rule:line-length
       uses: "$/.github/actions/digests-verify"
       with:
         digests: "${{ inputs.digests }}"
