@@ -52,6 +52,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Sarif uv audit"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-uv-audit.yml"
     with:
       name: "security-uv-audit-${{ inputs.tag || github.sha }}"
@@ -61,6 +63,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Sarif Semgrep"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-semgrep.yml"
     with:
       name: "security-semgrep-${{ inputs.tag || github.sha }}"
@@ -70,6 +74,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Sarif zizmor"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-zizmor.yml"
     with:
       name: "security-zizmor-${{ inputs.tag || github.sha }}"
@@ -80,6 +86,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Sarif GuardDog Core"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
@@ -91,6 +99,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Sarif GuardDog Extras"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
@@ -102,6 +112,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Sarif GuardDog Actions"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "actions"
@@ -114,6 +126,8 @@ jobs:
       security-events: "read" # Needed by CodeQL init and analyze (no upload)
       contents: "read"
     name: "Sarif CodeQL"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-codeql.yml"
     with:
       name: "security-codeql-${{ inputs.tag || github.sha }}"
@@ -163,6 +177,8 @@ jobs:
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-upload.yml"
     with:
       name: "security-${{ matrix.tool.name }}-${{ inputs.tag || github.sha }}"

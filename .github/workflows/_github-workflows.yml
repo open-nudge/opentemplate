@@ -17,6 +17,8 @@ jobs:
     name: "_GitHub Workflows"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_run-check.yml"
     with:
       check: "github-workflows"

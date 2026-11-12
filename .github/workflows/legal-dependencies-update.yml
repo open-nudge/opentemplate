@@ -25,6 +25,8 @@ jobs:
   latest-release:
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_latest-release-sha.yml"
 
   first-commit:
@@ -85,6 +87,8 @@ jobs:
               skip: true
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_legal-dependencies.yml"
     with:
       base-ref: "${{ matrix.target.base }}"

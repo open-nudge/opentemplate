@@ -33,6 +33,8 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
     name: "Security SBOM Legal"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_sbom.yml"
     with:
       type: "legal"

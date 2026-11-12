@@ -73,6 +73,8 @@ jobs:
               www.msftconnecttest.com:443
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_cache-run.yml"
     with:
       group: "${{ matrix.install.group }}"
@@ -112,6 +114,8 @@ jobs:
           - "json5"
           - "toml"
           - "xml"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_cache-run.yml"
     with:
       group: "${{ matrix.group }}"

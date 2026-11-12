@@ -38,6 +38,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Security GuardDog Core"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
@@ -48,6 +50,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Security GuardDog Python"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "python"
@@ -58,6 +62,8 @@ jobs:
     permissions:
       contents: "read"
     name: "Security GuardDog Actions"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-guarddog.yml"
     with:
       target: "actions"
@@ -88,6 +94,8 @@ jobs:
     permissions:
       actions: "read" # https://github.com/github/codeql-action/issues/2117
       security-events: "write" # Needed to upload SARIF file to tab
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-upload.yml"
     with:
       name: "${{ matrix.scan.name }}"

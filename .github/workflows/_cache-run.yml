@@ -85,6 +85,7 @@ jobs:
       - name: "Checkout repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
+          # src: hatchling finds the package (src/<name>) to build the wheel
           sparse-checkout: |
             LICENSES
             .github/actions
@@ -92,6 +93,7 @@ jobs:
             pyproject.toml
             uv.lock
             project
+            src
           sparse-checkout-cone-mode: true
           # All blobs in the retried fetch, not lazily during checkout
           # https://github.com/actions/checkout/issues/2597
@@ -101,6 +103,8 @@ jobs:
           # after initial template usage
           ref: "${{ inputs.ref }}"
       - name: "Setup uv and cache"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/uv-setup"
         with:
           group: "${{ inputs.group }}"

@@ -52,6 +52,8 @@ jobs:
             api.github.com:443
       - name: "Get release version"
         id: "version"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/release-version"
 
   sboms:
@@ -65,6 +67,8 @@ jobs:
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release-sboms.yml"
     with:
       upload-sarif: "${{ inputs.upload-sarif }}"
@@ -79,6 +83,8 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release-sarifs.yml"
     with:
       upload-sarif: "${{ inputs.upload-sarif }}"
@@ -87,6 +93,8 @@ jobs:
     name: "Tests"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_tests.yml"
 
   docs:
@@ -95,6 +103,8 @@ jobs:
       - "version"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release-docs.yml"
     with:
       version: "${{ needs.version.outputs.version }}"
@@ -107,6 +117,8 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release-build.yml"
 
   changelog:
@@ -120,6 +132,8 @@ jobs:
     permissions:
       contents: "read"
       pull-requests: "read" # Needed to read PR metadata during changelog gen
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release-changelog.yml"
     with:
       package-name: "${{ needs.package-create.outputs.package-name }}"
@@ -134,6 +148,8 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to verify and upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release-vsa.yml"
     with:
       digests: "${{ needs.package-create.outputs.digests }}"
@@ -151,6 +167,8 @@ jobs:
     permissions:
       contents: "read"
       attestations: "read" # Needed to verify release assets
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_release-upload.yml"
     with:
       digests: "${{ needs.package-create.outputs.digests }}"

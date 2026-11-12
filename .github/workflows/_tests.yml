@@ -64,6 +64,8 @@ jobs:
       Tests | ${{ matrix.os.name }} | python-${{ matrix.python }}
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_run.yml"
     with:
       # enq: long line more readable than splitting within command
@@ -95,6 +97,8 @@ jobs:
     name: "Tests Mutation"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_run.yml"
     with:
       command: |
@@ -117,6 +121,8 @@ jobs:
     needs: "_tests"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_run.yml"
     with:
       # enq: long line more readable than splitting within command

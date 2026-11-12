@@ -63,6 +63,8 @@ jobs:
       - name: "Checkout repository" # zizmor: ignore[artipacked]
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
       - name: "Setup template"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/template-setup"
         with:
           template-repository: "opentemplate"
@@ -79,6 +81,8 @@ jobs:
           .github/workflows/template-setup.yml
           .github/workflows/template-test.yml
       - name: "Setup git credentials"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/git-setup"
       - name: "Push changes"
         run: |
@@ -270,6 +274,8 @@ jobs:
         # yamllint enable rule:line-length rule:indentation
       # Hash-locked in uv.lock (dev-template-setup group)
       - name: "Install cookiecutter"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/uv-setup"
         with:
           group: "template-setup"
@@ -320,6 +326,8 @@ jobs:
     name: "Cache Setup"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_cache.yml"
     # Checkout main as otherwise the files will not be available
     with:
@@ -334,6 +342,8 @@ jobs:
       security-events: "write" # Needed to upload SARIF file to tab
       id-token: "write" # Needed for GitHub OIDC token if publish_results
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-scorecard.yml"
     with:
       sarif: true

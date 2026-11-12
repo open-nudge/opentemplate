@@ -76,6 +76,8 @@ jobs:
           persist-credentials: false
       # Hash-locked uv from the template, the caller cannot alter it
       - name: "Setup uv"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/setup-release"
         with:
           group: "dev-bootstrap"
@@ -89,6 +91,8 @@ jobs:
         id: "upload"
         if: >
           !cancelled()
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/sarif-upload"
         with:
           name: "${{ inputs.name }}"

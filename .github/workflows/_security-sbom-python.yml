@@ -125,6 +125,8 @@ jobs:
       attestations: "write" # Needed to verify and upload attestation
       id-token: "write" # Needed to get GH Token to attest
       artifact-metadata: "write" # Needed to create artifact metadata
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_sbom.yml"
     with:
       type: "python"

@@ -36,5 +36,7 @@ jobs:
     name: "JSON5"
     permissions:
       contents: "read"
+    # enq: globalize.sh expands this to repository path and commit SHA
+    # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_json5.yml"
 ...

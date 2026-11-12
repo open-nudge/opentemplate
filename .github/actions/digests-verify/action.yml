@@ -60,6 +60,8 @@ runs:
       # yamllint enable rule:indentation rule:line-length
     - name: "Get digests of the files"
       id: "actual"
+      # enq: globalize.sh expands this to repository path and commit SHA
+      # yamllint disable-line rule:line-length
       uses: "$/.github/actions/digests"
       with:
         directory: "${{ inputs.directory }}"

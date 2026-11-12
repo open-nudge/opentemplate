@@ -92,11 +92,15 @@ jobs:
       # release.yml publishes the archive verified against this digest
       - name: "Get docs digests"
         id: "docs"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests"
         with:
           directory: "${{ runner.temp }}/unattested"
           paths: "site-${{ github.sha }}.tar"
       - name: "Verify distributions"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests-verify"
         with:
           digests: "${{ inputs.digests }}"
@@ -105,6 +109,8 @@ jobs:
       # table in docs/template/release-your-project/process.md)
       # Without attestations (e.g. pull requests) only the files are checked
       - name: "Verify attestations"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/attestation-verify"
         with:
           directory: "${{ runner.temp }}/assets"
@@ -170,12 +176,16 @@ jobs:
           } > "${RUNNER_TEMP}/assets/notes.md"
         # yamllint enable rule:indentation rule:line-length
       - name: "Update documentation"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/pages-update"
         with:
           archive: "${{ runner.temp }}/unattested/site-${{ github.sha }}.tar"
           version: "${{ inputs.version }}"
       - name: "Get draft digests"
         id: "draft"
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
         uses: "$/.github/actions/digests"
         with:
           directory: "${{ runner.temp }}/assets"
