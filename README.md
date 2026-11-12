@@ -163,7 +163,8 @@ __opentemplate__ is a Python template which is:
     (VSA): the build provenance of the distributions is verified
     and the achieved SLSA Build level is attested for them
 - __[Software Bills of Materials](https://www.cisa.gov/sbom) (SBOMs)__:
-    generated per-Python, per-OS, per-dependency group -
+    generated per-Python, per-OS, per-dependency group
+    and embedded in the wheel ([PEP 770](https://peps.python.org/pep-0770/)) -
     __each [attested](https://github.com/actions/attest)__,
     and attached to the release
 - __Static security analysis tooling__: [`uv audit`](https://docs.astral.sh/uv/)

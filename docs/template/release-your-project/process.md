@@ -91,7 +91,10 @@ Managed automatically based on commit messages:
 
 Releases include only attested artifacts:
 
-- __Python package__ ([packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/))
+- __Python package__ ([packaging guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/)),
+    its wheel contains a CycloneDX SBOM of itself
+    ([PEP 770](https://peps.python.org/pep-0770/), created by
+    [python-sbom](https://github.com/tox-dev/python-sbom))
 
 - [uv audit](https://docs.astral.sh/uv/),
     [Semgrep](https://semgrep.dev/docs/cli-reference),
@@ -214,7 +217,8 @@ the command below should output `ahead` or `identical`:
 gh api repos/open-nudge/opentemplate/compare/<sha>...main --jq .status
 ```
 
-Every SBOM is additionally attested __against the wheel and source
+The wheel's own SBOM is covered by the wheel's digest (it is inside it),
+every other SBOM is additionally attested __against the wheel and source
 distribution__ (subject: distribution digest, predicate: the SBOM),
 __only after their provenance is verified__.
 
@@ -319,6 +323,9 @@ This process can be adjusted by editing:
 > [!IMPORTANT]
 > Reusable workflows run from the template commit pinned in
 > `.github/workflows` (`@<sha>`), editing their local copies has no effect.
+> Distributions are built with that commit's `pyproject.toml` as well,
+> only `[project]` comes from the project (other build settings,
+> e.g. `[tool.hatch]` or `hatch.toml`, are ignored).
 > To change them, fork the template and point `uses:` to the fork
 > (attestations are then signed by the fork's workflows).
 
@@ -339,6 +346,7 @@ This process can be adjusted by editing:
 - `.github/workflows/_release-sboms.yml`
 - `.github/workflows/_sbom.yml`
 - `.github/workflows/_security-upload.yml`
+- `.github/actions/dist-build/action.yml`
 - `.github/actions/attestation-verify/action.yml`
 - `.github/actions/digests-verify/action.yml`
 - `.github/actions/pages-update/action.yml`

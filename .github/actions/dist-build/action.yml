@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "Build"
+description: >
+  Build distributions of the project checked out in ./source into ./dist
+  with the template's build tools and pyproject.toml (only [project] comes
+  from the project), so the project cannot run its code during the build
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup reproducibility"
+      uses: "$/.github/actions/reproducibility-setup"
+      with:
+        path: "source"
+    - name: "Setup template build tools"
+      uses: "$/.github/actions/setup-release"
+      with:
+        group: "dev-build"
+    # Files read before pyproject.toml (hatch.toml, comver's loadfig)
+    # would override the template's build settings
+    # -P: source directory must not shadow tomlkit or hatchling (or stdlib)
+    - name: "Use template build configuration"
+      shell: "bash"
+      working-directory: "source"
+      # enq: inline Python is more readable with its own indentation
+      # yamllint disable rule:indentation
+      run: |
+        rm -f hatch.toml .comver.toml .config/comver.toml
+        uv run --project ../template python -P - <<'PY'
+        import pathlib
+        import tomlkit
+
+        source = pathlib.Path("pyproject.toml")
+        config = tomlkit.parse(pathlib.Path("../template/pyproject.toml").read_text())
+        config["project"] = tomlkit.parse(source.read_text())["project"]
+        source.write_text(tomlkit.dumps(config))
+        PY
+      # yamllint enable rule:indentation
+    # Backend is called directly: an isolated build would install
+    # [build-system] requires unpinned, while uv would load project config.
+    # The template's hash-locked dev-build group provides the backend
+    # and its plugins (comver, python-sbom).
+    - name: "Build distributions"
+      shell: "bash"
+      working-directory: "source"
+      env:
+        # SBOM source revision, the replaced pyproject.toml makes it dirty
+        PYTHON_SBOM_COMMIT: "${{ github.sha }}"
+      run: >
+        uv run --project ../template
+        python -P -m hatchling build --directory ../dist
+...
