@@ -9,6 +9,7 @@ build-backend = "hatchling.build"
 requires = [
   "hatchling>=1",
   "comver[hatchling]>=1",
+  "python-sbom[hatch]>=0.3",
 ]
 
 [project]
@@ -198,6 +199,10 @@ dev-template-setup = [
 dev-build = [
   "hatchling>=1",
   "comver[hatchling]>=1",
+  "python-sbom[hatch]>=0.3",
+  # Writes the template's pyproject.toml (see .github/actions/dist-build)
+  # also provided by hatchling, but mentioned explicitly for safety
+  "tomlkit>=0.13",
 ]
 
 dev-release = [
@@ -277,17 +282,20 @@ dev-all = [
 #
 ###############################################################################
 
+# Release builds use the template's settings so changes to this one are ignored
 [tool.hatch.version]
 source = "comver"
 
 [tool.hatch.build.targets.sdist]
 only-include = [
-  "src/opentemplate",
+  "src",
   "LICENSES",
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/opentemplate"]
+[tool.hatch.build.hooks.python-sbom]
+
+[tool.python-sbom]
+supplier = { name = "open-nudge", url = ["https://github.com/open-nudge"] }
 
 [tool.uv]
 required-version = ">=0.11.8"

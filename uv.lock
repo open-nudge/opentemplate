@@ -1085,6 +1085,15 @@ wheels = [
 ]
 
 [[package]]
+name = "installer"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/56/d3/2fab33d15004d41ae8e7b5d3e310510f7f34a7e1dd032a3e60d8b38d8fba/installer-1.1.0.tar.gz", hash = "sha256:5adc0c01ce62d809989e246987cd68944fe5df8af562d0358f65b2ab15cb5de7", size = 481257, upload-time = "2026-10-12T19:35:52.851Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d7/7a/63547a792a12148882205d79e07644091d5b7690f40c2bb9d41452a8bdc2/installer-1.1.0-py3-none-any.whl", hash = "sha256:f55f5728ff61d3dd54dbc5a397cf3f7307cb64b180c20b72afbebf01c9e2c8a0", size = 464466, upload-time = "2026-10-12T19:35:51.096Z" },
+]
+
+[[package]]
 name = "interrogate"
 version = "1.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2252,11 +2261,13 @@ dev-all = [
     { name = "pytest-randomly" },
     { name = "pytest-socket" },
     { name = "pytest-timeout" },
+    { name = "python-sbom", extra = ["hatch"] },
     { name = "reuse" },
     { name = "ruff" },
     { name = "shellcheck-py" },
     { name = "spdx-tools" },
     { name = "termynal" },
+    { name = "tomlkit" },
     { name = "validate-pyproject" },
     { name = "yamllint" },
     { name = "zizmor" },
@@ -2267,6 +2278,8 @@ dev-bootstrap = [
 dev-build = [
     { name = "comver", extra = ["hatchling"] },
     { name = "hatchling" },
+    { name = "python-sbom", extra = ["hatch"] },
+    { name = "tomlkit" },
 ]
 dev-citation = [
     { name = "check-jsonschema" },
@@ -2469,11 +2482,13 @@ dev-all = [
     { name = "pytest-randomly", specifier = ">=3" },
     { name = "pytest-socket", specifier = ">=0.7" },
     { name = "pytest-timeout", specifier = ">=2" },
+    { name = "python-sbom", extras = ["hatch"], specifier = ">=0.3" },
     { name = "reuse", specifier = ">=4" },
     { name = "ruff", specifier = ">=0.5.6" },
     { name = "shellcheck-py", specifier = ">=0.10.0" },
     { name = "spdx-tools", specifier = ">=0.8.3" },
     { name = "termynal", specifier = ">=0.12.1" },
+    { name = "tomlkit", specifier = ">=0.13" },
     { name = "validate-pyproject", specifier = ">=0.18" },
     { name = "yamllint", specifier = ">=1" },
     { name = "zizmor", specifier = ">=1" },
@@ -2482,6 +2497,8 @@ dev-bootstrap = [{ name = "uv", specifier = ">=0.11.8" }]
 dev-build = [
     { name = "comver", extras = ["hatchling"], specifier = ">=1" },
     { name = "hatchling", specifier = ">=1" },
+    { name = "python-sbom", extras = ["hatch"], specifier = ">=0.3" },
+    { name = "tomlkit", specifier = ">=0.13" },
 ]
 dev-citation = [{ name = "check-jsonschema", specifier = ">=0.31.2" }]
 dev-commit = [{ name = "conventional-pre-commit", specifier = ">=4" }]
@@ -3413,6 +3430,26 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/da/db/0b3e28ac047452d079d375ec6798bf76a036a08182dbb39ed38116a49130/python-magic-0.4.27.tar.gz", hash = "sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b", size = 14677, upload-time = "2022-06-07T20:16:59.508Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6c/73/9f872cb81fc5c3bb48f7227872c28975f998f3e7c2b1c16e95e6432bbb90/python_magic-0.4.27-py2.py3-none-any.whl", hash = "sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3", size = 13840, upload-time = "2022-06-07T20:16:57.763Z" },
+]
+
+[[package]]
+name = "python-sbom"
+version = "0.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "installer" },
+    { name = "packageurl-python" },
+    { name = "packaging" },
+    { name = "zipremove" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e7/c8/433fce09ca6d9580e71b1bcde4db4da5c1f77039536deca9d373f1b7886e/python_sbom-0.3.1.tar.gz", hash = "sha256:37d0fa3d0a16fddc3d88099e147e164ddb3055e8bc3424506ef41dd80f723a73", size = 289516, upload-time = "2026-11-10T00:30:46.773Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/14/f144bdd2ced56c3ffb5e6f85761a8ed203955de25f56803cebf584db2b71/python_sbom-0.3.1-py3-none-any.whl", hash = "sha256:fd7a64f0293c033ac8ed8946c3c2513e936eacb7c297fe5110e5bb06d42aafc9", size = 205103, upload-time = "2026-11-10T00:30:44.86Z" },
+]
+
+[package.optional-dependencies]
+hatch = [
+    { name = "hatchling" },
 ]
 
 [[package]]
@@ -4549,6 +4586,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/9f/5d/2680831aa43d181a0cc023ba89132ff6f03a0532f220cde27bccd60d54e2/yara_python-4.5.4-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:0b9de86fbe8a646c0644df9e1396d6941dc6ed0f89be2807e6c52ab39161fd9f", size = 2949066, upload-time = "2025-05-27T14:15:18.822Z" },
     { url = "https://files.pythonhosted.org/packages/9e/76/e89ec354731b1872462fa9cfdfc6d4751c272b3f43fa55523a8f0fcdd48a/yara_python-4.5.4-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:973f0bc24470ac86b6009baf2800ad3eadfa4ab653b6546ba5c65e9239850f47", size = 2420758, upload-time = "2025-05-27T14:15:20.505Z" },
     { url = "https://files.pythonhosted.org/packages/0c/28/9499649cb2cb42592c13ca6a15163e0cbf132c2974394de171aa5f8b49e4/yara_python-4.5.4-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:cb0f0e7183165426b09e2b1235e70909e540ac18e2c6be96070dfe17d7db4d78", size = 2639628, upload-time = "2025-05-27T14:15:22.142Z" },
+]
+
+[[package]]
+name = "zipremove"
+version = "0.10.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/92/30/47d65b9213f52df8a51f603cb0a2e5ef02c22172a8a17805e46c3beabb0d/zipremove-0.10.0.tar.gz", hash = "sha256:3c5957c115447b54299d3a23128764b59c4558fc98c4b878ff2dbc5db8a62021", size = 25448, upload-time = "2026-07-17T15:50:45.516Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0a/e4/2225c1890ce6e239ca23efabb80a3481229a14a2deaa489f5e89723a5aa6/zipremove-0.10.0-py3-none-any.whl", hash = "sha256:04e15df7083642d5b791e51f597cffef8a92d770ecf5160c529b5a7b53b40100", size = 11280, upload-time = "2026-07-17T15:50:44.653Z" },
 ]
 
 [[package]]

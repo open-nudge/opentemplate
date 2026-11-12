@@ -240,4 +240,13 @@ dependencies:
 
         It can be accessed from the release page of the repository or from
         the Insights tab of the repository (as described by sbom-url).
+    - sbom-file: >
+        https://github.com/open-nudge/opentemplate/releases
+      sbom-format: "cyclonedx"
+      sbom-url: "https://github.com/tox-dev/python-sbom"
+      sbom-creation: |
+        Wheel CycloneDX SBOM is created by python-sbom (hatchling build hook)
+        during every release build and embedded in the wheel (PEP 770).
+
+        It can be accessed from the wheel (.dist-info/sboms/).
 ...

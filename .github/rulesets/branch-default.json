@@ -55,6 +55,10 @@
             "integration_id": 15368
           },
           {
+            "context": "Release Check / _Release Check Build",
+            "integration_id": 15368
+          },
+          {
             "context": "Security CodeQL / _Security CodeQL",
             "integration_id": 15368
           },
