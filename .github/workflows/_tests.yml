@@ -93,29 +93,6 @@ jobs:
         ${{ matrix.os.endpoints }}
       timeout-minutes: "${{ inputs.timeout-minutes }}"
 
-  tests-mutation:
-    name: "Tests Mutation"
-    permissions:
-      contents: "read"
-    # enq: globalize.sh expands this to repository path and commit SHA
-    # yamllint disable-line rule:line-length
-    uses: "$/.github/workflows/_run.yml"
-    with:
-      command: |
-        uv run poe tests-mutation
-      # src/** ships package data (e.g. py.typed) in the built wheel
-      sparse-checkout: |
-        **.py
-        src/**
-        tests/**
-        .github/tools/tests-mutation.sh
-      group: "tests"
-      core: true
-      os: "ubuntu-latest"
-      additional-allowed-endpoints: >
-        ${{ inputs.additional-allowed-endpoints }}
-      timeout-minutes: "${{ inputs.timeout-minutes }}"
-
   coverage:
     name: "Coverage"
     needs: "_tests"

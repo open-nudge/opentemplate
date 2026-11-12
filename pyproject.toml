@@ -734,6 +734,7 @@ tests-coverage = { sequence = [
 ], args = [
   { name = "paths", positional = true, multiple = true },
 ], env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--randomly-seed=${SEED:-0} --hypothesis-seed=${SEED:-0}" } }
+# Slow, hence run on demand only (not in CI or prek)
 # mutmut disables pytest-randomly (unknown --randomly-seed)
 tests-mutation = { cmd = ".github/tools/tests-mutation.sh", env = { PYTHONHASHSEED = "${SEED:-0}", PYTEST_ADDOPTS = "--hypothesis-seed=${SEED:-0}" } }
 env-tests = { shell = """
@@ -756,11 +757,9 @@ tests = { sequence = [
   #
   # cycle = cogeol.scientific()[-1]["cycle"]
   # cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-coverage ${{paths}}" }},')
-  # cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-mutation" }},')
   # ]]]
   { ref = "env-tests --python 3.13 tests-coverage ${paths}" },
-  { ref = "env-tests --python 3.13 tests-mutation" },
-  # [[[end]]] (sum: /BFHkZeaWr)
+  # [[[end]]] (sum: Zkn36EfiD3)
 ], args = [
   { name = "paths", positional = true, multiple = true },
 ] }
@@ -775,14 +774,11 @@ tests-all = { sequence = [
   # for version in cogeol.scientific():
   #     cycle = version["cycle"]
   #     cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-coverage ${{paths}}" }},')
-  # cycle = cogeol.scientific()[-1]["cycle"]
-  # cog.outl(f'  {{ ref = "env-tests --python {cycle} tests-mutation" }},')
   # ]]]
   { ref = "env-tests --python 3.15 tests-coverage ${paths}" },
   { ref = "env-tests --python 3.14 tests-coverage ${paths}" },
   { ref = "env-tests --python 3.13 tests-coverage ${paths}" },
-  { ref = "env-tests --python 3.13 tests-mutation" },
-  # [[[end]]] (sum: JgwQgDxvNU)
+  # [[[end]]] (sum: owIUorTnyg)
 ], args = [
   { name = "paths", positional = true, multiple = true },
 ] }
