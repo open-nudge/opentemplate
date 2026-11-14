@@ -44,4 +44,7 @@ allow-dependencies-licenses:
   - "pkg:pypi/wcwidth"
   # MPL-2.0 (with MIT and BSD-3-Clause), dev-pyproject group (not distributed)
   - "pkg:pypi/validate-pyproject"
+  # GPL-3.0-or-later (with Apache-2.0, CC-BY-SA-4.0 and CC0-1.0),
+  # dev-legal and dev-release groups (not distributed)
+  - "pkg:pypi/reuse"
 ...

@@ -517,6 +517,8 @@ addopts = [
 ]
 # Per-test timeout in seconds
 timeout = 300
+# Explicit (upcoming default), unset it is a deprecation warning (error below)
+asyncio_default_fixture_loop_scope = "function"
 filterwarnings = [
   "error",
 ]

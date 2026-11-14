@@ -219,7 +219,7 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
 
 [[repos]]
 repo = "https://github.com/semgrep/pre-commit"
-rev = "a19f9deb8c211c43e469e994fa8ee15178bc1b1d" # frozen: v1.183.0
+rev = "e85cc41d57d8c4cc95d97c8813051744e51bd061" # frozen: v1.184.0
 
   # Keep these arguments aligned with the Docker scan in
   # .github/workflows/_security-semgrep.yml.
