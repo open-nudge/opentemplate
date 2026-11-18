@@ -4,47 +4,54 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-# Configuration of the Trivy scans (.github/workflows/_sbom.yml) and of
-# dependency-review-action (.github/workflows/_legal-dependencies.yml).
+# Configuration of the Trivy scans (.github/workflows/_sbom.yml).
 
-# Allowed licenses (exact SPDX identifiers) of the distributed Python
-# dependencies are classified as notice (LOW severity) and not reported,
-# any other license (including unknown ones) fails the license check.
+# Allowed licenses (exact SPDX identifiers) of the distributed dependencies
+# (project.dependencies and project.optional-dependencies) are classified as
+# notice (LOW severity) and not reported, any other license (including unknown
+# ones) fails the license check.
+
+# NOTE: Dependency groups and GitHub Actions are not distributed, therefore not checked.
 license:
-  notice: &allowed-licenses
+  notice:
     - "MIT"
     - "MIT-0"
+    - "MIT-CMU"
     - "Apache-2.0"
     - "BSD-2-Clause"
     - "BSD-3-Clause"
     - "ISC"
     - "PSF-2.0"
     - "Python-2.0"
+    - "Python-2.0.1"
+    - "CNRI-Python"
     - "0BSD"
     - "Unlicense"
+    - "CC0-1.0"
     - "Zlib"
     - "OFL-1.1"
-  # Emptied, these would otherwise be LOW severity (not reported) as well
+    - "BSL-1.0"
+    - "HPND"
+    - "X11"
+    - "NCSA"
+    - "UPL-1.0"
+    - "Unicode-3.0"
+    - "Unicode-DFS-2016"
+    - "BlueOak-1.0.0"
+    - "PostgreSQL"
+    - "MPL-2.0"
+    - "LGPL-2.1-only"
+    - "LGPL-2.1-or-later"
+    - "LGPL-3.0-only"
+    - "LGPL-3.0-or-later"
+  # enq: the only way to set an empty list in YAML
+  forbidden: [] # yamllint disable-line rule:brackets
+  # enq: the only way to set an empty list in YAML
+  restricted: [] # yamllint disable-line rule:brackets
+  # enq: the only way to set an empty list in YAML
+  reciprocal: [] # yamllint disable-line rule:brackets
   # enq: the only way to set an empty list in YAML
   permissive: [] # yamllint disable-line rule:brackets
   # enq: the only way to set an empty list in YAML
   unencumbered: [] # yamllint disable-line rule:brackets
-
-allow-licenses: *allowed-licenses
-# Exceptions as package URLs, e.g. pkg:githubactions/<owner>/<repo>
-# The dependency graph reports every uv.lock package as runtime (development
-# scope requires a virtual project), hence development and template setup
-# dependencies are listed here
-allow-dependencies-licenses:
-  # MPL-2.0, tooling and template setup dependency (not distributed)
-  - "pkg:pypi/certifi"
-  # MPL-2.0, dev-tests group (not distributed)
-  - "pkg:pypi/hypothesis"
-  # MIT-CMU, dev-docs group (not distributed)
-  - "pkg:pypi/wcwidth"
-  # MPL-2.0 (with MIT and BSD-3-Clause), dev-pyproject group (not distributed)
-  - "pkg:pypi/validate-pyproject"
-  # GPL-3.0-or-later (with Apache-2.0, CC-BY-SA-4.0 and CC0-1.0),
-  # dev-legal and dev-release groups (not distributed)
-  - "pkg:pypi/reuse"
 ...

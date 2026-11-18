@@ -10,14 +10,6 @@ on:
   pull_request:
     branches:
       - "main"
-    paths:
-      - ".trivy.yaml"
-      - ".trivyignore.yaml"
-      - "pyproject.toml"
-      - "uv.lock"
-      - ".github/workflows/security-sbom-python.yml"
-      - ".github/workflows/_security-sbom-python.yml"
-      - ".github/workflows/_sbom.yml"
   merge_group:
     types:
       - "checks_requested"
@@ -44,4 +36,20 @@ jobs:
     # enq: globalize.sh expands this to repository path and commit SHA
     # yamllint disable-line rule:line-length
     uses: "$/.github/workflows/_security-sbom-python.yml"
+
+  # Single required check, as matrix check names change with Python versions.
+  security-sbom-python-check:
+    name: "Security SBOM Python Check"
+    if: >
+      failure() || cancelled()
+    needs:
+      - "security-sbom-python"
+    timeout-minutes: 5
+    # enq: the only way to set permissions to none in GH Actions
+    permissions: {} # yamllint disable-line rule:braces
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Fail on failed or cancelled SBOM jobs"
+        run: >
+          echo "::error::Security SBOM Python jobs failed or were cancelled" && exit 1
 ...
