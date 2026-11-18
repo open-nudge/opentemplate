@@ -34,82 +34,40 @@ meaning:
 
 ### License compliance
 
-Licenses of dependencies are checked in CI against a single list of allowed
-[SPDX identifiers](https://spdx.org/licenses/) (`license.notice` in `.trivy.yaml`):
+Licenses of the distributed dependencies (`project.dependencies` and
+`project.optional-dependencies`) are checked in CI against a list of allowed
+[SPDX identifiers](https://spdx.org/licenses/) (`license.notice` in `.trivy.yaml`),
+permissive and weak copyleft licenses which do not affect the license
+of the project, e.g.
 
-> MIT, MIT-0, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC,
-> PSF-2.0, Python-2.0, 0BSD, Unlicense, Zlib, OFL-1.1
+> MIT, Apache-2.0, BSD-3-Clause, ISC, PSF-2.0, CC0-1.0, MPL-2.0, LGPL-3.0-only
 
-<!-- pyml disable-num-lines 7 line-length-->
-
-| Dependencies                             | Tool                       | Checked on                                         |
-| ---------------------------------------- | -------------------------- | -------------------------------------------------- |
-| Python `core` and `extras` (distributed) | Trivy                      | pull requests changing them, weekly, every release |
-| GitHub Actions, `uv.lock` files          | `dependency-review-action` | every pull request, weekly                         |
-| Python development groups                | `dependency-review-action` | every pull request (`uv.lock`), weekly             |
-
-Both tools fail on a license outside of the list.
+Any other license (including unknown ones) fails the check.
+Dependency groups (e.g. `dev-tests`) and GitHub Actions are not distributed,
+therefore not checked.
 
 > [!IMPORTANT]
-> Neither runs locally, so the first feedback is on CI!
-
-#### Python dependencies
+> The check does not run locally, so the first feedback is on CI!
 
 [Trivy](https://github.com/aquasecurity/trivy) checks the licenses of
-the package environments (`core` and `extras`), installed per Python version
-and OS
+the package environments installed from `uv.lock` per Python version and OS,
+`extras` (which includes `core`) and, on releases, also `core` separately
 (`.github/workflows/_sbom.yml`, configured in `.trivy.yaml` and `.trivyignore.yaml`).
 It evaluates SPDX expressions (e.g. `MIT OR GPL-3.0-only` passes,
 `MIT AND GPL-3.0-only` does not).
 
-The check runs on pull requests changing the dependencies (or the Trivy
-configuration), weekly against `main` and the latest release, and before every
-release
+The check runs on every pull request, weekly against `main` and the latest
+release, and before every release
 (`/tool:trivy/scope:licenses-<name>/language:python`, weekly and releases).
 
 > [!NOTE]
-> Like tests, the check runs only when dependencies change, therefore it is not
-> required for merging. Releases are not published with a failing check.
+> Pull requests require `Security SBOM Python Check` (results of every
+> Python version and OS) to pass before merging, releases are not published
+> with a failing check.
 
 > [!WARNING]
-> Development dependency groups are not checked, as they are not distributed.
-
-#### GitHub Actions and other dependencies
-
-`legal-dependencies.yml` runs
-[`dependency-review-action`](https://github.com/actions/dependency-review-action)
-on pull requests (and merge queues). It compares the
-[dependency graph](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph)
-of the base and head commits and fails if an __added or changed__ dependency
-has a license outside of the list (`allow-licenses` in `.trivy.yaml`
-refers to `license.notice`).
-
-It covers ecosystems which Trivy cannot see, most notably third-party
-GitHub Actions and reusable workflows used in workflows (and composite actions).
-It compares `uv.lock` as well (overlapping Trivy). Development dependencies
-(dependency groups) would be ignored (`fail-on-scopes`), but the dependency
-graph reports every `uv.lock` package of a non-virtual project as `runtime`,
-so development dependencies with other licenses are listed in
-`allow-dependencies-licenses` (e.g. `pkg:pypi/hypothesis`, MPL-2.0).
-
-`legal-dependencies-update.yml` runs the same check weekly between
-the first commit and the latest release, and between the latest release
-and `main` (between the first commit and `main` before the first release).
-
-> [!WARNING]
-> Dependencies of the first commit (the `opentemplate` snapshot, checked
-> by `opentemplate`) are not compared, check them manually
-> after narrowing the allowed licenses.
-
-> [!WARNING]
-> Dependencies without any license information are not reported by either
-> tool (`dependency-review-action` only lists them in the job summary),
+> Dependencies without any license information are not reported,
 > review such new dependencies manually.
-
-> [!IMPORTANT]
-> The dependency graph has to be enabled
-> (default for public repositories, private ones require
-> [GitHub Code Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security)).
 
 ## Adjustments
 
@@ -128,17 +86,12 @@ and `main` (between the first commit and `main` before the first release).
 > Adjust project licensing as needed.
 
 To update allowed licenses, modify `license.notice` in `.trivy.yaml`
-(exact SPDX identifiers, __also used by `dependency-review-action`__).
+(exact SPDX identifiers).
 
-Exceptions for single dependencies:
-
-- Python: `licenses` in `.trivyignore.yaml`, identified by the license and
-    the path of the package metadata as a glob (matching every Python version
-    and OS), e.g. `**/<package>-*.dist-info/METADATA`, optionally until
-    `expired_at` (prefer allowing the license if acceptable)
-- GitHub Actions and `uv.lock`: `allow-dependencies-licenses`
-    in `.trivy.yaml` as [package URLs](https://github.com/package-url/purl-spec),
-    e.g. `pkg:githubactions/<owner>/<repo>`
+Exceptions for single dependencies are `licenses` in `.trivyignore.yaml`,
+identified by the license and the path of the package metadata as a glob
+(matching every Python version and OS), e.g. `**/<package>-*.dist-info/METADATA`,
+optionally until `expired_at` (prefer allowing the license if acceptable).
 
 > [!NOTE]
 > Both files are attested and attached to every release, so the allowed

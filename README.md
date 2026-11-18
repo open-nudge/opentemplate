@@ -117,12 +117,10 @@ __opentemplate__ is a Python template which is:
     [SPDX Licensing](https://spdx.dev/learn/handling-license-info/)
     for more information
 - __Dependency license compliance__: distributed Python dependencies
+    (`project.dependencies` and optional dependencies)
     are checked by [Trivy](https://github.com/aquasecurity/trivy)
-    (per Python version and OS), GitHub Actions and other dependencies
-    checked by
-    [`dependency-review-action`](https://github.com/actions/dependency-review-action),
-    both against a single list of allowed licenses
-    (as defined in `.trivy.yaml`)
+    (per Python version and OS) against the allowed licenses
+    (as defined in `.trivy.yaml`) on every pull request (required to merge)
 - __Automated Python version updates__: `pyproject.toml`
     (and GitHub Actions pipelines where necessary)
     are automatically updated to always use __3 latest Python

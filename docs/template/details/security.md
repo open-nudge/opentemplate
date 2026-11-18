@@ -154,12 +154,13 @@ with a reason to `[tool.uv.audit]` in `pyproject.toml`:
 
 [Trivy](https://github.com/aquasecurity/trivy) scans the Python SBOMs
 (per tier, Python version and OS) for known vulnerabilities and the licenses
-of the distributed environments (`core` and `extras`) on pull requests
-(job summary only), weekly (`main` and the latest release)
+of the distributed environments (`extras`, which includes `core`, and on
+releases also `core` separately) on every pull request (job summary only),
+weekly (`main` and the latest release)
 and before every release (`.github/workflows/_sbom.yml`)
 (latter two being uploaded to the security tab).
 Vulnerabilities are triaged in the Security tab, while licenses outside of
-the allowed ones fail the job (see [legal](legal.md#python-dependencies)).
+the allowed ones fail the job (see [legal](legal.md#license-compliance)).
 
 Configuration (allowed licenses) is stored in `.trivy.yaml`,
 triaged findings are ignored in `.trivyignore.yaml`. __Both files are required__,
@@ -192,10 +193,13 @@ Python dependencies are scanned per tier (as SBOMs are):
 
 <!-- pyml disable-num-lines 8 line-length-->
 
-| Tier     | Dependencies                       | Scanned on                     |
-| -------- | ---------------------------------- | ------------------------------ |
-| `core`   | `--no-default-groups`              | releases                       |
-| `extras` | `--no-default-groups --all-extras` | pull requests, `main`, release |
+| Tier     | Dependencies                       | Scanned on                           |
+| -------- | ---------------------------------- | ------------------------------------ |
+| `core`   | `--no-default-groups`              | releases                             |
+| `extras` | `--no-default-groups --all-extras` | every pull request, `main`, releases |
+
+Pull requests require both scans (`Security GuardDog Python` and
+`Security GuardDog Actions`) to complete before merging.
 
 > [!NOTE]
 > Heuristics produce false positives, therefore findings do not fail the
