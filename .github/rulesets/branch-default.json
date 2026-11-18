@@ -35,10 +35,6 @@
             "integration_id": 15368
           },
           {
-            "context": "Legal Dependencies / _Legal Dependencies",
-            "integration_id": 15368
-          },
-          {
             "context": "Policy",
             "integration_id": 15368
           },
@@ -63,6 +59,14 @@
             "integration_id": 15368
           },
           {
+            "context": "Security GuardDog Actions / _Security GuardDog (actions)",
+            "integration_id": 15368
+          },
+          {
+            "context": "Security GuardDog Python / _Security GuardDog (python)",
+            "integration_id": 15368
+          },
+          {
             "context": "Security uv audit / _Security uv audit",
             "integration_id": 15368
           },
@@ -72,6 +76,10 @@
           },
           {
             "context": "Security SBOM Legal / SBOM Create",
+            "integration_id": 15368
+          },
+          {
+            "context": "Security SBOM Python Check",
             "integration_id": 15368
           },
           {

@@ -10,10 +10,6 @@ on:
   pull_request:
     branches:
       - "main"
-    paths:
-      - "pyproject.toml"
-      - "uv.lock"
-      - ".github/workflows/**"
   merge_group:
     types:
       - "checks_requested"
@@ -33,19 +29,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Dev dependencies are not scanned as it takes too long
-  security-guarddog-core:
-    permissions:
-      contents: "read"
-    name: "Security GuardDog Core"
-    # enq: globalize.sh expands this to repository path and commit SHA
-    # yamllint disable-line rule:line-length
-    uses: "$/.github/workflows/_security-guarddog.yml"
-    with:
-      target: "python"
-      groups: "--no-default-groups"
-      name: "guarddog-core"
-
   security-guarddog-python:
     permissions:
       contents: "read"
@@ -73,7 +56,6 @@ jobs:
   security-guarddog-upload:
     name: "Security GuardDog Upload (${{ matrix.scan.name }})"
     needs:
-      - "security-guarddog-core"
       - "security-guarddog-python"
       - "security-guarddog-actions"
     # Also on failure, so findings reach the Security tab
@@ -85,8 +67,6 @@ jobs:
       fail-fast: false
       matrix:
         scan:
-          - name: "guarddog-core"
-            category: "/tool:guarddog/scope:dependencies-core/language:python"
           - name: "guarddog-extras"
             category: "/tool:guarddog/scope:dependencies-extras/language:python"
           - name: "guarddog-actions"

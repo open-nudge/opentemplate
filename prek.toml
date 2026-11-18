@@ -141,7 +141,7 @@ repo = "meta"
 
 [[repos]]
 repo = "https://github.com/siderolabs/conform"
-rev = "57c5cc3cabc0c9219d69673cfa8faa49c2db76fb" # frozen: v0.1.0-alpha.32
+rev = "18598907d4315be915a0c446fdd8aa9b47ba2c22" # frozen: v0.1.0-alpha.33
 
   [[repos.hooks]]
   id = "conform"
@@ -219,7 +219,7 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
 
 [[repos]]
 repo = "https://github.com/semgrep/pre-commit"
-rev = "e85cc41d57d8c4cc95d97c8813051744e51bd061" # frozen: v1.184.0
+rev = "14ad2383dd6f19216cc78ba8ea1d4f607fc29df1" # frozen: v1.185.0
 
   # Keep these arguments aligned with the Docker scan in
   # .github/workflows/_security-semgrep.yml.
