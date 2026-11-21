@@ -88,7 +88,7 @@ __opentemplate__ is a Python template which is:
 
 - __Package manager:__ [`uv`](https://docs.astral.sh/uv/)
     (with [`poe`](https://poethepoet.natn.io/) tasks)
-    and a single `uv run poe setup` manages everything!
+    and a single `uv run poe setup` manages everything.
     (see [why uv](https://open-nudge.github.io/opentemplate/latest/template/about/faq/#why-use-uv-with-poe))
 - __Testing:__ [`pytest`](https://docs.pytest.org/en/stable/)
     (with [`coverage`](https://coverage.readthedocs.io/en/7.9.1/),
@@ -135,13 +135,13 @@ __opentemplate__ is a Python template which is:
     each release is attested and immutably versioned via
     [`commition`](https://pypi.org/project/commition/)
 - [__`prek`__](https://prek.j178.dev/): __all checks and fixers are run
-    before commit__, no need to remember them!
-    (`prek` is also setup after running a single `uv run poe setup` command!)
+    before commit__, no need to remember them.
+    (`prek` is also setup after running a single `uv run poe setup` command)
 
 ### Security
 
 > [!IMPORTANT]
-> __Everything below is already provided out of the box, one-click only!__
+> __Everything below is already provided out of the box, one-click only__
 
 - [__Hardening__](https://open-nudge.github.io/opentemplate/latest/template/quickstart/installation/#hardening):
     during setup, an automated issue is created to guide you step by step
@@ -212,10 +212,10 @@ __opentemplate__ is a Python template which is:
 - __Templates__: __every possible template included__ (discussions,
     issues, pull requests - each extensively described)
 - __Predefined labels__ - each pull request will be automatically labeled
-    (over `20` labels created during setup!) based on changed files
+    (over `20` labels created during setup) based on changed files
     (e.g. `docs`, `tests`, `deps`, `config` etc.).
     __No need to specify [semver](https://semver.org/) `scope`
-    of commit anymore!__
+    of commit anymore__
 - __Open source documents__: `CODE_OF_CONDUCT.md`,
     `CONTRIBUTING.md`, `ROADMAP.md`, `CHANGELOG.md`, `CODEOWNERS`, `DCO`,
     and much more - all automatically added and linked to your
@@ -262,7 +262,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 1. Create a new GitHub repository using this template
     (green `Use this template` button)
 1. Name your repo (__use underscore `_`, not hyphens `-`__)
-1. Add project description (__necessary!__)
+1. Add project description (__necessary__)
 1. __Wait until the setup commit appears__
     (performed by `github-actions[bot]`, it may take a few minutes)
 1. Clone the repository
@@ -290,7 +290,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 ### Examples
 
 > [!CAUTION]
-> Click on each example to see it in action!
+> Click on each example to see it in action.
 
 <details>
   <summary><b><big>Run checkers or fixers manually</big></b> (click me)</summary>
@@ -349,7 +349,7 @@ Advanced tool and development changes still belong in `pyproject.toml`:
   <summary><b><big>Disable some prek check</big></b> (click me)</summary>
 &nbsp;
 
-> Disabling checks should be done cautiously!
+> Disabling checks should be done cautiously.
 
 `prek` checks are defined in `prek.toml`.
 
@@ -369,7 +369,7 @@ SKIP="dco,ini,fix-python" git commit -m <message>
 For details, refer to the `id` fields in `prek.toml`.
 
 > Some commands have both `<group>-fix` and `<group>-check`
-> for different actions!
+> for different actions.
 
 </details>
 
@@ -377,7 +377,7 @@ For details, refer to the `id` fields in `prek.toml`.
   <summary><b><big>Disable GitHub Actions checks</big></b> (click me)</summary>
 &nbsp;
 
-> Disabling checks should be done cautiously!
+> Disabling checks should be done cautiously.
 
 When making a commit you can add one of the following
 strings to the message:
@@ -396,7 +396,7 @@ strings to the message:
 
 ## Contribute
 
-We welcome your contributions! Start here:
+We welcome your contributions. Start here:
 
 - [Code of Conduct](/CODE_OF_CONDUCT.md)
 - [Contributing Guide](/CONTRIBUTING.md)

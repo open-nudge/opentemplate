@@ -166,7 +166,7 @@ Configuration (allowed licenses) is stored in `.trivy.yaml`,
 triaged findings are ignored in `.trivyignore.yaml`. __Both files are required__,
 used by every scan, attested and attached to releases
 (`trivy-config-<commit SHA>.yaml`, `trivy-ignore-<commit SHA>.yaml`),
-so what the released scans ignore can be audited.
+letting anyone audit what the released scans ignore.
 
 Every run installs the newest Trivy release published __at least 7 days ago__
 (the Dependabot-like cooldown), so no manual updates are needed, while
@@ -242,7 +242,7 @@ Known limitations (the job warns when something was not scanned):
 
 ### CodeQL
 
-[CodeQL](https://codeql.github.com/) only analyzes GitHub Actions workflows
+[CodeQL](https://codeql.github.com/) only scans GitHub Actions workflows
 (`.github/workflows/*security-codeql*.yml`).
 Pull requests fail on any finding, while results are uploaded to the
 Security tab on `main` (push and weekly) and attached to releases.
@@ -287,7 +287,7 @@ Without it set the `NO_GITHUB_CODE_SECURITY` configuration variable
 
 - skips CodeQL (the required check passes as skipped), as its
     [license](https://securitylab.github.com/tools/codeql/license/)
-    does not allow analyzing private code without GitHub Code Security
+    does not allow scanning private code without GitHub Code Security
 - skips uploads to the Security tab, findings are listed in the job
     summary of each scanner instead (checks still fail on findings)
 

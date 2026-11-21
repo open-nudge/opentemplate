@@ -40,8 +40,8 @@ contain unreleased commits. The same applies to Python SBOM scans
 
 ## Cache
 
-Dependency caches are rebuilt after every merge to `main` and weekly,
-so they are not evicted by GitHub (unused for 7 days).
+Dependency caches are rebuilt after every merge to `main` and weekly
+to keep GitHub from evicting them (unused for 7 days).
 
 ## prek (previously pre-commit)
 

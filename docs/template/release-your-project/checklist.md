@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0
 
 > [!NOTE]
 > While automation handles most of the release process,
-> some project-specific details require manual updates.
+> some details specific to your project require manual updates.
 
 ## [README](../../index.md)
 
