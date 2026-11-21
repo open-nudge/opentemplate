@@ -1,0 +1,21 @@
+{
+  "name": "branch-except-dependabot",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [
+        "refs/heads/dependabot/**/*"
+      ],
+      "include": [
+        "~ALL"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "non_fast_forward"
+    }
+  ],
+  "bypass_actors": []
+}
