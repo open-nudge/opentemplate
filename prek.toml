@@ -191,6 +191,8 @@ rev = "4ce91ef208b37f9ac2894766e8cd7b33ffe3baed" # frozen: v3.27.0
   id = "vale"
   alias = "setup-natural-language"
   entry = "vale sync"
+  # Source builds report no release version, so Vale cannot locate its grammars
+  env.VALE_GRAMMARS_URL = "https://github.com/vale-cli/vale/releases/latest/download"
   name = "<<<SETUP>>> Natural language"
   verbose = true
   pass_filenames = false

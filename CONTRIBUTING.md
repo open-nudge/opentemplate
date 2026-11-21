@@ -157,7 +157,7 @@ Pull requests have to be:
 
 > [!TIP]
 > Type of the pull request should be the largest
-> of all commits (`feat!` > `fix!` > `feat` > `fix`)
+> of all commits (breaking `feat` > breaking `fix` > `feat` > `fix`)
 
 <!-- vale on -->
 

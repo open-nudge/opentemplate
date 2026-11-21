@@ -42,7 +42,7 @@ The `main` branch is protected and should always be in a releasable state.
 
 > [!NOTE]
 > If a PR has a few commits, its type should match the most significant
-> one (`feat!` > `fix!` > `feat` > `fix`).
+> one (breaking `feat` > breaking `fix` > `feat` > `fix`).
 
 > [!TIP]
 > The [`GitHub CLI`](https://cli.github.com/) simplifies this process.
