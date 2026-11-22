@@ -81,7 +81,7 @@ Managed automatically based on commit messages:
 
 - `fix` → Patch version update
 - `feat` → Minor version update
-- `BREAKING` (or `feat!`/`fix!`) → Major version update
+- `BREAKING` (or `!` after the type) → Major version update
 
 > [!TIP]
 > Check out [comver](https://github.com/open-nudge/comver)
@@ -168,7 +168,7 @@ The distributions carry
 for attested releases, see [below](#attestations)).
 
 > [!WARNING]
-> You need to run `harden.yml` before releasing, otherwise it will fail!
+> You need to run `harden.yml` before releasing, otherwise it will fail.
 
 > [!NOTE]
 > `open-nudge/opentemplate` is SLSA L2 itself as it relies on its own build.
@@ -183,7 +183,7 @@ for attested releases, see [below](#attestations)).
 > value, e.g. `true` (at the
 > [organization or repository level](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-variables#defining-configuration-variables-for-multiple-workflows)),
 > otherwise their release fails. No attestations are created and attached then.
-> __This escape hatch is ignored for public and internal repositories!__
+> __This escape hatch is ignored for public and internal repositories.__
 
 ## Verifications
 

@@ -114,7 +114,7 @@ standard in every commit, for example:
 git commit -s -S -m "feat: add new feature"
 ```
 
-- You can __only use `fix`, `feat`, `fix!`, `feat!`__ types,
+- You can __only use `fix` and `feat` types__ (with `!` for breaking changes),
     __we do not accept any other types__ (e.g. `chore`, `refactor`, `docs` and
     others).
 - Your commits should be atomic and should not contain many changes.
@@ -123,6 +123,9 @@ git commit -s -S -m "feat: add new feature"
 - __Your commits have to be signed (use `-S` flag in `git commit` as in
     the example above).__ Please see the [Signing commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits)
     for more information.
+- __Update your branch with `git pull --no-rebase -S --signoff upstream main`__
+    (the Update branch button adds no sign-off); on Dependabot pull requests,
+    comment `@dependabot rebase`.
 
 <!-- vale off -->
 
@@ -144,7 +147,7 @@ you cannot make small a pull request, describe the reasons in the
 Pull requests have to be:
 
 - __Contain `type` akin to the commits__;
-    Same rules apply (only `fix`, `feat`, `fix!`, `feat!` allowed)
+    Same rules apply (only `fix` and `feat`, with `!` for breaking changes)
 - __Linked to the `issue`__ via `Closes #XXX`
     (where `XXX` is the issue number) in the description.
 - Target the `main` branch.
@@ -154,7 +157,7 @@ Pull requests have to be:
 
 > [!TIP]
 > Type of the pull request should be the largest
-> of all commits (`feat!` > `fix!` > `feat` > `fix`)
+> of all commits (breaking `feat` > breaking `fix` > `feat` > `fix`)
 
 <!-- vale on -->
 
@@ -203,5 +206,5 @@ included in the next release.
 - [CHANGELOG](CHANGELOG.md) links to the release notes.
 - __We show certain releases to the public__
     by a blog post or a similar announcement (see [ANNOUNCEMENTS](ANNOUNCEMENTS.md)).
-- Public releases comprise of a few merged pull requests and are
+- Public releases comprise a few merged pull requests and are
     performed under maintainers' discretion.

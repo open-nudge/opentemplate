@@ -185,12 +185,14 @@ rev = "2bba271688c1abb1503097a064e6c3bc1d1b6a9b"  # frozen: lychee-v0.24.2
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "e2d4374b1c66c8a1dd6d912bebc135040d8833fa" # frozen: v3.26.0
+rev = "4ce91ef208b37f9ac2894766e8cd7b33ffe3baed" # frozen: v3.27.0
 
   [[repos.hooks]]
   id = "vale"
   alias = "setup-natural-language"
   entry = "vale sync"
+  # Source builds report no release version, so Vale cannot locate its grammars
+  env.VALE_GRAMMARS_URL = "https://github.com/vale-cli/vale/releases/latest/download"
   name = "<<<SETUP>>> Natural language"
   verbose = true
   pass_filenames = false

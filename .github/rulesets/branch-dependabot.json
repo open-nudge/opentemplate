@@ -1,12 +1,12 @@
 {
-  "name": "branch-all",
+  "name": "branch-dependabot",
   "target": "branch",
   "enforcement": "active",
   "conditions": {
     "ref_name": {
       "exclude": [],
       "include": [
-        "~ALL"
+        "refs/heads/dependabot/**/*"
       ]
     }
   },
@@ -15,5 +15,11 @@
       "type": "non_fast_forward"
     }
   ],
-  "bypass_actors": []
+  "bypass_actors": [
+    {
+      "actor_id": 29110,
+      "actor_type": "Integration",
+      "bypass_mode": "always"
+    }
+  ]
 }
