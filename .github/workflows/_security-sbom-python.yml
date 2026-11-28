@@ -35,7 +35,7 @@ on:
 permissions: {} # yamllint disable-line rule:braces
 
 jobs:
-  # Separate job before the matrix, as anonymous API limit (60/hour) is per IP, shared by macOS runners
+  # Separate job before the matrix, one request per run and one version for all scans
   trivy-version:
     name: "Trivy Version"
     runs-on: "ubuntu-latest"
@@ -50,25 +50,26 @@ jobs:
           egress-policy: "block"
           allowed-endpoints: >
             *.actions.githubusercontent.com:443
-            api.github.com:443
+            github.com:443
             results-receiver.actions.githubusercontent.com:443
       # Newest release older than 7 days (as the Dependabot cooldown),
       # the version used is recorded in the SARIFs (tool.driver.version)
+
+      # Release feed, not the API: its anonymous limit (60 requests/hour per IP)
+      # is shared with other users of the runner IP so it may fail at any point
       - name: "Get Trivy version"
         id: "trivy-version"
         # enq: shell indentation is more readable
         # yamllint disable rule:indentation
         run: |
-          # Anonymous, the aquasecurity IP allow list refuses tokens (GITHUB_TOKEN too)
-          curl --silent --show-error --retry 3 --output releases.json \
-            https://api.github.com/repos/aquasecurity/trivy/releases
-          # API errors are objects whose message is shown (e.g. anonymous limit of
-          # 60 requests/hour per IP), an empty version would install the latest release
-          version="$(jq --raw-output '
-            if type == "array" then . else error(.message) end
-            | map(select(.prerelease | not)
-              | select(.published_at | fromdateiso8601 < now - 604800))
-            | .[0].tag_name // error("no Trivy release older than 7 days")' releases.json)"
+          curl --silent --show-error --fail --retry 3 --output releases.atom \
+            https://github.com/aquasecurity/trivy/releases.atom
+          # Newest 10 releases, stable tags only, last edited (never before publishing)
+          # 7 days ago, an empty version would install the latest release
+          version="$(jq --raw-input --slurp --raw-output '
+            [scan("/(v[0-9]+\\.[0-9]+\\.[0-9]+)</id>\\s*<updated>([^<]+)</updated>")
+              | select(.[1] | fromdateiso8601 < now - 604800)]
+            | .[0][0] // error("no stable Trivy release older than 7 days")' releases.atom)"
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
         # yamllint enable rule:indentation
 

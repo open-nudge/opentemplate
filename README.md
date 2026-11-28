@@ -137,6 +137,10 @@ __opentemplate__ is a Python template which is:
 - [__`prek`__](https://prek.j178.dev/): __all checks and fixers are run
     before commit__, no need to remember them.
     (`prek` is also setup after running a single `uv run poe setup` command)
+- __Agent skills__: your package ships its own
+    [agent skill](https://agentskills.io) (`src/<package>/.agents/skills`,
+    included in the wheel), while `uv run poe setup` links skills shipped
+    by installed packages into `.agents/skills`
 
 ### Security
 
@@ -224,7 +228,7 @@ __opentemplate__ is a Python template which is:
     automatically divided based on `labels`, `types`, human/bot authors,
     and linked to appropriate issues and pull requests
 - __Config files__: [editorconfig](https://editorconfig.org/), `.gitattributes`,
-    always the latest Python `.gitignore` etc.
+    always the latest Python, AI agents skills, `.gitignore` etc.
 - __Commit checks__: verification of signatures, commit messages,
     DCO signing, no commit to the main branch policy
     (via [conform](https://github.com/siderolabs/conform))

@@ -4,11 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-name: "documentation-how-to"
+name: "documentation"
 description: "When and where to write and update documentation."
 license: "Apache-2.0"
 metadata:
-    author: "Szymon Maszke"
+    author: "open-nudge" # templateskip
+    documentation: "https://open-nudge.github.io/opentemplate" # templateskip
+    repository: "https://github.com/open-nudge/opentemplate" # templateskip
 ---
 
 ## When

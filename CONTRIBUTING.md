@@ -74,6 +74,8 @@ uv run poe setup
 > Tests run against the installed (non-editable) package in a persistent
 > environment per Python version (`.venvs/<version>`), the project is
 > reinstalled only when its source changes.
+> Agent skills shipped by installed packages are linked into `.agents/skills`,
+> rerun `uv run poe setup` after changing dependencies.
 
 ### Source code
 

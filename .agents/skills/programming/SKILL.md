@@ -4,19 +4,20 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-name: "programming-how-to"
+name: "programming"
 description: "When and where to write functionality source code"
 license: "Apache-2.0"
 metadata:
-    author: "Szymon Maszke"
+    author: "open-nudge" # templateskip
+    documentation: "https://open-nudge.github.io/opentemplate" # templateskip
+    repository: "https://github.com/open-nudge/opentemplate" # templateskip
 ---
 
-Use this skill for programming.
+Use this skill TO CREATE SOURCE CODE.
 
 ## When
 
-- After defining a set of indispensable dependencies
-- First coding step
+- AFTER defining a set of indispensable dependencies
 
 ## Where
 

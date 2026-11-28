@@ -82,6 +82,16 @@ Key considerations:
 > [!NOTE]
 > `opentemplate` does not enforce a specific testing methodology (e.g., TDD, BDD).
 
+### Agent skills
+
+- `src/<project_name>/.agents/skills` holds the
+    [agent skill](https://agentskills.io) for your package, shipped to
+    `PyPI`; describe there how agents should use your package.
+- Put dev skills in `.agents/skills/<name>/SKILL.md` (will be committed).
+- `uv run poe setup` links skills shipped by installed packages into
+    `.agents/skills` as gitignored symlinks, rerun it after changing
+    dependencies.
+
 ## Commits
 
 `opentemplate` follows simplified [semver](https://semver.org/):
@@ -114,6 +124,7 @@ may be required (as defined during [installation](installation.md)).
 
 - `pyproject.toml`
 - `project/`
+- `.agents/`
 - `prek.toml`
 - `.github/label-path.yml`
 - `/.github/workflows/template-setup.yml`
