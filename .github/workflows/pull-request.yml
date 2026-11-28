@@ -39,7 +39,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a" # v2.22.4
+        uses: "step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c" # v2.23.0
         with:
           disable-sudo-and-containers: true
           egress-policy: "block"
@@ -51,7 +51,7 @@ jobs:
             *.blob.core.windows.net:443
             api.github.com:443
       - name: "Lint Pull Request"
-        uses: "amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6" # v6.1.2
+        uses: "amannn/action-semantic-pull-request@c5e23b7e584519ee15caa684cf60d056aa9f035f" # v6.1.3
         with:
           types: |
             fix
