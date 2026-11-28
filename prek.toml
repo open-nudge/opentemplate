@@ -179,7 +179,7 @@ rev = "2bba271688c1abb1503097a064e6c3bc1d1b6a9b"  # frozen: lychee-v0.24.2
   language = "rust"
   verbose = true
   types = ["markdown"]
-  exclude = "^(DCO.md|template-setup/.*|LICENSE|LICENSES/.*|\\.agents/.*)$"
+  exclude = "^(DCO.md|template-setup/.*|LICENSE|LICENSES/.*)$"
   priority = 70
 
 
@@ -478,7 +478,7 @@ repo = "local"
   language = "system"
   require_serial = true
   types = ["markdown"]
-  exclude = "^(DCO.md|template-setup/.*|LICENSE|LICENSES/.*|\\.agents/.*)$"
+  exclude = "^(DCO.md|template-setup/.*|LICENSE|LICENSES/.*|(.*/)?\\.agents/.*)$"
   priority = 70
 
   [[repos.hooks]]

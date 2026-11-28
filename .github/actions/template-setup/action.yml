@@ -89,6 +89,19 @@ runs:
         "${DESCRIPTION}"
         "${SKIP_N_LINES}"
         "${EXCLUDE_LIST}"
+    - name: "Skill setup"
+      env:
+        TEMPLATE_REPOSITORY: "${{ inputs.template-repository }}"
+        REPOSITORY: "${{ inputs.repository }}"
+      shell: "bash"
+      # After template data change, which would rename the skill name again
+      # Skill names: lowercase letters, digits, single hyphens (PEP 503 normalized)
+      # || true if the skill is named the same as the template repository
+      run: |
+        skill="$(echo "${REPOSITORY}" | sed -E 's/[-_.]+/-/g' | tr '[:upper:]' '[:lower:]')"
+        skills="src/${REPOSITORY}/.agents/skills"
+        mv "${skills}/${TEMPLATE_REPOSITORY}" "${skills}/${skill}" || true
+        sed -i "s/^name: .*/name: \"${skill}\"/" "${skills}/${skill}/SKILL.md"
     # We can now work in standard working-directory
     # Cookiecutter recreated original repository at the same location
     - name: "Create .gitignore header and specific entries"
@@ -111,6 +124,21 @@ runs:
         curl
         https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
         >> .gitignore
+    - name: "Add the latest Agents .gitignore"
+      shell: "bash"
+      run: >
+        curl
+        https://raw.githubusercontent.com/github/gitignore/main/Global/Agents.gitignore
+        >> .gitignore
+    - name: "Add Agents specific .gitignore entries"
+      shell: "bash"
+      run: |
+        echo '
+        # Local agent configuration, only the .agents standard is committed
+        .claude/
+        # Skills linked from installed packages are symlinks, own skills are directories
+        .agents/skills/*
+        !.agents/skills/*/' >> .gitignore
     - name: "Setup uv"
       uses: "astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2" # v10.3.3
       with:

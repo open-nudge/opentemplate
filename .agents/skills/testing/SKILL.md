@@ -4,19 +4,21 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-name: "programming-how-to"
+name: "testing"
 description: "When and where to write tests of the functionalities"
 license: "Apache-2.0"
 metadata:
-    author: "Szymon Maszke"
+    author: "open-nudge" # templateskip
+    documentation: "https://open-nudge.github.io/opentemplate" # templateskip
+    repository: "https://github.com/open-nudge/opentemplate" # templateskip
 ---
 
 ## When
 
-- After creating implementation in `/src`
+- AFTER creating implementation in `/src`
 
 ## Where
 
-Implement functionality **ONLY** in the following paths:
+Implement testing functionality **ONLY** in the following paths:
 
 - `/tests` directory

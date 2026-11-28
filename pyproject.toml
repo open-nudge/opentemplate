@@ -178,14 +178,16 @@ dev-security = [
   "zizmor>=1",
 ]
 
-# uv version installed by CI and release jobs (setup-uv reads it from uv.lock)
 dev-bootstrap = [
   "uv>=0.11.8",
 ]
 
-# Task runner, all tasks are run via `uv run poe <task>`
 dev-tasks = [
   "poethepoet>=0.37",
+]
+
+dev-agents = [
+  "library-skills>=0.0.21",
 ]
 
 # templatedelete-start
@@ -274,6 +276,7 @@ dev-all = [
   { include-group = "dev-json5" },
   { include-group = "dev-toml" },
   { include-group = "dev-xml" },
+  { include-group = "dev-agents" },
 ]
 
 ###############################################################################
@@ -945,6 +948,7 @@ check-commit = "conventional-pre-commit --strict --scopes '' feat fix feat! fix!
 setup = { sequence = [
   # Project environment (.venv): everything, editable (linters, docs, IDE)
   "uv sync --all-extras",
+  "library-skills --yes --all",
   # Test environments (.venvs/<python>), missing interpreters are downloaded
   #
   #           DO NOT EDIT UNTIL end marker
