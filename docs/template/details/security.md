@@ -71,7 +71,8 @@ Security measures:
 - __Build track__: [L3](https://slsa.dev/spec/v1.2/build-requirements)
     (L2 for `open-nudge/opentemplate` itself, as it relies on its own build).
     Distributions are built and their provenance attested by reusable
-    workflows running no project code. `_release-vsa.yml` verifies the
+    workflows running no project code (the provenance is uploaded to PyPI
+    as well). `_release-vsa.yml` verifies the
     provenance and attests the result as a
     [Verification Summary Attestation](https://slsa.dev/spec/v1.2/verification_summary)
     (VSA), bundled with the distributions in the release

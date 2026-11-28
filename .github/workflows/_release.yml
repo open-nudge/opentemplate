@@ -17,6 +17,12 @@ on:
       digests:
         description: "sha256sum of the distributions"
         value: "${{ jobs.package-create.outputs.digests }}"
+      wheel-provenance:
+        description: "Sigstore bundle of the wheel build provenance"
+        value: "${{ jobs.package-create.outputs.wheel-provenance }}"
+      sdist-provenance:
+        description: "Sigstore bundle of the source distribution build provenance"
+        value: "${{ jobs.package-create.outputs.sdist-provenance }}"
       draft-digests:
         description: "sha256sum of the release draft artifact"
         value: "${{ jobs.github-upload.outputs.digests }}"

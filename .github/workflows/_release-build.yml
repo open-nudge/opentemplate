@@ -19,8 +19,15 @@ on:
       digests:
         description: >
           sha256sum of the distributions, verify downloads against it
-          (job outputs cannot be altered by other jobs, unlike artifacts)
         value: "${{ jobs.release-build.outputs.digests }}"
+      wheel-provenance:
+        description: >
+          Sigstore bundle of the wheel build provenance
+        value: "${{ jobs.release-build-attest.outputs.wheel-provenance }}"
+      sdist-provenance:
+        description: >
+          Sigstore bundle of the source distribution build provenance
+        value: "${{ jobs.release-build-attest.outputs.sdist-provenance }}"
 
 # enq: the only way to set permissions to none in GH Actions
 permissions: {} # yamllint disable-line rule:braces
@@ -133,6 +140,9 @@ jobs:
       id-token: "write" # Needed to get GH Token to attest
       attestations: "write" # Needed to upload attestation
       artifact-metadata: "write" # Needed to create artifact metadata
+    outputs:
+      wheel-provenance: "${{ steps.provenance.outputs.wheel }}"
+      sdist-provenance: "${{ steps.provenance.outputs.sdist }}"
     steps:
       - name: "Harden Runner"
         uses: "step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a" # v2.22.4
@@ -151,9 +161,36 @@ jobs:
             timestamp.githubapp.com:443
             tuf-repo-cdn.sigstore.dev:443
             tuf-repo.github.com:443
-      # Digests come from the build job, the artifact might have been replaced
-      - name: "Attest build provenance"
+      # Digests come from the build job, the artifact might have been replaced.
+      # PyPI accepts provenance of a single subject, hence one per distribution
+      - name: "Split distribution digests"
+        id: "dists"
+        env:
+          DIGESTS: "${{ needs.release-build.outputs.digests }}"
+        run: |
+          wheel="$(grep '\.whl$' <<< "${DIGESTS}")"
+          sdist="$(grep '\.tar\.gz$' <<< "${DIGESTS}")"
+          echo "wheel=${wheel}" >> "${GITHUB_OUTPUT}"
+          echo "sdist=${sdist}" >> "${GITHUB_OUTPUT}"
+      - name: "Attest wheel build provenance"
+        id: "wheel"
         uses: "actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6" # v4.2.2
         with:
-          subject-checksums: "${{ needs.release-build.outputs.digests }}"
+          subject-checksums: "${{ steps.dists.outputs.wheel }}"
+      - name: "Attest source distribution build provenance"
+        id: "sdist"
+        uses: "actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6" # v4.2.2
+        with:
+          subject-checksums: "${{ steps.dists.outputs.sdist }}"
+      # release.yml converts them to PEP 740 attestations (pypi-provenance)
+      - name: "Get provenance bundles"
+        id: "provenance"
+        env:
+          WHEEL: "${{ steps.wheel.outputs.bundle-path }}"
+          SDIST: "${{ steps.sdist.outputs.bundle-path }}"
+        run: |
+          wheel="$(jq --compact-output . "${WHEEL}")"
+          sdist="$(jq --compact-output . "${SDIST}")"
+          echo "wheel=${wheel}" >> "${GITHUB_OUTPUT}"
+          echo "sdist=${sdist}" >> "${GITHUB_OUTPUT}"
 ...

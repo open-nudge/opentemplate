@@ -206,9 +206,19 @@ where `<signer>` comes from the table in previous section and
 > Drop `--bundle` to fetch the attestations from GitHub instead.
 
 The same command verifies files downloaded from PyPI (the provenance is bound
-to the digest). PyPI itself only shows its publish attestations, signed by the
-project's `release.yml`, as trusted publishing does not support reusable
-workflows ([pypi/warehouse#11096](https://github.com/pypi/warehouse/issues/11096)).
+to the digest). PyPI also hosts this provenance
+([PEP 740](https://peps.python.org/pep-0740/))
+next to its publish attestation, signed by the project's `release.yml`
+(trusted publishing does not support reusable workflows,
+[pypi/warehouse#11096](https://github.com/pypi/warehouse/issues/11096)).
+Verify both with
+[`pypi-attestations`](https://github.com/pypi/pypi-attestations):
+
+```sh
+pypi-attestations verify pypi \
+  --repository https://github.com/<owner>/<repo> \
+  pypi:<asset>
+```
 
 Ensure the commit belongs to the template (and not to a fork of it),
 the command below should output `ahead` or `identical`:
@@ -349,5 +359,6 @@ This process can be adjusted by editing:
 - `.github/actions/dist-build/action.yml`
 - `.github/actions/attestation-verify/action.yml`
 - `.github/actions/digests-verify/action.yml`
+- `.github/actions/pypi-provenance/action.yml`
 - `.github/actions/pages-update/action.yml`
 - `.github/actions/release-version/action.yml`

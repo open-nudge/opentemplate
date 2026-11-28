@@ -158,7 +158,7 @@ rev = "18598907d4315be915a0c446fdd8aa9b47ba2c22" # frozen: v0.1.0-alpha.33
 
 [[repos]]
 repo = "https://github.com/trufflesecurity/trufflehog"
-rev = "e76dff8a7e57d6df0c60ad8cbf5d5cba505a8fc9" # frozen: v3.99.2
+rev = "d232362a64a09a9e7d58267b8f5acef00ae90e23" # frozen: v3.100.0
 
   [[repos.hooks]]
   id = "trufflehog"
@@ -185,7 +185,7 @@ rev = "2bba271688c1abb1503097a064e6c3bc1d1b6a9b"  # frozen: lychee-v0.24.2
 
 [[repos]]
 repo = "https://github.com/errata-ai/vale"
-rev = "4ce91ef208b37f9ac2894766e8cd7b33ffe3baed" # frozen: v3.27.0
+rev = "58f0dbfbce70bb23008a55ae64427858f788ef2e" # frozen: v3.28.1
 
   [[repos.hooks]]
   id = "vale"
@@ -221,7 +221,7 @@ rev = "914e7df21a07ef503a81201c76d2b11c789d3fca" # frozen: v1.7.12
 
 [[repos]]
 repo = "https://github.com/semgrep/pre-commit"
-rev = "14ad2383dd6f19216cc78ba8ea1d4f607fc29df1" # frozen: v1.185.0
+rev = "a68c2d451e989be0cfbe8234b6b1a9ea17424a0d" # frozen: v1.186.0
 
   # Keep these arguments aligned with the Docker scan in
   # .github/workflows/_security-semgrep.yml.

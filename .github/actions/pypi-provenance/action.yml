@@ -1,0 +1,63 @@
+# SPDX-FileCopyrightText: © 2026 open-nudge <https://github.com/open-nudge>
+# SPDX-FileContributor: szymonmaszke <github@maszke.co>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: "PyPI Provenance"
+description: >
+  Write the build provenance (Sigstore bundle) of a distribution as its
+  PEP 740 attestation <dist>.slsa.attestation, which twine uploads with <dist>
+
+inputs:
+  bundle:
+    description: >
+      Sigstore bundle of the provenance of a single distribution
+    required: true
+  directory:
+    description: "Directory containing the distribution"
+    default: "dist"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get attested distribution"
+      id: "distribution"
+      shell: "bash"
+      working-directory: "${{ inputs.directory }}"
+      env:
+        BUNDLE: "${{ inputs.bundle }}"
+      # enq: shell indentation is more readable
+      # yamllint disable rule:indentation
+      run: |
+        name="$(jq --exit-status --raw-output \
+          '.dsseEnvelope.payload | @base64d | fromjson | .subject[0].name' <<< "${BUNDLE}")"
+        if [[ ! -f "${name}" ]]; then
+          echo "::error title=Unknown distribution::${name} is not in ${PWD}"
+          exit 1
+        fi
+        echo "name=${name}" >> "${GITHUB_OUTPUT}"
+      # yamllint enable rule:indentation
+    # Same conversion as pypi_attestations.Attestation.from_bundle
+    - name: "Write PEP 740 attestation"
+      shell: "bash"
+      working-directory: "${{ inputs.directory }}"
+      env:
+        BUNDLE: "${{ inputs.bundle }}"
+        NAME: "${{ steps.distribution.outputs.name }}"
+      # enq: jq indentation is more readable
+      # yamllint disable rule:indentation
+      run: |
+        jq '{
+          version: 1,
+          verification_material: {
+            certificate: .verificationMaterial.certificate.rawBytes,
+            transparency_entries: .verificationMaterial.tlogEntries
+          },
+          envelope: {
+            statement: .dsseEnvelope.payload,
+            signature: .dsseEnvelope.signatures[0].sig
+          }
+        }' <<< "${BUNDLE}" > "${NAME}.slsa.attestation"
+      # yamllint enable rule:indentation
+...
