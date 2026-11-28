@@ -169,8 +169,9 @@ used by every scan, attested and attached to releases
 (`trivy-config-<commit SHA>.yaml`, `trivy-ignore-<commit SHA>.yaml`),
 letting anyone audit what the released scans ignore.
 
-Every run installs the newest Trivy release published __at least 7 days ago__
-(the Dependabot-like cooldown), so no manual updates are needed, while
+Every run installs the newest Trivy release published (and last edited)
+__at least 7 days ago__ (the Dependabot-like cooldown),
+so no manual updates are needed, while
 compromised releases (like [`v0.69.4`](https://github.com/aquasecurity/trivy/security/advisories/GHSA-69fq-xp46-6x23),
 withdrawn after 3 hours) are not used.
 The version used is recorded in every SARIF (`tool.driver.version`),
