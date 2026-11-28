@@ -153,8 +153,8 @@ __opentemplate__ is a Python template which is:
 - [__SLSA Build L3 provenance__](https://slsa.dev/spec/v1.0/levels#build-l3):
     wheel and source distributions are built in a reusable workflow
     which runs no project code, their digests are
-    [attested](https://github.com/actions/attest) in a separate job
-    and the signed bundle is attached to each release
+    [attested](https://github.com/actions/attest) in a separate job,
+    the signed bundle is attached to each release and uploaded to PyPI
     (public repositories or GitHub Enterprise Cloud,
     once `harden.yml` pins the reusable workflows)
 - [__SLSA Verification Summary Attestation__](https://slsa.dev/spec/v1.2/verification_summary)

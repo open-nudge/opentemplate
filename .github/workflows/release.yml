@@ -155,6 +155,24 @@ jobs:
         uses: "$/.github/actions/dist-download"
         with:
           digests: "${{ needs.release.outputs.digests }}"
+      # twine uploads dist/<file>.<type>.attestation with <file> (PEP 740),
+      # next to the publish attestation created by the action below
+      - name: "Add wheel build provenance"
+        if: >
+          ! github.event.repository.private
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
+        uses: "$/.github/actions/pypi-provenance"
+        with:
+          bundle: "${{ needs.release.outputs.wheel-provenance }}"
+      - name: "Add source distribution build provenance"
+        if: >
+          ! github.event.repository.private
+        # enq: globalize.sh expands this to repository path and commit SHA
+        # yamllint disable-line rule:line-length
+        uses: "$/.github/actions/pypi-provenance"
+        with:
+          bundle: "${{ needs.release.outputs.sdist-provenance }}"
       # PyPI accepts identical re-uploads (re-runs) and rejects changed files
       - name: "Upload python package"
         if: >
